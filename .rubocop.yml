@@ -1,0 +1,28 @@
+Documentation:
+  Enabled: false
+
+Rails:
+  Enabled: true
+
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+    - db/**/*
+    - config/**/*
+    - bin/delayed_job
+
+ClassLength:
+  Exclude:
+    - test/**/*
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Metrics/BlockLength:
+  CountComments: false  # count full line comments?
+  Max: 25
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'spec/**/*.rb'
+    - 'test/test_helper.rb'
