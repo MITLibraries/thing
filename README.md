@@ -1,24 +1,10 @@
-# README
+# th(esis).ing(est)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a simple web app to collect metadata and files from a `User` and allow
+`Users` with the role `Admin` to download and edit the metadata.
 
-Things you may want to cover:
+# Developer Notes
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+When changing the db schema, please run `bundle exec annotate` to update the
+model and associated tests to reflect the changes in a nice convenient,
+consistent way.
