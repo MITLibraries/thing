@@ -10,4 +10,6 @@
 
 class Right < ApplicationRecord
   has_many :theses
+
+  validates :statement, presence: true
 end
