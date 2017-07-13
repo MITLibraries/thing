@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170713122432) do
+ActiveRecord::Schema.define(version: 20170713123352) do
 
   create_table "degrees", force: :cascade do |t|
     t.string "name"
@@ -24,6 +24,12 @@ ActiveRecord::Schema.define(version: 20170713122432) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "rights", force: :cascade do |t|
+    t.text "statement", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "theses", force: :cascade do |t|
     t.string "title", null: false
     t.text "abstract", null: false
@@ -31,7 +37,16 @@ ActiveRecord::Schema.define(version: 20170713122432) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.integer "right_id"
+    t.index ["right_id"], name: "index_theses_on_right_id"
     t.index ["user_id"], name: "index_theses_on_user_id"
+  end
+
+  create_table "theses_degrees", id: false, force: :cascade do |t|
+    t.integer "thesis_id"
+    t.integer "degree_id"
+    t.index ["degree_id"], name: "index_theses_degrees_on_degree_id"
+    t.index ["thesis_id"], name: "index_theses_degrees_on_thesis_id"
   end
 
   create_table "theses_departments", id: false, force: :cascade do |t|
