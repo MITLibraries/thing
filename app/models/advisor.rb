@@ -10,4 +10,6 @@
 
 class Advisor < ApplicationRecord
   has_and_belongs_to_many :theses
+
+  validates :name, presence: true
 end
