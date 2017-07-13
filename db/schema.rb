@@ -18,16 +18,37 @@ ActiveRecord::Schema.define(version: 20170713123901) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "advisors_theses", id: false, force: :cascade do |t|
+    t.integer "thesis_id"
+    t.integer "advisor_id"
+    t.index ["advisor_id"], name: "index_advisors_theses_on_advisor_id"
+    t.index ["thesis_id"], name: "index_advisors_theses_on_thesis_id"
+  end
+
   create_table "degrees", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "degrees_theses", id: false, force: :cascade do |t|
+    t.integer "thesis_id"
+    t.integer "degree_id"
+    t.index ["degree_id"], name: "index_degrees_theses_on_degree_id"
+    t.index ["thesis_id"], name: "index_degrees_theses_on_thesis_id"
   end
 
   create_table "departments", force: :cascade do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "departments_theses", id: false, force: :cascade do |t|
+    t.integer "thesis_id"
+    t.integer "department_id"
+    t.index ["department_id"], name: "index_departments_theses_on_department_id"
+    t.index ["thesis_id"], name: "index_departments_theses_on_thesis_id"
   end
 
   create_table "rights", force: :cascade do |t|
@@ -46,27 +67,6 @@ ActiveRecord::Schema.define(version: 20170713123901) do
     t.integer "right_id"
     t.index ["right_id"], name: "index_theses_on_right_id"
     t.index ["user_id"], name: "index_theses_on_user_id"
-  end
-
-  create_table "theses_advisors", id: false, force: :cascade do |t|
-    t.integer "thesis_id"
-    t.integer "advisor_id"
-    t.index ["advisor_id"], name: "index_theses_advisors_on_advisor_id"
-    t.index ["thesis_id"], name: "index_theses_advisors_on_thesis_id"
-  end
-
-  create_table "theses_degrees", id: false, force: :cascade do |t|
-    t.integer "thesis_id"
-    t.integer "degree_id"
-    t.index ["degree_id"], name: "index_theses_degrees_on_degree_id"
-    t.index ["thesis_id"], name: "index_theses_degrees_on_thesis_id"
-  end
-
-  create_table "theses_departments", id: false, force: :cascade do |t|
-    t.integer "thesis_id"
-    t.integer "department_id"
-    t.index ["department_id"], name: "index_theses_departments_on_department_id"
-    t.index ["thesis_id"], name: "index_theses_departments_on_thesis_id"
   end
 
   create_table "users", force: :cascade do |t|

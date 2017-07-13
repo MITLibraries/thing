@@ -4,8 +4,8 @@ one:
   title: MyString
   abstract: MyText
   grad_date: 2017-07-13
-
-two:
-  title: MyString
-  abstract: MyText
-  grad_date: 2017-07-13
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+  advisors: [one]
