@@ -8,6 +8,8 @@
 #  grad_date  :date             not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  user_id    :integer
+#  right_id   :integer
 #
 
 class Thesis < ApplicationRecord

@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: rights
+#
+#  id         :integer          not null, primary key
+#  statement  :text             not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
 require 'test_helper'
 
 class RightTest < ActiveSupport::TestCase
