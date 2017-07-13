@@ -15,4 +15,5 @@ class Thesis < ApplicationRecord
   has_one :right
   has_and_belongs_to_many :departments
   has_and_belongs_to_many :degrees
+  has_and_belongs_to_many :advisors
 end
