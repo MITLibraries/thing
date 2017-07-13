@@ -5,6 +5,9 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'devise'
+gem 'omniauth-mit-oauth2'
+gem 'omniauth-oauth2'
 gem 'puma'
 gem 'rails', '~> 5.1.2'
 gem 'sass-rails'
@@ -23,8 +26,13 @@ group :development, :test do
 end
 
 group :development do
+  gem 'annotate'
   gem 'listen'
   gem 'spring'
   gem 'spring-watcher-listen'
   gem 'web-console'
+end
+
+group :test do
+  gem 'coveralls', require: false
 end
