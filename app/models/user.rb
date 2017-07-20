@@ -14,6 +14,7 @@ class User < ApplicationRecord
   devise :omniauthable, omniauth_providers: [:mit_oauth2]
   validates :uid, presence: true
   validates :email, presence: true
+  has_many :theses
 
   # `uid` is a unique ID that comes back from OmniAuth (which gets it from
   # the remote authentication provider). It is used to lookup or create a new

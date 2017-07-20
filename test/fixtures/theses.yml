@@ -1,0 +1,35 @@
+# == Schema Information
+#
+# Table name: theses
+#
+#  id         :integer          not null, primary key
+#  title      :string           not null
+#  abstract   :text             not null
+#  grad_date  :date             not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  user_id    :integer
+#  right_id   :integer
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  abstract: MyText
+  grad_date: 2017-07-13
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+  advisors: [one]
+
+two:
+  title:  Can apparent superluminal neutrino speeds be explained as a quantum weak measurement?
+  abstract: Probably not.
+  grad_date: 2017-07-13
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+  advisors: [one]

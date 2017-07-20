@@ -10,7 +10,64 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170710172050) do
+ActiveRecord::Schema.define(version: 20170713123901) do
+
+  create_table "advisors", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "advisors_theses", id: false, force: :cascade do |t|
+    t.integer "thesis_id"
+    t.integer "advisor_id"
+    t.index ["advisor_id"], name: "index_advisors_theses_on_advisor_id"
+    t.index ["thesis_id"], name: "index_advisors_theses_on_thesis_id"
+  end
+
+  create_table "degrees", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "degrees_theses", id: false, force: :cascade do |t|
+    t.integer "thesis_id"
+    t.integer "degree_id"
+    t.index ["degree_id"], name: "index_degrees_theses_on_degree_id"
+    t.index ["thesis_id"], name: "index_degrees_theses_on_thesis_id"
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "departments_theses", id: false, force: :cascade do |t|
+    t.integer "thesis_id"
+    t.integer "department_id"
+    t.index ["department_id"], name: "index_departments_theses_on_department_id"
+    t.index ["thesis_id"], name: "index_departments_theses_on_thesis_id"
+  end
+
+  create_table "rights", force: :cascade do |t|
+    t.text "statement", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "theses", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "abstract", null: false
+    t.date "grad_date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.integer "right_id"
+    t.index ["right_id"], name: "index_theses_on_right_id"
+    t.index ["user_id"], name: "index_theses_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "uid", null: false
