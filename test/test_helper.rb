@@ -14,6 +14,12 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alpha order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    def mock_auth(user)
+      OmniAuth.config.mock_auth[:mit_oauth2] =
+        OmniAuth::AuthHash.new(provider: 'mit_oauth2',
+                               uid: user.uid,
+                               info: { email: user.email })
+      get '/users/auth/mit_oauth2/callback'
+    end
   end
 end

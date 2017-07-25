@@ -23,3 +23,4 @@ yo:
 admin:
   uid: 'admin_id'
   email: 'admin@example.com'
+  admin: true
