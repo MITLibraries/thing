@@ -19,5 +19,17 @@
     <div class="local-identity">
       <h2 class="title title-site"><a href="/">Thesis Submission at MIT Libraries</a></h2>
     </div>
+    <div class="wrap-local-nav">
+      <div class="wrap-bar">
+        <% if user_signed_in? %>
+          <%= link_to("Sign out", destroy_user_session_path, method: :delete, id: "sign_in", class: 'action-auth')  %>
+          <% if current_user.admin? %>
+            <%= link_to("Admin", admin_root_path) %>
+          <% end %>
+        <% else %>
+          <%= link_to("Sign in", user_mit_oauth2_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
