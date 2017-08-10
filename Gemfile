@@ -12,6 +12,7 @@ gem 'omniauth-oauth2'
 gem 'puma'
 gem 'rails', '~> 5.1.2'
 gem 'sass-rails'
+gem 'simple_form'
 gem 'therubyracer', platforms: :ruby
 gem 'uglifier'
 
