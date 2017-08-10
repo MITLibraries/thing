@@ -1,0 +1,49 @@
+<%= simple_form_for(@thesis, url: '/thesis',
+             html: { class: 'thesisSubmission' } ) do |f| %>
+
+  <%= f.error_notification %>
+
+  <%= f.input :title, label: 'Title',
+                      wrapper_html: { class: 'field-wrap' },
+                      input_html: { class: 'field field-text wide' } %>
+
+  <%= f.input :abstract, label: 'Abstract', as: :text,
+                         wrapper_html: { class: 'field-wrap' },
+                         input_html: { class: 'field field-text wide' } %>
+
+  <%= f.association :departments, label_method: :name, as: :check_boxes,
+                       include_hidden: false,
+                       wrapper_html: { class: 'field-wrap list-checkboxes' },
+                       input_html: { class: 'field-checkbox' } %>
+
+  <%= f.association :degrees, label_method: :name, as: :check_boxes,
+                       include_hidden: false,
+                       wrapper_html: { class: 'field-wrap list-checkboxes' },
+                       input_html: { class: 'field-checkbox' } %>
+
+  <%= f.association :right, label_method: :statement, as: :radio_buttons,
+                            wrapper_html: { class: 'field-wrap list-radios' },
+                            input_html: { class: 'field-checkbox' } %>
+
+  <fieldset>
+    <legend>Graduation Date</legend>
+
+      <div class='group-inline'>
+
+      <%= f.input :graduation_month, label: 'Month', as: :select,
+                           collection: Date::MONTHNAMES.compact,
+                           wrapper_html: { class: 'field-wrap' },
+                           input_html: { class: 'field field-select' } %>
+
+      <%= f.input :graduation_year, label: 'Year', as: :string,
+                          wrapper_html: { class: 'field-wrap' },
+                          input_html: { class: 'field field-select' } %>
+    </div>
+
+  </fieldset>
+
+  <div class='field-wrap'>
+    <%= submit_tag 'Submit Thesis', class: 'btn button-primary' %>
+  </div>
+
+<% end %>
