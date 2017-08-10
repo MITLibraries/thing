@@ -1,4 +1,4 @@
-require "administrate/base_dashboard"
+require 'administrate/base_dashboard'
 
 class ThesisDashboard < Administrate::BaseDashboard
   # ATTRIBUTE_TYPES
@@ -18,7 +18,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     abstract: Field::Text,
     grad_date: Field::DateTime,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -26,41 +26,41 @@ class ThesisDashboard < Administrate::BaseDashboard
   #
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
-  COLLECTION_ATTRIBUTES = [
-    :title,
-    :user,
-    :right,
-    :grad_date
+  COLLECTION_ATTRIBUTES = %i[
+    title
+    user
+    right
+    grad_date
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
-  SHOW_PAGE_ATTRIBUTES = [
-    :id,
-    :user,
-    :title,
-    :abstract,
-    :grad_date,
-    :right,
-    :created_at,
-    :updated_at,
-    :departments,
-    :degrees,
-    :advisors
+  SHOW_PAGE_ATTRIBUTES = %i[
+    id
+    user
+    title
+    abstract
+    grad_date
+    right
+    created_at
+    updated_at
+    departments
+    degrees
+    advisors
   ].freeze
 
   # FORM_ATTRIBUTES
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
-  FORM_ATTRIBUTES = [
-    :user,
-    :right,
-    :departments,
-    :degrees,
-    :advisors,
-    :title,
-    :abstract,
-    :grad_date,
+  FORM_ATTRIBUTES = %i[
+    user
+    right
+    departments
+    degrees
+    advisors
+    title
+    abstract
+    grad_date
   ].freeze
 
   # Overwrite this method to customize how theses are displayed

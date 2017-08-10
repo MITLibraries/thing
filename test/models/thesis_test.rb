@@ -55,9 +55,9 @@ class ThesisTest < ActiveSupport::TestCase
 
   test 'invalid with multiple rights' do
     thesis = theses(:one)
-    assert_raises (ActiveRecord::AssociationTypeMismatch) {
+    assert_raises(ActiveRecord::AssociationTypeMismatch) do
       thesis.right = [rights(:one), rights(:two)]
-    }
+    end
   end
 
   test 'invalid without department' do
