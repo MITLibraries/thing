@@ -55,8 +55,8 @@ class Thesis < ApplicationRecord
 
   # Combine the UI supplied month and year into a datetime object
   def combine_graduation_date
-    self.grad_date = DateTime.new(graduation_year.to_i,
-                                  Date::MONTHNAMES.index(graduation_month))
+    self.grad_date = Time.zone.local(graduation_year.to_i,
+                                     Date::MONTHNAMES.index(graduation_month))
   end
 
   def split_graduation_date
