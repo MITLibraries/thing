@@ -214,6 +214,9 @@ GEM
     selenium-webdriver (3.4.3)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
+    simple_form (3.5.0)
+      actionpack (> 4, < 5.2)
+      activemodel (> 4, < 5.2)
     simplecov (0.14.1)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
@@ -278,6 +281,7 @@ DEPENDENCIES
   rubocop
   sass-rails
   selenium-webdriver
+  simple_form
   spring
   spring-watcher-listen
   sqlite3
