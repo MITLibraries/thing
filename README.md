@@ -12,3 +12,20 @@ This is a simple web app to collect metadata and files from a `User` and allow
 When changing the db schema, please run `bundle exec annotate` to update the
 model and associated tests to reflect the changes in a nice convenient,
 consistent way.
+
+
+
+*********************************************************************************
+#Docker Setup
+
+1. Build the docker image
+    docker-compose build
+    
+2. Connect the database
+    docker-compose up
+    
+3. Create the database and migrate (1st time)
+    docker-compose run web rake db:create db:migrate
+    
+    
+At the end of the above commands, you can visit http://localhost:3000 and see the welcome page.
