@@ -31,8 +31,6 @@ group :development do
   gem 'annotate'
   gem 'listen'
   gem 'rubocop'
-  gem 'spring'
-  gem 'spring-watcher-listen'
   gem 'web-console'
 end
 
