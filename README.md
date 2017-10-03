@@ -23,8 +23,11 @@ consistent way.
     
 2. Connect the database
     docker-compose up
+
+3. Update default config/database.yml with PG configuration
     
-3. Create the database and migrate (1st time)
+    
+4. Create the database and migrate (1st time)
     docker-compose run web rake db:create db:migrate
     
     
