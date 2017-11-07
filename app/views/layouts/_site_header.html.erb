@@ -27,7 +27,7 @@
             <%= link_to("Admin", admin_root_path) %>
           <% end %>
         <% else %>
-          <%= link_to("Sign in", user_mit_oauth2_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+          <%= link_to("Sign in", "https://libthing.mit.edu:8443", id: "sign_in", class: 'action-auth') %>
         <% end %>
       </div>
     </div>
