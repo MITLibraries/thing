@@ -16,7 +16,7 @@ consistent way.
 
 
 *********************************************************************************
-#Docker Setup
+# Docker Setup
 
 1. The default database configuration is for SQLLite; The docker image uses Postgres db
 and hence before you build the image, update condig/database.yml with contents in config/database-pg.yml.postgres.
@@ -33,4 +33,4 @@ and hence before you build the image, update condig/database.yml with contents i
            docker-compose up     
     
     
-At the end of the above commands, you can visit http://localhost and see the main page.
+At the end of the above commands, you can visit https://localhost and see the main page.
