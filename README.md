@@ -18,17 +18,19 @@ consistent way.
 *********************************************************************************
 #Docker Setup
 
-1. Build the docker image
-    docker-compose build
-    
-2. Connect the database
-    docker-compose up
+1. The default database configuration is for SQLLite; The docker image uses Postgres db
+and hence before you build the image, update condig/database.yml with contents in config/database-pg.yml.postgres.
 
-3. Update default config/database.yml with PG configuration
+2. Build the docker image
+    
+        docker-compose build
+    
+3. Create the database and migrate (1st time)
+       
+       docker-compose run web rake db:create db:migrate
+4. Start the container (If this is the first time, go to Step 4 and then come back here.)
+       
+           docker-compose up     
     
     
-4. Create the database and migrate (1st time)
-    docker-compose run web rake db:create db:migrate
-    
-    
-At the end of the above commands, you can visit http://localhost:3000 and see the welcome page.
+At the end of the above commands, you can visit http://localhost and see the main page.
