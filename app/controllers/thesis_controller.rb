@@ -25,7 +25,7 @@ class ThesisController < ApplicationController
     if ENV['FAKE_AUTH_ENABLED'] == 'true'
       redirect_to user_developer_omniauth_authorize_path
     else
-      redirect_to user_mit_oauth2_omniauth_authorize_path
+      redirect_to user_saml_omniauth_authorize_path
     end
   end
 

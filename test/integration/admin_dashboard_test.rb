@@ -1,6 +1,14 @@
 require 'test_helper'
 
 class AuthenticationTest < ActionDispatch::IntegrationTest
+  def setup
+    auth_setup
+  end
+
+  def teardown
+    auth_teardown
+  end
+
   test 'accessing admin panel unauthenticated redirects to root' do
     get '/admin'
     assert_response :redirect
