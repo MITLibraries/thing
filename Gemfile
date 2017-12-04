@@ -7,8 +7,7 @@ end
 
 gem 'administrate'
 gem 'devise'
-gem 'omniauth-mit-oauth2'
-gem 'omniauth-oauth2'
+gem 'omniauth-saml'
 gem 'puma'
 gem 'rails', '~> 5.1.2'
 gem 'sass-rails'
@@ -36,4 +35,5 @@ end
 
 group :test do
   gem 'coveralls', require: false
+  gem 'minitest-reporters'
 end

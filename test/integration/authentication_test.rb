@@ -2,15 +2,11 @@ require 'test_helper'
 
 class AuthenticationTest < ActionDispatch::IntegrationTest
   def setup
-    Rails.application.env_config['devise.mapping'] = Devise.mappings[:user]
-    Rails.application.env_config['omniauth.auth'] =
-      OmniAuth.config.mock_auth[:mit_oauth2]
-    OmniAuth.config.test_mode = true
+    auth_setup
   end
 
   def teardown
-    OmniAuth.config.test_mode = false
-    OmniAuth.config.mock_auth[:mit_oauth2] = nil
+    auth_teardown
   end
 
   def silence_omniauth
@@ -22,21 +18,23 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   test 'accessing callback without credentials redirects to signin' do
-    OmniAuth.config.mock_auth[:mit_oauth2] = :invalid_credentials
+    OmniAuth.config.mock_auth[:saml] = :invalid_credentials
     silence_omniauth do
-      get '/users/auth/mit_oauth2/callback'
+      get '/users/auth/saml/callback'
       follow_redirect!
     end
     assert_response :success
   end
 
   test 'accessing callback with for new user' do
-    OmniAuth.config.mock_auth[:mit_oauth2] =
-      OmniAuth::AuthHash.new(provider: 'mit_oauth2',
+    # we can't use `mock_auth` because we wan't to test user creation
+    # and `mock_auth` users a fixtured user
+    OmniAuth.config.mock_auth[:saml] =
+      OmniAuth::AuthHash.new(provider: 'saml',
                              uid: '123545',
-                             info: { email: 'bob@asdf.com' })
+                             info: { uid: '123545', email: 'bob@asdf.com' })
     usercount = User.count
-    get '/users/auth/mit_oauth2/callback'
+    get '/users/auth/saml/callback'
     follow_redirect!
     assert_response :success
     assert_equal(usercount + 1, User.count)

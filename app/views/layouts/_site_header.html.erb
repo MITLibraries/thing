@@ -27,7 +27,11 @@
             <%= link_to("Admin", admin_root_path) %>
           <% end %>
         <% else %>
-          <%= link_to("Sign in", user_mit_oauth2_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+          <% if ENV['FAKE_AUTH_ENABLED'] == 'true' %>
+            <%= link_to("Sign in", user_developer_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+          <% else %>
+            <%= link_to("Sign in", user_saml_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+          <% end %>
         <% end %>
       </div>
     </div>
