@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.4.2'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -9,7 +10,7 @@ gem 'administrate'
 gem 'devise'
 gem 'omniauth-saml'
 gem 'puma'
-gem 'rails', '~> 5.1.2'
+gem 'rails', '5.1.4'
 gem 'sass-rails'
 gem 'simple_form'
 gem 'therubyracer', platforms: :ruby
