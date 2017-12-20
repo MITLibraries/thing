@@ -8,6 +8,7 @@ end
 
 gem 'administrate'
 gem 'devise'
+gem 'lograge'
 gem 'omniauth-saml'
 gem 'puma'
 gem 'rails', '5.1.4'
