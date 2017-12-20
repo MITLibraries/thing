@@ -12,6 +12,7 @@ gem 'lograge'
 gem 'omniauth-saml'
 gem 'puma'
 gem 'rails', '5.1.4'
+gem 'rollbar'
 gem 'sass-rails'
 gem 'simple_form'
 gem 'therubyracer', platforms: :ruby
