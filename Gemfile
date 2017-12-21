@@ -15,6 +15,7 @@ gem 'rails', '5.1.4'
 gem 'rollbar'
 gem 'sass-rails'
 gem 'simple_form'
+gem 'skylight'
 gem 'therubyracer', platforms: :ruby
 gem 'uglifier'
 
