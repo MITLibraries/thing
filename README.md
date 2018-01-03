@@ -23,6 +23,12 @@ consistent way.
 
 # Environment Variables
 
+`DISABLE_LOGRAGE` - set this in to disable lograge single line logging config
+and use rails standard verbose logging.
+
+`RAILS_LOG_TO_STDOUT` - log to standard out instead of a file. Heroku enables
+this automatically. It is often nice in development as well.
+
 ## Authentication for Development ONLY
 
 `FAKE_AUTH_ENABLED` - set to `true`. WARNING: DO NOT DO THIS IN PRODUCTION! BAD!
