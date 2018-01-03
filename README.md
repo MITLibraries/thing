@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/MITLibraries/thing.svg?branch=master)](https://travis-ci.org/MITLibraries/thing)
+[![Coverage Status](https://coveralls.io/repos/github/MITLibraries/thing/badge.svg?branch=master)](https://coveralls.io/github/MITLibraries/thing?branch=master)
 [![Dependency Status](https://gemnasium.com/badges/github.com/MITLibraries/thing.svg)](https://gemnasium.com/github.com/MITLibraries/thing)
 [![Code Climate](https://codeclimate.com/github/MITLibraries/thing/badges/gpa.svg)](https://codeclimate.com/github/MITLibraries/thing)
 
@@ -64,9 +65,10 @@ For SAML authentication, you will need all of the following.
 
 `URN_UID` - `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` should be good enough for both MIT and testshib. However, it is not guaranteed to be forever unique but MIT does not provide a truly unique option so this is the best we've got.
 
+# Local deployment
+Use heroku local. We have also experimented with docker, and are retaining it in case we move toward dockerizing all the things in future.
 
-*********************************************************************************
-#Docker Setup
+## Docker Setup
 
 1. Build the docker image
     docker-compose build
