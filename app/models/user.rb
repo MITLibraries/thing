@@ -11,7 +11,7 @@
 #
 
 class User < ApplicationRecord
-  if ENV['FAKE_AUTH_ENABLED'] == 'true'
+  if Rails.configuration.fake_auth_enabled  # Use config, not ENV. See README.
     devise :omniauthable, omniauth_providers: [:developer]
   else
     devise :omniauthable, omniauth_providers: [:saml]

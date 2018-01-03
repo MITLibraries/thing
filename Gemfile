@@ -38,6 +38,7 @@ group :development do
 end
 
 group :test do
+  gem 'climate_control'
   gem 'coveralls', require: false
   gem 'minitest-reporters'
 end

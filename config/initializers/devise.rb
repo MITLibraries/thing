@@ -32,7 +32,7 @@ Devise.setup do |config|
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
 
-  if ENV['FAKE_AUTH_ENABLED'] == 'true'
+  if Rails.configuration.fake_auth_enabled
     config.omniauth :developer
   else
     # Omniauth Config
