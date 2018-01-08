@@ -6,9 +6,11 @@ module Users
       flash[:notice] = "Welcome #{@user.email}!"
     end
 
-    # Do _NOT_ set FAKE_AUTH_ENABLED in staging or production. Ever. Bad Idea.
+    # Make sure to use Rails.configuration.fake_auth_enabled and not
+    # ENV['FAKE_AUTH_ENABLED'] here. The config performs an additional check
+    # to make sure we're not on the production server.
     def developer
-      raise 'Invalid Authentication' unless ENV['FAKE_AUTH_ENABLED'] == 'true'
+      raise 'Invalid Authentication' unless Rails.configuration.fake_auth_enabled
       @user = User.from_omniauth(request.env['omniauth.auth'])
       @user.admin = true
       @user.uid = @user.email

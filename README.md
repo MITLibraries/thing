@@ -32,7 +32,24 @@ this automatically. It is often nice in development as well.
 
 ## Authentication for Development ONLY
 
-`FAKE_AUTH_ENABLED` - set to `true`. WARNING: DO NOT DO THIS IN PRODUCTION! BAD!
+There's a fake auth system you can use on review apps. It bypasses the actual auth system and just logs you in with a fake developer account.
+
+### To enable on review apps
+* Set `FAKE_AUTH_ENABLED` to `true`
+
+### To enable on localhost
+In `.env`:
+* Set `FAKE_AUTH_ENABLED=true`
+
+### To enable on staging or production
+Don't.
+
+Also, you shouldn't be able to. Even if you set `FAKE_AUTH_ENABLED`, the `HEROKU_APP_NAME` check will fail.
+
+### To use in the codebase
+Use `Rails.configuration.fake_auth_enabled`, NOT `ENV['FAKE_AUTH_ENABLED']`.
+
+Using the latter bypasses the app name check, which can let us inadvertently turn on fake auth in production. `nope`
 
 ## Authentication for production
 

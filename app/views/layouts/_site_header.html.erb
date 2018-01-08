@@ -27,7 +27,7 @@
             <%= link_to("Admin", admin_root_path) %>
           <% end %>
         <% else %>
-          <% if ENV['FAKE_AUTH_ENABLED'] == 'true' %>
+          <% if Rails.configuration.fake_auth_enabled %>
             <%= link_to("Sign in", user_developer_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
           <% else %>
             <%= link_to("Sign in", user_saml_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
