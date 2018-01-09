@@ -2,16 +2,11 @@
   "name": "thing",
   "scripts": {},
   "env": {
+    "FAKE_AUTH_ENABLED": "true",
     "HEROKU_APP_NAME": {
       "required": true
     },
     "LANG": {
-      "required": true
-    },
-    "PAPERTRAIL_API_TOKEN": {
-      "required": true
-    },
-    "PRIVATE_KEY": {
       "required": true
     },
     "RACK_ENV": {
@@ -26,10 +21,11 @@
     "RAILS_SERVE_STATIC_FILES": {
       "required": true
     },
-    "SECRET_KEY_BASE": {
+    "ROLLBAR_ACCESS_TOKEN": {
       "required": true
     },
-    "SKYLIGHT_AUTHENTICATION": {
+    "ROLLBAR_ENV": "pr",
+    "SECRET_KEY_BASE": {
       "required": true
     },
   },
@@ -42,7 +38,6 @@
     }
   },
   "addons": [
-    "papertrail",
     "heroku-postgresql"
   ],
   "buildpacks": [
