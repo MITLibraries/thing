@@ -11,6 +11,7 @@ class ThesisController < ApplicationController
     @thesis = Thesis.new(thesis_params)
     @thesis.user = current_user
     if @thesis.save
+      puts thesis_params
       flash.notice = 'Your thesis submission is now in progress'
       redirect_to thesis_path(@thesis)
     else
