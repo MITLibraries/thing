@@ -1,0 +1,15 @@
+<h3><%= @thesis.title %></h3>
+
+<p>
+  <%= @thesis.graduation_month %> <%= @thesis.graduation_year %>
+</p>
+<ul class="list-unbulleted">
+  <% @thesis.departments.each do |department| %>
+    <li>
+      <%= department.name %>
+    </li>
+  <% end %>
+</ul>
+<p>
+  Submitted on <%= @thesis.created_at.to_formatted_s(:long) %> by <%= @thesis.user.email %>
+</p>

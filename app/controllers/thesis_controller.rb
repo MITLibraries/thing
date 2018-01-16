@@ -12,10 +12,14 @@ class ThesisController < ApplicationController
     @thesis.user = current_user
     if @thesis.save
       flash.notice = 'Your thesis submission is now in progress'
-      redirect_to root_path
+      redirect_to thesis_path(@thesis)
     else
       render 'new'
     end
+  end
+
+  def show
+    @thesis = Thesis.find(params[:id])
   end
 
   private
