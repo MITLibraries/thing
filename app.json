@@ -27,7 +27,7 @@
     "ROLLBAR_ENV": "pr",
     "SECRET_KEY_BASE": {
       "required": true
-    },
+    }
   },
   "formation": {
     "web": {
