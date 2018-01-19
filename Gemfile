@@ -7,6 +7,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'administrate'
+gem 'cancancan'
 gem 'devise'
 gem 'lograge'
 gem 'omniauth-saml'
