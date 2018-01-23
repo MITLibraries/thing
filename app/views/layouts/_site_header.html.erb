@@ -21,18 +21,23 @@
     </div>
     <div class="wrap-local-nav">
       <div class="wrap-bar">
-        <% if user_signed_in? %>
-          <%= link_to("Sign out", destroy_user_session_path, method: :delete, id: "sign_in", class: 'action-auth')  %>
-          <% if current_user.admin? %>
-            <%= link_to("Admin", admin_root_path) %>
+        <nav class="local-nav" aria-label="Main menu">
+          <% if user_signed_in? && current_user.admin? %>
+            <%= link_to("Process submissions", process_path, class: 'button-secondary') %>
+            <%= link_to("Admin", admin_root_path, class: 'button-secondary') %>
           <% end %>
-        <% else %>
-          <% if Rails.configuration.fake_auth_enabled %>
-            <%= link_to("Sign in", user_developer_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+        </nav>
+        <nav class="nav-user" aria-label="User menu">
+          <% if user_signed_in? %>
+            <%= link_to("Sign out", destroy_user_session_path, method: :delete, id: "sign_in", class: 'action-auth')  %>
           <% else %>
-            <%= link_to("Sign in", user_saml_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+            <% if Rails.configuration.fake_auth_enabled %>
+              <%= link_to("Sign in", user_developer_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+            <% else %>
+              <%= link_to("Sign in", user_saml_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+            <% end %>
           <% end %>
-        <% end %>
+        </nav>
       </div>
     </div>
   </div>

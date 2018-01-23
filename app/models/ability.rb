@@ -17,6 +17,8 @@ class Ability
       if user.admin?
         can :manage, :all
       end
+
+      # Define :process role here
     end
   end
 end

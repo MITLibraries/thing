@@ -9,6 +9,7 @@ end
 gem 'administrate'
 gem 'cancancan'
 gem 'devise'
+gem 'kaminari'
 gem 'lograge'
 gem 'omniauth-saml'
 gem 'puma'

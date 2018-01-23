@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class ThesisControllerTest < ActionDispatch::IntegrationTest
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~ the submission system ~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'new prompts for login' do
     get '/thesis/new'
     assert_response :redirect
@@ -131,5 +132,91 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
       post "/thesis/#{theses(:one).id}",
            params: { thesis: { title: 'yoyos are cool' } }
     end
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~ the processing queue ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'submissions processing page exists' do
+    sign_in users(:admin)
+    get '/process'
+    assert_response :success
+  end
+
+  test 'anon users cannot see submissions processing page' do
+    # Note that nobody is signed in.
+    get '/process'
+    assert_response :redirect
+  end
+
+  test 'non-admin users cannot see submissions processing page' do
+    sign_in users(:yo)
+    assert_not users(:yo).admin?
+    assert_raises(CanCan::AccessDenied) do
+      get '/process'
+    end
+  end
+
+  test 'submissions include submitter email' do
+    sign_in users(:admin)
+    get '/process'
+    # Limit to the first 25 theses since that's all that will show up on the
+    # first page.
+    expected_theses = Thesis.order('grad_date ASC').first(25)
+    expected_theses.each do |t|
+      assert @response.body.include? t.user.email
+    end
+  end
+
+  test 'submissions include grad date' do
+    sign_in users(:admin)
+    get '/process'
+    expected_theses = Thesis.order('grad_date ASC').first(25)
+    expected_theses.each do |t|
+      friendly_date = "#{t.graduation_month} #{t.graduation_year}"
+      assert @response.body.include? friendly_date
+    end
+  end
+
+  test 'submissions include departments' do
+    sign_in users(:admin)
+    get '/process'
+    expected_theses = Thesis.order('grad_date ASC').first(25)
+    expected_theses.each do |t|
+      assert t.departments.map {|d| @response.body.include? d.name}.all?
+    end
+  end
+
+  test 'submissions include degrees' do
+    sign_in users(:admin)
+    get '/process'
+    expected_theses = Thesis.order('grad_date ASC').first(25)
+    expected_theses.each do |t|
+      assert t.degrees.map {|d| @response.body.include? d.name}.all?
+    end
+  end
+
+  test 'submissions ordered by grad date ascending' do
+    sign_in users(:admin)
+    get '/process'
+    theses = @controller.instance_variable_get(:@theses)
+    theses.each_with_index do |t, i|
+      assert t.grad_date <= theses[i + 1].grad_date if theses[i + 1].present?
+    end
+  end
+
+  test 'link to submissions page visible to admin' do
+    sign_in users(:admin)
+    get '/'
+    assert_select "a[href=?]", "/process"
+  end
+
+  test 'link to submissions page not visible to non-admin users' do
+    sign_in users(:yo)
+    get '/'
+    assert_select "a[href=?]", "/process", count: 0
+  end
+
+  test 'link to submissions page not visible to anonymous users' do
+    get '/'
+    assert_select "a[href=?]", "/process", count: 0
   end
 end

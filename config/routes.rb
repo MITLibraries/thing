@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   end
 
   resources :thesis, only: [:new, :create, :show]
+  get 'process', to: 'thesis#process_theses'
 
   devise_for :users, :controllers => {
     :omniauth_callbacks => 'users/omniauth_callbacks'

@@ -23,6 +23,12 @@ class ThesisController < ApplicationController
     @thesis = Thesis.find(params[:id])
   end
 
+  # Do not name this simply 'process' or you will shadow a built-in controller
+  # function and then you will be sad.
+  def process_theses
+    @theses = Thesis.order('grad_date ASC').page(params[:page]).per(25)
+  end
+
   private
 
   def require_user
