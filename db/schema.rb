@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170713123901) do
+ActiveRecord::Schema.define(version: 20180124144953) do
 
   create_table "advisors", force: :cascade do |t|
     t.string "name", null: false
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20170713123901) do
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.integer "right_id"
+    t.string "status", default: "active"
     t.index ["right_id"], name: "index_theses_on_right_id"
     t.index ["user_id"], name: "index_theses_on_user_id"
   end

@@ -219,4 +219,62 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     get '/'
     assert_select "a[href=?]", "/process", count: 0
   end
+
+  test 'mark downloaded option available for active theses' do
+    sign_in users(:admin)
+    get '/process'
+    thesis = theses(:active)
+    assert_select "div[data-id=thesis_#{thesis.id}] form"
+  end
+
+  test 'mark downloaded option not available for downloaded theses' do
+    sign_in users(:admin)
+    get '/process'
+    thesis = theses(:downloaded)
+    assert_select "div[data-id=thesis_#{thesis.id}] form", count: 0
+  end
+
+  test 'mark downloaded option not available for withdrawn theses' do
+    sign_in users(:admin)
+    get '/process'
+    thesis = theses(:withdrawn)
+    assert_select "div[data-id=thesis_#{thesis.id}] form", count: 0
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ marking downloads ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'only admin can mark as downloaded' do
+    thesis = theses(:active)
+    post mark_downloaded_url(thesis), xhr: true
+    assert_response :redirect
+    assert_equal 'active', thesis.status
+  end
+
+  test 'mark thesis as downloaded - valid case' do
+    sign_in users(:admin)
+    thesis = theses(:active)
+    post mark_downloaded_url(thesis), xhr: true
+
+    assert_equal 'application/json', @response.content_type
+    resp = JSON.parse(@response.body)
+    assert resp.key? 'id'
+    assert resp.key? 'saved'
+    assert_equal thesis.id.to_s, resp['id']
+    assert_equal true, resp['saved']
+  end
+
+  test 'cannot mark theses if already downloaded' do
+    sign_in users(:admin)
+    thesis = theses(:downloaded)
+    assert_raises ActionController::BadRequest do
+      post mark_downloaded_url(thesis), xhr: true
+    end
+  end
+
+  test 'cannot mark theses if withdrawn' do
+    sign_in users(:admin)
+    thesis = theses(:withdrawn)
+    assert_raises ActionController::BadRequest do
+      post mark_downloaded_url(thesis), xhr: true
+    end
+  end
 end

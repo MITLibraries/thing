@@ -19,6 +19,8 @@ class Ability
       end
 
       # Define :process role here
+      # They should be able to view submissions and mark theses as done
+      # Should they be able to mark theses as withdrawn, or is that admin only?
     end
   end
 end

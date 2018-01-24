@@ -1,0 +1,20 @@
+.text-info {
+  color: $informational;
+}
+.text-success {
+  color: $success;
+}
+.text-warning {
+  color: $warning;
+}
+.text-danger {
+  color: $error;
+}
+
+.button_to {
+  @extend .field-wrap;
+
+  input {
+    @extend .button-secondary;
+  }
+}
