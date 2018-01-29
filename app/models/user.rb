@@ -8,6 +8,7 @@
 #  admin      :boolean          default(FALSE)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  role       :string           default("basic")
 #
 
 class User < ApplicationRecord
@@ -20,6 +21,9 @@ class User < ApplicationRecord
   validates :uid, presence: true
   validates :email, presence: true
   has_many :theses
+
+  ROLES = %w[basic processor thesis_admin sysadmin]
+  validates_inclusion_of :role, :in => ROLES
 
   # `uid` is a unique ID that comes back from OmniAuth (which gets it from
   # the remote authentication provider). It is used to lookup or create a new
