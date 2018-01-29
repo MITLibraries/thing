@@ -10,6 +10,7 @@
 #  updated_at :datetime         not null
 #  user_id    :integer
 #  right_id   :integer
+#  status     :string           default("active")
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
@@ -33,3 +34,36 @@ two:
   departments: [one]
   degrees: [one]
   advisors: [one]
+
+downloaded:
+  title: MyString
+  abstract: MyText
+  grad_date: 2017-07-13
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+  advisors: [one]
+  status: 'downloaded'
+
+withdrawn:
+  title: MyString
+  abstract: MyText
+  grad_date: 2017-07-13
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+  advisors: [one]
+  status: 'withdrawn'
+
+active:
+  title: MyString
+  abstract: MyText
+  grad_date: 2017-07-13
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+  advisors: [one]
+  status: 'active'  # The default, but specified for testing purposes.

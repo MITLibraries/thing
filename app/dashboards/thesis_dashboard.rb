@@ -18,7 +18,10 @@ class ThesisDashboard < Administrate::BaseDashboard
     abstract: Field::Text,
     grad_date: Field::DateTime,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime
+    updated_at: Field::DateTime,
+    status: Field::Select.with_options(
+      collection: Thesis::STATUS_OPTIONS,
+    ),
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -47,6 +50,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     departments
     degrees
     advisors
+    status
   ].freeze
 
   # FORM_ATTRIBUTES
@@ -61,6 +65,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     title
     abstract
     grad_date
+    status
   ].freeze
 
   # Overwrite this method to customize how theses are displayed

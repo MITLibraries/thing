@@ -10,6 +10,7 @@
 #  updated_at :datetime         not null
 #  user_id    :integer
 #  right_id   :integer
+#  status     :string           default("active")
 #
 
 class Thesis < ApplicationRecord
@@ -31,6 +32,9 @@ class Thesis < ApplicationRecord
 
   validates :departments, presence: true
   validates :degrees, presence: true
+
+  STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
+  validates_inclusion_of :status, :in => STATUS_OPTIONS
 
   # temporarily disabling advisor validation to allow web form work to
   # proceed with the simpler elements before tackling this more complex
@@ -62,5 +66,15 @@ class Thesis < ApplicationRecord
   def split_graduation_date
     self.graduation_year = grad_date.strftime('%Y')
     self.graduation_month = grad_date.strftime('%B')
+  end
+
+  def css_alert_type
+    if self.status == 'active'
+      'info'
+    elsif self.status == 'withdrawn'
+      'danger'
+    elsif self.status == 'downloaded'
+      'success'
+    end
   end
 end

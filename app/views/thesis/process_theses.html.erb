@@ -1,7 +1,7 @@
 <h3>Thesis Submissions Queue</h3>
 
 <% @theses.each do |thesis| %>
-  <div class="panel panel-info"> <%# color-code by status? %>
+  <div class="panel panel-<%= thesis.css_alert_type %>" data-id="thesis_<%= thesis.id %>">
     <div class="panel-heading">
       <div class="layout-3q1q layout-band">
         <div class="col3q">
@@ -13,14 +13,27 @@
       </div>
     </div>
     <div class="panel-body">
-      <%= 'Department'.pluralize(thesis.departments.count) %>:
-        <%= thesis.departments.map{|d| d.name}.join(",") %><br />
-      <%= 'Degree'.pluralize(thesis.degrees.count) %>:
-        <%= thesis.degrees.map{|d| d.name}.join(",") %><br />
+      <div class="layout-3q1q layout-band">
+        <div class="col3q">
+          <%= "Department".pluralize(thesis.departments.count) %>:
+            <%= thesis.departments.map{|d| d.name}.join(",") %><br />
+          <%= "Degree".pluralize(thesis.degrees.count) %>:
+            <%= thesis.degrees.map{|d| d.name}.join(",") %><br />
+          </div>
+          <div class="col1q">
+            <% if thesis.status == "active" %>
+              <%= button_to "Mark as downloaded",
+                  { action: "mark_downloaded", id: thesis.id },
+                  remote: true %>
+            <% end %>
+          </div>
+        </div>
     </div>
     <div class="panel-footer">
-      <%= link_to 'View details', thesis_path(thesis.id) %>
+      <%= link_to "View details", thesis_path(thesis.id) %>
       --
+      Status: <span class="text-<%= thesis.css_alert_type %>">
+        <%= thesis.status %></span>
       <%# Other stuff should go here when e.g. people can mark as done or
           a download link exists. %>
     </div>
@@ -28,3 +41,5 @@
 <% end %>
 
 <%= paginate @theses %>
+
+<script>markDownloaded();</script>

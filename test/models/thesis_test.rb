@@ -10,6 +10,7 @@
 #  updated_at :datetime         not null
 #  user_id    :integer
 #  right_id   :integer
+#  status     :string           default("active")
 #
 
 require 'test_helper'
@@ -97,5 +98,33 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:one)
     thesis.advisors = [advisors(:one), advisors(:two)]
     assert(thesis.valid?)
+  end
+
+  test 'can have active status' do
+    thesis = theses(:one)
+    thesis.status = 'active'
+    thesis.save
+    assert(thesis.valid?)
+  end
+
+  test 'can have withdrawn status' do
+    thesis = theses(:one)
+    thesis.status = 'withdrawn'
+    thesis.save
+    assert(thesis.valid?)
+  end
+
+  test 'can have downloaded status' do
+    thesis = theses(:one)
+    thesis.status = 'downloaded'
+    thesis.save
+    assert(thesis.valid?)
+  end
+
+  test 'cannot have other statuses' do
+    thesis = theses(:one)
+    thesis.status = 'nobel prize-winning'
+    thesis.save
+    assert_not(thesis.valid?)
   end
 end

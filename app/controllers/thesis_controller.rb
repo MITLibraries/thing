@@ -29,6 +29,27 @@ class ThesisController < ApplicationController
     @theses = Thesis.order('grad_date ASC').page(params[:page]).per(25)
   end
 
+  def mark_downloaded
+    @thesis = Thesis.find(params[:id])
+    if not @thesis.status == 'active'
+      raise ActionController::BadRequest.new
+    end
+
+    @thesis.status = 'downloaded'
+
+    respond_to do |format|
+      if @thesis.save
+        format.js
+        format.html { redirect_to process_path }
+        render json: { id: params[:id], saved: true }
+      else
+        format.js
+        format.html { redirect_to process_path }
+        render json: { id: params[:id], saved: false }
+      end
+    end
+  end
+
   private
 
   def require_user
