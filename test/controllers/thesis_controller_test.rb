@@ -147,12 +147,35 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
-  test 'non-admin users cannot see submissions processing page' do
-    sign_in users(:yo)
-    assert_not users(:yo).admin?
+  test 'basic users cannot see submissions processing page' do
+    sign_in users(:basic)
     assert_raises(CanCan::AccessDenied) do
       get '/process'
     end
+  end
+
+  test 'processor users can see submissions processing page' do
+    sign_in users(:processor)
+    get '/process'
+    assert_response :success
+  end
+
+  test 'thesis admin users can see submissions processing page' do
+    sign_in users(:thesis_admin)
+    get '/process'
+    assert_response :success
+  end
+
+  test 'sysadmin users can see submissions processing page' do
+    sign_in users(:sysadmin)
+    get '/process'
+    assert_response :success
+  end
+
+  test 'admin users can see submissions processing page' do
+    sign_in users(:admin)
+    get '/process'
+    assert_response :success
   end
 
   test 'submissions include submitter email' do

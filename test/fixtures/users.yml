@@ -8,6 +8,7 @@
 #  admin      :boolean          default(FALSE)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  role       :string           default("basic")
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
@@ -28,3 +29,23 @@ admin:
 bad:
   uid: 'bad_id'
   email: 'bad@example.com'
+
+basic:
+  uid: 'basic_id'
+  email: 'basic@example.com'
+  role: 'basic'
+
+processor:
+  uid: 'processor_id'
+  email: 'processor@example.com'
+  role: 'processor'
+
+thesis_admin:
+  uid: 'thesis_admin_id'
+  email: 'thesis_admin@example.com'
+  role: 'thesis_admin'
+
+sysadmin:
+  uid: 'sysadmin_id'
+  email: 'sysadmin@example.com'
+  role: 'sysadmin'

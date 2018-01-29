@@ -7,6 +7,10 @@ class ThesisDashboard < Administrate::BaseDashboard
   # Each different type represents an Administrate::Field object,
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
+  #
+  # The dashboard must know about grad_date, since it is a column on the model
+  # schema, but also about graduation_year and graduation_month, since Thesis
+  # performs before_create validation on these objects.
   ATTRIBUTE_TYPES = {
     user: Field::BelongsTo,
     right: Field::BelongsTo,
@@ -17,6 +21,8 @@ class ThesisDashboard < Administrate::BaseDashboard
     title: Field::String,
     abstract: Field::Text,
     grad_date: Field::DateTime,
+    graduation_month: Field::Number,
+    graduation_year: Field::Number,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     status: Field::Select.with_options(
@@ -56,6 +62,9 @@ class ThesisDashboard < Administrate::BaseDashboard
   # FORM_ATTRIBUTES
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
+  #
+  # Make sure you display graduation_year and graduation_month on the form or
+  # you will be unable to create Theses!
   FORM_ATTRIBUTES = %i[
     user
     right
@@ -64,8 +73,9 @@ class ThesisDashboard < Administrate::BaseDashboard
     advisors
     title
     abstract
-    grad_date
     status
+    graduation_year
+    graduation_month
   ].freeze
 
   # Overwrite this method to customize how theses are displayed
