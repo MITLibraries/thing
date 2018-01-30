@@ -26,7 +26,20 @@ class ThesisController < ApplicationController
   # Do not name this simply 'process' or you will shadow a built-in controller
   # function and then you will be sad.
   def process_theses
-    @theses = Thesis.order('grad_date ASC').page(params[:page]).per(25)
+    status = params[:status]
+
+    if status.present?
+      # We could also test that Thesis::STATUS_OPTIONS.include? status,
+      # but we aren't, because:
+      # 1) if some URL hacker enters status=purple, they'll get 200 OK, not
+      #    500;
+      # 2) also they deserve the blank page they get.
+      queryset = Thesis.where(status: status)
+    else
+      queryset = Thesis.all
+    end
+
+    @theses = queryset.order('grad_date ASC').page(params[:page]).per(25)
   end
 
   def mark_downloaded

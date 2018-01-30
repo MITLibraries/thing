@@ -264,6 +264,117 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_select "div[data-id=thesis_#{thesis.id}] form", count: 0
   end
 
+  # ~~~~~~~~~~~~~~~~~~~~ filters on the processing queue ~~~~~~~~~~~~~~~~~~~~~~
+  test 'queryset when no status is given' do
+    sign_in users(:admin)
+    get process_path
+
+    # We want to make sure that this queryset returned by the controller is the
+    # same as the all-theses queryset. This is surprisingly irritating. So
+    # we assert that they have the same number of elements, and that their
+    # set difference is empty; this is mathematically the same as saying
+    # they're equal.
+    assert_equal(Thesis.all.count,
+                 @controller.instance_variable_get(:@theses).count)
+    assert_equal(0,
+      (Thesis.all - @controller.instance_variable_get(:@theses)).count)
+  end
+
+  test 'queryset when status is active' do
+    sign_in users(:admin)
+    get process_path(status: 'active')
+    active_theses = Thesis.where(status: 'active')
+
+    assert active_theses.count > 0
+    assert_equal(active_theses.count,
+                 @controller.instance_variable_get(:@theses).count)
+    assert_equal(0,
+      (active_theses - @controller.instance_variable_get(:@theses)).count)
+  end
+
+  test 'queryset when status is withdrawn' do
+    sign_in users(:admin)
+    get process_path(status: 'withdrawn')
+    withdrawn_theses = Thesis.where(status: 'withdrawn')
+
+    assert withdrawn_theses.count > 0
+    assert_equal(withdrawn_theses.count,
+                 @controller.instance_variable_get(:@theses).count)
+    assert_equal(0,
+      (withdrawn_theses - @controller.instance_variable_get(:@theses)).count)
+  end
+
+  test 'queryset when status is downloaded' do
+    sign_in users(:admin)
+    get process_path(status: 'downloaded')
+    downloaded_theses = Thesis.where(status: 'downloaded')
+
+    assert downloaded_theses.count > 0
+    assert_equal(downloaded_theses.count,
+                 @controller.instance_variable_get(:@theses).count)
+    assert_equal(0,
+      (downloaded_theses - @controller.instance_variable_get(:@theses)).count)
+  end
+
+  test 'queryset when status is bogus' do
+    sign_in users(:admin)
+    get process_path(status: 'bogus')
+    bogus_theses = Thesis.where(status: 'bogus')
+
+    assert_not Thesis::STATUS_OPTIONS.include?('bogus')
+
+    assert_equal 0, bogus_theses.count
+    assert_equal(bogus_theses.count,
+                 @controller.instance_variable_get(:@theses).count)
+    assert_equal(0,
+      (bogus_theses - @controller.instance_variable_get(:@theses)).count)
+  end
+
+  test 'theses of all statuses visible on all-theses page' do
+    sign_in users(:admin)
+    get process_path
+
+    assert_select "a[href=?]", thesis_path(theses(:active))
+    assert_select "a[href=?]", thesis_path(theses(:withdrawn))
+    assert_select "a[href=?]", thesis_path(theses(:downloaded))
+  end
+
+  test 'only active theses visible on active theses page' do
+    sign_in users(:admin)
+    get process_path(status: 'active')
+
+    assert_select "a[href=?]", thesis_path(theses(:active))
+    assert_select "a[href=?]", thesis_path(theses(:withdrawn)), count: 0
+    assert_select "a[href=?]", thesis_path(theses(:downloaded)), count: 0
+  end
+
+  test 'only downloaded theses visible on downloaded theses page' do
+    sign_in users(:admin)
+    get process_path(status: 'downloaded')
+
+    assert_select "a[href=?]", thesis_path(theses(:active)), count: 0
+    assert_select "a[href=?]", thesis_path(theses(:withdrawn)), count: 0
+    assert_select "a[href=?]", thesis_path(theses(:downloaded))
+  end
+
+  test 'only withdrawn theses visible on withdrawn theses page' do
+    sign_in users(:admin)
+    get process_path(status: 'withdrawn')
+
+    assert_select "a[href=?]", thesis_path(theses(:active)), count: 0
+    assert_select "a[href=?]", thesis_path(theses(:withdrawn))
+    assert_select "a[href=?]", thesis_path(theses(:downloaded)), count: 0
+  end
+
+  test 'no theses visible on bogus-status theses page' do
+    sign_in users(:admin)
+    get process_path(status: 'pickled')
+
+    assert_select "a[href=?]", thesis_path(theses(:active)), count: 0
+    assert_select "a[href=?]", thesis_path(theses(:withdrawn)), count: 0
+    assert_select "a[href=?]", thesis_path(theses(:downloaded)), count: 0
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ marking downloads ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'only admin can mark as downloaded' do
     thesis = theses(:active)

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   resources :thesis, only: [:new, :create, :show]
   get 'process', to: 'thesis#process_theses'
+  get 'process/:status', to: 'thesis#process_theses'
   post 'done/:id', to: 'thesis#mark_downloaded',
                    id: /[0-9]+/,
                    as: 'mark_downloaded'
