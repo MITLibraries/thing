@@ -9,7 +9,8 @@
 #
 
 class Degree < ApplicationRecord
-  has_and_belongs_to_many :theses
+  has_many :degree_theses
+  has_many :theses, through: :degree_theses
 
   validates :name, presence: true
 end

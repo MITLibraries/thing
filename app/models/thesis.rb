@@ -16,8 +16,10 @@
 class Thesis < ApplicationRecord
   belongs_to :user
   belongs_to :right
+  has_many :degree_theses
+  has_many :degrees, through: :degree_theses
+
   has_and_belongs_to_many :departments
-  has_and_belongs_to_many :degrees
   has_and_belongs_to_many :advisors
 
   attr_accessor :graduation_year, :graduation_month
