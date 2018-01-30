@@ -1,5 +1,13 @@
 <h3>Thesis Submissions Queue</h3>
 
+<div class="wrap-filters">
+  View:
+  <%= link_to "All", process_path, { class: 'btn button-small button-secondary'} %>
+  <%= link_to "Active", process_path(status: 'active'), { class: 'btn button-small button-secondary'} %>
+  <%= link_to "Downloaded", process_path(status: 'downloaded'), { class: 'btn button-small button-secondary'} %>
+  <%= link_to "Withdrawn", process_path(status: 'withdrawn'), { class: 'btn button-small button-secondary'} %>
+</div>
+
 <% @theses.each do |thesis| %>
   <div class="panel panel-<%= thesis.css_alert_type %>" data-id="thesis_<%= thesis.id %>">
     <div class="panel-heading">
