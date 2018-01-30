@@ -19,7 +19,8 @@ class Thesis < ApplicationRecord
   has_many :degree_theses
   has_many :degrees, through: :degree_theses
 
-  has_and_belongs_to_many :departments
+  has_many :department_theses
+  has_many :departments, through: :department_theses
 
   attr_accessor :graduation_year, :graduation_month
 
