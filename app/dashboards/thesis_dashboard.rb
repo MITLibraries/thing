@@ -16,7 +16,6 @@ class ThesisDashboard < Administrate::BaseDashboard
     right: Field::BelongsTo,
     departments: Field::HasMany,
     degrees: Field::HasMany,
-    advisors: Field::HasMany,
     id: Field::Number,
     title: Field::String,
     abstract: Field::Text,
@@ -55,7 +54,6 @@ class ThesisDashboard < Administrate::BaseDashboard
     updated_at
     departments
     degrees
-    advisors
     status
   ].freeze
 
@@ -70,7 +68,6 @@ class ThesisDashboard < Administrate::BaseDashboard
     right
     departments
     degrees
-    advisors
     title
     abstract
     status

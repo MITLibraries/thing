@@ -87,19 +87,6 @@ class ThesisTest < ActiveSupport::TestCase
     assert(thesis.valid?)
   end
 
-  test 'invalid without advisor' do
-    skip('reenable once advisors are updated to work as necessary')
-    thesis = theses(:one)
-    thesis.advisors = []
-    assert(thesis.invalid?)
-  end
-
-  test 'can have multiple advisors' do
-    thesis = theses(:one)
-    thesis.advisors = [advisors(:one), advisors(:two)]
-    assert(thesis.valid?)
-  end
-
   test 'can have active status' do
     thesis = theses(:one)
     thesis.status = 'active'

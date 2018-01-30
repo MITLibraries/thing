@@ -10,20 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180130155751) do
-
-  create_table "advisors", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "advisors_theses", id: false, force: :cascade do |t|
-    t.integer "thesis_id"
-    t.integer "advisor_id"
-    t.index ["advisor_id"], name: "index_advisors_theses_on_advisor_id"
-    t.index ["thesis_id"], name: "index_advisors_theses_on_thesis_id"
-  end
+ActiveRecord::Schema.define(version: 20180130160813) do
 
   create_table "degree_theses", id: false, force: :cascade do |t|
     t.integer "thesis_id"

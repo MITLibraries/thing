@@ -20,7 +20,6 @@ class Thesis < ApplicationRecord
   has_many :degrees, through: :degree_theses
 
   has_and_belongs_to_many :departments
-  has_and_belongs_to_many :advisors
 
   attr_accessor :graduation_year, :graduation_month
 
@@ -37,11 +36,6 @@ class Thesis < ApplicationRecord
 
   STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
   validates_inclusion_of :status, :in => STATUS_OPTIONS
-
-  # temporarily disabling advisor validation to allow web form work to
-  # proceed with the simpler elements before tackling this more complex
-  # form element
-  # validates :advisors, presence: true
 
   before_create :combine_graduation_date
   after_find :split_graduation_date

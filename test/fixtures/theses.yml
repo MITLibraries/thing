@@ -23,7 +23,6 @@ one:
   right: one
   departments: [one]
   degrees: [one]
-  advisors: [one]
 
 two:
   title:  Can apparent superluminal neutrino speeds be explained as a quantum weak measurement?
@@ -33,7 +32,6 @@ two:
   right: one
   departments: [one]
   degrees: [one]
-  advisors: [one]
 
 downloaded:
   title: MyString
@@ -43,7 +41,6 @@ downloaded:
   right: one
   departments: [one]
   degrees: [one]
-  advisors: [one]
   status: 'downloaded'
 
 withdrawn:
@@ -54,7 +51,6 @@ withdrawn:
   right: one
   departments: [one]
   degrees: [one]
-  advisors: [one]
   status: 'withdrawn'
 
 active:
@@ -65,5 +61,4 @@ active:
   right: one
   departments: [one]
   degrees: [one]
-  advisors: [one]
   status: 'active'  # The default, but specified for testing purposes.
