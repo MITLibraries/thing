@@ -9,7 +9,8 @@
 #
 
 class Department < ApplicationRecord
-  has_and_belongs_to_many :theses
+  has_many :department_theses
+  has_many :theses, through: :department_theses
 
   validates :name, presence: true
 end

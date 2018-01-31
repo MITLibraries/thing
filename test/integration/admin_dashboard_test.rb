@@ -116,7 +116,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
                           right_id: Right.first.id,
                           department_ids: [ Department.first.id ],
                           degree_ids: [ Degree.first.id ],
-                          advisor_ids: [ Advisor.first.id ],
                           title: 'yoyos are cool',
                           abstract: 'We discovered it with science',
                           graduation_month: 'May',
@@ -308,47 +307,5 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
       params: { degree: { name: 'Master of Fine Arts' } }
     degree.reload
     assert_equal 'Master of Fine Arts', degree.name
-  end
-
-  test 'accessing advisors panel works with admin rights' do
-    mock_auth(users(:admin))
-    get '/admin/advisors'
-    assert_response :success
-    assert_equal('/admin/advisors', path)
-  end
-
-  test 'accessing advisors panel works with sysadmin rights' do
-    mock_auth(users(:sysadmin))
-    get '/admin/advisors'
-    assert_response :success
-    assert_equal('/admin/advisors', path)
-  end
-
-  test 'accessing advisors panel works with thesis_admin rights' do
-    mock_auth(users(:thesis_admin))
-    get '/admin/advisors'
-    assert_response :success
-    assert_equal('/admin/advisors', path)
-  end
-
-  test 'accessing advisors panel does not work with processor rights' do
-    mock_auth(users(:processor))
-    get '/admin/advisors'
-    assert_response :redirect
-  end
-
-  test 'accessing advisors panel does not work with basic rights' do
-    mock_auth(users(:basic))
-    get '/admin/advisors'
-    assert_response :redirect
-  end
-
-  test 'thesis admins can edit advisors through admin dashboard' do
-    mock_auth(users(:thesis_admin))
-    advisor = Advisor.first
-    patch admin_advisor_path(advisor),
-      params: { advisor: { name: 'Fabio Zoltán de Academe' } }
-    advisor.reload
-    assert_equal 'Fabio Zoltán de Academe', advisor.name
   end
 end
