@@ -32,22 +32,36 @@
             <% if thesis.status == "active" %>
               <%= button_to "Mark as downloaded",
                   { action: "mark_downloaded", id: thesis.id },
-                  remote: true %>
+                  { remote: true, class: 'btn button-secondary',
+                    form_class: 'downloaded' } %>
             <% end %>
           </div>
         </div>
     </div>
     <div class="panel-footer">
-      <%= link_to "View details", thesis_path(thesis.id) %>
-      --
-      Status: <span class="text-<%= thesis.css_alert_type %>">
-        <%= thesis.status %></span>
-      <%# Other stuff should go here when e.g. people can mark as done or
-          a download link exists. %>
+      <div class="layout-3q1q layout-band">
+        <div class="col3q">
+          <%= link_to "View details", thesis_path(thesis.id) %>
+          --
+          Status: <span class="thesis-status text-<%= thesis.css_alert_type %>">
+            <%= thesis.status %></span>
+          <%# Other stuff should go here when e.g. people can mark as done or
+              a download link exists. %>
+        </div>
+        <div class="col1q">
+          <% if thesis.status != 'withdrawn' %>
+            <%= button_to "Mark as withdrawn",
+                { action: "mark_withdrawn", id: thesis.id },
+                { remote: true, class: 'btn button-subtle warn',
+                  form_class: 'withdrawn', data: { confirm:
+                    "Are you sure this thesis should be withdrawn?" }} %>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 <% end %>
 
 <%= paginate @theses %>
 
-<script>markDownloaded();</script>
+<script>updateStatus();</script>
