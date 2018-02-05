@@ -183,6 +183,15 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  test 'sysadmins can edit roles through user dashboard' do
+    mock_auth(users(:sysadmin))
+    user = users(:processor)
+    patch admin_user_path(user),
+      params: { user: { role: 'thesis_admin' } }
+    user.reload
+    assert_equal 'thesis_admin', user.role
+  end
+
   test 'accessing rights panel works with admin rights' do
     mock_auth(users(:admin))
     get '/admin/rights'
