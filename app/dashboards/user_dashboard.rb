@@ -14,7 +14,10 @@ class UserDashboard < Administrate::BaseDashboard
     email: Field::String,
     admin: Field::Boolean,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime
+    updated_at: Field::DateTime,
+    role: Field::Select.with_options(
+      collection: User::ROLES
+    )
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -23,10 +26,10 @@ class UserDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-    theses
     id
-    uid
     email
+    role
+    theses
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -48,6 +51,7 @@ class UserDashboard < Administrate::BaseDashboard
     theses
     email
     admin
+    role
   ].freeze
 
   # Overwrite this method to customize how users are displayed
