@@ -49,18 +49,17 @@ class ThesisController < ApplicationController
     end
 
     @thesis.status = 'downloaded'
+    handle_thesis_ajax
+  end
 
-    respond_to do |format|
-      if @thesis.save
-        format.js
-        format.html { redirect_to process_path }
-        render json: { id: params[:id], saved: true }
-      else
-        format.js
-        format.html { redirect_to process_path }
-        render json: { id: params[:id], saved: false }
-      end
-    end
+  def mark_withdrawn
+    @thesis = Thesis.find(params[:id])
+    # No need to do status checks - people can mark already-downloaded theses
+    # as withdrawn since we have no guarantees about business workflow here,
+    # and there's no harm in marking withdrawn theses again as withdrawn.
+
+    @thesis.status = 'withdrawn'
+    handle_thesis_ajax
   end
 
   private
@@ -80,5 +79,19 @@ class ThesisController < ApplicationController
     params.require(:thesis).permit(:title, :abstract, :graduation_month,
                                    :graduation_year, :right_id,
                                    department_ids: [], degree_ids: [])
+  end
+
+  def handle_thesis_ajax
+    respond_to do |format|
+      if @thesis.save
+        format.js
+        format.html { redirect_to process_path }
+        render json: { id: params[:id], saved: true }
+      else
+        format.js
+        format.html { redirect_to process_path }
+        render json: { id: params[:id], saved: false }
+      end
+    end
   end
 end

@@ -11,10 +11,10 @@
   color: $error;
 }
 
-.button_to {
+.downloaded, .withdrawn {
   @extend .field-wrap;
+}
 
-  input {
-    @extend .button-secondary;
-  }
+.withdrawn {
+  margin: 0;
 }

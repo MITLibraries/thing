@@ -35,6 +35,7 @@ class Ability
   def processor
     basic
     can :mark_downloaded, Thesis
+    can :mark_withdrawn, Thesis
     can :process_theses, Thesis
   end
 

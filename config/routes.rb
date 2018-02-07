@@ -15,6 +15,9 @@ Rails.application.routes.draw do
   post 'done/:id', to: 'thesis#mark_downloaded',
                    id: /[0-9]+/,
                    as: 'mark_downloaded'
+  post 'withdrawn/:id', to: 'thesis#mark_withdrawn',
+                   id: /[0-9]+/,
+                   as: 'mark_withdrawn'
 
   devise_for :users, :controllers => {
     :omniauth_callbacks => 'users/omniauth_callbacks'
