@@ -30,6 +30,27 @@ and use rails standard verbose logging.
 `RAILS_LOG_TO_STDOUT` - log to standard out instead of a file. Heroku enables
 this automatically. It is often nice in development as well.
 
+## ActiveStorage Configuration
+
+### Development
+
+`LOCAL_STORAGE_HOST` - this must be set to match your local server address and
+port. On our vagrant, `http://0.0.0.0:5000` works. Others may need
+`http://localhost:5000` depending on how you start the server. Your web browser
+console will likely provide an error that helps decide what you need.
+
+### Production
+
+The information necessary to identify a bucket on S3 is configured via this set
+of variables:
+`AWS_ACCESS_KEY_ID`
+`AWS_REGION`
+`AWS_S3_BUCKET`
+`AWS_SECRET_ACCESS_KEY`
+
+In addition, you will need to ensure the bucket CORS `AllowedOrigin` settings
+are configured to allow for the domain this app runs at.
+
 ## Authentication for Development ONLY
 
 There's a fake auth system you can use on review apps. It bypasses the actual auth system and just logs you in with a fake developer account.

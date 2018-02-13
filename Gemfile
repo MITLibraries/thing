@@ -7,6 +7,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'administrate'
+gem 'aws-sdk-s3'
 gem 'bootsnap'
 gem 'cancancan'
 gem 'devise'
