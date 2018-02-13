@@ -2,6 +2,10 @@
   "name": "thing",
   "scripts": {},
   "env": {
+    "AWS_ACCESS_KEY_ID": "true",
+    "AWS_REGION": "true",
+    "AWS_S3_BUCKET": "true",
+    "AWS_SECRET_ACCESS_KEY": "true",
     "FAKE_AUTH_ENABLED": "true",
     "HEROKU_APP_NAME": {
       "required": true
