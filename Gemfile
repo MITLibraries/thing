@@ -22,7 +22,7 @@ gem 'therubyracer', platforms: :ruby
 gem 'uglifier'
 
 group :production do
-  gem 'pg'
+  gem 'pg', '0.21'
 end
 
 group :development, :test do
