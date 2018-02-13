@@ -45,8 +45,18 @@
           --
           Status: <span class="thesis-status text-<%= thesis.css_alert_type %>">
             <%= thesis.status %></span>
-          <%# Other stuff should go here when e.g. people can mark as done or
-              a download link exists. %>
+
+          --
+
+          <br />
+          Files:  <% if thesis.files.attached? %>
+                    <% thesis.files.each do |file| %>
+                      <br />
+                       <%= link_to(file.filename, file.service_url) %>
+                    <% end %>
+                  <% else %>
+                    No files attached
+                  <% end %>
         </div>
         <div class="col1q">
           <% if thesis.status != 'withdrawn' %>
