@@ -1,6 +1,8 @@
 {
   "name": "thing",
-  "scripts": {},
+  "scripts": {
+    "postdeploy": "bundle exec rails db:seed"
+  },
   "env": {
     "AWS_ACCESS_KEY_ID": {
       "required": true
