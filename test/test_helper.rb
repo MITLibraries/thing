@@ -40,5 +40,14 @@ end
 module ActionDispatch
   class IntegrationTest
     include Devise::Test::IntegrationHelpers
+
+    def remove_uploaded_files
+      FileUtils.rm_rf(Rails.root.join('tmp', 'storage'))
+    end
+
+    def after_teardown
+      super
+      remove_uploaded_files
+    end
   end
 end
