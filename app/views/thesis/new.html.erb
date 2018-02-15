@@ -43,6 +43,10 @@
   </fieldset>
 
   <div class='field-wrap'>
+    <%= f.file_field :files, multiple: true, direct_upload: true %>
+  </div>
+
+  <div class='field-wrap'>
     <%= submit_tag 'Submit Thesis', class: 'btn button-primary' %>
   </div>
 

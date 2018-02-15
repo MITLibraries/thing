@@ -11,6 +11,7 @@ class ThesisController < ApplicationController
   def create
     @thesis = Thesis.new(thesis_params)
     @thesis.user = current_user
+    @thesis.files.attach(params[:thesis][:files])
     if @thesis.save
       flash.notice = 'Your thesis submission is now in progress'
       redirect_to thesis_path(@thesis)

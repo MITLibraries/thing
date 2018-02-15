@@ -22,6 +22,8 @@ class Thesis < ApplicationRecord
   has_many :department_theses
   has_many :departments, through: :department_theses
 
+  has_many_attached :files
+
   attr_accessor :graduation_year, :graduation_month
 
   validates :title, presence: true

@@ -7,13 +7,15 @@ git_source(:github) do |repo_name|
 end
 
 gem 'administrate'
+gem 'aws-sdk-s3'
+gem 'bootsnap'
 gem 'cancancan'
 gem 'devise'
 gem 'kaminari'
 gem 'lograge'
 gem 'omniauth-saml'
 gem 'puma'
-gem 'rails', '5.1.4'
+gem 'rails', '5.2.0.rc1'
 gem 'rollbar'
 gem 'sass-rails'
 gem 'simple_form'
