@@ -9,7 +9,14 @@ module FakeAuthConfig
   private
 
   def fake_auth_enabled?
-    ENV['FAKE_AUTH_ENABLED'] == 'true'
+    # Default to fake auth in development unless FAKE_AUTH_ENABLED=false
+    # This allows rake tasks to run without loading ENV.
+    # This line is not testable because it checks for dev env explicitly.
+    if Rails.env.development? && ENV['FAKE_AUTH_ENABLED'].nil?
+      true
+    else
+      ENV['FAKE_AUTH_ENABLED'] == 'true'
+    end
   end
 
   # Checks to make sure the application is not the staging or production
