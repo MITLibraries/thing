@@ -2,10 +2,10 @@
 
 <div class="wrap-filters">
   View:
-  <%= link_to "Active", process_path(status: 'active'), { class: 'btn button-small button-secondary'} %>
-  <%= link_to "Downloaded", process_path(status: 'downloaded'), { class: 'btn button-small button-secondary'} %>
-  <%= link_to "Withdrawn", process_path(status: 'withdrawn'), { class: 'btn button-small button-secondary'} %>
-  <%= link_to "All", process_path(status: 'any'), { class: 'btn button-small button-secondary'} %>
+  <%= link_to "Active", process_path(status: 'active'), { class: "btn button-small #{highlight_class('active')}"} %>
+  <%= link_to "Downloaded", process_path(status: 'downloaded'), { class: "btn button-small #{highlight_class('downloaded')}"} %>
+  <%= link_to "Withdrawn", process_path(status: 'withdrawn'), { class: "btn button-small #{highlight_class('withdrawn')}"} %>
+  <%= link_to "All", process_path(status: 'any'), { class: "btn button-small #{highlight_class('any')}"} %>
 </div>
 
 <% @theses.each do |thesis| %>
