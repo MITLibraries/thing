@@ -52,7 +52,7 @@
           Files:  <% if thesis.files.attached? %>
                     <% thesis.files.each do |file| %>
                       <br />
-                       <%= link_to(file.filename, file.service_url) %>
+                       <%= link_to(file.filename, url_for(file)) %>
                     <% end %>
                   <% else %>
                     No files attached
