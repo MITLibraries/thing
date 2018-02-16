@@ -29,7 +29,9 @@ class ThesisController < ApplicationController
   def process_theses
     status = params[:status]
 
-    if status.present?
+    if status == 'any'
+      queryset = Thesis.all
+    elsif status.present?
       # We could also test that Thesis::STATUS_OPTIONS.include? status,
       # but we aren't, because:
       # 1) if some URL hacker enters status=purple, they'll get 200 OK, not
@@ -37,7 +39,7 @@ class ThesisController < ApplicationController
       # 2) also they deserve the blank page they get.
       queryset = Thesis.where(status: status)
     else
-      queryset = Thesis.all
+      queryset = Thesis.where(status: 'active')
     end
 
     @theses = queryset.order('grad_date ASC').page(params[:page]).per(25)
