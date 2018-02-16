@@ -139,50 +139,50 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~ the processing queue ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'submissions processing page exists' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     assert_response :success
   end
 
   test 'anon users cannot see submissions processing page' do
     # Note that nobody is signed in.
-    get '/process'
+    get process_path
     assert_response :redirect
   end
 
   test 'basic users cannot see submissions processing page' do
     sign_in users(:basic)
     assert_raises(CanCan::AccessDenied) do
-      get '/process'
+      get process_path
     end
   end
 
   test 'processor users can see submissions processing page' do
     sign_in users(:processor)
-    get '/process'
+    get process_path
     assert_response :success
   end
 
   test 'thesis admin users can see submissions processing page' do
     sign_in users(:thesis_admin)
-    get '/process'
+    get process_path
     assert_response :success
   end
 
   test 'sysadmin users can see submissions processing page' do
     sign_in users(:sysadmin)
-    get '/process'
+    get process_path
     assert_response :success
   end
 
   test 'admin users can see submissions processing page' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     assert_response :success
   end
 
   test 'submissions include submitter email' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     # Limit to the first 25 theses since that's all that will show up on the
     # first page.
     expected_theses = Thesis.order('grad_date ASC').first(25)
@@ -193,7 +193,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'submissions include grad date' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     expected_theses = Thesis.order('grad_date ASC').first(25)
     expected_theses.each do |t|
       friendly_date = "#{t.graduation_month} #{t.graduation_year}"
@@ -203,7 +203,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'submissions include departments' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     expected_theses = Thesis.order('grad_date ASC').first(25)
     expected_theses.each do |t|
       assert t.departments.map {|d| @response.body.include? d.name}.all?
@@ -212,7 +212,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'submissions include degrees' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     expected_theses = Thesis.order('grad_date ASC').first(25)
     expected_theses.each do |t|
       assert t.degrees.map {|d| @response.body.include? d.name}.all?
@@ -221,7 +221,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'submissions ordered by grad date ascending' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     theses = @controller.instance_variable_get(:@theses)
     theses.each_with_index do |t, i|
       assert t.grad_date <= theses[i + 1].grad_date if theses[i + 1].present?
@@ -231,37 +231,37 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'link to submissions page visible to admin' do
     sign_in users(:admin)
     get '/'
-    assert_select "a[href=?]", "/process"
+    assert_select "a[href=?]", process_path
   end
 
   test 'link to submissions page not visible to non-admin users' do
     sign_in users(:yo)
     get '/'
-    assert_select "a[href=?]", "/process", count: 0
+    assert_select "a[href=?]", process_path, count: 0
   end
 
   test 'link to submissions page not visible to anonymous users' do
     get '/'
-    assert_select "a[href=?]", "/process", count: 0
+    assert_select "a[href=?]", process_path, count: 0
   end
 
   test 'mark downloaded option available for active theses' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     thesis = theses(:active)
     assert_select "form[action=?]", "/done/#{thesis.id}"
   end
 
   test 'mark downloaded option not available for downloaded theses' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     thesis = theses(:downloaded)
     assert_select "form[action=?]", "/done/#{thesis.id}", count: 0
   end
 
   test 'mark downloaded option not available for withdrawn theses' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     thesis = theses(:withdrawn)
     assert_select "div[data-id=thesis_#{thesis.id}] form", count: 0
   end
@@ -276,10 +276,12 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # we assert that they have the same number of elements, and that their
     # set difference is empty; this is mathematically the same as saying
     # they're equal.
-    assert_equal(Thesis.all.count,
+    assert_equal(Thesis.where(status: 'active').count,
                  @controller.instance_variable_get(:@theses).count)
     assert_equal(0,
-      (Thesis.all - @controller.instance_variable_get(:@theses)).count)
+      (Thesis.where(status: 'active') -
+        @controller.instance_variable_get(:@theses)
+      ).count)
   end
 
   test 'queryset when status is active' do
@@ -332,9 +334,18 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
       (bogus_theses - @controller.instance_variable_get(:@theses)).count)
   end
 
-  test 'theses of all statuses visible on all-theses page' do
+  test 'only active theses visible on base page' do
     sign_in users(:admin)
     get process_path
+
+    assert_select "a[href=?]", thesis_path(theses(:active))
+    assert_select "a[href=?]", thesis_path(theses(:withdrawn)), count: 0
+    assert_select "a[href=?]", thesis_path(theses(:downloaded)), count: 0
+  end
+
+  test 'theses of all statuses visible on all-theses page' do
+    sign_in users(:admin)
+    get process_path(status: 'any')
 
     assert_select "a[href=?]", thesis_path(theses(:active))
     assert_select "a[href=?]", thesis_path(theses(:withdrawn))
@@ -509,21 +520,21 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'mark withdrawn option available for active theses' do
     sign_in users(:admin)
-    get '/process'
+    get process_path
     thesis = theses(:active)
     assert_select "form[action=?]", "/withdrawn/#{thesis.id}"
   end
 
   test 'mark withdrawn option available for downloaded theses' do
     sign_in users(:admin)
-    get '/process'
+    get process_path(status: 'downloaded')
     thesis = theses(:downloaded)
     assert_select "form[action=?]", "/withdrawn/#{thesis.id}"
   end
 
   test 'mark withdrawn option not available for withdrawn theses' do
     sign_in users(:admin)
-    get '/process'
+    get process_path(status: 'withdrawn')
     thesis = theses(:withdrawn)
     assert_select "form[action=?]", "/withdrawn/#{thesis.id}",
       count: 0
