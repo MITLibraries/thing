@@ -16,6 +16,7 @@
     "AWS_SECRET_ACCESS_KEY": {
       "required": true
     },
+    "DISABLE_ALL_EMAIL": "true",
     "FAKE_AUTH_ENABLED": "true",
     "HEROKU_APP_NAME": {
       "required": true
@@ -40,6 +41,21 @@
     },
     "ROLLBAR_ENV": "pr",
     "SECRET_KEY_BASE": {
+      "required": true
+    },
+    "SMTP_ADDRESS": {
+      "required": true
+    },
+    "SMTP_PASSWORD": {
+      "required": true
+    },
+    "SMTP_PORT": {
+      "required": true
+    },
+    "SMTP_USER": {
+      "required": true
+    },
+    "THESIS_ADMIN_EMAIL": {
       "required": true
     }
   },

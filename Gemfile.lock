@@ -102,6 +102,11 @@ GEM
     crass (1.0.3)
     datetime_picker_rails (0.0.7)
       momentjs-rails (>= 2.8.1)
+    delayed_job (4.1.4)
+      activesupport (>= 3.0, < 5.2)
+    delayed_job_active_record (4.1.2)
+      activerecord (>= 3.0, < 5.2)
+      delayed_job (>= 3.0, < 5)
     devise (4.4.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -303,6 +308,7 @@ DEPENDENCIES
   capybara
   climate_control
   coveralls
+  delayed_job_active_record
   devise
   kaminari
   listen
