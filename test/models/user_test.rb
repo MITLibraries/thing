@@ -9,6 +9,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  role       :string           default("basic")
+#  name       :string
 #
 
 require 'test_helper'
