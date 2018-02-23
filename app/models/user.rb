@@ -21,6 +21,7 @@ class User < ApplicationRecord
 
   validates :uid, presence: true
   validates :email, presence: true
+  validates :name, presence: true
   has_many :theses
 
   ROLES = %w[basic processor thesis_admin sysadmin]
@@ -32,6 +33,7 @@ class User < ApplicationRecord
   def self.from_omniauth(auth)
     where(uid: auth.info.uid).first_or_create do |user|
       user.email = auth.info.email
+      user.name = auth.info.name
     end
   end
 end
