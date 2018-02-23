@@ -1,4 +1,4 @@
-/* last updated 7/26/2017 - commit bdb1608 */
+/* last updated 2/22/2018 - commit ff36bd9  */
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
@@ -41,12 +41,23 @@ input[type=radio] {
 }
 
 .wrap-bar {
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-pack: justify;
-      justify-content: space-between;
-  -ms-flex-align: center;
-      align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.js .expand-collapse-control .button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .list-inline {
@@ -105,28 +116,28 @@ input[type=radio] {
   display: none;
 }
 
-a, .wrap-footer a, .wrap-outer-footer-institute a {
+.js .expand-collapse-control .button, a, .wrap-footer a, .wrap-outer-footer-institute a {
+  -webkit-transition: color .25s ease-in-out 0s;
   transition: color .25s ease-in-out 0s;
   color: #338bc5;
   text-decoration: none;
 }
-a:hover, a:active, a:focus {
+.js .expand-collapse-control .button:hover, a:hover, .js .expand-collapse-control .button:active, a:active, .js .expand-collapse-control .button:focus, a:focus {
   color: #0ea6ec;
   text-decoration: underline;
 }
-a:disabled, .is-disabled {
+.js .expand-collapse-control .button:disabled, a:disabled, .js .expand-collapse-control .is-disabled.button, a.is-disabled {
   display: none;
   color: #595959;
 }
-a:active, .is-pressed, .is-active {
+.js .expand-collapse-control .button:active, a:active, .js .expand-collapse-control .is-pressed.button, a.is-pressed, .js .expand-collapse-control .is-active.button, a.is-active {
   color: #0ea6ec;
 }
 
-/* csslint ignore:start */
 * {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
-/* csslint ignore:end */
 
 html, body {
   height: 100%;
@@ -164,7 +175,7 @@ dd {
 hr {
   margin: 2rem 0;
   border: none;
-  border-top: 1px solid #999;
+  border-top: 1px solid #767676;
 }
 
 .wrap-outer-header.reasons {
@@ -236,14 +247,14 @@ hr {
   margin-bottom: .5em;
   font-size: 1.4rem;
   text-transform: uppercase;
-  color: #999;
+  color: #767676;
 }
 
 .hd-subtitle3, .wrap-content .subtitle3 {
   margin-bottom: .5em;
   font-size: 1.2rem;
   text-transform: uppercase;
-  color: #999;
+  color: #767676;
 }
 
 .copy-lead, .panel .panel-heading {
@@ -262,7 +273,7 @@ hr {
 .copy-micro {
   font-size: 1rem;
   font-weight: 400;
-  color: #999;
+  color: #595959;
 }
 
 .layout-band:after {
@@ -339,7 +350,7 @@ hr {
   }
 }
 
-.wrap-header .header-slim .logo-mit-lib svg {
+.wrap-header .header-slim .logo-mit-lib img {
   height: 35px;
 }
 
@@ -370,7 +381,7 @@ hr {
 }
 
 .wrap-outer-content {
-  background-color: #f3f3f3;
+  background-color: #fff;
   color: #111;
 }
 
@@ -425,6 +436,7 @@ hr {
 
 @media (min-width: 768px) {
   .layout-1t2t {
+    display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
   }
@@ -441,6 +453,7 @@ hr {
 
 @media (min-width: 768px) {
   .layout-2t1t {
+    display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
   }
@@ -492,10 +505,13 @@ hr {
 }
 @media (min-width: 768px) {
   .wrap-footer .wrap-sitemap {
+    display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-direction: row;
-        flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
   }
   .wrap-footer .wrap-sitemap .col {
     margin-right: 3%;
@@ -507,12 +523,14 @@ hr {
     display: block;
   }
   .wrap-footer .identity {
+    display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     -ms-flex-wrap: wrap;
         flex-wrap: wrap;
-    -ms-flex-pack: justify;
-        justify-content: space-between;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
     margin: 4% 0 0 0;
   }
   .wrap-footer .wrap-logo-lib,
@@ -524,13 +542,15 @@ hr {
     margin-bottom: 0;
   }
   .wrap-footer .wrap-logo-lib {
-    -ms-flex-order: 1;
-        order: 1;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
     margin-right: 4%;
   }
   .wrap-footer .wrap-usergroups {
-    -ms-flex-order: 3;
-        order: 3;
+    -webkit-box-ordinal-group: 4;
+        -ms-flex-order: 3;
+            order: 3;
     width: 100%;
     margin: 1rem 4% 0 0;
     border-top: none;
@@ -540,20 +560,23 @@ hr {
     margin-bottom: 0;
   }
   .wrap-footer .wrap-social {
-    -ms-flex-order: 2;
-        order: 2;
+    -webkit-box-ordinal-group: 3;
+        -ms-flex-order: 2;
+            order: 2;
     margin-left: 4%;
   }
 }
 @media (min-width: 1024px) {
   .wrap-footer .wrap-usergroups {
-    -ms-flex-order: 2;
-        order: 2;
+    -webkit-box-ordinal-group: 3;
+        -ms-flex-order: 2;
+            order: 2;
     width: auto;
   }
   .wrap-footer .wrap-social {
-    -ms-flex-order: 3;
-        order: 3;
+    -webkit-box-ordinal-group: 4;
+        -ms-flex-order: 3;
+            order: 3;
   }
 }
 
@@ -561,10 +584,12 @@ hr {
   padding: 1.5rem 4%;
 }
 .wrap-footer.footer-slim .footer-main {
+  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-align: center;
-      align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 .wrap-footer.footer-slim .wrap-sitemap {
   margin-left: 2%;
@@ -575,8 +600,9 @@ hr {
 }
 @media (min-width: 768px) {
   .wrap-footer.footer-slim .footer-main {
-    -ms-flex-align: baseline;
-        align-items: baseline;
+    -webkit-box-align: baseline;
+        -ms-flex-align: baseline;
+            align-items: baseline;
   }
   .wrap-footer.footer-slim .wrap-sitemap .item {
     display: inline-block;
@@ -592,9 +618,12 @@ hr {
 }
 .wrap-content .title-page {
   margin-bottom: 1rem;
+  padding: .5rem 0 1rem 0;
+  font-weight: 600;
 }
 
 .button-primary, .wrap-outer-header-local .action-auth {
+  -webkit-transition: background-color .25s, border .25s;
   transition: background-color .25s, border .25s;
   display: inline-block;
   border: 1px solid #338bc5;
@@ -632,7 +661,8 @@ hr {
   border-color: #AC1D22;
 }
 
-.button-secondary, .button-subtle, .pagination a {
+.button-secondary, .button-subtle, .pagination a, .js .expand-collapse-control .button {
+  -webkit-transition: background-color .25s, border .25s;
   transition: background-color .25s, border .25s;
   display: inline-block;
   border: 1px solid #ccc;
@@ -641,31 +671,31 @@ hr {
   padding: 5px 10px;
   background-color: transparent;
 }
-.button-secondary:hover, .button-subtle:hover, .pagination a:hover, .button-secondary:focus, .button-subtle:focus, .pagination a:focus {
+.button-secondary:hover, .button-subtle:hover, .pagination a:hover, .js .expand-collapse-control .button:hover, .button-secondary:focus, .button-subtle:focus, .pagination a:focus, .js .expand-collapse-control .button:focus {
   background-color: #0ea6ec;
   border-color: #0ea6ec;
   color: #fafafa;
   text-decoration: none;
 }
-.button-secondary.green, .green.button-subtle, .pagination a.green {
+.button-secondary.green, .green.button-subtle, .pagination a.green, .js .expand-collapse-control .green.button {
   border: 1px solid #43926a;
   color: #43926a;
 }
-.button-secondary.green:hover, .green.button-subtle:hover, .pagination a.green:hover, .button-secondary.green:focus, .green.button-subtle:focus, .pagination a.green:focus {
+.button-secondary.green:hover, .green.button-subtle:hover, .pagination a.green:hover, .js .expand-collapse-control .green.button:hover, .button-secondary.green:focus, .green.button-subtle:focus, .pagination a.green:focus, .js .expand-collapse-control .green.button:focus {
   background-color: #2ea76a;
   border-color: #43926a;
   color: #fafafa;
 }
-.button-secondary.warn, .warn.button-subtle, .pagination a.warn {
+.button-secondary.warn, .warn.button-subtle, .pagination a.warn, .js .expand-collapse-control .warn.button {
   color: #AC1D22;
 }
-.button-secondary.warn:before, .warn.button-subtle:before, .pagination a.warn:before {
+.button-secondary.warn:before, .warn.button-subtle:before, .pagination a.warn:before, .js .expand-collapse-control .warn.button:before {
   font-family: FontAwesome;
   content: "\f071 ";
   font-size: .8em;
   margin-right: 5px;
 }
-.button-secondary.warn:hover, .warn.button-subtle:hover, .pagination a.warn:hover, .button-secondary.warn:focus, .warn.button-subtle:focus, .pagination a.warn:focus {
+.button-secondary.warn:hover, .warn.button-subtle:hover, .pagination a.warn:hover, .js .expand-collapse-control .warn.button:hover, .button-secondary.warn:focus, .warn.button-subtle:focus, .pagination a.warn:focus, .js .expand-collapse-control .warn.button:focus {
   background-color: #c0090f;
   border-color: #AC1D22;
   color: #fafafa;
@@ -723,7 +753,8 @@ form .field {
 }
 form .field:focus, form .field:active {
   border-color: #338bc5;
-  box-shadow: 0 0 5px rgba(14, 166, 236, 0.8);
+  -webkit-box-shadow: 0 0 5px rgba(14, 166, 236, 0.8);
+          box-shadow: 0 0 5px rgba(14, 166, 236, 0.8);
 }
 form .field.wide {
   width: 90%;
@@ -732,7 +763,8 @@ form .field-text {
   min-width: 25rem;
   padding: 6px 12px;
   background-color: #fff;
-  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+          box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
 }
 form .tip,
 form .hint {
@@ -800,6 +832,12 @@ form .error .hint {
 .form-horizontal .form-action {
   display: inline-block;
   width: 18%;
+}
+
+.box-content {
+  border: 1px solid #dedede;
+  background-color: #fff;
+  padding: 3%;
 }
 
 .bit {
@@ -886,7 +924,8 @@ form .error .hint {
 .well {
   margin: 2rem 0;
   background-color: rgba(89, 89, 89, 0.1);
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+          box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
   padding: 2rem 2.5rem;
 }
 
@@ -945,17 +984,20 @@ form .error .hint {
   color: #fafafa;
 }
 
+.wrap-header {
+  background: #111 url('vi-shape7-tp.svg') no-repeat 0 65%;
+}
 .wrap-header .logo-mit-lib {
   display: inline-block;
   fill: #fafafa;
 }
-.wrap-header .logo-mit-lib svg {
+.wrap-header .logo-mit-lib img {
   width: auto;
-  height: auto;
+  max-height: 44px;
   max-width: 100%;
 }
 .wrap-header .link-logo-mit .logo-mit {
-  fill: #999;
+  fill: #767676;
 }
 .wrap-header .link-logo-mit .logo-mit .color {
   fill: #fafafa;
@@ -988,11 +1030,14 @@ form .error .hint {
 }
 
 .wrap-outer-footer {
-  background-color: #333;
+  background-color: #111;
   color: #fafafa;
   font-size: 1.2rem;
 }
 
+.wrap-footer {
+  background: #111 url("vi-shape7-tp.svg") no-repeat 10% center;
+}
 .wrap-footer a {
   color: #ccc;
 }
@@ -1008,10 +1053,10 @@ form .error .hint {
 .wrap-footer .logo-mit-lib {
   fill: #fafafa;
 }
-.wrap-footer .logo-mit-lib svg {
-  width: auto;
-  height: auto;
+.wrap-footer .logo-mit-lib img {
+  max-height: 60px;
   max-width: 100%;
+  vertical-align: baseline;
 }
 .wrap-footer .wrap-usergroups {
   font-size: 1.4rem;
@@ -1040,21 +1085,24 @@ form .error .hint {
 }
 
 .wrap-outer-footer-institute {
-  background-color: #595959;
+  background-color: #333;
   font-size: 1rem;
-  color: #999;
+  color: #767676;
 }
 .wrap-outer-footer-institute a {
   color: #fafafa;
 }
-.wrap-outer-footer-institute .link-logo-mit .logo-mit {
+.wrap-outer-footer-institute .link-logo-mit {
   display: inline-block;
-  fill: #999;
+}
+.wrap-outer-footer-institute .link-logo-mit .logo-mit {
+  fill: #767676;
 }
 .wrap-outer-footer-institute .link-logo-mit .logo-mit .color {
   fill: #fafafa;
 }
 .wrap-outer-footer-institute .about-mit {
+  display: inline-block;
   color: #ccc;
   text-transform: uppercase;
 }
@@ -1067,10 +1115,29 @@ abbr.required {
   text-decoration: none;
 }
 
-.wrap-content .title-page {
-  padding: .5rem 0 1rem 0;
-  font-weight: 600;
+.no-js .expand-collapse-control {
+  display: none;
 }
-.wrap-content .wrap-filters {
-  margin: 1rem 0;
+
+.js .expand-collapse-wrap {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  -webkit-transition: height 200ms;
+  transition: height 200ms;
+}
+.js .expand-container {
+  margin-bottom: 4rem;
+}
+.js .expand-collapse-control {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  padding: 4rem .5rem .5rem .5rem;
+  background: #fff;
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), color-stop(50%, #f3f3f3));
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #f3f3f3 50%);
 }
