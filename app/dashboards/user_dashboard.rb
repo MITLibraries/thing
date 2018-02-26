@@ -13,6 +13,7 @@ class UserDashboard < Administrate::BaseDashboard
     uid: Field::String,
     email: Field::String,
     admin: Field::Boolean,
+    name: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     role: Field::Select.with_options(
@@ -35,6 +36,7 @@ class UserDashboard < Administrate::BaseDashboard
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
+    name
     theses
     id
     uid
@@ -48,6 +50,7 @@ class UserDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
+    name
     theses
     email
     admin
