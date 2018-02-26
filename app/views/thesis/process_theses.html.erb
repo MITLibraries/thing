@@ -27,16 +27,26 @@
             <%= thesis.departments.map{|d| d.name}.join(",") %><br />
           <%= "Degree".pluralize(thesis.degrees.count) %>:
             <%= thesis.degrees.map{|d| d.name}.join(",") %><br />
-          </div>
-          <div class="col1q">
-            <% if thesis.status == "active" %>
-              <%= button_to "Mark as downloaded",
-                  { action: "mark_downloaded", id: thesis.id },
-                  { remote: true, class: 'btn button-secondary',
-                    form_class: 'downloaded' } %>
-            <% end %>
-          </div>
         </div>
+        <div class="col1q">
+          <% if thesis.status == "active" %>
+            <%= button_to "Mark as downloaded",
+                { action: "mark_downloaded", id: thesis.id },
+                { remote: true, class: 'btn button-secondary',
+                  data: {status: 'downloaded'} } %>
+          <% end %>
+        </div>
+      </div>
+      <div>
+        <%= form_tag(annotate_path(thesis), method: "post", remote: true) do %>
+          <div class="field-wrap">
+            <%= label_tag("note_#{thesis.id}", "Note:", class: "field-label") %>
+            <%= text_area_tag("note_#{thesis.id}", thesis.note,
+              class: "field field-text field-textarea full-width") %>
+          </div>
+          <%= submit_tag("Update note", class: "btn button-secondary") %>
+        <% end %>
+      </div>
     </div>
     <div class="panel-footer">
       <div class="layout-3q1q layout-band">
@@ -63,7 +73,7 @@
             <%= button_to "Mark as withdrawn",
                 { action: "mark_withdrawn", id: thesis.id },
                 { remote: true, class: 'btn button-subtle warn',
-                  form_class: 'withdrawn', data: { confirm:
+                  data: { status: 'withdrawn', confirm:
                     "Are you sure this thesis should be withdrawn?" }} %>
           <% end %>
         </div>
@@ -74,4 +84,4 @@
 
 <%= paginate @theses %>
 
-<script>updateStatus();</script>
+<script>handleUpdates();</script>

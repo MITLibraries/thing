@@ -2,6 +2,7 @@ class ThesisController < ApplicationController
   before_action :require_user
   before_action :authenticate_user!
   load_and_authorize_resource
+  protect_from_forgery with: :exception
 
   def new
     @thesis = Thesis.new
@@ -52,7 +53,7 @@ class ThesisController < ApplicationController
     end
 
     @thesis.status = 'downloaded'
-    handle_thesis_ajax
+    handle_thesis_ajax('status')
   end
 
   def mark_withdrawn
@@ -62,7 +63,15 @@ class ThesisController < ApplicationController
     # and there's no harm in marking withdrawn theses again as withdrawn.
 
     @thesis.status = 'withdrawn'
-    handle_thesis_ajax
+    handle_thesis_ajax('status')
+  end
+
+  def annotate
+    @thesis = Thesis.find(params[:id])
+    key_name = "note_#{@thesis.id}"
+    note = params[key_name]
+    @thesis.note = note
+    handle_thesis_ajax('note')
   end
 
   private
@@ -84,16 +93,16 @@ class ThesisController < ApplicationController
                                    department_ids: [], degree_ids: [])
   end
 
-  def handle_thesis_ajax
+  def handle_thesis_ajax(handler)
     respond_to do |format|
       if @thesis.save
         format.js
         format.html { redirect_to process_path }
-        render json: { id: params[:id], saved: true }
+        render json: { id: params[:id], saved: true, handler: handler }
       else
         format.js
         format.html { redirect_to process_path }
-        render json: { id: params[:id], saved: false }
+        render json: { id: params[:id], saved: false, handler: handler }
       end
     end
   end

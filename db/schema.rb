@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(version: 2018_02_27_185947) do
     t.integer "user_id"
     t.integer "right_id"
     t.string "status", default: "active"
+    t.text "note"
     t.index ["right_id"], name: "index_theses_on_right_id"
     t.index ["user_id"], name: "index_theses_on_user_id"
   end

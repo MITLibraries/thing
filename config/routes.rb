@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   post 'withdrawn/:id', to: 'thesis#mark_withdrawn',
                    id: /[0-9]+/,
                    as: 'mark_withdrawn'
+  post 'annotate/:id', to: 'thesis#annotate',
+                   id: /[0-9]+/,
+                   as: 'annotate'
 
   devise_for :users, :controllers => {
     :omniauth_callbacks => 'users/omniauth_callbacks'

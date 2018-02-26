@@ -36,6 +36,7 @@ class Ability
     basic
     can :mark_downloaded, Thesis
     can :mark_withdrawn, Thesis
+    can :annotate, Thesis
     can :process_theses, Thesis
   end
 

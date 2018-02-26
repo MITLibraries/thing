@@ -11,6 +11,7 @@
 #  user_id    :integer
 #  right_id   :integer
 #  status     :string           default("active")
+#  note       :text
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
@@ -62,3 +63,14 @@ active:
   departments: [one]
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
+
+with_note:
+  title: MyString
+  abstract: MyText
+  grad_date: 2017-07-13
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+  status: 'active'  # The default, but specified for testing purposes.
+  note: 'Absolutely for sure rocket science'
