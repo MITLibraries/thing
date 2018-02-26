@@ -23,9 +23,13 @@
     <div class="wrap-local-nav">
       <div class="wrap-bar">
         <nav class="local-nav" aria-label="Main menu">
-          <% if user_signed_in? && current_user.admin? %>
-            <%= link_to("Process submissions", process_path, class: 'button-secondary') %>
-            <%= link_to("Admin", admin_root_path, class: 'button-secondary') %>
+          <% if user_signed_in? %>
+            <% if can? :process_theses, Thesis %>
+              <%= link_to("Process submissions", process_path, class: 'button-secondary') %>
+            <% end %>
+            <% if current_user.admin? %>
+              <%= link_to("Admin", admin_root_path, class: 'button-secondary') %>
+            <% end %>
           <% end %>
         </nav>
         <nav class="nav-user" aria-label="User menu">
