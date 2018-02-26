@@ -19,7 +19,7 @@ class User < ApplicationRecord
     devise :omniauthable, omniauth_providers: [:saml]
   end
 
-  validates :uid, presence: true
+  validates :uid, presence: true #, uniqueness: true
   validates :email, presence: true
   validates :name, presence: true
   has_many :theses

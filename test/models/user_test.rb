@@ -32,8 +32,15 @@ class UserTest < ActiveSupport::TestCase
     assert(user.invalid?)
   end
 
+  test 'invalid without name' do
+    user = users(:yo)
+    user.name = nil
+    assert(user.invalid?)
+  end
+
   test 'invalid with duplicate uid' do
-    user = User.new(uid: 'some_id', email: 'yo@example.com')
+    uid = users(:yo).uid
+    user = User.new(uid: uid, email: 'yo@example.com', name: 'Zaphod B.')
     assert_raises ActiveRecord::RecordNotUnique do
       user.save
     end

@@ -21,32 +21,39 @@
 yo:
   uid: 'some_id'
   email: 'yo@example.com'
+  name: 'Yo Yobot'
 
 admin:
   uid: 'admin_id'
   email: 'admin@example.com'
   admin: true
+  name: 'Admin Robot'
 
 bad:
   uid: 'bad_id'
   email: 'bad@example.com'
+  name: 'Bad Robot'
 
 basic:
   uid: 'basic_id'
   email: 'basic@example.com'
   role: 'basic'
+  name: 'Basic Robot'
 
 processor:
   uid: 'processor_id'
   email: 'processor@example.com'
   role: 'processor'
+  name: 'Processor Robot'
 
 thesis_admin:
   uid: 'thesis_admin_id'
   email: 'thesis_admin@example.com'
   role: 'thesis_admin'
+  name: 'Thesis A. Robot'
 
 sysadmin:
   uid: 'sysadmin_id'
   email: 'sysadmin@example.com'
   role: 'sysadmin'
+  name: 'Sysadmin Robot'
