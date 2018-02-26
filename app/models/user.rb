@@ -31,7 +31,7 @@ class User < ApplicationRecord
   # the remote authentication provider). It is used to lookup or create a new
   # local user via this method.
   def self.from_omniauth(auth)
-    where(uid: auth.info.uid).first_or_create do |user|
+    User.where(uid: auth.info.uid).first_or_create do |user|
       user.email = auth.info.email
       user.name = auth.info.name
     end
