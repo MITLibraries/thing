@@ -30,8 +30,15 @@ class User < ApplicationRecord
   # `uid` is a unique ID that comes back from OmniAuth (which gets it from
   # the remote authentication provider). It is used to lookup or create a new
   # local user via this method.
+  # Touchstone and fake_auth put this UID in different places.
   def self.from_omniauth(auth)
-    User.where(uid: auth.info.uid).first_or_create do |user|
+    if auth.info.key? 'uid'
+      uid = auth.info.uid
+    else
+      uid = auth.uid
+    end
+
+    User.where(uid: uid).first_or_create do |user|
       user.email = auth.info.email
       user.name = auth.info.name
     end

@@ -58,4 +58,21 @@ class UserTest < ActiveSupport::TestCase
     omniuser = User.from_omniauth(auth)
     assert_equal(omniuser.email, 'ocat@example.com')
   end
+
+  test 'created user from omniauth has a name' do
+    auth = OmniAuth::AuthHash.new(uid: '1234', provider: 'example',
+                                  info: { name: 'Blue Cat',
+                                          email: 'bcat@example.com' })
+    omniuser = User.from_omniauth(auth)
+    assert_equal(omniuser.name, 'Blue Cat')
+  end
+
+  test 'uses existing user from omniauth' do
+    user = users(:yo)
+    auth = OmniAuth::AuthHash.new(uid: user.uid, provider: 'example',
+                                  info: { name: user.name,
+                                          email: user.email })
+    omniuser = User.from_omniauth(auth)
+    assert_equal(omniuser.id, user.id)
+  end
 end
