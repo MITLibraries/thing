@@ -14,6 +14,8 @@
 #
 
 class User < ApplicationRecord
+  default_scope { order('surname ASC') }
+
   if Rails.configuration.fake_auth_enabled  # Use config, not ENV. See README.
     devise :omniauthable, omniauth_providers: [:developer]
   else
