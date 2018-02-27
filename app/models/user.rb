@@ -47,9 +47,11 @@ class User < ApplicationRecord
     end
   end
 
-  # Definitely for sure wrong for some people. But staff need name info to
-  # process theses and we have no way of knowing which users would prefer
-  # something else.
+  # Definitely for sure wrong for some people. But staff want to be able to
+  # sort on surname for processing purposes, so we're getting given name +
+  # surname. If we find ourselves displaying name to users, we should also
+  # get the displayName property from Touchstone and be sure to use that in
+  # user-facing communication.
   def name
     "#{self.surname}, #{self.given_name} (#{self.email})"
   end

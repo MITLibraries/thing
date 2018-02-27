@@ -62,7 +62,7 @@ Devise.setup do |config|
                     attribute_statements: { uid: [ENV['URN_UID']],
                                             email: [ENV['URN_EMAIL']],
                                             given_name: [ENV['URN_GIVEN_NAME']],
-                                            surname: [ENV['URN_SN']] },
+                                            surname: [ENV['URN_SURNAME']] },
                     security: { authn_requests_signed: true,
                                 want_assertions_signed: true,
                                 want_assertions_encrypted: true,
