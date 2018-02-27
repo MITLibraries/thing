@@ -27,7 +27,7 @@
             <% if can? :process_theses, Thesis %>
               <%= link_to("Process submissions", process_path, class: 'button-secondary') %>
             <% end %>
-            <% if current_user.admin? %>
+            <% if current_user.admin? || can?(:administrate, Admin) %>
               <%= link_to("Admin", admin_root_path, class: 'button-secondary') %>
             <% end %>
           <% end %>
