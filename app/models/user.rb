@@ -9,7 +9,8 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  role       :string           default("basic")
-#  name       :string
+#  given_name :string
+#  surname    :string
 #
 
 class User < ApplicationRecord
@@ -21,7 +22,6 @@ class User < ApplicationRecord
 
   validates :uid, presence: true #, uniqueness: true
   validates :email, presence: true
-  validates :name, presence: true
   has_many :theses
 
   ROLES = %w[basic processor thesis_admin sysadmin]
@@ -40,7 +40,15 @@ class User < ApplicationRecord
 
     User.where(uid: uid).first_or_create do |user|
       user.email = auth.info.email
-      user.name = auth.info.name
+      user.given_name = auth.info.given_name
+      user.surname = auth.info.surname
     end
+  end
+
+  # Definitely for sure wrong for some people. But staff need name info to
+  # process theses and we have no way of knowing which users would prefer
+  # something else.
+  def name
+    "#{self.surname}, #{self.given_name} (#{self.email})"
   end
 end

@@ -99,7 +99,9 @@ For SAML authentication, you will need all of the following.
 
 `URN_EMAIL` - URN to extract from SAML response. For MIT, `urn:oid:0.9.2342.19200300.100.1.3` for testshib `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` is close enough for testing.
 
-`URN_NAME` - `urn:oid:2.16.840.1.113730.3.1.241` for MIT, `urn:oid:2.5.4.3` for testshib
+`URN_GIVEN_NAME` - `urn:oid:2.5.4.42` for MIT
+`URN_SN` - `urn:oid:2.5.4.4` for MIT
+These have not been tried with testshib but there's a chance they're the same.
 
 `URN_UID` - `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` should be good enough for both MIT and testshib. However, it is not guaranteed to be forever unique but MIT does not provide a truly unique option so this is the best we've got.
 
