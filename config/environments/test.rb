@@ -3,6 +3,7 @@ Rails.application.configure do
 
   ENV['SP_PRIVATE_KEY'] = ''
   ENV['SP_CERTIFICATE'] = ''
+  ENV['THESIS_ADMIN_EMAIL'] = 'test@example.com'
 
   # The test environment is used exclusively to run your application's
   # test suite. You never need to work with it otherwise. Remember that
