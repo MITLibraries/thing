@@ -15,7 +15,6 @@ module Users
       raise 'Invalid Authentication' unless Rails.configuration.fake_auth_enabled
       @user = User.from_omniauth(request.env['omniauth.auth'])
       @user.admin = true
-      @user.uid = @user.email
       @user.save
       sign_in_and_redirect @user, event: :authentication
       flash[:notice] = "Welcome #{@user.email}!"

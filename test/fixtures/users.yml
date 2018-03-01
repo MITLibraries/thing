@@ -9,6 +9,8 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  role       :string           default("basic")
+#  given_name :string
+#  surname    :string
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
@@ -20,32 +22,46 @@
 yo:
   uid: 'some_id'
   email: 'yo@example.com'
+  given_name: 'Yo'
+  surname: 'Yobot'
 
 admin:
   uid: 'admin_id'
   email: 'admin@example.com'
   admin: true
+  given_name: 'Admin'
+  surname: 'Robot'
 
 bad:
   uid: 'bad_id'
   email: 'bad@example.com'
+  given_name: 'Bad'
+  surname: 'Robot'
 
 basic:
   uid: 'basic_id'
   email: 'basic@example.com'
   role: 'basic'
+  given_name: 'Basic'
+  surname: 'Robot'
 
 processor:
   uid: 'processor_id'
   email: 'processor@example.com'
   role: 'processor'
+  given_name: 'Processor'
+  surname: 'Robot'
 
 thesis_admin:
   uid: 'thesis_admin_id'
   email: 'thesis_admin@example.com'
   role: 'thesis_admin'
+  given_name: 'Thesis A.'
+  surname: 'Robot'
 
 sysadmin:
   uid: 'sysadmin_id'
   email: 'sysadmin@example.com'
   role: 'sysadmin'
+  given_name: 'Sysadmin'
+  surname: 'Robot'
