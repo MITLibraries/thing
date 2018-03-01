@@ -27,6 +27,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     status: Field::Select.with_options(
       collection: Thesis::STATUS_OPTIONS,
     ),
+    note: Field::Text,
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -55,6 +56,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     departments
     degrees
     status
+    note
   ].freeze
 
   # FORM_ATTRIBUTES
@@ -73,6 +75,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     status
     graduation_year
     graduation_month
+    note
   ].freeze
 
   # Overwrite this method to customize how theses are displayed

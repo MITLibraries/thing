@@ -11,6 +11,7 @@
 #  user_id    :integer
 #  right_id   :integer
 #  status     :string           default("active")
+#  note       :text
 #
 
 require 'test_helper'

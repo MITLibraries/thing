@@ -29,3 +29,11 @@
 .withdrawn {
   margin: 0;
 }
+
+textarea.full-width {
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+
+	width: 100%;
+}

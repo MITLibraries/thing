@@ -136,6 +136,27 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'note field does not show on thesis submission page' do
+    sign_in users(:yo)
+    get new_thesis_path
+
+    assert_select 'label', text: 'Note:', count: 0
+    assert_select 'textarea.thesis_note', count: 0
+  end
+
+  test 'note does not show on thesis viewing page' do
+    yo = users(:yo)
+    sign_in yo
+
+    thesis = Thesis.where(user: yo).first
+    note_text = 'Yo dawg, I heard you like notes on your thesis'
+    thesis.note = note_text
+    thesis.save
+    get thesis_path(thesis)
+
+    assert_no_match note_text, response.body
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~ the processing queue ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'submissions processing page exists' do
     sign_in users(:admin)
@@ -226,6 +247,24 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     theses.each_with_index do |t, i|
       assert t.grad_date <= theses[i + 1].grad_date if theses[i + 1].present?
     end
+  end
+
+  test 'note field visible' do
+    sign_in users(:admin)
+    get process_path
+
+    # Expected number of theses on page (all of them or max # allowed by
+    # the pagination, whichever is lower).
+    count = Thesis.where(status: 'active').count
+    num_theses = if count > 25
+                   25
+                 else
+                   count
+                 end
+
+    assert_select 'label', text: 'Note:', count: num_theses
+    assert_select 'textarea', count: num_theses
+    assert_select 'input[value="Update note"]', count: num_theses
   end
 
   test 'link to submissions page visible to admin' do
@@ -550,5 +589,66 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis = theses(:withdrawn)
     assert_select "form[action=?]", "/withdrawn/#{thesis.id}",
       count: 0
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ adding notes  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'non-authenticated users cannot add notes' do
+    thesis = theses(:with_note)
+    orig_note = thesis.note
+    target_note = 'Best consumed with scooby snacks'
+    note_field_id = "note_#{thesis.id}"
+    post annotate_url(thesis),
+      params: Hash[note_field_id, target_note], xhr: true
+    assert_response :redirect
+    assert_equal orig_note, thesis.reload.note
+  end
+
+  test 'basic users cannot add notes' do
+    sign_in users(:basic)
+    thesis = theses(:with_note)
+    orig_note = thesis.note
+    target_note = 'Best consumed with scooby snacks'
+    note_field_id = "note_#{thesis.id}"
+    assert_raises CanCan::AccessDenied do
+      post annotate_url(thesis),
+        params: Hash[note_field_id, target_note], xhr: true
+    end
+    assert_equal orig_note, thesis.reload.note
+  end
+
+  test 'admins can add notes' do
+    sign_in users(:admin)
+    thesis = theses(:with_note)
+    orig_note = thesis.note
+    target_note = 'Best consumed with scooby snacks'
+    note_field_id = "note_#{thesis.id}"
+    post annotate_url(thesis),
+      params: Hash[note_field_id, target_note], xhr: true
+    assert_response :success
+    assert_equal target_note, thesis.reload.note
+  end
+
+  test 'thesis admins can add notes' do
+    sign_in users(:thesis_admin)
+    thesis = theses(:with_note)
+    orig_note = thesis.note
+    target_note = 'Best consumed with scooby snacks'
+    note_field_id = "note_#{thesis.id}"
+    post annotate_url(thesis),
+      params: Hash[note_field_id, target_note], xhr: true
+    assert_response :success
+    assert_equal target_note, thesis.reload.note
+  end
+
+  test 'processors can add notes' do
+    sign_in users(:processor)
+    thesis = theses(:with_note)
+    orig_note = thesis.note
+    target_note = 'Best consumed with scooby snacks'
+    note_field_id = "note_#{thesis.id}"
+    post annotate_url(thesis),
+      params: Hash[note_field_id, target_note], xhr: true
+    assert_response :success
+    assert_equal target_note, thesis.reload.note
   end
 end
