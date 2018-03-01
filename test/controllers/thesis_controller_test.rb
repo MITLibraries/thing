@@ -234,18 +234,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", process_path
   end
 
-  test 'link to submissions page visible to processors' do
-    sign_in users(:processor)
-    get '/'
-    assert_select "a[href=?]", process_path
-  end
-
-  test 'link to submissions page visible to thesis admins' do
-    sign_in users(:thesis_admin)
-    get '/'
-    assert_select "a[href=?]", process_path
-  end
-
   test 'link to submissions page not visible to non-admin users' do
     sign_in users(:yo)
     get '/'
