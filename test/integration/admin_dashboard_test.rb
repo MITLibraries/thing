@@ -87,6 +87,12 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  test 'thesis admins can view an admin theses show page' do
+    mock_auth(users(:thesis_admin))
+    get admin_thesis_path(theses(:one))
+    assert_response :success
+  end
+
   test 'thesis admins can update theses through admin panel' do
     mock_auth(users(:thesis_admin))
 
