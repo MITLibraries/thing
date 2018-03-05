@@ -1,11 +1,22 @@
 <h3>Thesis Submissions Queue</h3>
 
-<div class="wrap-filters">
-  View:
-  <%= link_to "Active", process_path(status: 'active'), { class: "btn button-small #{highlight_class('active')}"} %>
-  <%= link_to "Downloaded", process_path(status: 'downloaded'), { class: "btn button-small #{highlight_class('downloaded')}"} %>
-  <%= link_to "Withdrawn", process_path(status: 'withdrawn'), { class: "btn button-small #{highlight_class('withdrawn')}"} %>
-  <%= link_to "All", process_path(status: 'any'), { class: "btn button-small #{highlight_class('any')}"} %>
+<div class="gridband layout-2c">
+  <div class="grid-item">
+    <div class="wrap-filters">
+      View:
+      <%= link_to "Active", magic_status_url('active'), { class: "btn button-small #{highlight_status('active')}"} %>
+      <%= link_to "Downloaded", magic_status_url('downloaded'), { class: "btn button-small #{highlight_status('downloaded')}"} %>
+      <%= link_to "Withdrawn", magic_status_url('withdrawn'), { class: "btn button-small #{highlight_status('withdrawn')}"} %>
+      <%= link_to "All",magic_status_url('any'), { class: "btn button-small #{highlight_status('any')}"} %>
+    </div>
+  </div>
+  <div class="grid-item">
+    <div class="wrap-filters">
+      Sort by:
+      <%= link_to "Date", magic_sort_url('date'), { class: "btn button-small #{highlight_sort('date')}"} %>
+      <%= link_to "Name", magic_sort_url('name'), { class: "btn button-small #{highlight_sort('name')}"} %>
+    </div>
+  </div>
 </div>
 
 <% @theses.each do |thesis| %>
@@ -13,7 +24,7 @@
     <div class="panel-heading">
       <div class="layout-3q1q layout-band">
         <div class="col3q">
-          <%= thesis.user.email %>
+          <%= thesis.user.name %>
         </div>
         <div class="col1q">
           <%= thesis.graduation_month %> <%= thesis.graduation_year %>
