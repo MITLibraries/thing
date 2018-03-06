@@ -30,6 +30,7 @@ class ThesisController < ApplicationController
   # function and then you will be sad.
   def process_theses
     status = params[:status]
+    sort = params[:sort]
 
     if status == 'any'
       queryset = Thesis.all
@@ -43,8 +44,7 @@ class ThesisController < ApplicationController
     else
       queryset = Thesis.where(status: 'active')
     end
-
-    @theses = queryset.order('grad_date ASC').page(params[:page]).per(25)
+    @theses = sorted_theses(queryset, sort).page(params[:page]).per(25)
   end
 
   def mark_downloaded
@@ -105,6 +105,14 @@ class ThesisController < ApplicationController
         format.html { redirect_to process_path }
         render json: { id: params[:id], saved: false, handler: handler }
       end
+    end
+  end
+
+  def sorted_theses(queryset, sort)
+    if sort == 'name'
+      queryset.name_asc
+    else
+      queryset.date_asc
     end
   end
 end

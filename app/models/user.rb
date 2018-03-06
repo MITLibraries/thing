@@ -53,6 +53,10 @@ class User < ApplicationRecord
   # get the displayName property from Touchstone and be sure to use that in
   # user-facing communication.
   def name
-    "#{self.surname}, #{self.given_name} (#{self.email})"
+    if self.surname && self.given_name
+      "#{self.surname}, #{self.given_name} (#{self.email})"
+    else
+      "#{self.email}"
+    end
   end
 end

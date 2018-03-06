@@ -44,6 +44,11 @@ class Thesis < ApplicationRecord
   before_create :combine_graduation_date
   after_find :split_graduation_date
 
+  scope :name_asc, lambda {
+    includes(:user).order('users.surname, users.given_name')
+  }
+  scope :date_asc, -> { order('grad_date') }
+
   # Ensures submitted year string is reasonably sane
   def valid_year?
     oldest_year = Time.zone.now.year - 5

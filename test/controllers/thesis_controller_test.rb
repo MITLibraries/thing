@@ -439,6 +439,30 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", thesis_path(theses(:downloaded)), count: 0
   end
 
+  test 'default sort is by date' do
+    sign_in users(:admin)
+    get process_path
+    theses = @controller.instance_variable_get(:@theses)
+    assert theses.first.grad_date <= theses.second.grad_date
+    assert theses.second.grad_date <= theses.third.grad_date
+  end
+
+  test 'can be sorted by date on purpose' do
+    sign_in users(:admin)
+    get process_path(sort: 'date')
+    theses = @controller.instance_variable_get(:@theses)
+    assert theses.first.grad_date <= theses.second.grad_date
+    assert theses.second.grad_date <= theses.third.grad_date
+  end
+
+  test 'can be sorted by name' do
+    sign_in users(:admin)
+    get process_path(sort: 'name')
+    theses = @controller.instance_variable_get(:@theses)
+    assert theses.first.user.surname <= theses.second.user.surname
+    assert theses.second.user.surname <= theses.third.user.surname
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ marking downloads ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'non-authenticated users cannot mark as downloaded' do
     thesis = theses(:active)
