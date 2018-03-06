@@ -19,79 +19,58 @@
   </div>
 </div>
 
-<% @theses.each do |thesis| %>
-  <div class="panel panel-<%= thesis.css_alert_type %>" data-id="thesis_<%= thesis.id %>">
-    <div class="panel-heading">
-      <div class="layout-3q1q layout-band">
-        <div class="col3q">
-          <%= thesis.user.name %>
+<% if show_form %>
+  <%= form_tag(process_path, {:method => :get}) do %>
+    <%= hidden_field_tag :status, request.params[:status]  %>
+    <%= hidden_field_tag :sort, request.params[:sort]  %>
+    <fieldset>
+      <legend>
+        Filter by graduation date
+      </legend>
+      <div class="group-inline">
+        Show theses from
+        <div class="field-wrap">
+          <%= label_tag(:start_month, "Start Month", { class: "field-label" }) %>
+          <%= select_tag(:start_month,
+                options_for_select([['', ''], ['January', '1'],
+                  ['February', '2'], ['March', '3'], ['April', '4'],
+                  ['May', '5'], ['June', '6'], ['July', '7'], ['August', '8'],
+                  ['September', '9'], ['October', '10'], ['November', '11'],
+                  ['December', '12']], params[:start_month]),
+                { class: 'date required field field-select' }) %>
         </div>
-        <div class="col1q">
-          <%= thesis.graduation_month %> <%= thesis.graduation_year %>
+        <div class="field-wrap">
+          <%= label_tag(:start_year, "Start Year", { class: "field-label" }) %>
+          <%= select_tag(:start_year,
+                options_for_select(options_for_year_range, params[:start_year]),
+                { class: 'date required field field-select' }) %>
         </div>
+        until
+        <div class="field-wrap">
+          <%= label_tag(:end_month, "End Month", { class: "field-label" }) %>
+          <%= select_tag(:end_month,
+                options_for_select([['', ''], ['January', '1'],
+                  ['February', '2'], ['March', '3'], ['April', '4'],
+                  ['May', '5'], ['June', '6'], ['July', '7'], ['August', '8'],
+                  ['September', '9'], ['October', '10'], ['November', '11'],
+                  ['December', '12']], params[:end_month]),
+                { class: 'date required field field-select' }) %>
+        </div>
+        <div class="field-wrap">
+          <%= label_tag(:end_year, "End Year", { class: "field-label" }) %>
+          <%= select_tag(:end_year,
+                options_for_select(options_for_year_range, params[:end_year]),
+                { class: 'date required field field-select' }) %>
+        </div>
+        <button type="submit" class="btn button-secondary">Filter</button>
       </div>
-    </div>
-    <div class="panel-body">
-      <div class="layout-3q1q layout-band">
-        <div class="col3q">
-          <%= "Department".pluralize(thesis.departments.count) %>:
-            <%= thesis.departments.map{|d| d.name}.join(",") %><br />
-          <%= "Degree".pluralize(thesis.degrees.count) %>:
-            <%= thesis.degrees.map{|d| d.name}.join(",") %><br />
-        </div>
-        <div class="col1q">
-          <% if thesis.status == "active" %>
-            <%= button_to "Mark as downloaded",
-                { action: "mark_downloaded", id: thesis.id },
-                { remote: true, class: 'btn button-secondary',
-                  data: {status: 'downloaded'} } %>
-          <% end %>
-        </div>
-      </div>
-      <div>
-        <%= form_tag(annotate_path(thesis), method: "post", remote: true) do %>
-          <div class="field-wrap">
-            <%= label_tag("note_#{thesis.id}", "Note:", class: "field-label") %>
-            <%= text_area_tag("note_#{thesis.id}", thesis.note,
-              class: "field field-text field-textarea full-width") %>
-          </div>
-          <%= submit_tag("Update note", class: "btn button-secondary") %>
-        <% end %>
-      </div>
-    </div>
-    <div class="panel-footer">
-      <div class="layout-3q1q layout-band">
-        <div class="col3q">
-          <%= link_to "View details", thesis_path(thesis.id) %>
-          --
-          Status: <span class="thesis-status text-<%= thesis.css_alert_type %>">
-            <%= thesis.status %></span>
-
-          --
-
-          <br />
-          Files:  <% if thesis.files.attached? %>
-                    <% thesis.files.each do |file| %>
-                      <br />
-                       <%= link_to(file.filename, url_for(file)) %>
-                    <% end %>
-                  <% else %>
-                    No files attached
-                  <% end %>
-        </div>
-        <div class="col1q">
-          <% if thesis.status != 'withdrawn' %>
-            <%= button_to "Mark as withdrawn",
-                { action: "mark_withdrawn", id: thesis.id },
-                { remote: true, class: 'btn button-subtle warn',
-                  data: { status: 'withdrawn', confirm:
-                    "Are you sure this thesis should be withdrawn?" }} %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
+    </fieldset>
+  <% end %>
 <% end %>
+
+<%# We have to specify the partial because the default would be the plural -
+    "theses/thesis". %>
+<%= render(partial: 'thesis/thesis', collection: @theses) || render('empty') %>
 
 <%= paginate @theses %>
 

@@ -74,3 +74,57 @@ with_note:
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
   note: 'Absolutely for sure rocket science'
+
+may_2018:
+  title: MyString
+  abstract: MyText
+  grad_date: 2018-05-01
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+
+august_2018:
+  title: MyString
+  abstract: MyText
+  grad_date: 2018-08-01
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+
+january_2019:
+  title: MyString
+  abstract: MyText
+  grad_date: 2019-01-01
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+
+may_2019:
+  title: MyString
+  abstract: MyText
+  grad_date: 2019-05-01
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+
+august_2019:
+  title: MyString
+  abstract: MyText
+  grad_date: 2019-08-01
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+
+december_2019:
+  title: MyString
+  abstract: MyText
+  grad_date: 2019-12-31
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
