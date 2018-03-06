@@ -44,7 +44,7 @@ class ThesisController < ApplicationController
     else
       queryset = Thesis.where(status: 'active')
     end
-    sorted_theses(queryset, sort)
+    @theses = sorted_theses(queryset, sort).page(params[:page]).per(25)
   end
 
   def mark_downloaded
@@ -110,9 +110,9 @@ class ThesisController < ApplicationController
 
   def sorted_theses(queryset, sort)
     if sort == 'name'
-      @theses = queryset.joins(:user).order('surname ASC').page(params[:page]).per(25)
+      queryset.name_asc
     else
-      @theses = queryset.order('grad_date ASC').page(params[:page]).per(25)
+      queryset.date_asc
     end
   end
 end
