@@ -24,6 +24,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     graduation_year: Field::Number,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    files: FileField,
     status: Field::Select.with_options(
       collection: Thesis::STATUS_OPTIONS,
     ),
@@ -57,6 +58,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     degrees
     status
     note
+    files
   ].freeze
 
   # FORM_ATTRIBUTES
