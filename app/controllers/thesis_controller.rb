@@ -29,22 +29,13 @@ class ThesisController < ApplicationController
   # Do not name this simply 'process' or you will shadow a built-in controller
   # function and then you will be sad.
   def process_theses
-    status = params[:status]
-    sort = params[:sort]
+    #filter_status(params[:status])
+    @theses = Thesis.by_status(params[:status])
+    filter_dates(params)
+    sort_theses(params[:sort])
+    warn_about_dates(params)
 
-    if status == 'any'
-      queryset = Thesis.all
-    elsif status.present?
-      # We could also test that Thesis::STATUS_OPTIONS.include? status,
-      # but we aren't, because:
-      # 1) if some URL hacker enters status=purple, they'll get 200 OK, not
-      #    500;
-      # 2) also they deserve the blank page they get.
-      queryset = Thesis.where(status: status)
-    else
-      queryset = Thesis.where(status: 'active')
-    end
-    @theses = sorted_theses(queryset, sort).page(params[:page]).per(25)
+    @theses = @theses.page(params[:page]).per(25)
   end
 
   def mark_downloaded
@@ -113,6 +104,64 @@ class ThesisController < ApplicationController
       queryset.name_asc
     else
       queryset.date_asc
+    end
+  end
+
+  def format_date_for_filter(month, year, inclusive)
+    begin
+      if month.present? && year.present?
+        formatted_date = Date.new(year=year.to_i, month=month.to_i)
+      elsif year.present?
+        if inclusive
+          formatted_date = Date.new(year=year.to_i, month=12, day=31)
+        else
+          formatted_date = Date.new(year=year.to_i)
+        end
+      else
+        formatted_date = nil
+      end
+    rescue TypeError, ArgumentError
+      formatted_date = nil
+    end
+    formatted_date
+  end
+
+  # This limits the theses to those within the date range specified by the
+  # user, if present. We do this filtering INCLUSIVELY - asking for theses
+  # from June 2017 to May 2018 will return June 2017 and May 2018 theses as
+  # well as everything in between.
+  def filter_dates(params)
+    start_date = format_date_for_filter(params["start_month"], params["start_year"], false)
+    end_date = format_date_for_filter(params["end_month"], params["end_year"], true)
+
+    if start_date.present?
+      @theses = @theses.where('grad_date >= ?', start_date)
+    end
+
+    if end_date.present?
+      @theses = @theses.where('grad_date <= ?', end_date)
+    end
+  end
+
+  def sort_theses(sort)
+    if sort == 'name'
+      @theses = @theses.name_asc
+    else
+      @theses = @theses.date_asc
+    end
+  end
+
+  def warn_about_dates(params)
+    if params["start_month"].present?
+      # This doesn't work if you symbolize the hash key in `exclude?`.
+      if params.keys.exclude?("start_year") || params["start_year"].empty?
+        flash.now[:start] = 'Please specify a start year if you specify a start month. No start date filter has been applied.<br/>'
+      end
+    end
+    if params["end_month"].present?
+      if params.keys.exclude?("end_year") || params["end_year"].empty?
+        flash.now[:end] = 'Please specify an end year if you specify an end month. No end date filter has been applied.'
+      end
     end
   end
 end
