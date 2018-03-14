@@ -48,6 +48,20 @@ class Thesis < ApplicationRecord
     includes(:user).order('users.surname, users.given_name')
   }
   scope :date_asc, -> { order('grad_date') }
+  scope :by_status, lambda { |status|
+    if status == 'any'
+      @theses = Thesis.all
+    elsif status.present?
+      # We could also test that Thesis::STATUS_OPTIONS.include? status,
+      # but we aren't, because:
+      # 1) if some URL hacker enters status=purple, they'll get 200 OK, not
+      #    500;
+      # 2) also they deserve the blank page they get.
+      @theses = Thesis.where(status: status)
+    else
+      @theses = Thesis.where(status: 'active')
+    end
+  }
 
   # Ensures submitted year string is reasonably sane
   def valid_year?
