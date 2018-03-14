@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/MITLibraries/thing.svg?branch=master)](https://travis-ci.org/MITLibraries/thing)
 [![Coverage Status](https://coveralls.io/repos/github/MITLibraries/thing/badge.svg?branch=master)](https://coveralls.io/github/MITLibraries/thing?branch=master)
-[![Dependency Status](https://gemnasium.com/badges/github.com/MITLibraries/thing.svg)](https://gemnasium.com/github.com/MITLibraries/thing)
+[![Depfu](https://badges.depfu.com/badges/054347faa25f6d3a4d9e66535fd18763/overview.svg)](https://depfu.com/github/MITLibraries/thing?project=Bundler)
 [![Code Climate](https://codeclimate.com/github/MITLibraries/thing/badges/gpa.svg)](https://codeclimate.com/github/MITLibraries/thing)
 
 # th(esis).ing(est)
