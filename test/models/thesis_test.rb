@@ -45,6 +45,33 @@ class ThesisTest < ActiveSupport::TestCase
     assert(thesis.invalid?)
   end
 
+  test 'grad year should be vaguely reasonable' do
+    thesis = theses(:one)
+    thesis.graduation_year = '1861'
+    assert thesis.valid?
+
+    thesis.graduation_year = '2018'
+    assert thesis.valid?
+
+    thesis.graduation_year = 1861
+    assert thesis.valid?
+
+    thesis.graduation_year = 2018
+    assert thesis.valid?
+
+    thesis.graduation_year = '1860'
+    assert thesis.invalid?
+
+    thesis.graduation_year = '10'
+    assert thesis.invalid?
+
+    thesis.graduation_year = '10000'
+    assert thesis.invalid?
+
+    thesis.graduation_year = 'honeybadgers'
+    assert thesis.invalid?
+  end
+
   test 'invalid without user' do
     thesis = theses(:one)
     thesis.user = nil
