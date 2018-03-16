@@ -124,7 +124,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
                           degree_ids: [ Degree.first.id ],
                           title: 'yoyos are cool',
                           abstract: 'We discovered it with science',
-                          graduation_month: 'May',
+                          graduation_month: 'June',
                           graduation_year: Date.today.year } }
 
     assert_equal orig_count + 1, Thesis.count

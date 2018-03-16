@@ -41,6 +41,8 @@ class Thesis < ApplicationRecord
   STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
   validates_inclusion_of :status, :in => STATUS_OPTIONS
 
+  VALID_MONTHS = ['February', 'June', 'September']
+
   before_create :combine_graduation_date
   after_find :split_graduation_date
 
@@ -74,8 +76,9 @@ class Thesis < ApplicationRecord
   end
 
   def valid_month?
-    return if Date::MONTHNAMES.compact.include?(graduation_month)
-    errors.add(:graduation_month, 'Invalid graduation month')
+    return if VALID_MONTHS.include?(graduation_month)
+    errors.add(:graduation_month,
+      'Invalid graduation month; must be June, September, or February')
   end
 
   # Combine the UI supplied month and year into a datetime object

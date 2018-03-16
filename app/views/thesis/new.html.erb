@@ -31,7 +31,7 @@
       <div class='group-inline'>
 
       <%= f.input :graduation_month, label: 'Month', as: :select,
-                           collection: Date::MONTHNAMES.compact,
+                           collection: Thesis::VALID_MONTHS,
                            wrapper_html: { class: 'field-wrap' },
                            input_html: { class: 'field field-select' } %>
 
