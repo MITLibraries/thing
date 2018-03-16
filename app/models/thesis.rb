@@ -63,11 +63,13 @@ class Thesis < ApplicationRecord
     end
   }
 
-  # Ensures submitted year string is reasonably sane
+  # Ensures submitted graduation year is a four-digit integer, not less than
+  # the year of the Institute's founding.
+  # We expect that graduation_year will be a String (in which case to_s is a
+  # no-op), but if it's an Integer this will also work.
   def valid_year?
-    oldest_year = Time.zone.now.year - 5
-    latest_year = Time.zone.now.year + 5
-    return if (oldest_year..latest_year).cover?(graduation_year.to_i)
+    return if (/^\d{4}$/.match(graduation_year.to_s) &&
+               graduation_year.to_i >= 1861)
     errors.add(:graduation_year, 'Invalid graduation year')
   end
 
