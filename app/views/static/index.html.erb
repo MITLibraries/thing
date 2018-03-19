@@ -7,7 +7,7 @@
     </p>
 
     <p>
-      Adding your thesis only takes a few minutes, and preserves color content, text searchability, and embedded links within your thesis. 
+      Adding your thesis only takes a few minutes, and preserves color content, text searchability, and embedded links within your thesis.
     </p>
 
     <p>
@@ -43,7 +43,17 @@
       <strong>Paper copies of your thesis are still required and should be submitted to your academic department as usual.</strong> See <a href="https://libraries.mit.edu/archives/thesis-specs/index.html">Thesis Specifications</a> for more information.
     </p>
 
-    <p><a class="btn button-primary" href="">Sign in to get started</a></p>
+    <p>
+      <% if user_signed_in? %>
+        <%= link_to('Get started', new_thesis_path, class: 'btn button-primary') %>
+      <% else %>
+        <% if Rails.configuration.fake_auth_enabled %>
+          <%= link_to("Sign in to get started", user_developer_omniauth_authorize_path, id: "sign_in", class: 'btn button-primary') %>
+        <% else %>
+          <%= link_to("Sign in to get started", user_saml_omniauth_authorize_path, id: "sign_in", class: 'btn button-primary') %>
+        <% end %>
+      <% end %>
+    </p>
 
   </div>
 
