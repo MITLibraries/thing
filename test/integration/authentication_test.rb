@@ -40,9 +40,15 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal(usercount + 1, User.count)
   end
 
-  test 'redirect to root path after login' do
+  test 'redirect to root path after login for normal users' do
     mock_auth(users(:yo))
     follow_redirect!
-    assert_equal '/', @request.path
+    assert_equal '/thesis/new', @request.path
+  end
+
+  test 'redirect to root path after login for admin users' do
+    mock_auth(users(:admin))
+    follow_redirect!
+    assert_equal '/process', @request.path
   end
 end

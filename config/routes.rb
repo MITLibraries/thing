@@ -32,9 +32,5 @@ Rails.application.routes.draw do
     delete 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
   end
 
-  authenticated do
-    root :to => 'thesis#new'
-  end
-
   root to: 'static#index'
 end
