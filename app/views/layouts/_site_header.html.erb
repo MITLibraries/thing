@@ -23,6 +23,8 @@
     <div class="wrap-local-nav">
       <div class="wrap-bar">
         <nav class="local-nav" aria-label="Main menu">
+          <%= link_to("Home", root_path, class: 'button-secondary') %>
+          <%= link_to("Submit Thesis", new_thesis_path, class: 'button-secondary') %>
           <% if user_signed_in? %>
             <% if can? :process_theses, Thesis %>
               <%= link_to("Process submissions", process_path, class: 'button-secondary') %>
