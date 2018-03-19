@@ -19,7 +19,7 @@
 one:
   title: MyString
   abstract: MyText
-  grad_date: 2017-07-13
+  grad_date: 2017-09-13
   user: yo
   right: one
   departments: [one]
@@ -28,7 +28,7 @@ one:
 two:
   title:  Can apparent superluminal neutrino speeds be explained as a quantum weak measurement?
   abstract: Probably not.
-  grad_date: 2017-07-13
+  grad_date: 2017-09-13
   user: yo
   right: one
   departments: [one]
@@ -37,7 +37,7 @@ two:
 downloaded:
   title: MyString
   abstract: MyText
-  grad_date: 2017-07-13
+  grad_date: 2017-09-13
   user: yo
   right: one
   departments: [one]
@@ -47,7 +47,7 @@ downloaded:
 withdrawn:
   title: MyString
   abstract: MyText
-  grad_date: 2017-07-13
+  grad_date: 2017-09-13
   user: yo
   right: one
   departments: [one]
@@ -57,7 +57,7 @@ withdrawn:
 active:
   title: MyString
   abstract: MyText
-  grad_date: 2017-07-13
+  grad_date: 2017-09-13
   user: yo
   right: one
   departments: [one]
@@ -67,7 +67,7 @@ active:
 with_note:
   title: MyString
   abstract: MyText
-  grad_date: 2017-07-13
+  grad_date: 2017-09-13
   user: yo
   right: one
   departments: [one]
@@ -75,55 +75,46 @@ with_note:
   status: 'active'  # The default, but specified for testing purposes.
   note: 'Absolutely for sure rocket science'
 
-may_2018:
+june_2018:
   title: MyString
   abstract: MyText
-  grad_date: 2018-05-01
+  grad_date: 2018-06-01
   user: yo
   right: one
   departments: [one]
   degrees: [one]
 
-august_2018:
+september_2018:
   title: MyString
   abstract: MyText
-  grad_date: 2018-08-01
+  grad_date: 2018-09-01
   user: yo
   right: one
   departments: [one]
   degrees: [one]
 
-january_2019:
+february_2019:
   title: MyString
   abstract: MyText
-  grad_date: 2019-01-01
+  grad_date: 2019-02-01
   user: yo
   right: one
   departments: [one]
   degrees: [one]
 
-may_2019:
+june_2019:
   title: MyString
   abstract: MyText
-  grad_date: 2019-05-01
+  grad_date: 2019-06-01
   user: yo
   right: one
   departments: [one]
   degrees: [one]
 
-august_2019:
+september_2019:
   title: MyString
   abstract: MyText
-  grad_date: 2019-08-01
-  user: yo
-  right: one
-  departments: [one]
-  degrees: [one]
-
-december_2019:
-  title: MyString
-  abstract: MyText
-  grad_date: 2019-12-31
+  grad_date: 2019-09-01
   user: yo
   right: one
   departments: [one]

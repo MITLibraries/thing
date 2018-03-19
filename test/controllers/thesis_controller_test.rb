@@ -25,7 +25,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
              degree_ids: [degrees(:one).id.to_s],
              right_id: rights(:one).id.to_s,
              graduation_year: (Time.current.year + 1).to_s,
-             graduation_month: 'December',
+             graduation_month: 'September',
              files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
            }
          }
@@ -467,17 +467,19 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:admin)
     get process_path(start_year: '2019')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert_not view_theses.exists? theses(:may_2018).id
-    assert_not view_theses.exists? theses(:august_2018).id
-    assert view_theses.exists? theses(:may_2019).id
-    assert view_theses.exists? theses(:august_2019).id
+    assert_not view_theses.exists? theses(:june_2018).id
+    assert_not view_theses.exists? theses(:september_2018).id
+    assert view_theses.exists? theses(:june_2019).id
+    assert view_theses.exists? theses(:september_2019).id
   end
 
   test 'start year filter is inclusive' do
     sign_in users(:admin)
     get process_path(start_year: '2019')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert view_theses.exists? theses(:january_2019).id
+    assert view_theses.exists? theses(:february_2019).id
+    assert view_theses.exists? theses(:june_2019).id
+    assert view_theses.exists? theses(:september_2019).id
   end
 
   test 'filtering by start year does not flash errors' do
@@ -489,19 +491,19 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'can be filtered by start year and month' do
     sign_in users(:admin)
-    get process_path(start_year: '2019', start_month: '6')
+    get process_path(start_year: '2019', start_month: '7')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert_not view_theses.exists? theses(:may_2018).id
-    assert_not view_theses.exists? theses(:august_2018).id
-    assert_not view_theses.exists? theses(:may_2019).id
-    assert view_theses.exists? theses(:august_2019).id
+    assert_not view_theses.exists? theses(:june_2018).id
+    assert_not view_theses.exists? theses(:september_2018).id
+    assert_not view_theses.exists? theses(:june_2019).id
+    assert view_theses.exists? theses(:september_2019).id
   end
 
   test 'start year and month filter is inclusive' do
     sign_in users(:admin)
-    get process_path(start_year: '2019', start_month: '5')
+    get process_path(start_year: '2019', start_month: '6')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert view_theses.exists? theses(:may_2019).id
+    assert view_theses.exists? theses(:june_2019).id
   end
 
   test 'filtering by start year and month does not flash errors' do
@@ -515,17 +517,18 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:admin)
     get process_path(end_year: '2018')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert view_theses.exists? theses(:may_2018).id
-    assert view_theses.exists? theses(:august_2018).id
-    assert_not view_theses.exists? theses(:may_2019).id
-    assert_not view_theses.exists? theses(:august_2019).id
+    assert view_theses.exists? theses(:june_2018).id
+    assert view_theses.exists? theses(:september_2018).id
+    assert_not view_theses.exists? theses(:june_2019).id
+    assert_not view_theses.exists? theses(:september_2019).id
   end
 
   test 'end year filter is inclusive' do
     sign_in users(:admin)
     get process_path(end_year: '2019')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert view_theses.exists? theses(:december_2019).id
+    assert view_theses.exists? theses(:june_2019).id
+    assert view_theses.exists? theses(:september_2019).id
   end
 
   test 'filtering by end year does not flash errors' do
@@ -537,19 +540,19 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'can be filtered by end year and month' do
     sign_in users(:admin)
-    get process_path(end_year: '2019', end_month: '6')
+    get process_path(end_year: '2019', end_month: '7')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert view_theses.exists? theses(:may_2018).id
-    assert view_theses.exists? theses(:august_2018).id
-    assert view_theses.exists? theses(:may_2019).id
-    assert_not view_theses.exists? theses(:august_2019).id
+    assert view_theses.exists? theses(:june_2018).id
+    assert view_theses.exists? theses(:september_2018).id
+    assert view_theses.exists? theses(:june_2019).id
+    assert_not view_theses.exists? theses(:september_2019).id
   end
 
   test 'end year and month filter is inclusive' do
     sign_in users(:admin)
-    get process_path(end_year: '2019', end_month: '5')
+    get process_path(end_year: '2019', end_month: '6')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert view_theses.exists? theses(:may_2019).id
+    assert view_theses.exists? theses(:june_2019).id
   end
 
   test 'filtering by end year and month does not flash errors' do
@@ -561,13 +564,13 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'can be filtered by both start and end dates' do
     sign_in users(:admin)
-    get process_path(start_year: '2018', start_month: '6',
+    get process_path(start_year: '2018', start_month: '7',
                      end_year: '2019', end_month: '6')
     view_theses = @controller.instance_variable_get(:@theses)
-    assert_not view_theses.exists? theses(:may_2018).id
-    assert view_theses.exists? theses(:august_2018).id
-    assert view_theses.exists? theses(:may_2019).id
-    assert_not view_theses.exists? theses(:august_2019).id
+    assert_not view_theses.exists? theses(:june_2018).id
+    assert view_theses.exists? theses(:september_2018).id
+    assert view_theses.exists? theses(:june_2019).id
+    assert_not view_theses.exists? theses(:september_2019).id
   end
 
   test 'rejects start month without year' do
