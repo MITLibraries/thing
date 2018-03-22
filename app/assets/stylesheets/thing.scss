@@ -15,6 +15,7 @@ label.error {
   float: none;
 }
 
+// general
 .text-info {
   color: $informational;
 }
@@ -28,6 +29,8 @@ label.error {
   color: $error;
 }
 
+
+// admin processing
 .downloaded, .withdrawn {
   @extend .field-wrap;
 }
@@ -40,6 +43,66 @@ textarea.full-width {
 	-webkit-box-sizing: border-box;
 	   -moz-box-sizing: border-box;
 	        box-sizing: border-box;
-
 	width: 100%;
 }
+
+.panel {
+  &.has-flag {
+    padding-top: 1rem;
+  }
+
+  &.panel-info .status {
+    background-color: $brand-primary;
+  }
+
+  &.panel-success .status {
+    background-color: $success;
+  }
+
+  &.panel-warning .status {
+    background-color: $warning;
+  }
+
+  &.panel-danger .status {
+    background-color: $error;
+  }
+
+  .col1q-r {
+    text-align: right;
+  }
+
+  .status {
+    position: absolute;
+    top: 0;
+    right: 2rem;
+    background-color: $blue;
+    color: white;
+    padding: .3rem 1rem;
+  }
+
+  .grad-date {
+    margin: .5rem 0 0 0;
+    font-size: $fs-base;
+  }
+
+  .label {
+    font-weight: $fw-bold;
+  }
+
+  .view-details {
+    margin: 1rem 0;
+  }
+
+  .form-notes {
+    margin: .3rem 0;
+  }
+}
+
+
+// info 
+.label.subtitle3 {
+  margin-top: 2rem;
+  margin-bottom: .2rem;
+  font-weight: normal;
+}
+
