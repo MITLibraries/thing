@@ -27,16 +27,22 @@ class Thesis < ApplicationRecord
 
   attr_accessor :graduation_year, :graduation_month
 
-  validates :title, presence: true
-  validates :abstract, presence: true
+  validates :title, presence:
+    { message: 'Please provide the title for your Thesis.' }
+  validates :abstract, presence:
+    { message: 'Please provide the abstract for your Thesis.' }
 
-  validates :graduation_year, presence: true
+  validates :graduation_year, presence:
+    { message: 'Please input your year of graduation.' }
   validate :valid_year?
-  validates :graduation_month, presence: true
+  validates :graduation_month, presence:
+    { message: 'Please select your month of graduation.' }
   validate :valid_month?
 
-  validates :departments, presence: true
-  validates :degrees, presence: true
+  validates :departments, presence:
+    { message: 'Please select your department(s).' }
+  validates :degrees, presence:
+    { message: 'Please select your degree(s).' }
 
   STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
   validates_inclusion_of :status, :in => STATUS_OPTIONS
