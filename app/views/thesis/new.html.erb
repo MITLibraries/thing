@@ -1,72 +1,107 @@
-<%= simple_form_for(@thesis, url: '/thesis',
+<div class="layout-3q1q layout-band">
+
+  <div class="col3q">
+    <h3 class="hd-2 title">Submit your thesis</h3>
+    <%= simple_form_for(@thesis, url: '/thesis',
              html: { class: 'thesisSubmission' } ) do |f| %>
 
-  <%= f.error_notification %>
+    <%= f.error_notification %>
 
-  <%= f.input :title, label: 'Title',
-                      wrapper_html: { class: 'field-wrap' },
-                      input_html: { class: 'field field-text wide' } %>
+    <%= f.input :title, label: 'Title',
+                        wrapper_html: { class: 'field-wrap' },
+                        input_html: { class: 'field field-text wide' } %>
 
-  <%= f.input :abstract, label: 'Abstract', as: :text,
-                         wrapper_html: { class: 'field-wrap' },
-                         input_html: { class: 'field field-text wide' } %>
-
-  <%= f.association :departments, label_method: :name, as: :check_boxes,
-                       include_hidden: false,
-                       wrapper_html: { class: 'field-wrap list-checkboxes' },
-                       input_html: { class: 'field-checkbox' } %>
-
-  <%= f.association :degrees, label_method: :name, as: :check_boxes,
-                       include_hidden: false,
-                       wrapper_html: { class: 'field-wrap list-checkboxes' },
-                       input_html: { class: 'field-checkbox' } %>
-
-  <%= f.association :right, label_method: :statement, as: :radio_buttons,
-                            wrapper_html: { class: 'field-wrap list-radios' },
-                            input_html: { class: 'field-checkbox' } %>
-
-  <fieldset>
-    <legend>Graduation Date</legend>
-
-      <div class='group-inline'>
-
-      <%= f.input :graduation_month, label: 'Month', as: :select,
-                           collection: Thesis::VALID_MONTHS,
+    <%= f.input :abstract, label: 'Abstract', as: :text,
                            wrapper_html: { class: 'field-wrap' },
-                           input_html: { class: 'field field-select' } %>
+                           input_html: { class: 'field field-text wide' } %>
 
-      <%= f.input :graduation_year, label: 'Year', as: :string,
-                          wrapper_html: { class: 'field-wrap' },
-                          input_html: { class: 'field field-select' } %>
+    <%= f.association :departments, label_method: :name, as: :check_boxes,
+                         include_hidden: false,
+                         wrapper_html: { class: 'field-wrap list-checkboxes' },
+                         input_html: { class: 'field-checkbox' } %>
+
+    <%= f.association :degrees, label_method: :name, as: :check_boxes,
+                         include_hidden: false,
+                         wrapper_html: { class: 'field-wrap list-checkboxes' },
+                         input_html: { class: 'field-checkbox' } %>
+
+    <%= f.association :right, label_method: :statement, as: :radio_buttons,
+                              wrapper_html: { class: 'field-wrap list-radios' },
+                              input_html: { class: 'field-checkbox' } %>
+
+    <fieldset>
+      <legend>Graduation Date</legend>
+
+        <div class='group-inline'>
+
+        <%= f.input :graduation_month, label: 'Month', as: :select,
+                             collection: Thesis::VALID_MONTHS,
+                             wrapper_html: { class: 'field-wrap' },
+                             input_html: { class: 'field field-select' } %>
+
+        <%= f.input :graduation_year, label: 'Year', as: :string,
+                            wrapper_html: { class: 'field-wrap' },
+                            input_html: { class: 'field field-select' } %>
+      </div>
+
+    </fieldset>
+
+    <%= f.input :files, as: :file,
+        wrapper_html: { class: 'field-wrap' },
+        input_html: { class: 'field field-upload',
+                      multiple: true,
+                      direct_upload: true },
+        label: 'Files to upload',
+        hint: 'Please provide an exact PDF duplicate of your paper thesis.' %>
+
+    <div class='field-wrap'>
+      <div id="files_to_upload"></div>
     </div>
 
-  </fieldset>
+    <div class='field-wrap'>
+      <%= submit_tag 'Submit Thesis', class: 'btn button-primary' %>
+    </div>
 
-  <%= f.input :files, as: :file,
-      wrapper_html: { class: 'field-wrap' },
-      input_html: { class: 'field field-upload',
-                    multiple: true,
-                    direct_upload: true },
-      label: 'Files to upload',
-      hint: 'Please provide an exact PDF duplicate of your paper thesis.' %>
+  <% end %>
 
-  <div class='field-wrap'>
-    <div id="files_to_upload"></div>
+  <script>
+  $("input:file").change(function () {
+      var filenames = '';
+      var fileblurb = '<p>The following files will be uploaded when this form is submitted:</p>';
+      for (var i = 0; i < this.files.length; i++) {
+          filenames += '<li>' + this.files[i].name + '</li>';
+      }
+      $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
+  });
+  </script>
+</div>
+<aside class="content-sup col1q-r" role="complementary">
+  <div class="bit">
+    <h3 class="title">Submission tips</h3>
+    <ul>
+      <li>
+        Combine your thesis into a single PDF file for upload.
+      </li>
+      <li>
+        Remove encryption or other access limitations.
+      </li>
+      <li>
+        Keep file size less than 30MB when possible.
+      </li>
+      <li>
+        Submit an exact duplicate of the paper thesis.
+      </li>
+    </ul>
   </div>
 
-  <div class='field-wrap'>
-    <%= submit_tag 'Submit Thesis', class: 'btn button-primary' %>
+
+  <div class="bit">
+    <h3 class="title">Need help?</h3>
+    <p>
+      Email us at <a href="mailto:etheses-admin@mit.edu?Subject=Thesis%20submission%20help">etheses-admin@mit.edu</a> for further assistance.
+    </p>
+    <p><a href="https://libraries.mit.edu/archives/thesis-specs/index.html">Review the Thesis Specifications</a></p>
   </div>
+</aside>
+</div>
 
-<% end %>
-
-<script>
-$("input:file").change(function () {
-    var filenames = '';
-    var fileblurb = '<p>The following files will be uploaded when this form is submitted:</p>';
-    for (var i = 0; i < this.files.length; i++) {
-        filenames += '<li>' + this.files[i].name + '</li>';
-    }
-    $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
-});
-</script>
