@@ -3,46 +3,66 @@
   <div class="col3q">
     <h3 class="hd-2 title">Submit your thesis</h3>
     <%= simple_form_for(@thesis, url: '/thesis',
-             html: { class: 'thesisSubmission' } ) do |f| %>
+             html: { class: 'thesisSubmission' }, validate: true ) do |f| %>
 
     <%= f.error_notification %>
 
     <%= f.input :title, label: 'Title',
                         wrapper_html: { class: 'field-wrap' },
-                        input_html: { class: 'field field-text wide' } %>
+                        input_html: { class: 'field field-text wide',
+                          data: { msg: 'Your thesis title is required.'}
+                        } %>
 
     <%= f.input :abstract, label: 'Abstract', as: :text,
                            wrapper_html: { class: 'field-wrap' },
-                           input_html: { class: 'field field-text wide' } %>
+                           input_html: { class: 'field field-text wide',
+                             data: { msg: 'Your thesis abstract is required.'}
+                           } %>
 
-    <%= f.association :departments, label_method: :name, as: :check_boxes,
+    <%= f.association :departments, label_method: :name, as: :select,
+                         validate: { presence: true },
                          include_hidden: false,
-                         wrapper_html: { class: 'field-wrap list-checkboxes' },
-                         input_html: { class: 'field-checkbox' } %>
+                         wrapper_html: { class: 'field-wrap select' },
+                         input_html: { class: 'field-select', multiple: false,
+                           data: { msg: 'Selecting your primary Department is required.'}
+                         },
+                         hint: 'Select your primary department as listed on your title page' %>
 
-    <%= f.association :degrees, label_method: :name, as: :check_boxes,
+    <%= f.association :degrees, label_method: :name, as: :select,
                          include_hidden: false,
-                         wrapper_html: { class: 'field-wrap list-checkboxes' },
-                         input_html: { class: 'field-checkbox' } %>
+                         wrapper_html: { class: 'field-wrap select' },
+                         input_html: { class: 'field-select', multiple: false,
+                           data: { msg: 'Selecting your primary Degree is required.'}
+                         },
+                         hint: 'Select your primary degree as listed on your title page' %>
 
-    <%= f.association :right, label_method: :statement, as: :radio_buttons,
-                              wrapper_html: { class: 'field-wrap list-radios' },
-                              input_html: { class: 'field-checkbox' } %>
+    <%= f.association :right, label: 'Copyright',
+                              label_method: :statement, as: :select,
+                              include_hidden: false,
+                              wrapper_html: { class: 'field-wrap select' },
+                              input_html: { class: 'field-select',
+                                            multiple: false,
+                                            data: { msg: 'Selecting the appropriate copyright is required.'} },
+                              hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe %>
 
     <fieldset>
-      <legend>Graduation Date</legend>
+      <legend>Degree Date</legend>
 
         <div class='group-inline'>
 
-        <%= f.input :graduation_month, label: 'Month', as: :select,
-                             collection: Thesis::VALID_MONTHS,
-                             wrapper_html: { class: 'field-wrap' },
-                             input_html: { class: 'field field-select' } %>
+          <%= f.input :graduation_month, label: 'Month', as: :select,
+                               collection: Thesis::VALID_MONTHS,
+                               wrapper_html: { class: 'field-wrap' },
+                               input_html: { class: 'field field-select', data: { msg: 'Selecting Month of graduation is required.' } } %>
 
-        <%= f.input :graduation_year, label: 'Year', as: :string,
-                            wrapper_html: { class: 'field-wrap' },
-                            input_html: { class: 'field field-select' } %>
+          <%= f.input :graduation_year, label: 'Year', as: :string,
+                              wrapper_html: { class: 'field-wrap' },
+                              input_html: { class: 'field field-select',
+                                data: { msg: 'Entering a valid year of graduation is required.' },
+                              type: 'number',
+                              step: 1 } %>
       </div>
+      <span class="hint">For the degree date, enter the semester in which your degree will be conferred (typically your graduation semester).</span>
 
     </fieldset>
 
@@ -50,8 +70,10 @@
         wrapper_html: { class: 'field-wrap' },
         input_html: { class: 'field field-upload',
                       multiple: true,
-                      direct_upload: true },
+                      direct_upload: true,
+                      data: { msg: 'Attaching your Thesis is required.' } },
         label: 'Files to upload',
+        required: true,
         hint: 'Please provide an exact PDF duplicate of your paper thesis.' %>
 
     <div class='field-wrap'>
@@ -74,6 +96,7 @@
       $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
   });
   </script>
+  <script>$("#new_thesis").validate();</script>
 </div>
 <aside class="content-sup col1q-r" role="complementary">
   <div class="bit">
@@ -104,4 +127,3 @@
   </div>
 </aside>
 </div>
-

@@ -9,6 +9,12 @@
   background: #111 image-url("vi-shape7-tp.svg") no-repeat 10% center;
 }
 
+label.error {
+  color: $error;
+  display: block;
+  float: none;
+}
+
 .text-info {
   color: $informational;
 }
