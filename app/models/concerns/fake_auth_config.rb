@@ -27,7 +27,7 @@ module FakeAuthConfig
   # pattern.
   def app_name_pattern_match?
     return true if Rails.env.development?
-    review_app_pattern = /^library-thesis-dropbox-s-pr-[\d]+$/
+    review_app_pattern = /^library-thesis-dropbox-s?-pr-[\d]+$/
     review_app_pattern.match(ENV['HEROKU_APP_NAME']).present?
   end
 end

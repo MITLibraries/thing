@@ -21,6 +21,15 @@ class FakeAuthTest < ActiveSupport::TestCase
     end
   end
 
+  test 'fakeauth enabled pr minus s pattern app name' do
+    ClimateControl.modify(
+      FAKE_AUTH_ENABLED: 'true',
+      HEROKU_APP_NAME: 'library-thesis-dropbox--pr-123'
+    ) do
+      assert_equal(true, fake_auth_status)
+    end
+  end
+
   test 'fakeauth enabled no heroku app name' do
     ClimateControl.modify FAKE_AUTH_ENABLED: 'true' do
       assert_equal(false, fake_auth_status)
