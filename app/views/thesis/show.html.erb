@@ -1,8 +1,11 @@
 <h3><%= @thesis.title %></h3>
 
+<h4 class="label subtitle3">Graduation date</h4> 
 <p>
   <%= @thesis.graduation_month %> <%= @thesis.graduation_year %>
 </p>
+
+<h4 class="label subtitle3">Department(s)</h4> 
 <ul class="list-unbulleted">
   <% @thesis.departments.each do |department| %>
     <li>
@@ -10,6 +13,7 @@
     </li>
   <% end %>
 </ul>
-<p>
+
+<p class="copy-sup">
   Submitted on <%= @thesis.created_at.to_formatted_s(:long) %> by <%= @thesis.user.email %>
 </p>
