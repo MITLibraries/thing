@@ -21,8 +21,8 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
            thesis: {
              title: title,
              abstract: 'Frook.',
-             department_ids: [departments(:one).id.to_s],
-             degree_ids: [degrees(:one).id.to_s],
+             department_ids: departments(:one).id.to_s,
+             degree_ids: degrees(:one).id.to_s,
              right_id: rights(:one).id.to_s,
              graduation_year: (Time.current.year + 1).to_s,
              graduation_month: 'September',
@@ -46,7 +46,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
              title: title,
              abstract: 'Frook.',
              # The missing department ids here should cause the form to fail.
-             degree_ids: [degrees(:one).id.to_s],
+             degree_ids: degrees(:one).id.to_s,
              right_id: rights(:one).id.to_s,
              graduation_year: (Time.current.year + 1).to_s,
              graduation_month: 'December',
