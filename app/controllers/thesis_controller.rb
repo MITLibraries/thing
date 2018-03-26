@@ -82,7 +82,7 @@ class ThesisController < ApplicationController
   def thesis_params
     params.require(:thesis).permit(:title, :abstract, :graduation_month,
                                    :graduation_year, :right_id,
-                                   department_ids: [], degree_ids: [])
+                                   :department_ids, :degree_ids)
   end
 
   def handle_thesis_ajax(handler)

@@ -15,8 +15,8 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     post thesis_index_path,
          params: { thesis:
            { right_id: Right.first.id,
-             department_ids: [Department.first.id],
-             degree_ids: [Degree.first.id],
+             department_ids: Department.first.id,
+             degree_ids: Degree.first.id,
              title: 'yoyos are cool',
              abstract: 'We discovered it with science',
              graduation_month: 'June',
