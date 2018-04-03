@@ -21,6 +21,9 @@
     "HEROKU_APP_NAME": {
       "required": true
     },
+    "JS_EXCEPTION_LOGGER_KEY": {
+      "required": true
+    },
     "LANG": {
       "required": true
     },

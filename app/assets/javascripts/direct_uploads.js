@@ -29,8 +29,14 @@ addEventListener("direct-upload:error", event => {
   event.preventDefault()
   const { id, error } = event.detail
   const element = document.getElementById(`direct-upload-${id}`)
+  Rollbar.critical("ActiveStorage Direct Upload Failed.", event);
   element.classList.add("direct-upload--error")
   element.setAttribute("title", error)
+  element.insertAdjacentHTML("afterend", `
+    <div id="direct-upload-${id}" class="alert alert-banner error">
+      Something went wrong on our end and we weren't able to upload your file. You can try submitting again or contact etheses-admin@mit.edu for assistance.
+    </div>
+  `)
 })
 
 addEventListener("direct-upload:end", event => {

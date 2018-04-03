@@ -16,6 +16,7 @@
 <!-- Size should be 32 x 32 pixels -->
 <%= favicon_link_tag 'favicon.ico', :rel => 'shortcut icon' %>
 
+<%= render partial: "layouts/js_exception_handler" %>
 <%= javascript_include_tag "application" %>
 <% if (ENV['GOOGLE_ANALYTICS']) %>
 <script type="text/javascript">

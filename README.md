@@ -27,6 +27,9 @@ consistent way.
 `DISABLE_LOGRAGE` - set this in to disable lograge single line logging config
 and use rails standard verbose logging.
 
+`JS_EXCEPTION_LOGGER_KEY` - set this to the value of the rollbar public post key
+to enable capturing javascript exceptions.
+
 `RAILS_LOG_TO_STDOUT` - log to standard out instead of a file. Heroku enables
 this automatically. It is often nice in development as well.
 
