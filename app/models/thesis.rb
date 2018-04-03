@@ -28,14 +28,14 @@ class Thesis < ApplicationRecord
   attr_accessor :graduation_year, :graduation_month
 
   VALIDATION_MSGS = {
-    title: 'Please provide the title for your Thesis.',
-    abstract: 'Please provide the abstract for your Thesis.',
+    title: 'Please provide the title for your thesis.',
+    abstract: 'Please provide the abstract for your thesis.',
     graduation_year: 'Please input your year of graduation.',
     graduation_month: 'Please select your month of graduation.',
-    departments: 'Please select your department(s).',
-    degrees: 'Please select your degree(s).',
+    departments: 'Please select your primary department.',
+    degrees: 'Please select your primary degree.',
     right: 'Please select the appropriate copyright.',
-    files: 'Attaching your Thesis is required.',
+    files: 'Attaching your thesis is required.',
   }
 
   validates :title, presence:
