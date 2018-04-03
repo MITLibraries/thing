@@ -10,13 +10,13 @@
     <%= f.input :title, label: 'Title',
                         wrapper_html: { class: 'field-wrap' },
                         input_html: { class: 'field field-text wide',
-                          data: { msg: 'Your thesis title is required.'}
+                          data: { msg: Thesis::VALIDATION_MSGS[:title] }
                         } %>
 
     <%= f.input :abstract, label: 'Abstract', as: :text,
                            wrapper_html: { class: 'field-wrap' },
                            input_html: { class: 'field field-text wide',
-                             data: { msg: 'Your thesis abstract is required.'}
+                             data: { msg: Thesis::VALIDATION_MSGS[:abstract] }
                            } %>
 
     <%= f.association :departments, label_method: :name, as: :select,
@@ -24,7 +24,7 @@
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
                          input_html: { class: 'field-select', multiple: false,
-                           data: { msg: 'Selecting your primary Department is required.'}
+                           data: { msg: Thesis::VALIDATION_MSGS[:departments] }
                          },
                          hint: 'Select your primary department as listed on your title page' %>
 
@@ -32,7 +32,7 @@
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
                          input_html: { class: 'field-select', multiple: false,
-                           data: { msg: 'Selecting your primary Degree is required.'}
+                           data: { msg: Thesis::VALIDATION_MSGS[:degrees] }
                          },
                          hint: 'Select your primary degree as listed on your title page' %>
 
@@ -42,7 +42,7 @@
                               wrapper_html: { class: 'field-wrap select' },
                               input_html: { class: 'field-select',
                                             multiple: false,
-                                            data: { msg: 'Selecting the appropriate copyright is required.'} },
+                                            data: { msg: Thesis::VALIDATION_MSGS[:right] } },
                               hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe %>
 
     <fieldset>
@@ -53,12 +53,12 @@
           <%= f.input :graduation_month, label: 'Month', as: :select,
                                collection: Thesis::VALID_MONTHS,
                                wrapper_html: { class: 'field-wrap' },
-                               input_html: { class: 'field field-select', data: { msg: 'Selecting Month of graduation is required.' } } %>
+                               input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] } } %>
 
           <%= f.input :graduation_year, label: 'Year', as: :string,
                               wrapper_html: { class: 'field-wrap' },
                               input_html: { class: 'field field-select',
-                                data: { msg: 'Entering a valid year of graduation is required.' },
+                                data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] },
                               type: 'number',
                               step: 1 } %>
       </div>
@@ -71,7 +71,7 @@
         input_html: { class: 'field field-upload',
                       multiple: true,
                       direct_upload: true,
-                      data: { msg: 'Attaching your Thesis is required.' } },
+                      data: { msg: Thesis::VALIDATION_MSGS[:files] } },
         label: 'Files to upload',
         required: true,
         hint: 'Please provide an exact PDF duplicate of your paper thesis.' %>
