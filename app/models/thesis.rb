@@ -27,22 +27,33 @@ class Thesis < ApplicationRecord
 
   attr_accessor :graduation_year, :graduation_month
 
+  VALIDATION_MSGS = {
+    title: 'Please provide the title for your thesis.',
+    abstract: 'Please provide the abstract for your thesis.',
+    graduation_year: 'Please input your year of graduation.',
+    graduation_month: 'Please select your month of graduation.',
+    departments: 'Please select your primary department.',
+    degrees: 'Please select your primary degree.',
+    right: 'Please select the appropriate copyright.',
+    files: 'Attaching your thesis is required.',
+  }
+
   validates :title, presence:
-    { message: 'Please provide the title for your Thesis.' }
+    { message: VALIDATION_MSGS[:title] }
   validates :abstract, presence:
-    { message: 'Please provide the abstract for your Thesis.' }
+    { message: VALIDATION_MSGS[:abstract] }
 
   validates :graduation_year, presence:
-    { message: 'Please input your year of graduation.' }
+    { message: VALIDATION_MSGS[:graduation_year] }
   validate :valid_year?
   validates :graduation_month, presence:
-    { message: 'Please select your month of graduation.' }
+    { message: VALIDATION_MSGS[:graduation_month] }
   validate :valid_month?
 
   validates :departments, presence:
-    { message: 'Please select your department(s).' }
+    { message: VALIDATION_MSGS[:departments] }
   validates :degrees, presence:
-    { message: 'Please select your degree(s).' }
+    { message: VALIDATION_MSGS[:degrees] }
 
   STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
   validates_inclusion_of :status, :in => STATUS_OPTIONS
