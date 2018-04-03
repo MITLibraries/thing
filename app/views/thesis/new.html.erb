@@ -2,6 +2,11 @@
 
   <div class="col3q">
     <h3 class="hd-2 title">Submit your thesis</h3>
+
+    <p class="copy-sup">
+      You are logged in and submitting as <%= current_user.display_name %>.
+      Not you? <%= link_to("Sign out.", destroy_user_session_path, method: :delete) %>
+    </p>
     <%= simple_form_for(@thesis, url: '/thesis',
              html: { class: 'thesisSubmission' }, validate: true ) do |f| %>
 

@@ -26,7 +26,6 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 'yoyos are cool', Thesis.last.title
     assert_equal 'We discovered it with science', Thesis.last.abstract
   end
-
   test 'invalid title message' do
     mock_auth(users(:basic))
     params = @thesis_params
@@ -73,5 +72,12 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     params[:files] = nil
     post thesis_index_path, params: { thesis: params }
     assert_select "input.required[data-msg='#{Thesis::VALIDATION_MSGS[:files]}']"
+  end
+
+  test 'indicates active user' do
+    mock_auth(users(:basic))
+    msg = "You are logged in and submitting as #{users(:basic).display_name}."
+    get new_thesis_path
+    assert @response.body.include? msg
   end
 end

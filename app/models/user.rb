@@ -49,12 +49,20 @@ class User < ApplicationRecord
 
   # Definitely for sure wrong for some people. But staff want to be able to
   # sort on surname for processing purposes, so we're getting given name +
-  # surname. If we find ourselves displaying name to users, we should also
-  # get the displayName property from Touchstone and be sure to use that in
-  # user-facing communication.
+  # surname.
   def name
     if self.surname && self.given_name
       "#{self.surname}, #{self.given_name} (#{self.email})"
+    else
+      "#{self.email}"
+    end
+  end
+
+  # We should really be getting the displayName property from Touchstone, but
+  # that was a scope creep at the time this feature was implemented.
+  def display_name
+    if self.surname && self.given_name
+      "#{self.given_name} #{self.surname} (#{self.email})"
     else
       "#{self.email}"
     end
