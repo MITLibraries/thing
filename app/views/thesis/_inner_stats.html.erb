@@ -1,0 +1,74 @@
+<%= column_chart [
+  # The first set here is a gross hack. Chartkick renders the data in the order
+  # it's received; therefore you can end up with the X axis not ordered by date
+  # (e.g. if the 'withdrawn' series includes a date that isn't found in the
+  # other series - it will end up on the X axis after all dates of the previous
+  # series, regardless of its position in time).
+  # It turns out to be hard to get group_for_graph to return series that
+  # contain all relevant dates but have zeroes where nothing with that date
+  # matches the status. Instead, we have graph_base return a null series,
+  # which contains all relevant dates but has zero values (and no label or
+  # color, so it isn't visible). This forces the X axis to render all
+  # applicable dates before rendering any series data over the axis.
+  {
+    name: '',
+    data: graph_base
+  },
+  {
+    name: 'Processed',
+    data: group_for_graph('downloaded')
+  },
+  {
+    name: 'Active',
+    data: group_for_graph('active')
+  },
+  {
+    name: 'Withdrawn',
+    data: group_for_graph('withdrawn')
+  }],
+  stacked: true,
+  # Brand colors! (Muted versions.)
+  colors: ['white', '#1A1A83', '#FFC422', '#B00606'] %>
+
+<table>
+  <tr>
+    <th>
+      Graduation Date
+    </th>
+    <th>
+      # Active
+    </th>
+    <th>
+      # Downloaded
+    </th>
+    <th>
+      # Withdrawn
+    </th>
+    <th>
+      % Downloaded
+    </th>
+  </tr>
+  <% @theses.group_by(&:grad_date).each do |date, group| %>
+    <% active = group.select { |item| item.status == 'active' }.count %>
+    <% downloaded = group.select { |item| item.status == 'downloaded' }.count %>
+    <% withdrawn = group.select { |item| item.status == 'withdrawn' }.count %>
+    <% any = group.count %>
+    <tr>
+      <td>
+        <%= date.strftime("%b %Y") %>
+      </td>
+      <td>
+        <%= active %>
+      </td>
+      <td>
+        <%= downloaded %>
+      </td>
+      <td>
+        <%= withdrawn %>
+      </td>
+      <td>
+        <%= (100*Float(downloaded)/Float(any)).round %>%
+      </td>
+    </tr>
+  <% end %>
+</table>

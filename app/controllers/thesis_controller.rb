@@ -29,7 +29,6 @@ class ThesisController < ApplicationController
   # Do not name this simply 'process' or you will shadow a built-in controller
   # function and then you will be sad.
   def process_theses
-    #filter_status(params[:status])
     @theses = Thesis.by_status(params[:status])
     filter_dates(params)
     sort_theses(params[:sort])
@@ -64,6 +63,11 @@ class ThesisController < ApplicationController
     note = params[key_name]
     @thesis.note = note
     handle_thesis_ajax('note')
+  end
+
+  def stats
+    @theses = Thesis.all
+    filter_dates(params)
   end
 
   private

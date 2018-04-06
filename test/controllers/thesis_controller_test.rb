@@ -827,4 +827,56 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal target_note, thesis.reload.note
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ stats ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'non-authenticated users cannot see stats' do
+    get stats_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see stats' do
+    sign_in users(:basic)
+    assert_raises CanCan::AccessDenied do
+      get stats_path
+    end
+  end
+
+  test 'thesis processors can see stats' do
+    sign_in users(:processor)
+    get stats_path
+    assert_response :success
+  end
+
+  test 'thesis admins can see stats' do
+    sign_in users(:thesis_admin)
+    get stats_path
+    assert_response :success
+  end
+
+  test 'admins can see stats' do
+    sign_in users(:admin)
+    get stats_path
+    assert_response :success
+  end
+
+  test 'basic page content' do
+    sign_in users(:processor)
+    get stats_path
+    assert_select 'h3', text: 'Statistics'
+    assert_select 'table'
+    assert @response.body.downcase.include? 'filter by graduation date'
+  end
+
+  # Just spot check the filtering here, as we tested the filters extensively
+  # above for the processing queue.
+  test 'stats can be filtered by both start and end dates' do
+    sign_in users(:admin)
+    get stats_path(start_year: '2018', start_month: '7',
+                     end_year: '2019', end_month: '6')
+    view_theses = @controller.instance_variable_get(:@theses)
+    assert_not view_theses.exists? theses(:june_2018).id
+    assert view_theses.exists? theses(:september_2018).id
+    assert view_theses.exists? theses(:june_2019).id
+    assert_not view_theses.exists? theses(:september_2019).id
+  end
 end

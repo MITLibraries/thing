@@ -81,6 +81,9 @@ class Thesis < ApplicationRecord
       @theses = Thesis.where(status: 'active')
     end
   }
+  scope :valid_months_only, lambda {
+    select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
+  }
 
   # Ensures submitted graduation year is a four-digit integer, not less than
   # the year of the Institute's founding.

@@ -38,6 +38,7 @@ class Ability
     can :mark_withdrawn, Thesis
     can :annotate, Thesis
     can :process_theses, Thesis
+    can :stats, Thesis
   end
 
   # Library staff who can use the admin dashboards (which includes operations

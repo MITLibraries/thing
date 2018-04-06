@@ -38,11 +38,21 @@ module ThesisHelper
   end
 
   def earliest_year
-    Thesis.by_status(params[:status]).order('grad_date').first.grad_date.year
+    queryset = Thesis.by_status(params[:status])
+    if params[:status].present? and queryset.present?
+      queryset.order('grad_date').first.grad_date.year
+    else
+      Thesis.all.order('grad_date').first.grad_date.year
+    end
   end
 
   def latest_year
-    Thesis.by_status(params[:status]).order('grad_date').last.grad_date.year
+    queryset = Thesis.by_status(params[:status])
+    if params[:status].present? and queryset.present?
+      queryset.order('grad_date').last.grad_date.year
+    else
+      Thesis.all.order('grad_date').last.grad_date.year
+    end
   end
 
   def show_form
@@ -56,5 +66,21 @@ module ThesisHelper
     else
       false
     end
+  end
+
+  # Returns a data series with all applicable dates for the X axis, but 0
+  # values for everything on the Y axis. See comment in _inner_stats.html.erb.
+  def graph_base
+    @theses.
+      group_by_month(:grad_date, format: "%b %Y", series: false).
+      count.
+      transform_values { |v| 0 }
+  end
+
+  def group_for_graph(status)
+    @theses.
+      by_status(status).
+      group_by_month(:grad_date, format: "%b %Y", series: false).
+      count
   end
 end
