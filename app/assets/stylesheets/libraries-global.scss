@@ -1,4 +1,4 @@
-/* last updated 4/4/2018 - commit 680962d  */
+/* last updated 4/6/2018 - commit 22420aa  */
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
@@ -158,6 +158,11 @@ body {
   font-size: 1.6rem;
   line-height: 1.2;
   font-family: "Helvetica Neue", Helvetica, Arial, "Open Sans", sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 ol,
@@ -985,6 +990,78 @@ form .error .hint {
   border-top: 4px solid #D50606;
 }
 
+.highlight, .table .is-highlighted, .table-simplified .is-highlighted {
+  background-color: #ffde66;
+}
+
+.table, .table-simplified {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+.table caption, .table-simplified caption {
+  margin-bottom: .5rem;
+  font-size: 1.4rem;
+  text-align: left;
+}
+.table tr:hover, .table-simplified tr:hover {
+  background-color: rgba(89, 89, 89, 0.3);
+}
+.table th, .table-simplified th {
+  font-weight: 600;
+  text-align: left;
+}
+.table th, .table-simplified th,
+.table td,
+.table-simplified td {
+  padding: .75rem;
+  border: 1px solid #dedede;
+}
+.table tfoot tr, .table-simplified tfoot tr {
+  border-top: 2px solid #dedede;
+  font-weight: 600;
+}
+.table .align-left, .table-simplified .align-left {
+  text-align: left;
+}
+.table .align-center, .table-simplified .align-center {
+  text-align: center;
+}
+.table .align-right, .table-simplified .align-right {
+  text-align: right;
+}
+
+.table-simplified th,
+.table-simplified td {
+  border: none;
+  border-bottom: 1px solid #dedede;
+}
+
+.table-cozy th,
+.table-cozy td {
+  padding: .5rem;
+}
+
+.table-spacious th,
+.table-spacious td {
+  padding: 1.2rem;
+}
+
+.wrapper-table-scrollable {
+  width: 100%;
+  overflow-y: auto;
+}
+
+.table-responsive th.supplemental,
+.table-responsive td.supplemental {
+  display: none;
+}
+@media (min-width: 768px) {
+  .table-responsive th.supplemental,
+  .table-responsive td.supplemental {
+    display: table-cell;
+  }
+}
+
 #skip {
   position: absolute;
   overflow: hidden;
@@ -1170,4 +1247,3 @@ abbr.required {
   background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), color-stop(50%, #f3f3f3));
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #f3f3f3 50%);
 }
-

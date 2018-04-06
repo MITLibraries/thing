@@ -106,18 +106,3 @@ textarea.full-width {
   font-weight: normal;
 }
 
-table {
-  border-collapse: collapse;
-
-  th, td {
-    padding: 1rem;
-  }
-
-  th {
-    background-color: $gray-l2;
-  }
-
-  tr:nth-child(even) {
-    background: $gray-l4;
-  }
-}
