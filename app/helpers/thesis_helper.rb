@@ -38,11 +38,21 @@ module ThesisHelper
   end
 
   def earliest_year
-    Thesis.by_status(params[:status]).order('grad_date').first.grad_date.year
+    queryset = Thesis.by_status(params[:status])
+    if queryset.present?
+      queryset.order('grad_date').first.grad_date.year
+    else
+      Thesis.all.order('grad_date').first.grad_date.year
+    end
   end
 
   def latest_year
-    Thesis.by_status(params[:status]).order('grad_date').last.grad_date.year
+    queryset = Thesis.by_status(params[:status])
+    if queryset.present?
+      queryset.order('grad_date').last.grad_date.year
+    else
+      Thesis.all.order('grad_date').last.grad_date.year
+    end
   end
 
   def show_form
@@ -56,5 +66,13 @@ module ThesisHelper
     else
       false
     end
+  end
+
+  def group_for_graph(status)
+    @theses.
+      by_status(status).
+      group_by_month(:grad_date, format: "%b %Y").
+      count.
+      reject { |key, value| value == 0 }
   end
 end

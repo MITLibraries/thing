@@ -99,10 +99,25 @@ textarea.full-width {
 }
 
 
-// info 
+// info
 .label.subtitle3 {
   margin-top: 2rem;
   margin-bottom: .2rem;
   font-weight: normal;
 }
 
+table {
+  border-collapse: collapse;
+
+  th, td {
+    padding: 1rem;
+  }
+
+  th {
+    background-color: $gray-l2;
+  }
+
+  tr:nth-child(even) {
+    background: $gray-l4;
+  }
+}

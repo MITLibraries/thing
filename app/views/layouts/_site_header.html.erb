@@ -28,6 +28,7 @@
           <% if user_signed_in? %>
             <% if can? :process_theses, Thesis %>
               <%= link_to("Process submissions", process_path, class: 'nav-item') %>
+              <%= link_to("Stats", stats_path, class: 'nav-item') %>
             <% end %>
             <% if current_user.admin? || can?(:administrate, Admin) %>
               <%= link_to("Admin", admin_root_path, class: 'nav-item') %>

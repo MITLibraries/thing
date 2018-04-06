@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   post 'annotate/:id', to: 'thesis#annotate',
                    id: /[0-9]+/,
                    as: 'annotate'
+  get 'stats', to: 'thesis#stats', as: 'stats'
 
   devise_for :users, :controllers => {
     :omniauth_callbacks => 'users/omniauth_callbacks'
