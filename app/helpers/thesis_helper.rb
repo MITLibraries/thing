@@ -68,11 +68,19 @@ module ThesisHelper
     end
   end
 
+  # Returns a data series with all applicable dates for the X axis, but 0
+  # values for everything on the Y axis. See comment in _inner_stats.html.erb.
+  def graph_base
+    @theses.
+      group_by_month(:grad_date, format: "%b %Y", series: false).
+      count.
+      transform_values { |v| 0 }
+  end
+
   def group_for_graph(status)
     @theses.
       by_status(status).
-      group_by_month(:grad_date, format: "%b %Y").
-      count.
-      reject { |key, value| value == 0 }
+      group_by_month(:grad_date, format: "%b %Y", series: false).
+      count
   end
 end
