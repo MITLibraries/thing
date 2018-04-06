@@ -39,7 +39,7 @@ module ThesisHelper
 
   def earliest_year
     queryset = Thesis.by_status(params[:status])
-    if queryset.present?
+    if params[:status].present? and queryset.present?
       queryset.order('grad_date').first.grad_date.year
     else
       Thesis.all.order('grad_date').first.grad_date.year
@@ -48,7 +48,7 @@ module ThesisHelper
 
   def latest_year
     queryset = Thesis.by_status(params[:status])
-    if queryset.present?
+    if params[:status].present? and queryset.present?
       queryset.order('grad_date').last.grad_date.year
     else
       Thesis.all.order('grad_date').last.grad_date.year

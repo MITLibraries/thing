@@ -131,6 +131,12 @@ class ThesisHelperTest < ActionView::TestCase
     assert_equal 2017, earliest_year
   end
 
+  test 'earliest year handles an empty status param' do
+    params[:status] = ''
+
+    assert_equal 2017, earliest_year
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ earliest_year ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'latest year works as expected when no status' do
     params[:status] = nil
@@ -146,6 +152,12 @@ class ThesisHelperTest < ActionView::TestCase
 
   test 'latest year handles the empty set' do
     params[:status] = 'pink'
+
+    assert_equal 2019, latest_year
+  end
+
+  test 'latest year handles an empty status param' do
+    params[:status] = ''
 
     assert_equal 2019, latest_year
   end
