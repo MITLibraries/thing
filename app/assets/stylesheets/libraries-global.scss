@@ -1,4 +1,4 @@
-/* last updated 4/6/2018 - commit 22420aa  */
+/* last updated 4/10/2018 - commit 706d319   */
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
@@ -386,6 +386,9 @@ hr {
   display: inline-block;
   margin-right: 10px;
   font-size: 1.4rem;
+}
+.wrap-header-local .wrap-local-nav .nav-item.current {
+  border: 1px solid #0000FF;
 }
 
 .wrap-outer-content {
