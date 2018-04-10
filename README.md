@@ -30,6 +30,11 @@ and use rails standard verbose logging.
 `JS_EXCEPTION_LOGGER_KEY` - set this to the value of the rollbar public post key
 to enable capturing javascript exceptions.
 
+`PREFERRED_DOMAIN` - set this to the domain you would like to to use. Any other
+requests that come to the app will redirect to the root of this domain. This is
+useful to prevent access to herokuapp.com domains as well as any legacy domains
+you'd like to handle.
+
 `RAILS_LOG_TO_STDOUT` - log to standard out instead of a file. Heroku enables
 this automatically. It is often nice in development as well.
 

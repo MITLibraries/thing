@@ -33,5 +33,9 @@ Rails.application.routes.draw do
     delete 'sign_out', to: 'devise/sessions#destroy', as: :destroy_user_session
   end
 
+  # handle old vireo starting URLs
+  get 'vireo', to: redirect('/')
+  get 'vireo/:whatever', to: redirect('/')
+
   root to: 'static#index'
 end
