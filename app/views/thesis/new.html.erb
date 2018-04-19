@@ -25,6 +25,7 @@
                            } %>
 
     <%= f.association :departments, label_method: :name, as: :select,
+                         collection: Department.order(:name),
                          validate: { presence: true },
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
