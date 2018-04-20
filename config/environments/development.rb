@@ -55,6 +55,9 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
+  # allow configurable log levels, default to debug
+  config.log_level = ENV['LOG_LEVEL'] || :debug
+
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
