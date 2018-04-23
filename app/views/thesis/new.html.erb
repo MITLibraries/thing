@@ -11,6 +11,7 @@
              html: { class: 'thesisSubmission' }, validate: true ) do |f| %>
 
     <%= f.error_notification %>
+    <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
 
     <%= f.input :title, label: 'Title',
                         wrapper_html: { class: 'field-wrap' },
@@ -102,7 +103,22 @@
       $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
   });
   </script>
-  <script>$("#new_thesis").validate();</script>
+  <script>
+    $("#new_thesis").validate({
+      invalidHandler: function(event, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+          var message = errors == 1
+            ? 'The form was not submitted successfully - one required field needs to be fixed.'
+            : 'The form was not submitted successfully - ' + errors + ' required fields need to be fixed.';
+          $("div.error").html(message);
+          $("div.error").show();
+        } else {
+          $("div.error").hide();
+        }
+      }
+    });
+  </script>
 </div>
 <aside class="content-sup col1q-r" role="complementary">
   <div class="bit">
