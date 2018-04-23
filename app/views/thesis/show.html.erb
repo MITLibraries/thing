@@ -1,11 +1,11 @@
 <h3 class="hd-4"><%= @thesis.title %></h3>
 
-<h4 class="label subtitle3">Graduation date</h4> 
+<h4 class="label subtitle3">Graduation date</h4>
 <p>
   <%= @thesis.graduation_month %> <%= @thesis.graduation_year %>
 </p>
 
-<h4 class="label subtitle3">Department(s)</h4> 
+<h4 class="label subtitle3">Department(s)</h4>
 <ul class="list-unbulleted">
   <% @thesis.departments.each do |department| %>
     <li>
@@ -17,3 +17,5 @@
 <p class="copy-sup">
   Submitted on <%= @thesis.created_at.to_formatted_s(:long) %> by <%= @thesis.user.email %>
 </p>
+
+<p>Theses will only be added to DSpace after degrees have been awarded and the thesis has been fully processed and cataloged by the MIT Libraries, which will be at least 3 months after the degree date.</p>
