@@ -5,7 +5,7 @@
 
     <p class="copy-sup">
       You are logged in and submitting as <%= current_user.display_name %>.
-      Not you? <%= link_to("Sign out.", destroy_user_session_path, method: :delete) %>
+      Not you? <%= link_to("Sign out.", destroy_user_session_path, method: :delete) %> Please note: all fields are required.
     </p>
     <%= simple_form_for(@thesis, url: '/thesis',
              html: { class: 'thesisSubmission' }, validate: true ) do |f| %>
