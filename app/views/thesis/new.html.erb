@@ -5,7 +5,7 @@
 
     <p class="copy-sup">
       You are logged in and submitting as <%= current_user.display_name %>.
-      Not you? <%= link_to("Sign out.", destroy_user_session_path, method: :delete) %>
+      Not you? <%= link_to("Sign out.", destroy_user_session_path, method: :delete) %> Please note: all fields are required.
     </p>
     <%= simple_form_for(@thesis, url: '/thesis',
              html: { class: 'thesisSubmission' }, validate: true ) do |f| %>
@@ -125,16 +125,13 @@
     <h3 class="title">Submission tips</h3>
     <ul>
       <li>
+        Submit an exact duplicate of the paper thesis.
+      </li>
+      <li>
         Combine your thesis into a single PDF file for upload.
       </li>
       <li>
         Remove encryption or other access limitations.
-      </li>
-      <li>
-        Keep file size less than 30MB when possible.
-      </li>
-      <li>
-        Submit an exact duplicate of the paper thesis.
       </li>
     </ul>
   </div>
