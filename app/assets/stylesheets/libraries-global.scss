@@ -1,4 +1,4 @@
-/* last updated 4/10/2018 - commit 706d319   */
+/* last updated 4/25/2018 - commit 0f59f8e   */
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
@@ -117,8 +117,8 @@ input[type=radio] {
 }
 
 .js .expand-collapse-control .button, a, .wrap-footer a, .wrap-outer-footer-institute a {
-  -webkit-transition: color .25s ease-in-out 0s;
-  transition: color .25s ease-in-out 0s;
+  -webkit-transition: all .25s ease-in-out 0s;
+  transition: all .25s ease-in-out 0s;
   color: #0000FF;
   text-decoration: none;
 }
@@ -824,6 +824,7 @@ form .group-inline {
 }
 form .group-inline .field-wrap {
   display: inline-block;
+  vertical-align: top;
   margin-bottom: .2rem;
 }
 form .group-inline .field-select {
