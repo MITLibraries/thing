@@ -637,7 +637,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis = theses(:active)
     assert_equal thesis.status, 'active'
     post mark_downloaded_url(thesis), xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal 'downloaded', thesis.reload.status
   end
 
@@ -646,7 +646,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis = theses(:active)
     assert_equal thesis.status, 'active'
     post mark_downloaded_url(thesis), xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal 'downloaded', thesis.reload.status
   end
 
@@ -655,21 +655,8 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis = theses(:active)
     assert_equal thesis.status, 'active'
     post mark_downloaded_url(thesis), xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal 'downloaded', thesis.reload.status
-  end
-
-  test 'mark thesis as downloaded - valid case' do
-    sign_in users(:admin)
-    thesis = theses(:active)
-    post mark_downloaded_url(thesis), xhr: true
-
-    assert_equal 'application/json', @response.content_type
-    resp = JSON.parse(@response.body)
-    assert resp.key? 'id'
-    assert resp.key? 'saved'
-    assert_equal thesis.id.to_s, resp['id']
-    assert_equal true, resp['saved']
   end
 
   test 'cannot mark theses if already downloaded' do
@@ -710,7 +697,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis = theses(:active)
     assert_equal thesis.status, 'active'
     post mark_withdrawn_url(thesis), xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal 'withdrawn', thesis.reload.status
   end
 
@@ -719,7 +706,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis = theses(:active)
     assert_equal thesis.status, 'active'
     post mark_withdrawn_url(thesis), xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal 'withdrawn', thesis.reload.status
   end
 
@@ -728,21 +715,8 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis = theses(:active)
     assert_equal thesis.status, 'active'
     post mark_withdrawn_url(thesis), xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal 'withdrawn', thesis.reload.status
-  end
-
-  test 'mark thesis as withdrawn - valid case' do
-    sign_in users(:admin)
-    thesis = theses(:active)
-    post mark_withdrawn_url(thesis), xhr: true
-
-    assert_equal 'application/json', @response.content_type
-    resp = JSON.parse(@response.body)
-    assert resp.key? 'id'
-    assert resp.key? 'saved'
-    assert_equal thesis.id.to_s, resp['id']
-    assert_equal true, resp['saved']
   end
 
   test 'mark withdrawn option available for active theses' do
@@ -795,36 +769,33 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'admins can add notes' do
     sign_in users(:admin)
     thesis = theses(:with_note)
-    orig_note = thesis.note
     target_note = 'Best consumed with scooby snacks'
     note_field_id = "note_#{thesis.id}"
     post annotate_url(thesis),
       params: Hash[note_field_id, target_note], xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal target_note, thesis.reload.note
   end
 
   test 'thesis admins can add notes' do
     sign_in users(:thesis_admin)
     thesis = theses(:with_note)
-    orig_note = thesis.note
     target_note = 'Best consumed with scooby snacks'
     note_field_id = "note_#{thesis.id}"
     post annotate_url(thesis),
       params: Hash[note_field_id, target_note], xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal target_note, thesis.reload.note
   end
 
   test 'processors can add notes' do
     sign_in users(:processor)
     thesis = theses(:with_note)
-    orig_note = thesis.note
     target_note = 'Best consumed with scooby snacks'
     note_field_id = "note_#{thesis.id}"
     post annotate_url(thesis),
       params: Hash[note_field_id, target_note], xhr: true
-    assert_response :success
+    assert_response :redirect
     assert_equal target_note, thesis.reload.note
   end
 
