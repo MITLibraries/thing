@@ -20,6 +20,10 @@
             <%= thesis.title %>
           </li>
           <li>
+            <span class="label">Submission date: </span>
+            <%= thesis.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %d, %Y %r') %>
+          </li>
+          <li>
             <span class="label"><%= "Department".pluralize(thesis.departments.count) %>:</span>
               <%= thesis.departments.map{|d| d.name}.join(",") %>
           </li>
@@ -42,6 +46,7 @@
           </div>
         </div>
       </div>
+
       <div class="col1q-r">
         <p class="rights"><span class="label">Rights: </span> <%= thesis.right.statement %></p>
         <%= link_to("View details", thesis_path(thesis.id), class: 'btn button-secondary button-small view-details') %>
