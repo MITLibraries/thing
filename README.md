@@ -45,10 +45,6 @@ this automatically. It is often nice in development as well.
 
 ### Development
 
-`LOCAL_STORAGE_HOST` - this must be set to match your local server address and
-port. On our vagrant, `http://0.0.0.0:5000` works. Others may need
-`http://localhost:5000` depending on how you start the server. Your web browser
-console will likely provide an error that helps decide what you need.
 `THESIS_ADMIN_EMAIL` - used for both `from` and `cc` of receipt emails.
 
 ### Production
