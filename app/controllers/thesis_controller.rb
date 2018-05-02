@@ -44,7 +44,12 @@ class ThesisController < ApplicationController
     end
 
     @thesis.status = 'downloaded'
-    handle_thesis_ajax('status')
+    if @thesis.save
+      flash[:info] = "#{@thesis.title} has been marked downloaded."
+    else
+      flash[:error] = "#{@thesis.title} was unable to be marked downloaded."
+    end
+    redirect_to process_path
   end
 
   def mark_withdrawn
@@ -54,7 +59,12 @@ class ThesisController < ApplicationController
     # and there's no harm in marking withdrawn theses again as withdrawn.
 
     @thesis.status = 'withdrawn'
-    handle_thesis_ajax('status')
+    if @thesis.save
+      flash[:info] = "#{@thesis.title} has been marked withdrawn."
+    else
+      flash[:error] = "#{@thesis.title} was unable to be marked withdrawn."
+    end
+    redirect_to process_path
   end
 
   def annotate
@@ -62,7 +72,12 @@ class ThesisController < ApplicationController
     key_name = "note_#{@thesis.id}"
     note = params[key_name]
     @thesis.note = note
-    handle_thesis_ajax('note')
+    if @thesis.save
+      flash[:info] = "#{@thesis.title} note has been updated."
+    else
+      flash[:error] = "#{@thesis.title} note was unable to be updated."
+    end
+    redirect_to process_path
   end
 
   def stats
@@ -87,20 +102,6 @@ class ThesisController < ApplicationController
     params.require(:thesis).permit(:title, :abstract, :graduation_month,
                                    :graduation_year, :right_id,
                                    :department_ids, :degree_ids)
-  end
-
-  def handle_thesis_ajax(handler)
-    respond_to do |format|
-      if @thesis.save
-        format.js
-        format.html { redirect_to process_path }
-        render json: { id: params[:id], saved: true, handler: handler }
-      else
-        format.js
-        format.html { redirect_to process_path }
-        render json: { id: params[:id], saved: false, handler: handler }
-      end
-    end
   end
 
   def sorted_theses(queryset, sort)
