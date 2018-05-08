@@ -31,17 +31,21 @@
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
                          input_html: { class: 'field field-select', multiple: false,
-                           data: { msg: Thesis::VALIDATION_MSGS[:departments] }
+                           data: { msg: Thesis::VALIDATION_MSGS[:departments] },
+                           'aria-describedby': 'thesis_departments_ids-hint'
                          },
-                         hint: 'Select your primary department as listed on your title page' %>
+                         hint: 'Select your primary department as listed on your title page',
+                         hint_html: { id: 'thesis_departments_ids-hint' } %>
 
     <%= f.association :degrees, label_method: :name, as: :select,
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
                          input_html: { class: 'field field-select', multiple: false,
-                           data: { msg: Thesis::VALIDATION_MSGS[:degrees] }
+                           data: { msg: Thesis::VALIDATION_MSGS[:degrees] },
+                           'aria-describedby': 'thesis_degrees_ids-hint'
                          },
-                         hint: 'Select your primary degree as listed on your title page' %>
+                         hint: 'Select your primary degree as listed on your title page',
+                         hint_html: { id: 'thesis_degrees_ids-hint' } %>
 
     <%= f.association :right, label: 'Copyright',
                               label_method: :statement, as: :select,
@@ -49,8 +53,10 @@
                               wrapper_html: { class: 'field-wrap select' },
                               input_html: { class: 'field field-select',
                                             multiple: false,
-                                            data: { msg: Thesis::VALIDATION_MSGS[:right] } },
-                              hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe %>
+                                            data: { msg: Thesis::VALIDATION_MSGS[:right] },
+                                            'aria-describedby': 'thesis_copyright_ids-hint' },
+                              hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe,
+                              hint_html: { id: 'thesis_copyright_ids-hint' } %>
 
     <fieldset>
       <legend>Degree Date</legend>
