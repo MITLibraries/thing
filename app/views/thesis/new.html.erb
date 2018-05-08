@@ -31,17 +31,21 @@
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
                          input_html: { class: 'field field-select', multiple: false,
-                           data: { msg: Thesis::VALIDATION_MSGS[:departments] }
+                           data: { msg: Thesis::VALIDATION_MSGS[:departments] },
+                           'aria-describedby': 'thesis_departments_ids-hint'
                          },
-                         hint: 'Select your primary department as listed on your title page' %>
+                         hint: 'Select your primary department as listed on your title page',
+                         hint_html: { id: 'thesis_departments_ids-hint' } %>
 
     <%= f.association :degrees, label_method: :name, as: :select,
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
                          input_html: { class: 'field field-select', multiple: false,
-                           data: { msg: Thesis::VALIDATION_MSGS[:degrees] }
+                           data: { msg: Thesis::VALIDATION_MSGS[:degrees] },
+                           'aria-describedby': 'thesis_degrees_ids-hint'
                          },
-                         hint: 'Select your primary degree as listed on your title page' %>
+                         hint: 'Select your primary degree as listed on your title page',
+                         hint_html: { id: 'thesis_degrees_ids-hint' } %>
 
     <%= f.association :right, label: 'Copyright',
                               label_method: :statement, as: :select,
@@ -49,19 +53,22 @@
                               wrapper_html: { class: 'field-wrap select' },
                               input_html: { class: 'field field-select',
                                             multiple: false,
-                                            data: { msg: Thesis::VALIDATION_MSGS[:right] } },
-                              hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe %>
+                                            data: { msg: Thesis::VALIDATION_MSGS[:right] },
+                                            'aria-describedby': 'thesis_copyright_ids-hint' },
+                              hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe,
+                              hint_html: { id: 'thesis_copyright_ids-hint' } %>
 
     <fieldset>
       <legend>Degree Date</legend>
-        <span class="hint">For the degree date, enter the semester in which your degree will be conferred (typically your graduation semester).</span>
+        <span id="thesis_date_ids-hint" class="hint">For the degree date, enter the semester in which your degree will be conferred (typically your graduation semester).</span>
 
         <div class='group-inline'>
 
           <%= f.input :graduation_month, label: 'Month', as: :select,
                                collection: Thesis::VALID_MONTHS,
                                wrapper_html: { class: 'field-wrap' },
-                               input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] } } %>
+                               input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
+                               'aria-describedby': 'thesis_date_ids-hint' } %>
 
           <%= f.input :graduation_year, label: 'Year', as: :string,
                               wrapper_html: { class: 'field-wrap' },
@@ -78,10 +85,12 @@
         input_html: { class: 'field field-upload',
                       multiple: true,
                       direct_upload: true,
-                      data: { msg: Thesis::VALIDATION_MSGS[:files] } },
+                      data: { msg: Thesis::VALIDATION_MSGS[:files] },
+                      'aria-describedby': 'thesis_files_ids-hint' },
         label: 'Files to upload',
         required: true,
-        hint: 'Please provide an exact PDF duplicate of your paper thesis.' %>
+        hint: 'Please provide an exact PDF duplicate of your paper thesis.',
+        hint_html: { id: 'thesis_files_ids-hint' }  %>
 
     <div class='field-wrap'>
       <div id="files_to_upload"></div>
