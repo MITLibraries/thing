@@ -20,6 +20,7 @@ gem 'omniauth-saml'
 gem 'puma'
 gem 'rails', '5.2.0'
 gem 'sass-rails'
+gem 'sentry-raven'
 gem 'simple_form'
 gem 'skylight'
 gem 'therubyracer', platforms: :ruby

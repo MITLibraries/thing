@@ -42,6 +42,9 @@
     "SECRET_KEY_BASE": {
       "required": true
     },
+    "SENTRY_DSN": {
+      "required": true
+    },
     "SMTP_ADDRESS": {
       "required": true
     },

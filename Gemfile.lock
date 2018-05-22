@@ -117,6 +117,8 @@ GEM
     docile (1.1.5)
     erubi (1.7.1)
     execjs (2.7.0)
+    faraday (0.15.1)
+      multipart-post (>= 1.2, < 3)
     ffi (1.9.23)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
@@ -168,6 +170,7 @@ GEM
     momentjs-rails (2.20.1)
       railties (>= 3.1)
     msgpack (1.2.4)
+    multipart-post (2.0.0)
     nio4r (2.3.1)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
@@ -250,6 +253,8 @@ GEM
     selenium-webdriver (3.12.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
+    sentry-raven (2.7.3)
+      faraday (>= 0.7.6, < 1.0)
     simple_form (4.0.0)
       actionpack (> 4)
       activemodel (> 4)
@@ -324,6 +329,7 @@ DEPENDENCIES
   rubocop
   sass-rails
   selenium-webdriver
+  sentry-raven
   simple_form
   skylight
   sqlite3

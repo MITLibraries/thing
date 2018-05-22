@@ -41,6 +41,8 @@ you'd like to handle.
 `RAILS_LOG_TO_STDOUT` - log to standard out instead of a file. Heroku enables
 this automatically. It is often nice in development as well.
 
+`SENTRY_DSN` - set to your project sentry key to enable exception logging
+
 ## ActiveStorage Configuration
 
 ### Development
