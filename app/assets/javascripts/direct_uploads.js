@@ -2,6 +2,8 @@
 /* original source:
    http://edgeguides.rubyonrails.org/active_storage_overview.html#example */
 
+var storageErrorDetected = false;
+
 addEventListener("direct-upload:initialize", event => {
   const { target, detail } = event
   const { id, file } = detail
@@ -29,7 +31,8 @@ addEventListener("direct-upload:error", event => {
   event.preventDefault()
   const { id, error } = event.detail
   const element = document.getElementById(`direct-upload-${id}`)
-  Rollbar.critical("ActiveStorage Direct Upload Failed.", event);
+  Raven.captureException('ActiveStorage Direct Upload Failed.')
+  storageErrorDetected = true
   element.classList.add("direct-upload--error")
   element.setAttribute("title", error)
   element.insertAdjacentHTML("afterend", `
@@ -46,7 +49,10 @@ addEventListener("direct-upload:end", event => {
 })
 
 addEventListener("direct-uploads:end", event => {
-  console.log("direct-uploads:end")
   // Workaround for https://github.com/rails/rails/issues/31860
-  event.target.submit()
+  // only do the submit hack if we didn't detect an error or the user won't see
+  // our in-app messages and will instead see a throw exception.
+  if (storageErrorDetected == false) {
+    event.target.submit()
+  }
 })

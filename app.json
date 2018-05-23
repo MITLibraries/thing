@@ -39,11 +39,10 @@
     "RAILS_SERVE_STATIC_FILES": {
       "required": true
     },
-    "ROLLBAR_ACCESS_TOKEN": {
+    "SECRET_KEY_BASE": {
       "required": true
     },
-    "ROLLBAR_ENV": "pr",
-    "SECRET_KEY_BASE": {
+    "SENTRY_DSN": {
       "required": true
     },
     "SMTP_ADDRESS": {
