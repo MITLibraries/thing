@@ -39,6 +39,7 @@ class Ability
     can :annotate, Thesis
     can :process_theses, Thesis
     can :stats, Thesis
+    can :read, Thesis
   end
 
   # Library staff who can use the admin dashboards (which includes operations

@@ -86,6 +86,18 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'thesis_admin users can view another user thesis' do
+    sign_in users(:thesis_admin)
+    get "/thesis/#{theses(:one).id}"
+    assert_response :success
+  end
+
+  test 'processor users can view another user thesis' do
+    sign_in users(:processor)
+    get "/thesis/#{theses(:one).id}"
+    assert_response :success
+  end
+
   # Tests below this note are to protect us from our future selves.
   # Currently we have no routes for delete/update or controller actions to
   # handle this, but I'm adding these tests to remind us in the future that if
