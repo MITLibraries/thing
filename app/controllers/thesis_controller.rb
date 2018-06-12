@@ -49,7 +49,7 @@ class ThesisController < ApplicationController
     else
       flash[:error] = "#{@thesis.title} was unable to be marked downloaded."
     end
-    redirect_to process_path
+    redirect_back(fallback_location: process_path)
   end
 
   def mark_withdrawn
@@ -64,7 +64,7 @@ class ThesisController < ApplicationController
     else
       flash[:error] = "#{@thesis.title} was unable to be marked withdrawn."
     end
-    redirect_to process_path
+    redirect_back(fallback_location: process_path)
   end
 
   def annotate
@@ -77,7 +77,7 @@ class ThesisController < ApplicationController
     else
       flash[:error] = "#{@thesis.title} note was unable to be updated."
     end
-    redirect_to process_path
+    redirect_back(fallback_location: process_path)
   end
 
   def stats
