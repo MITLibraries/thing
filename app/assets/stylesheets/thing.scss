@@ -1,15 +1,3 @@
-
-// .wrap-header and .wrap-footer are using asset pipeline versions of the svg
-// here to allow them to be served in production.
-.wrap-header {
-  background: #111 image-url("vi-shape7-tp.svg") no-repeat 0 65%;
-}
-
-.wrap-footer {
-  background: #111 image-url("vi-shape7-tp.svg") no-repeat 10% center;
-}
-
-
 label.error {
   display: block;
   margin-bottom: 0;
@@ -107,4 +95,3 @@ textarea.full-width {
   margin-bottom: .2rem;
   font-weight: normal;
 }
-
