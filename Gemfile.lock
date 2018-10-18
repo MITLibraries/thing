@@ -1,5 +1,7 @@
-PATH
-  remote: /Users/jprevost/projects/mitlibraries-theme
+GIT
+  remote: https://github.com/mitlibraries/mitlibraries-theme
+  revision: 98033ea1bf102c4583d19187135f0bc11c28eb37
+  branch: support_additional_js
   specs:
     mitlibraries-theme (0.1.0)
       rails
