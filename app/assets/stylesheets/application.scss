@@ -2,7 +2,6 @@
  Import each file directly to allow for controlling order and sharing variables
 */
 
-@import "_variables.scss";
-@import "libraries-global.scss";
-@import "thing.scss";
-@import "direct_uploads.scss";
+@import "libraries-main";
+@import "thing";
+@import "direct_uploads";

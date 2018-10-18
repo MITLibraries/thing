@@ -1,3 +1,11 @@
+PATH
+  remote: /Users/jprevost/projects/mitlibraries-theme
+  specs:
+    mitlibraries-theme (0.1.0)
+      rails
+      sass
+      sass-rails
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -326,6 +334,7 @@ DEPENDENCIES
   kaminari
   listen
   lograge
+  mitlibraries-theme!
   omniauth-saml
   pg
   puma

@@ -16,6 +16,9 @@ gem 'devise'
 gem 'groupdate'
 gem 'kaminari'
 gem 'lograge'
+gem 'mitlibraries-theme',
+    git: 'https://github.com/mitlibraries/mitlibraries-theme',
+    branch: 'support_additional_js'
 gem 'omniauth-saml'
 gem 'puma'
 gem 'rails', '~> 5.2.0'
