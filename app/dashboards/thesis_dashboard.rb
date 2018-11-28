@@ -19,7 +19,9 @@ class ThesisDashboard < Administrate::BaseDashboard
     id: Field::Number,
     title: Field::String,
     abstract: Field::Text,
-    grad_date: Field::DateTime,
+    grad_date: Field::DateTime.with_options(
+      format: "%Y %B"
+    ),
     graduation_month: Field::Number,
     graduation_year: Field::Number,
     created_at: Field::DateTime,
