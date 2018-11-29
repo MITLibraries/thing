@@ -40,13 +40,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal('/admin', path)
   end
 
-  test 'accessing admin panel as a sysadmin works' do
-    mock_auth(users(:sysadmin))
-    get '/admin'
-    assert_response :success
-    assert_equal('/admin', path)
-  end
-
   test 'accessing admin panel with admin rights works' do
     mock_auth(users(:admin))
     get '/admin'
@@ -56,13 +49,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test 'accessing theses panel works with admin rights' do
     mock_auth(users(:admin))
-    get '/admin/theses'
-    assert_response :success
-    assert_equal('/admin/theses', path)
-  end
-
-  test 'accessing theses panel works with sysadmin rights' do
-    mock_auth(users(:sysadmin))
     get '/admin/theses'
     assert_response :success
     assert_equal('/admin/theses', path)
@@ -90,6 +76,12 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   test 'thesis admins can view an admin theses show page' do
     mock_auth(users(:thesis_admin))
     get admin_thesis_path(theses(:one))
+    assert_response :success
+  end
+
+  test 'thesis admins can access the thesis edit form through admin panel' do
+    mock_auth(users(:thesis_admin))
+    get "/admin/theses/#{theses(:one).id}/edit"
     assert_response :success
   end
 
@@ -144,8 +136,8 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert Thesis.exists?(thesis_id)
   end
 
-  test 'sysadmins can destroy theses through admin panel' do
-    mock_auth(users(:sysadmin))
+  test 'admins can destroy theses through admin panel' do
+    mock_auth(users(:admin))
 
     thesis = Thesis.first
     # Cache this, because the thesis will stop existing if the delete goes
@@ -158,13 +150,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test 'accessing users panel works with admin rights' do
     mock_auth(users(:admin))
-    get '/admin/users'
-    assert_response :success
-    assert_equal('/admin/users', path)
-  end
-
-  test 'accessing users panel works with sysadmin rights' do
-    mock_auth(users(:sysadmin))
     get '/admin/users'
     assert_response :success
     assert_equal('/admin/users', path)
@@ -189,8 +174,8 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
-  test 'sysadmins can edit roles through user dashboard' do
-    mock_auth(users(:sysadmin))
+  test 'admins can edit roles through user dashboard' do
+    mock_auth(users(:admin))
     user = users(:processor)
     patch admin_user_path(user),
       params: { user: { role: 'thesis_admin' } }
@@ -200,13 +185,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test 'accessing rights panel works with admin rights' do
     mock_auth(users(:admin))
-    get '/admin/rights'
-    assert_response :success
-    assert_equal('/admin/rights', path)
-  end
-
-  test 'accessing rights panel works with sysadmin rights' do
-    mock_auth(users(:sysadmin))
     get '/admin/rights'
     assert_response :success
     assert_equal('/admin/rights', path)
@@ -247,13 +225,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal('/admin/departments', path)
   end
 
-  test 'accessing departments panel works with sysadmin rights' do
-    mock_auth(users(:sysadmin))
-    get '/admin/departments'
-    assert_response :success
-    assert_equal('/admin/departments', path)
-  end
-
   test 'accessing departments panel works with thesis_admin rights' do
     mock_auth(users(:thesis_admin))
     get '/admin/departments'
@@ -284,20 +255,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test 'accessing degrees panel works with admin rights' do
     mock_auth(users(:admin))
-    get '/admin/degrees'
-    assert_response :success
-    assert_equal('/admin/degrees', path)
-  end
-
-  test 'accessing degrees panel works with sysadmin rights' do
-    mock_auth(users(:sysadmin))
-    get '/admin/degrees'
-    assert_response :success
-    assert_equal('/admin/degrees', path)
-  end
-
-  test 'accessing degrees panel works with thesis_admin rights' do
-    mock_auth(users(:thesis_admin))
     get '/admin/degrees'
     assert_response :success
     assert_equal('/admin/degrees', path)
