@@ -47,11 +47,7 @@ class Ability
   # powers.
   def thesis_admin
     processor
-    can [:create, :update], Thesis
+    can %i[create update], Thesis
     can :administrate, Admin
-  end
-
-  def sysadmin
-    can :manage, :all
   end
 end

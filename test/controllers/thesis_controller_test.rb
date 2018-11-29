@@ -201,12 +201,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'sysadmin users can see submissions processing page' do
-    sign_in users(:sysadmin)
-    get process_path
-    assert_response :success
-  end
-
   test 'admin users can see submissions processing page' do
     sign_in users(:admin)
     get process_path

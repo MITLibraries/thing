@@ -12,18 +12,17 @@ module Admin
     # People with sysadmin privileges can do anything here. People with thesis
     # admin privileges can create and edit but not destroy theses.
     def authenticate_admin
-      admin_actions = %w[show update index create]
+      admin_actions = %w[show update index create edit]
+
       if current_user
-        if [
-            can?(:administrate, Admin) &&
-              admin_actions.include?(params[:action]),
-            current_user.role == 'sysadmin',
-            current_user.admin?
-          ].any?
+        if [can?(:administrate, Admin) &&
+            admin_actions.include?(params[:action]),
+            current_user.admin?].any?
 
           return
         end
       end
+
       redirect_to '/', alert: 'Not authorized.'
     end
 
