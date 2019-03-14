@@ -7,7 +7,7 @@ Rails.application.configure do
     exceptions = %w(controller action format id)
     {
       params: event.payload[:params].except(*exceptions),
-      time: event.time.utc().iso8601(3),
+      time: Time.now.utc().iso8601(3),
     }
   end
 
