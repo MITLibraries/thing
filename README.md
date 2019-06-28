@@ -61,6 +61,18 @@ of variables:
 In addition, you will need to ensure the bucket CORS `AllowedOrigin` settings
 are configured to allow for the domain this app runs at.
 
+## User Roles
+
+There are a few user roles that can be assigned by admins (one of the user roles!). The abilities of each role are defined in the [ability model](https://github.com/MITLibraries/thing/blob/master/app/models/ability.rb).
+
+`Basic` is the default user role and is assigned when a user self creates and account. Self creation is the only supported way to create an account. If we have a new staff member, they first need to login to self create an account with the basic role and then admin staff can assign them appropriate roles.
+
+`Thesis Processor` is used for any users that process theses.
+
+`Thesis Admin` can do everything a Thesis Processor can do but can also create and update any thesis (not just their own like a basic user).
+
+`Admin` can do anything, including deleting or changing anything and assigning roles to other users. Assigning roles is done in the web UI.
+
 ## Sending Receipt Email in Production
 
 `SMTP_ADDRESS`
