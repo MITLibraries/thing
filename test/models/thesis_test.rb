@@ -143,7 +143,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert_not(thesis.valid?)
   end
 
-  test 'only June, September, and February are valid months' do
+  test 'only May, June, September, and February are valid months' do
     thesis = theses(:one)
     thesis.grad_date = nil
     thesis.graduation_year = 2018
@@ -161,7 +161,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert thesis.invalid?
 
     thesis.graduation_month = 'May'
-    assert thesis.invalid?
+    assert thesis.valid?
 
     thesis.graduation_month = 'June'
     assert thesis.valid?
