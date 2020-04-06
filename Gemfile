@@ -47,5 +47,6 @@ end
 
 group :test do
   gem 'climate_control'
-  gem 'coveralls', require: false
+  gem 'simplecov', require: false
+  gem 'simplecov-lcov', require: false
 end
