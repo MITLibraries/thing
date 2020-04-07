@@ -58,10 +58,3 @@ thesis_admin:
   role: 'thesis_admin'
   given_name: 'Thesis A.'
   surname: 'Robot'
-
-sysadmin:
-  uid: 'sysadmin_id'
-  email: 'sysadmin@example.com'
-  role: 'sysadmin'
-  given_name: 'Sysadmin'
-  surname: 'Robot'
