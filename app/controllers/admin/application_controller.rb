@@ -9,8 +9,7 @@ module Admin
     before_action :authenticate_user!
     before_action :authenticate_admin
 
-    # People with sysadmin privileges can do anything here. People with thesis
-    # admin privileges can create and edit but not destroy theses.
+    # Ensure that current user has admin privileges.
     def authenticate_admin
       admin_actions = %w[show update index create edit]
 

@@ -43,8 +43,7 @@ class Ability
   end
 
   # Library staff who can use the admin dashboards (which includes operations
-  # on departments), but who don't have system administration
-  # powers.
+  # on departments).
   def thesis_admin
     processor
     can %i[create update], Thesis

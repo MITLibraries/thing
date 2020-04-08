@@ -26,7 +26,7 @@ class User < ApplicationRecord
   validates :email, presence: true
   has_many :theses
 
-  ROLES = %w[basic processor thesis_admin sysadmin]
+  ROLES = %w[basic processor thesis_admin]
   validates_inclusion_of :role, :in => ROLES
 
   # `uid` is a unique ID that comes back from OmniAuth (which gets it from
