@@ -24,7 +24,6 @@ gem 'sass-rails'
 gem 'sentry-raven'
 gem 'simple_form'
 gem 'skylight'
-gem 'therubyracer', platforms: :ruby
 gem 'uglifier'
 
 group :production do
