@@ -14,7 +14,7 @@ class ThesisController < ApplicationController
     @thesis.user = current_user
     @thesis.files.attach(params[:thesis][:files])
     if @thesis.save
-      flash.notice = 'Your thesis submission is now in progress'
+      flash.notice = 'Thank you for your submission.'
       ReceiptMailer.receipt_email(@thesis).deliver_later
       redirect_to thesis_path(@thesis)
     else

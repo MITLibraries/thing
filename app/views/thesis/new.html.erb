@@ -13,6 +13,27 @@
       You are logged in and submitting as <%= current_user.display_name %>.
       Not you? <%= link_to("Sign out.", destroy_user_session_path, method: :delete) %> Please note: all fields are required.
     </p>
+
+    <div class="well">
+      <h4>May 2020 degree list candidates</h4>
+
+      <ul>
+        <li>Please submit the PDF of your thesis directly to your department. 
+            Do not submit your thesis using this site.</li>
+        <li>For doctoral theses only: after submitting your thesis to your
+            department, please use this site to submit your
+            <a href="https://libraries.mit.edu/wp-content/uploads/2019/08/umi-proquest-form.pdf">ProQuest form</a>
+            and a copy of your title and abstract pages.</li>
+        <li>Tip: You can create a single PDF or attach multiple files by
+            dragging and dropping onto this form.</li>
+      </ul>
+
+      <h4>Departments</h4>
+      Please do not submit via this site. 
+      Email <a href="mailto:mit-theses@mit.edu?Subject=Thesis%20submission%20help">mit-theses@mit.edu</a> 
+      with any questions.
+    </div>
+
     <%= simple_form_for(@thesis, url: '/thesis',
              html: { class: 'thesisSubmission' }, validate: true ) do |f| %>
 
@@ -95,7 +116,7 @@
                       'aria-describedby': 'thesis_files_ids-hint' },
         label: 'Files to upload',
         required: true,
-        hint: 'Please provide an exact PDF duplicate of your paper thesis.',
+        hint: 'Please provide an exact PDF duplicate of your paper thesis (except May 2020 - see instructions at top of page).',
         hint_html: { id: 'thesis_files_ids-hint' }  %>
 
     <div class='field-wrap'>
@@ -105,7 +126,6 @@
     <div class='field-wrap'>
       <%= submit_tag 'Submit Thesis', class: 'btn button-primary' %>
     </div>
-
   <% end %>
 
   <script>
