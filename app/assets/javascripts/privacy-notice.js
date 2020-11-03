@@ -22,13 +22,15 @@ var getCookieValue = function(cookieName) {
   var match = null;
 
   // Look for the cookie name in the array
-  cookies.forEach((element) => {
-    var cookiePair = element.split('=');
+  var i;
+  
+  for (i = 0; i < cookies.length; i++) {
+    var cookiePair = cookies[i].split('=');
 
     if (cookieName == cookiePair[0].trim()) {
       match = decodeURIComponent(cookiePair[1]);
-    }
-  });
+    }   
+  }
 
   // Return the cookie value if found (or null otherwise)
   return match;
