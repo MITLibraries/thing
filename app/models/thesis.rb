@@ -55,6 +55,8 @@ class Thesis < ApplicationRecord
   validates :degrees, presence:
     { message: VALIDATION_MSGS[:degrees] }
 
+  # validates :files, presence: true
+
   STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
   validates_inclusion_of :status, :in => STATUS_OPTIONS
 
@@ -69,16 +71,16 @@ class Thesis < ApplicationRecord
   scope :date_asc, -> { order('grad_date') }
   scope :by_status, lambda { |status|
     if status == 'any'
-      @theses = Thesis.all
+      @theses = self.all
     elsif status.present?
       # We could also test that Thesis::STATUS_OPTIONS.include? status,
       # but we aren't, because:
       # 1) if some URL hacker enters status=purple, they'll get 200 OK, not
       #    500;
       # 2) also they deserve the blank page they get.
-      @theses = Thesis.where(status: status)
+      @theses = self.where(status: status)
     else
-      @theses = Thesis.where(status: 'active')
+      @theses = self.where(status: 'active')
     end
   }
   scope :valid_months_only, lambda {
