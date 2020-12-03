@@ -33,4 +33,33 @@ class DepartmentTest < ActiveSupport::TestCase
     department.theses = []
     assert(department.valid?)
   end
+
+  test 'can have or or more transfers' do
+    d = Department.last
+    assert(d.name == 'Underwater Basketweaving')
+    tcount = d.transfers.count
+    t1 = Transfer.new
+    t1.department = d
+    t1.user = User.first
+    t1.graduation_month = 'May'
+    t1.graduation_year = '2020'
+    t1.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t1.save
+    t2 = Transfer.new
+    t2.department = d
+    t2.user = User.first
+    t2.graduation_month = 'May'
+    t2.graduation_year = '2020'
+    t2.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t2.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t2.save
+    assert(d.transfers.count == tcount + 2)
+  end
+
+  test 'can access transfer information from department' do
+    d = Department.last
+    assert(d.name == 'Underwater Basketweaving')
+    ttest = d.transfers.first
+    assert(ttest.grad_date.to_s == '2020-05-01')
+  end
 end
