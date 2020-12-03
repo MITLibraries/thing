@@ -22,4 +22,9 @@ class TransferTest < ActiveSupport::TestCase
     assert(transfer.invalid?)
   end
 
+  test 'needs valid department' do
+    transfer = transfers(:valid)
+    transfer.department_id = 'boo'
+    assert(transfer.invalid?)
+  end
 end
