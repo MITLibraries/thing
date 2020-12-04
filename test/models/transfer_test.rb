@@ -14,36 +14,51 @@ require 'test_helper'
 class TransferTest < ActiveSupport::TestCase
   test 'valid transfer' do
     transfer = transfers(:valid)
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
     assert(transfer.valid?)
   end
 
   test 'needs valid user' do
     transfer = transfers(:baduser)
-    assert(transfer.invalid?)
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    assert transfer.invalid?
   end
 
   test 'needs a department' do
     transfer = transfers(:valid)
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    assert transfer.valid?
     transfer.department = nil
-    assert(transfer.invalid?)
+    assert transfer.invalid?
   end
 
   test 'needs valid department' do
     transfer = transfers(:valid)
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    assert transfer.valid?
     transfer.department_id = 'boo'
-    assert(transfer.invalid?)
+    assert transfer.invalid?
   end
 
   test 'invalid without grad date' do
     transfer = transfers(:valid)
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    assert transfer.valid?
     transfer.grad_date = nil
     transfer.graduation_month = nil
     transfer.graduation_year = nil
-    assert(transfer.invalid?)
+    assert transfer.invalid?
   end
 
   test 'grad year should be vaguely reasonable' do
     transfer = transfers(:valid)
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
 
     # Valid
     transfer.graduation_year = '1861'
@@ -74,6 +89,8 @@ class TransferTest < ActiveSupport::TestCase
 
   test 'only May, June, September, and February are valid months' do
     transfer = transfers(:valid)
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
     transfer.grad_date = nil
     transfer.graduation_year = 2020
 
@@ -112,5 +129,20 @@ class TransferTest < ActiveSupport::TestCase
 
     transfer.graduation_month = 'December'
     assert transfer.invalid?
+  end
+
+  test 'should have an attached file or two' do
+    transfer = Transfer.new
+    transfer.user = User.new
+    transfer.department = Department.new
+    transfer.graduation_year = 2020
+    transfer.graduation_month = 'September'
+    assert transfer.invalid?
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    assert transfer.valid?
+    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    assert transfer.valid?
   end
 end

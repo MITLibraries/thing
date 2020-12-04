@@ -13,11 +13,14 @@ class Transfer < ApplicationRecord
   belongs_to :user
   belongs_to :department
 
+  has_many_attached :files
+
   attr_accessor :graduation_year, :graduation_month
 
   VALIDATION_MSGS = {
     graduation_year: 'Required - Please input your year of graduation.',
     graduation_month: 'Required - Please select your month of graduation.',
+    files: 'Required - Attaching at least one file is required.',
   }
 
   validates :graduation_year, presence:
@@ -26,6 +29,7 @@ class Transfer < ApplicationRecord
   validates :graduation_month, presence:
     { message: VALIDATION_MSGS[:graduation_month] }
   validate :valid_month?
+  validates :files, presence: true
 
   VALID_MONTHS = ['February', 'May', 'June', 'September']
 
