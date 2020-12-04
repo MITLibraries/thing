@@ -10,7 +10,7 @@
 #  updated_at    :datetime         not null
 #
 valid:
-  department_id: 298486374
+  department: one
   grad_date: 2020-05-01
   user: yo
 
