@@ -85,4 +85,25 @@ class UserTest < ActiveSupport::TestCase
     user = users(:yo)
     assert_equal 'Yobot, Yo (yo@example.com)', user.name
   end
+
+  test 'can have one or more transfers' do
+    u = User.last
+    assert(u.name == 'Yobot, Yo (yo@example.com)')
+    tcount = u.transfers.count
+    t1 = Transfer.new
+    t1.department = Department.first
+    t1.user = u
+    t1.graduation_month = 'May'
+    t1.graduation_year = '2020'
+    t1.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t1.save
+    assert(u.transfers.count == tcount + 1)
+  end
+
+  test 'can access transfer from user' do
+    u = User.last
+    assert(u.name == 'Yobot, Yo (yo@example.com)')
+    ttest = u.transfers.first
+    assert(ttest.grad_date.to_s == '2020-05-01')
+  end
 end

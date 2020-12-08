@@ -11,6 +11,7 @@
 class Department < ApplicationRecord
   has_many :department_theses
   has_many :theses, through: :department_theses
+  has_many :transfers
 
   validates :name, presence: true
 end

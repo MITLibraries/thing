@@ -25,6 +25,7 @@ class User < ApplicationRecord
   validates :uid, presence: true #, uniqueness: true
   validates :email, presence: true
   has_many :theses
+  has_many :transfers
 
   ROLES = %w[basic processor thesis_admin]
   validates_inclusion_of :role, :in => ROLES
