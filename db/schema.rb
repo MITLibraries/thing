@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_03_120000) do
+ActiveRecord::Schema.define(version: 2020_12_09_213534) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -80,6 +80,15 @@ ActiveRecord::Schema.define(version: 2020_12_03_120000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "submitters", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "department_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["department_id"], name: "index_submitters_on_department_id"
+    t.index ["user_id"], name: "index_submitters_on_user_id"
+  end
+
   create_table "theses", force: :cascade do |t|
     t.string "title", null: false
     t.text "abstract", null: false
@@ -118,6 +127,8 @@ ActiveRecord::Schema.define(version: 2020_12_03_120000) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "submitters", "departments"
+  add_foreign_key "submitters", "users"
   add_foreign_key "transfers", "departments"
   add_foreign_key "transfers", "users"
 end
