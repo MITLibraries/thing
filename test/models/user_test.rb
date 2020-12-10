@@ -106,4 +106,13 @@ class UserTest < ActiveSupport::TestCase
     ttest = u.transfers.first
     assert(ttest.grad_date.to_s == '2020-05-01')
   end
+
+  test 'can have zero or more departments as submitter' do
+    yo = users(:yo)
+    admin = users(:admin)
+    bad = users(:bad)
+    assert(yo.departments.count == 2)
+    assert(admin.departments.count == 1)
+    assert(bad.departments.count == 0)
+  end
 end

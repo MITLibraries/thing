@@ -34,7 +34,7 @@ class DepartmentTest < ActiveSupport::TestCase
     assert(department.valid?)
   end
 
-  test 'can have or or more transfers' do
+  test 'can have one or more transfers' do
     d = Department.last
     assert(d.name == 'Underwater Basketweaving')
     tcount = d.transfers.count
@@ -61,5 +61,23 @@ class DepartmentTest < ActiveSupport::TestCase
     assert(d.name == 'Underwater Basketweaving')
     ttest = d.transfers.first
     assert(ttest.grad_date.to_s == '2020-05-01')
+  end
+
+  test 'can have zero or more users' do
+    department_one = departments(:one)
+    department_two = departments(:two)
+    department_three = departments(:three)
+    assert(department_one.users.count == 1)
+    assert(department_two.users.count == 2)
+    assert(department_three.users.count == 0)
+  end
+
+  test 'can have zero or more submitters' do
+    department_one = departments(:one)
+    department_two = departments(:two)
+    department_three = departments(:three)
+    assert(department_one.submitters.count == 1)
+    assert(department_two.submitters.count == 2)
+    assert(department_three.submitters.count == 0)
   end
 end
