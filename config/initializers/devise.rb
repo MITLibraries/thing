@@ -69,6 +69,7 @@ Devise.setup do |config|
                                 metadata_signed: true,
                                 embed_sign: false,
                                 digest_method: XMLSecurity::Document::SHA1,
-                                signature_method: XMLSecurity::Document::RSA_SHA1 }
+                                signature_method: XMLSecurity::Document::RSA_SHA1 },
+                    failure_raise_out_environments: ['staging', 'production']
   end
 end
