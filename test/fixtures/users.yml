@@ -52,6 +52,13 @@ processor:
   given_name: 'Processor'
   surname: 'Robot'
 
+transfer_submitter:
+  uid: 'transfer_submitter_id'
+  email: 'transfer@example.com'
+  role: 'transfer_submitter'
+  given_name: 'Terry'
+  surname: 'Ransfer'
+
 thesis_admin:
   uid: 'thesis_admin_id'
   email: 'thesis_admin@example.com'

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     resources :departments
     resources :rights
     resources :theses
+    resources :transfers
 
     root to: "theses#index"
   end
@@ -27,6 +28,8 @@ Rails.application.routes.draw do
   devise_for :users, :controllers => {
     :omniauth_callbacks => 'users/omniauth_callbacks'
   }
+
+  resources :transfer, only: [:new, :create, :show]
 
   devise_scope :user do
     get 'sign_in', to: 'devise/sessions#new', as: :user_session

@@ -29,6 +29,13 @@ class Ability
     can :read, Thesis, user_id: @user.id
   end
 
+  # Users who can submit and view transfers.
+  def transfer_submitter
+    basic
+    can :create, Transfer
+    can :read, Transfer, user_id: @user.id
+  end
+
   # Library staff who process the thesis queue. They should be able to use the
   # submissions processing queue page and whatever functionality it exposes,
   # but not the admin dashboards.
@@ -40,6 +47,7 @@ class Ability
     can :process_theses, Thesis
     can :stats, Thesis
     can :read, Thesis
+    can :read, Transfer
   end
 
   # Library staff who can use the admin dashboards (which includes operations
@@ -47,6 +55,8 @@ class Ability
   def thesis_admin
     processor
     can %i[create update], Thesis
+    can :create, Transfer
+    can :read, Transfer
     can :administrate, Admin
   end
 end
