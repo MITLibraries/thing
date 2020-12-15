@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: yo
+  user: transfer_submitter
   department: one
 
 two:
-  user: yo
+  user: transfer_submitter
   department: two
 
 three:
-  user: admin
+  user: thesis_admin
   department: two

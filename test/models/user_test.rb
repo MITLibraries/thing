@@ -101,18 +101,18 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'can access transfer from user' do
-    u = User.last
-    assert(u.name == 'Yobot, Yo (yo@example.com)')
+    u = users(:transfer_submitter)
+    assert(u.name == 'Ransfer, Terry (transfer@example.com)')
     ttest = u.transfers.first
     assert(ttest.grad_date.to_s == '2020-05-01')
   end
 
   test 'can have zero or more departments as submitter' do
-    yo = users(:yo)
-    admin = users(:admin)
+    transfer_submitter = users(:transfer_submitter)
+    thesis_admin = users(:thesis_admin)
     bad = users(:bad)
-    assert(yo.departments.count == 2)
-    assert(admin.departments.count == 1)
+    assert(transfer_submitter.departments.count == 2)
+    assert(thesis_admin.departments.count == 1)
     assert(bad.departments.count == 0)
   end
 end

@@ -12,7 +12,12 @@
 valid:
   department: one
   grad_date: 2020-05-01
-  user: yo
+  user: transfer_submitter
+
+alsovalid:
+  department: one
+  grad_date: 2020-05-01
+  user: thesis_admin
 
 baduser:
   department: one

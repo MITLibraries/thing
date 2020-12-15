@@ -4,7 +4,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~ the submission system ~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'new prompts for login' do
     get '/thesis/new'
-    assert_response :redirect
+    assert_redirected_to '/users/auth/saml'
   end
 
   test 'new when logged in' do
