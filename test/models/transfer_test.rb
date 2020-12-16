@@ -8,6 +8,7 @@
 #  grad_date     :date             not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  note          :text
 #
 require 'test_helper'
 
@@ -46,6 +47,12 @@ class TransferTest < ActiveSupport::TestCase
     @transfer.graduation_month = nil
     @transfer.graduation_year = nil
     assert @transfer.invalid?
+  end
+
+  test 'valid even without a note' do
+    assert @transfer.valid?
+    @transfer.note = nil
+    assert @transfer.valid?
   end
 
   test 'grad year should be vaguely reasonable' do

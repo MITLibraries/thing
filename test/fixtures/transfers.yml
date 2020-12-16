@@ -8,10 +8,12 @@
 #  grad_date     :date             not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  note          :text
 #
 valid:
   department: one
   grad_date: 2020-05-01
+  note: 'Let me tell you a thing or two about these files. For one, they are all artisanally crafted by very skilled pigeons. Well, except for the one that we found under a cupboard in the back of the lab. No one knows why it exists - but every time we process the data without it, the laptop starts smoking. Seriously.'
   user: transfer_submitter
 
 alsovalid:
