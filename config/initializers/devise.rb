@@ -55,6 +55,7 @@ Devise.setup do |config|
                     idp_cert_fingerprint: idp_metadata[:idp_cert_fingerprint],
                     idp_sso_target_url: ENV['IDP_SSO_URL'],
                     idp_cert: idp_metadata[:idp_cert],
+                    idp_cert_multi: idp_metadata[:idp_cert_multi],
                     certificate: Base64.strict_decode64(ENV['SP_CERTIFICATE']),
                     private_key: Base64.strict_decode64(ENV['SP_PRIVATE_KEY']),
                     issuer: ENV['SP_ENTITY_ID'],
@@ -68,7 +69,7 @@ Devise.setup do |config|
                                 want_assertions_encrypted: true,
                                 metadata_signed: true,
                                 embed_sign: false,
-                                digest_method: XMLSecurity::Document::SHA1,
-                                signature_method: XMLSecurity::Document::RSA_SHA1 }
+                                digest_method: XMLSecurity::Document::RSA_SHA256,
+                                signature_method: XMLSecurity::Document::RSA_SHA256 }
   end
 end
