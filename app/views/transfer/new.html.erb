@@ -1,1 +1,100 @@
 <%= content_for(:title, "Thesis Transfer Submission | MIT Libraries") %>
+
+<% content_for :additional_js do %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<% end %>
+
+<%= simple_form_for(@transfer, url: '/transfer', html: { class: 'transferSubmission' }, validate: true ) do |f| %>
+
+  <%= f.error_notification %>
+  <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+
+  <%= f.association :department, label_method: :name, as: :select,
+        collection: current_user.submittable_departments,
+        validate: { presence: true },
+        include_hidden: false,
+        wrapper_html: { class: 'field-wrap select' },
+        input_html: { class: 'field field-select', multiple: false,
+          data: { msg: Transfer::VALIDATION_MSGS[:department] },
+          'aria-describedby': 'transfer_department-hint'
+        },
+        hint: 'Select the department for which you are submitting theses',
+        hint_html: { id: 'transfer_department-hint' } %>
+
+  <fieldset>
+    <legend>Degree Date</legend>
+    <span id="thesis_date_ids-hint" class="hint">For the degree date, enter the semester in which these degrees will be conferred.</span>
+    <div class='group-inline'>
+
+      <%= f.input :graduation_month, label: 'Month', as: :select,
+            collection: Thesis::VALID_MONTHS,
+            wrapper_html: { class: 'field-wrap' },
+            input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
+            'aria-describedby': 'thesis_date_ids-hint' } %>
+
+      <%= f.input :graduation_year, label: 'Year', as: :string,
+            wrapper_html: { class: 'field-wrap' },
+            input_html: { class: 'field field-select',
+              data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] },
+            type: 'number',
+            step: 1 } %>
+
+    </div>
+  </fieldset>
+
+  <%= f.input :files, as: :file,
+        wrapper_html: { class: 'field-wrap' },
+        input_html: { class: 'field field-upload',
+                      multiple: true,
+                      direct_upload: true,
+                      data: { msg: Transfer::VALIDATION_MSGS[:files] },
+                      'aria-describedby': 'transfer_files_ids-hint' },
+        label: 'Files to upload',
+        required: true,
+        hint: 'This would be the hint text describing the bulk files fields.',
+        hint_html: { id: 'transfer_files_ids-hint' }  %>
+
+  <div class='field-wrap'>
+    <div id="files_to_upload"></div>
+  </div>
+
+  <%= f.input :note, as: :text,
+        wrapper_html: { class: 'field-wrap' },
+        input_html: { class: 'field field-note', :rows => 10,
+          'aria-describedby': 'transfer_note-hint' },
+        label: 'Note',
+        required: false,
+        hint: 'This is where we describe what we think a note would inclue.',
+        hint_html: { id: 'transfer_note-hint' } %>
+
+  <div class='field-wrap'>
+    <%= submit_tag 'Submit Transfer', class: 'btn button-primary' %>
+  </div>
+
+<% end # Ends simple_form_for %>
+
+  <script>
+    $("input:file").change(function () {
+        var filenames = '';
+        var fileblurb = '<p>The following files will be uploaded when this form is submitted:</p>';
+        for (var i = 0; i < this.files.length; i++) {
+            filenames += '<li>' + this.files[i].name + '</li>';
+        }
+        $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
+    });
+
+    $("#new_transfer").validate({
+      invalidHandler: function(event, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+          var message = errors == 1
+            ? 'The form was not submitted successfully - one required field needs to be fixed.'
+            : 'The form was not submitted successfully - ' + errors + ' required fields need to be fixed.';
+          $("div.error").html(message);
+          $("div.error").show();
+        } else {
+          $("div.error").hide();
+        }
+      }
+    });
+  </script>

@@ -70,4 +70,14 @@ class User < ApplicationRecord
       "#{self.email}"
     end
   end
+
+  # Users with the "thesis_admin" role can submit transfers for any department.
+  # Users without that role are more limited.
+  def submittable_departments
+    if role == "thesis_admin"
+      Department.all.order(:name)
+    else
+      departments.order(:name)
+    end
+  end
 end

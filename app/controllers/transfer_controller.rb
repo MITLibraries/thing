@@ -9,6 +9,22 @@ class TransferController < ApplicationController
     @transfer.user = current_user
   end
 
+  def create
+    @transfer = Transfer.new(transfer_params)
+    @transfer.user = current_user
+    @transfer.files.attach(params[:transfer][:files])
+    if params[:transfer][:department_id]
+      @transfer.department = Department.find(params[:transfer][:department_id])
+    end
+    if @transfer.save
+      flash.notice = 'Thank you for your submission.'
+      redirect_to root_path()
+    else
+      flash[:error] = "Error saving transfer: #{@transfer.errors.full_messages}"
+      render 'new'
+    end
+  end
+
   def show
     @transfer = Transfer.find(params[:id])
   end
@@ -24,5 +40,10 @@ class TransferController < ApplicationController
     else
       redirect_to user_saml_omniauth_authorize_path
     end
+  end
+
+  def transfer_params
+    params.require(:transfer).permit(:graduation_month, :graduation_year, 
+                                     :department_id, :note)
   end
 end

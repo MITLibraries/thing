@@ -19,11 +19,13 @@ class Transfer < ApplicationRecord
   attr_accessor :graduation_year, :graduation_month
 
   VALIDATION_MSGS = {
-    graduation_year: 'Required - Please input your year of graduation.',
-    graduation_month: 'Required - Please select your month of graduation.',
+    department: 'Required - Please specify the department submitting the transfer.',
+    graduation_year: 'Required - Please input the graduation year for these theses.',
+    graduation_month: 'Required - Please select the graduation month for these theses.',
     files: 'Required - Attaching at least one file is required.',
   }
 
+  validates :department, presence: { message: VALIDATION_MSGS[:department] }
   validates :graduation_year, presence:
     { message: VALIDATION_MSGS[:graduation_year] }
   validate :valid_year?
