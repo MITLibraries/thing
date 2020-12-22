@@ -115,4 +115,12 @@ class UserTest < ActiveSupport::TestCase
     assert(thesis_admin.departments.count == 1)
     assert(bad.departments.count == 0)
   end
+
+  test 'thesis_submitters can see specified departments' do
+    assert_equal users(:transfer_submitter).submittable_departments.length, users(:transfer_submitter).submitters.length
+  end
+
+  test 'thesis_admins can see all departments' do
+    assert_equal users(:thesis_admin).submittable_departments.length, Department.all.length
+  end
 end

@@ -10,7 +10,7 @@
   <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
 
   <%= f.association :department, label_method: :name, as: :select,
-        collection: current_user.departments.order(:name),
+        collection: current_user.submittable_departments,
         validate: { presence: true },
         include_hidden: false,
         wrapper_html: { class: 'field-wrap select' },
