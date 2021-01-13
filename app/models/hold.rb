@@ -15,8 +15,13 @@
 #  updated_at       :datetime         not null
 #
 class Hold < ApplicationRecord
-	belongs_to :thesis
-	belongs_to :hold_source
+  belongs_to :thesis
+  belongs_to :hold_source
 
-	enum status: [ :active, :expired, :released ]
+  enum status: [ :active, :expired, :released ]
+
+  validates :date_requested, presence: true
+  validates :date_start, presence: true
+  validates :date_end, presence: true
+  validates :status, presence: true
 end

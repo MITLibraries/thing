@@ -22,6 +22,39 @@ class HoldTest < ActiveSupport::TestCase
     assert(hold.valid?)
   end
 
+  test 'valid date_requested' do
+    hold = holds(:valid)
+    assert(hold.valid?)
+    hold.date_requested = nil
+    assert(hold.invalid?)
+    hold.date_requested = 'foo'
+    assert(hold.invalid?)
+    hold.date_requested = '2021-14-40'
+    assert(hold.invalid?)
+  end
+
+  test 'valid date_start' do
+    hold = holds(:valid)
+    assert(hold.valid?)
+    hold.date_start = nil
+    assert(hold.invalid?)
+    hold.date_start = 'foo'
+    assert(hold.invalid?)
+    hold.date_start = '2021-14-40'
+    assert(hold.invalid?)
+  end
+
+  test 'valid date_end' do
+    hold = holds(:valid)
+    assert(hold.valid?)
+    hold.date_end = nil
+    assert(hold.invalid?)
+    hold.date_end = 'foo'
+    assert(hold.invalid?)
+    hold.date_end = '2021-14-40'
+    assert(hold.invalid?)
+  end
+
   test 'only valid status values' do
     hold = holds(:valid)
     hold.status = "active"
@@ -33,9 +66,7 @@ class HoldTest < ActiveSupport::TestCase
     assert_raises ArgumentError do
       hold.status = "garbage"
     end
-    assert_raises ActiveRecord::NotNullViolation do
-      hold.status = nil
-      hold.save
-    end
+    hold.status = nil
+    assert(hold.invalid?)
   end
 end
