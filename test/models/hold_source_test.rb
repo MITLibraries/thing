@@ -14,4 +14,10 @@ class HoldSourceTest < ActiveSupport::TestCase
     holdsource = hold_sources(:tlo)
     assert(holdsource.valid?)
   end
+
+  test 'source is required' do
+    holdsource = hold_sources(:tlo)
+    holdsource.source = nil
+    assert(holdsource.invalid?)
+  end
 end

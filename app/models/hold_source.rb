@@ -8,5 +8,7 @@
 #  updated_at :datetime         not null
 #
 class HoldSource < ApplicationRecord
-	has_many :holds
+  has_many :holds
+
+  validates :source, presence: true
 end
