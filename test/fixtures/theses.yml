@@ -75,6 +75,17 @@ with_note:
   status: 'active'  # The default, but specified for testing purposes.
   note: 'Absolutely for sure rocket science'
 
+with_hold:
+  title: MySensitiveThesis
+  abstract: MyText
+  grad_date: 2017-09-13
+  user: yo
+  right: one
+  departments: [one]
+  degrees: [one]
+  status: 'active'
+  note: 'Something sensitive'
+
 june_2018:
   title: MyString
   abstract: MyText
