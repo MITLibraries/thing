@@ -4,6 +4,8 @@ Rails.application.routes.draw do
     resources :users
     resources :degrees
     resources :departments
+    resources :holds
+    resources :hold_sources
     resources :rights
     resources :submitters
     resources :theses

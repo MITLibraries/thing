@@ -328,4 +328,86 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     get "/admin/transfers/#{transfers(:valid).id}"
     assert_response :success
   end
+
+  # Holds
+  test 'accessing holds panel does not work with basic rights' do
+    mock_auth(users(:basic))
+    get '/admin/holds'
+    assert_response :redirect
+    mock_auth(users(:processor))
+    get '/admin/holds'
+    assert_response :redirect
+  end
+
+  test 'accessing holds panel as an admin user works' do
+    mock_auth(users(:admin))
+    get '/admin/holds'
+    assert_response :success
+    assert_equal('/admin/holds', path)
+  end
+
+  test 'accessing holds panel as a thesis_admin user works' do
+    mock_auth(users(:thesis_admin))
+    get '/admin/holds'
+    assert_response :success
+    assert_equal('/admin/holds', path)
+  end
+
+  test 'can edit holds through admin dashboard' do
+    needle = 'Some specific test phrase that was not set in the fixtures...'
+    mock_auth(users(:thesis_admin))
+    hold = Hold.first
+    assert_not_equal needle, hold.processing_notes
+    patch admin_hold_path(hold),
+      params: { hold: { processing_notes: needle } }
+    hold.reload
+    assert_equal needle, hold.processing_notes
+  end
+
+  test 'hold edit screen includes a dropdown for enumerated status values' do
+    mock_auth(users(:thesis_admin))
+    get "/admin/holds/#{holds(:valid).id}/edit"
+    assert_select "select#hold_status", text: "active\nexpired\nreleased"
+  end
+
+  # Hold_sources
+  test 'accessing hold_sources panel does not work with basic rights' do
+    mock_auth(users(:basic))
+    get '/admin/hold_sources'
+    assert_response :redirect
+    mock_auth(users(:processor))
+    get '/admin/hold_sources'
+    assert_response :redirect
+  end
+
+  test 'accessing hold_sources panel as an admin user works' do
+    mock_auth(users(:admin))
+    get '/admin/hold_sources'
+    assert_response :success
+    assert_equal('/admin/hold_sources', path)
+  end
+
+  test 'accessing hold_sources panel as a thesis_admin user works' do
+    mock_auth(users(:thesis_admin))
+    get '/admin/hold_sources'
+    assert_response :success
+    assert_equal('/admin/hold_sources', path)
+  end
+
+  test 'can edit hold_sources through admin dashboard' do
+    needle = 'Some specific test phrase that was not set in the fixtures...'
+    mock_auth(users(:thesis_admin))
+    hold_source = HoldSource.first
+    assert_not_equal needle, hold_source.source
+    patch admin_hold_source_path(hold_source),
+      params: { hold_source: { source: needle } }
+    hold_source.reload
+    assert_equal needle, hold_source.source
+  end
+
+  test 'editing hold_sources lists which holds that source has requested' do
+    mock_auth(users(:thesis_admin))
+    get "/admin/hold_sources/#{hold_sources(:tlo).id}/edit"
+    assert_select "div.field-unit__field", text: theses(:with_hold).title
+  end
 end
