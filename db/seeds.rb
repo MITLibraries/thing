@@ -16,9 +16,4 @@ Right.find_or_create_by(statement: 'Other')
 Degree.find_or_create_by(name: 'Bachelor of Science')
 Degree.find_or_create_by(name: 'Master of Business Analytics')
 
-# Create Hold Sources
-HoldSource.find_or_create_by(source: 'TLO')
-HoldSource.find_or_create_by(source: 'Vice Chancellor')
-HoldSource.find_or_create_by(source: 'VPR')
-
 Rails.logger.info('Seeding DB Complete')
