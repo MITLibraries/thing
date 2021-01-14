@@ -184,18 +184,4 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.graduation_month = 'December'
     assert thesis.invalid?
   end
-
-  test 'a thesis may have a hold' do
-    thesis = theses(:with_hold)
-    assert thesis.holds.count == 1
-
-    thesis = theses(:one)
-    assert thesis.holds.count == 0
-  end
-
-  test 'thesis holds have readable attributes' do
-    thesis = theses(:with_hold)
-    assert thesis.holds.first.hold_source.source == 'technology licensing office'
-    assert thesis.holds.first.status = 'active'
-  end
 end
