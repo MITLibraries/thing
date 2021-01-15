@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_16_104412) do
+ActiveRecord::Schema.define(version: 2021_01_11_000000) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -74,6 +74,27 @@ ActiveRecord::Schema.define(version: 2020_12_16_104412) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "hold_sources", force: :cascade do |t|
+    t.text "source", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "holds", force: :cascade do |t|
+    t.integer "thesis_id", null: false
+    t.date "date_requested", null: false
+    t.date "date_start", null: false
+    t.date "date_end", null: false
+    t.integer "hold_source_id", null: false
+    t.string "case_number"
+    t.integer "status", null: false
+    t.text "processing_notes"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["hold_source_id"], name: "index_holds_on_hold_source_id"
+    t.index ["thesis_id"], name: "index_holds_on_thesis_id"
+  end
+
   create_table "rights", force: :cascade do |t|
     t.text "statement", null: false
     t.datetime "created_at", null: false
@@ -128,6 +149,8 @@ ActiveRecord::Schema.define(version: 2020_12_16_104412) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "holds", "hold_sources"
+  add_foreign_key "holds", "theses"
   add_foreign_key "submitters", "departments"
   add_foreign_key "submitters", "users"
   add_foreign_key "transfers", "departments"
