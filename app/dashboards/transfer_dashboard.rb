@@ -10,10 +10,13 @@ class TransferDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     user: Field::BelongsTo,
     department: Field::BelongsTo,
-    files_attachments: Field::HasMany.with_options(class_name: "ActiveStorage::Attachment"),
-    files_blobs: Field::HasMany.with_options(class_name: "ActiveStorage::Blob"),
+    files_attachments: AttachmentField,
     id: Field::Number,
-    grad_date: Field::Date,
+    grad_date: Field::DateTime.with_options(
+      format: "%Y %B"
+    ),
+    graduation_month: Field::Number,
+    graduation_year: Field::Number,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze
@@ -26,8 +29,9 @@ class TransferDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
   user
   department
+  grad_date
+  created_at
   files_attachments
-  files_blobs
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -36,7 +40,6 @@ class TransferDashboard < Administrate::BaseDashboard
   user
   department
   files_attachments
-  files_blobs
   id
   grad_date
   created_at
@@ -49,8 +52,6 @@ class TransferDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = %i[
   user
   department
-  files_attachments
-  files_blobs
   grad_date
   ].freeze
 
