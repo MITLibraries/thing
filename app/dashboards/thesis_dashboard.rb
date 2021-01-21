@@ -37,6 +37,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     author_note: Field::Text,
     processor_note: Field::Text,
     metadata_complete: Field::Boolean,
+    holds: Field::HasMany,
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -47,6 +48,7 @@ class ThesisDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
     title
     user
+    holds
     right
     grad_date
   ].freeze
@@ -64,6 +66,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     updated_at
     departments
     degrees
+    holds
     status
     publication_status
     author_note
