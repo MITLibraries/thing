@@ -8,6 +8,7 @@ class HoldSourceDashboard < Administrate::BaseDashboard
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
+    active_holds: Field::Number,
     holds: Field::HasMany,
     id: Field::Number,
     source: Field::Text,
@@ -23,6 +24,7 @@ class HoldSourceDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
   id
   source
+  active_holds
   holds
   created_at
   ].freeze

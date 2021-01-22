@@ -11,4 +11,8 @@ class HoldSource < ApplicationRecord
   has_many :holds
 
   validates :source, presence: true
+
+  def active_holds
+    return self.holds.count { |hold| hold.status == 'active' }
+  end
 end
