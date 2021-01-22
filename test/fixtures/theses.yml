@@ -73,7 +73,7 @@ with_note:
   departments: [one]
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
-  note: 'Absolutely for sure rocket science'
+  processor_note: 'Absolutely for sure rocket science'
 
 with_hold:
   title: MySensitiveThesis
@@ -84,7 +84,7 @@ with_hold:
   departments: [one]
   degrees: [one]
   status: 'active'
-  note: 'Something sensitive'
+  processor_note: 'Something sensitive'
 
 june_2018:
   title: MyString

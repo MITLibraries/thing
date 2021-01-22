@@ -26,21 +26,6 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 'yoyos are cool', Thesis.last.title
     assert_equal 'We discovered it with science', Thesis.last.abstract
   end
-  test 'invalid title message' do
-    mock_auth(users(:basic))
-    params = @thesis_params
-    params[:title] = nil
-    post thesis_index_path, params: { thesis: params }
-    assert_select 'span.error', text: Thesis::VALIDATION_MSGS[:title]
-  end
-
-  test 'invalid abstract message' do
-    mock_auth(users(:basic))
-    params = @thesis_params
-    params[:abstract] = nil
-    post thesis_index_path, params: { thesis: params }
-    assert_select 'span.error', text: Thesis::VALIDATION_MSGS[:abstract]
-  end
 
   test 'invalid departments message' do
     mock_auth(users(:basic))

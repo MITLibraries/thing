@@ -58,11 +58,11 @@
       <div class="col3q">
         <%= form_tag(annotate_path(thesis), method: "post", class: 'form-notes') do %>
           <div class="field-wrap">
-            <%= label_tag("note_#{thesis.id}", "Note:", class: "field-label") %>
-            <%= text_area_tag("note_#{thesis.id}", thesis.note,
+            <%= label_tag("note_#{thesis.id}", "Processor note:", class: "field-label") %>
+            <%= text_area_tag("note_#{thesis.id}", thesis.processor_note,
               class: "field field-text field-textarea full-width") %>
           </div>
-          <%= submit_tag("Update note", class: "btn button-secondary button-small") %>
+          <%= submit_tag("Update processor note", class: "btn button-secondary button-small") %>
         <% end %>
       </div>
       <div class="col1q-r">

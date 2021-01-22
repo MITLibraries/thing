@@ -27,10 +27,16 @@ class ThesisDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     files: FileField,
+    files_complete: Field::Boolean,
     status: Field::Select.with_options(
       collection: Thesis::STATUS_OPTIONS,
     ),
-    note: Field::Text,
+    publication_status: Field::Select.with_options(
+      collection: Thesis::PUBLICATION_STATUS_OPTIONS,
+    ),
+    author_note: Field::Text,
+    processor_note: Field::Text,
+    metadata_complete: Field::Boolean,
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -59,7 +65,11 @@ class ThesisDashboard < Administrate::BaseDashboard
     departments
     degrees
     status
-    note
+    publication_status
+    author_note
+    processor_note
+    metadata_complete
+    files_complete
     files
   ].freeze
 
@@ -77,9 +87,13 @@ class ThesisDashboard < Administrate::BaseDashboard
     title
     abstract
     status
+    publication_status
     graduation_year
     graduation_month
-    note
+    author_note
+    processor_note
+    metadata_complete
+    files_complete
   ].freeze
 
   # Overwrite this method to customize how theses are displayed
