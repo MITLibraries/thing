@@ -71,11 +71,11 @@ class ThesisController < ApplicationController
     @thesis = Thesis.find(params[:id])
     key_name = "note_#{@thesis.id}"
     note = params[key_name]
-    @thesis.note = note
+    @thesis.processor_note = note
     if @thesis.save
-      flash[:info] = "#{@thesis.title} note has been updated."
+      flash[:info] = "#{@thesis.title} processor note has been updated."
     else
-      flash[:error] = "#{@thesis.title} note was unable to be updated."
+      flash[:error] = "#{@thesis.title} processor note was unable to be updated."
     end
     redirect_back(fallback_location: process_path)
   end

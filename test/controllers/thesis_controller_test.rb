@@ -148,7 +148,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'note field does not show on thesis submission page' do
+  test 'processor note field does not show on thesis submission page' do
     sign_in users(:yo)
     get new_thesis_path
 
@@ -156,13 +156,13 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_select 'textarea.thesis_note', count: 0
   end
 
-  test 'note does not show on thesis viewing page' do
+  test 'processor note does not show on thesis viewing page' do
     yo = users(:yo)
     sign_in yo
 
     thesis = Thesis.where(user: yo).first
     note_text = 'Yo dawg, I heard you like notes on your thesis'
-    thesis.note = note_text
+    thesis.processor_note = note_text
     thesis.save
     get thesis_path(thesis)
 
@@ -255,7 +255,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'note field visible' do
+  test 'processor note field visible' do
     sign_in users(:admin)
     get process_path
 
@@ -268,9 +268,9 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
                    count
                  end
 
-    assert_select 'label', text: 'Note:', count: num_theses
+    assert_select 'label', text: 'Processor note:', count: num_theses
     assert_select 'textarea', count: num_theses
-    assert_select 'input[value="Update note"]', count: num_theses
+    assert_select 'input[value="Update processor note"]', count: num_theses
   end
 
   test 'link to submissions page visible to admin' do
@@ -748,31 +748,31 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ adding notes  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  test 'non-authenticated users cannot add notes' do
+  test 'non-authenticated users cannot add processor notes' do
     thesis = theses(:with_note)
-    orig_note = thesis.note
+    orig_note = thesis.processor_note
     target_note = 'Best consumed with scooby snacks'
     note_field_id = "note_#{thesis.id}"
     post annotate_url(thesis),
       params: Hash[note_field_id, target_note], xhr: true
     assert_response :redirect
-    assert_equal orig_note, thesis.reload.note
+    assert_equal orig_note, thesis.reload.processor_note
   end
 
-  test 'basic users cannot add notes' do
+  test 'basic users cannot add processor notes' do
     sign_in users(:basic)
     thesis = theses(:with_note)
-    orig_note = thesis.note
+    orig_note = thesis.processor_note
     target_note = 'Best consumed with scooby snacks'
     note_field_id = "note_#{thesis.id}"
     assert_raises CanCan::AccessDenied do
       post annotate_url(thesis),
         params: Hash[note_field_id, target_note], xhr: true
     end
-    assert_equal orig_note, thesis.reload.note
+    assert_equal orig_note, thesis.reload.processor_note
   end
 
-  test 'admins can add notes' do
+  test 'admins can add processor notes' do
     sign_in users(:admin)
     thesis = theses(:with_note)
     target_note = 'Best consumed with scooby snacks'
@@ -780,10 +780,10 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     post annotate_url(thesis),
       params: Hash[note_field_id, target_note], xhr: true
     assert_response :redirect
-    assert_equal target_note, thesis.reload.note
+    assert_equal target_note, thesis.reload.processor_note
   end
 
-  test 'thesis admins can add notes' do
+  test 'thesis admins can add processor notes' do
     sign_in users(:thesis_admin)
     thesis = theses(:with_note)
     target_note = 'Best consumed with scooby snacks'
@@ -791,10 +791,10 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     post annotate_url(thesis),
       params: Hash[note_field_id, target_note], xhr: true
     assert_response :redirect
-    assert_equal target_note, thesis.reload.note
+    assert_equal target_note, thesis.reload.processor_note
   end
 
-  test 'processors can add notes' do
+  test 'processors can add processor notes' do
     sign_in users(:processor)
     thesis = theses(:with_note)
     target_note = 'Best consumed with scooby snacks'
@@ -802,7 +802,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     post annotate_url(thesis),
       params: Hash[note_field_id, target_note], xhr: true
     assert_response :redirect
-    assert_equal target_note, thesis.reload.note
+    assert_equal target_note, thesis.reload.processor_note
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ stats ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_11_000000) do
+ActiveRecord::Schema.define(version: 2021_01_20_213811) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -111,15 +111,19 @@ ActiveRecord::Schema.define(version: 2021_01_11_000000) do
   end
 
   create_table "theses", force: :cascade do |t|
-    t.string "title", null: false
-    t.text "abstract", null: false
+    t.string "title"
+    t.text "abstract"
     t.date "grad_date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.integer "right_id"
     t.string "status", default: "active"
-    t.text "note"
+    t.text "processor_note"
+    t.text "author_note"
+    t.boolean "files_complete", default: false, null: false
+    t.boolean "metadata_complete", default: false, null: false
+    t.string "publication_status", default: "Not ready for publication", null: false
     t.index ["right_id"], name: "index_theses_on_right_id"
     t.index ["user_id"], name: "index_theses_on_user_id"
   end

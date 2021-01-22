@@ -25,16 +25,16 @@ class ThesisTest < ActiveSupport::TestCase
     assert(thesis.valid?)
   end
 
-  test 'invalid without title' do
+  test 'valid without title' do
     thesis = theses(:one)
     thesis.title = nil
-    assert(thesis.invalid?)
+    assert thesis.valid?
   end
 
-  test 'invalid without abstract' do
+  test 'valid without abstract' do
     thesis = theses(:one)
     thesis.abstract = nil
-    assert(thesis.invalid?)
+    assert thesis.valid?
   end
 
   test 'invalid without grad date' do
@@ -141,6 +141,79 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.status = 'nobel prize-winning'
     thesis.save
     assert_not(thesis.valid?)
+  end
+
+  test 'can have author note' do
+    thesis = theses(:one)
+    thesis.author_note = 'rad'
+    thesis.save
+    assert thesis.valid?
+  end
+
+  test 'can have processor note' do 
+    thesis = theses(:one)
+    thesis.processor_note = 'confirmed that author is rad'
+    thesis.save
+    assert thesis.valid?
+  end
+
+  test 'invalid without files complete' do
+    thesis = theses(:one)
+    thesis.files_complete = nil
+    thesis.save
+    assert_not thesis.valid?
+  end
+
+  test 'files complete defaults to false' do
+    thesis = Thesis.new
+    assert thesis.files_complete == false
+  end
+
+  test 'invalid without metadata complete' do
+    thesis = theses(:one)
+    thesis.metadata_complete = nil
+    thesis.save
+    assert_not thesis.valid?
+  end
+
+  test 'metadata complete defaults to false' do
+    thesis = Thesis.new
+    assert(thesis.metadata_complete == false)
+  end
+
+  test 'invalid without publication status' do
+    thesis = theses(:one)
+    thesis.publication_status = nil
+    thesis.save
+    assert_not thesis.valid?
+  end
+
+  test 'publication status defaults to not ready for publication' do
+    thesis = Thesis.new
+    assert thesis.publication_status == 'Not ready for publication'
+  end
+
+  test 'invalid without accepted publication status' do
+    thesis = theses(:one)
+    thesis.publication_status = 'Not ready for publication'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.publication_status = 'Publication review'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.publication_status = 'Ready for publication'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.publication_status = 'Published'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.publication_status = 'Foo'
+    thesis.save
+    assert_not thesis.valid?
   end
 
   test 'only May, June, September, and February are valid months' do

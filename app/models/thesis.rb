@@ -31,8 +31,6 @@ class Thesis < ApplicationRecord
   attr_accessor :graduation_year, :graduation_month
 
   VALIDATION_MSGS = {
-    title: 'Required - Please provide the title for your thesis.',
-    abstract: 'Required - Please provide the abstract for your thesis.',
     graduation_year: 'Required - Please input your year of graduation.',
     graduation_month: 'Required - Please select your month of graduation.',
     departments: 'Required - Please select your primary department.',
@@ -40,11 +38,6 @@ class Thesis < ApplicationRecord
     right: 'Required - Please select the appropriate copyright.',
     files: 'Required - Attaching your thesis is required.',
   }
-
-  validates :title, presence:
-    { message: VALIDATION_MSGS[:title] }
-  validates :abstract, presence:
-    { message: VALIDATION_MSGS[:abstract] }
 
   validates :graduation_year, presence:
     { message: VALIDATION_MSGS[:graduation_year] }
@@ -57,11 +50,19 @@ class Thesis < ApplicationRecord
     { message: VALIDATION_MSGS[:departments] }
   validates :degrees, presence:
     { message: VALIDATION_MSGS[:degrees] }
+  validates :files_complete, exclusion: [nil]
+  validates :metadata_complete, exclusion: [nil]
 
   # validates :files, presence: true
 
   STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
   validates_inclusion_of :status, :in => STATUS_OPTIONS
+
+  PUBLICATION_STATUS_OPTIONS = ['Not ready for publication', 
+                                'Publication review', 
+                                'Ready for publication',
+                                'Published']
+  validates_inclusion_of :publication_status, :in => PUBLICATION_STATUS_OPTIONS
 
   VALID_MONTHS = ['February', 'May', 'June', 'September']
 
