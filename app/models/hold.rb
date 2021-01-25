@@ -24,4 +24,8 @@ class Hold < ApplicationRecord
   validates :date_start, presence: true
   validates :date_end, presence: true
   validates :status, presence: true
+
+  def author
+    return self.thesis.user.name
+  end
 end

@@ -103,6 +103,6 @@ class ThesisDashboard < Administrate::BaseDashboard
   # across all pages of the admin dashboard.
   #
   def display_resource(thesis)
-    "Thesis: #{thesis.title}"
+    "Thesis: #{thesis.title} (by #{thesis.user.name})"
   end
 end
