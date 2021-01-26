@@ -114,6 +114,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
                           right_id: Right.first.id,
                           department_ids: [ Department.first.id ],
                           degree_ids: [ Degree.first.id ],
+                          advisor_ids: [ Advisor.first.id ],
                           title: 'yoyos are cool',
                           abstract: 'We discovered it with science',
                           graduation_month: 'June',

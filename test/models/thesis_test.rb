@@ -2,16 +2,20 @@
 #
 # Table name: theses
 #
-#  id         :integer          not null, primary key
-#  title      :string           not null
-#  abstract   :text             not null
-#  grad_date  :date             not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  user_id    :integer
-#  right_id   :integer
-#  status     :string           default("active")
-#  note       :text
+#  id                 :integer          not null, primary key
+#  title              :string
+#  abstract           :text
+#  grad_date          :date             not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  user_id            :integer
+#  right_id           :integer
+#  status             :string           default("active")
+#  processor_note     :text
+#  author_note        :text
+#  files_complete     :boolean          default(FALSE), not null
+#  metadata_complete  :boolean          default(FALSE), not null
+#  publication_status :string           default("Not ready for publication"), not null
 #
 
 require 'test_helper'
@@ -34,6 +38,25 @@ class ThesisTest < ActiveSupport::TestCase
   test 'valid without abstract' do
     thesis = theses(:one)
     thesis.abstract = nil
+    assert thesis.valid?
+  end
+
+  test 'valid without advisor' do
+    thesis = theses(:two)
+    assert_equal 0, thesis.advisors.count
+    assert thesis.valid?
+  end
+
+  test 'valid with one advisor' do
+    thesis = theses(:one)
+    assert_equal 1, thesis.advisors.count
+    assert thesis.valid?
+  end
+
+  test 'can have multiple advisors' do
+    thesis = theses(:one)
+    thesis.advisors = [advisors(:first),advisors(:second)]
+    assert_equal 2, thesis.advisors.count
     assert thesis.valid?
   end
 
