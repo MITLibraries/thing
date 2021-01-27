@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   # For details see http://guides.rubyonrails.org/routing.html
   namespace :admin do
     resources :users
+    resources :advisors
     resources :degrees
     resources :departments
     resources :holds
