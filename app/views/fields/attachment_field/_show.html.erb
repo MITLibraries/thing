@@ -1,3 +1,8 @@
 <% field.attachments.each do |attachment| %>
-  <%= link_to(attachment.filename, url_for(attachment)) %>
+  <ul>
+    <li>Link: <%= link_to(attachment.filename, url_for(attachment)) %></li>
+    <li>Purpose: <%= attachment.purpose %></li>
+    <li>Description: <%= attachment.description %></li>
+  </ul>
+  <hr />
 <% end %>
