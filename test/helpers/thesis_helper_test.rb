@@ -74,9 +74,10 @@ class ThesisHelperTest < ActionView::TestCase
     # february_2019
     # june_2019
     # september_2019
+    # multi_depts
 
     expected = { "Sep 2017"=>5, "Jun 2018"=>1, "Sep 2018"=>1,
-                 "Feb 2019"=>1, "Jun 2019"=>1, "Sep 2019"=>1}
+                 "Feb 2019"=>2, "Jun 2019"=>1, "Sep 2019"=>1}
     assert_equal expected, grouped_theses
   end
 
@@ -109,7 +110,7 @@ class ThesisHelperTest < ActionView::TestCase
     # Expects the theses as noted in the 3 tests above to exist.
 
     expected = { "Sep 2017"=>7, "Jun 2018"=>1, "Sep 2018"=>1,
-                 "Feb 2019"=>1, "Jun 2019"=>1, "Sep 2019"=>1}
+                 "Feb 2019"=>2, "Jun 2019"=>1, "Sep 2019"=>1}
     assert_equal expected, grouped_theses
   end
 

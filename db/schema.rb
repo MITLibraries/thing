@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_25_212125) do
+ActiveRecord::Schema.define(version: 2021_01_28_183652) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -74,9 +74,11 @@ ActiveRecord::Schema.define(version: 2021_01_25_212125) do
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
-  create_table "department_theses", id: false, force: :cascade do |t|
+  create_table "department_theses", force: :cascade do |t|
     t.integer "thesis_id"
     t.integer "department_id"
+    t.boolean "primary", default: false, null: false
+    t.index ["department_id", "thesis_id"], name: "department_and_thesis", unique: true
     t.index ["department_id"], name: "index_department_theses_on_department_id"
     t.index ["thesis_id"], name: "index_department_theses_on_thesis_id"
   end
