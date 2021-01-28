@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_20_213811) do
+ActiveRecord::Schema.define(version: 2021_01_25_212125) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -31,6 +31,19 @@ ActiveRecord::Schema.define(version: 2021_01_20_213811) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "advisor_theses", id: false, force: :cascade do |t|
+    t.integer "thesis_id"
+    t.integer "advisor_id"
+    t.index ["advisor_id"], name: "index_advisor_theses_on_advisor_id"
+    t.index ["thesis_id"], name: "index_advisor_theses_on_thesis_id"
+  end
+
+  create_table "advisors", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "degree_theses", id: false, force: :cascade do |t|

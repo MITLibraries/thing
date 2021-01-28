@@ -2,16 +2,20 @@
 #
 # Table name: theses
 #
-#  id         :integer          not null, primary key
-#  title      :string           not null
-#  abstract   :text             not null
-#  grad_date  :date             not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  user_id    :integer
-#  right_id   :integer
-#  status     :string           default("active")
-#  note       :text
+#  id                 :integer          not null, primary key
+#  title              :string
+#  abstract           :text
+#  grad_date          :date             not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  user_id            :integer
+#  right_id           :integer
+#  status             :string           default("active")
+#  processor_note     :text
+#  author_note        :text
+#  files_complete     :boolean          default(FALSE), not null
+#  metadata_complete  :boolean          default(FALSE), not null
+#  publication_status :string           default("Not ready for publication"), not null
 #
 
 class Thesis < ApplicationRecord
@@ -25,6 +29,9 @@ class Thesis < ApplicationRecord
 
   has_many :holds
   has_many :hold_sources, through: :holds
+
+  has_many :advisor_theses
+  has_many :advisors, through: :advisor_theses
 
   has_many_attached :files
 

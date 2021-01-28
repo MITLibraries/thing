@@ -38,6 +38,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     processor_note: Field::Text,
     metadata_complete: Field::Boolean,
     holds: Field::HasMany,
+    advisors: Field::HasMany,
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -66,6 +67,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     updated_at
     departments
     degrees
+    advisors
     holds
     status
     publication_status
@@ -87,6 +89,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     right
     departments
     degrees
+    advisors
     title
     abstract
     status
