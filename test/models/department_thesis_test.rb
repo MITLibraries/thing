@@ -21,7 +21,11 @@ class DepartmentThesisTest < ActiveSupport::TestCase
   end
 
   test 'only one primary department per thesis' do
+    link = department_theses(:primary)
+    assert_equal true, link.primary
     link = department_theses(:other)
+    assert_equal false, link.primary
+    assert(link.valid?)
     link.primary = true
     assert(link.invalid?)
   end

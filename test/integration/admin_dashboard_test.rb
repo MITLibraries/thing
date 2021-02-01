@@ -413,18 +413,17 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   test 'can edit department_thesis through admin dashboard' do
-    needle = false
     mock_auth(users(:thesis_admin))
     link = DepartmentThesis.first
-    assert_not_equal needle, link.primary
+    assert_not_equal false, link.primary
     patch admin_department_thesis_path(link),
-      params: { department_thesis: { primary: needle } }
+      params: { department_thesis: { primary: false } }
     link.reload
-    assert_equal needle, link.primary
+    assert_equal false, link.primary
     patch admin_department_thesis_path(link),
-      params: { department_thesis: { primary: !needle } }
+      params: { department_thesis: { primary: true } }
     link.reload
-    assert_not_equal needle, link.primary
+    assert_not_equal false, link.primary
   end
 
   # Holds
