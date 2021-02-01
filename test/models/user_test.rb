@@ -123,4 +123,14 @@ class UserTest < ActiveSupport::TestCase
   test 'thesis_admins can see all departments' do
     assert_equal users(:thesis_admin).submittable_departments.length, Department.all.length
   end
+
+  test 'has zero or more theses through author table' do
+    u1 = users(:yo)
+    u2 = users(:bad)
+    assert(u1.authors.any?)
+    assert(u1.theses.any?)
+    assert(u1.valid?)
+    assert(u2.theses.empty?)
+    assert(u2.valid?)
+  end
 end

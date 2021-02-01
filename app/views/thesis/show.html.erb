@@ -17,7 +17,7 @@
 </ul>
 
 <p class="copy-sup">
-  Submitted on <%= @thesis.created_at.to_formatted_s(:long) %> by <%= @thesis.user.email %>
+  Submitted on <%= @thesis.created_at.to_formatted_s(:long) %> by <%= @thesis.users.map { |u| u.name }.join(",") %>
 </p>
 
 <p>Theses will only be added to DSpace after degrees have been awarded and the thesis has been fully processed and cataloged by the MIT Libraries, which will be at least 3 months after the degree date.</p>

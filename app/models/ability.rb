@@ -25,8 +25,8 @@ class Ability
     # Any user can create a new Thesis.
     can :create, Thesis
 
-    # Only the Thesis owner can view their Thesis.
-    can :read, Thesis, user_id: @user.id
+    # Only the Thesis author can view their Thesis.
+    can :read, Thesis, users: { id: @user.id }
   end
 
   # Users who can submit and view transfers.

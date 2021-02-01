@@ -93,7 +93,10 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_not_equal thesis.title, new_title
 
     patch admin_thesis_path(thesis),
-      params: { thesis: { title: new_title } }
+      params: { thesis: { user_ids: [ User.first.id ], 
+                          title: new_title 
+                        } 
+              }
 
     thesis.reload
     assert_response :redirect
@@ -102,7 +105,8 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   test 'thesis admins can create theses through admin panel' do
-    mock_auth(users(:thesis_admin))
+    user = users(:thesis_admin)
+    mock_auth(user)
 
     orig_count = Thesis.count
 
@@ -110,7 +114,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     # model does some before-creation logic to combine the month and year into
     # the grad_date attribute on the model instance.
     post admin_theses_path,
-      params: { thesis: { user_id: User.first.id,
+      params: { thesis: { user_ids: [ user.id ],
                           right_id: Right.first.id,
                           department_ids: [ Department.first.id ],
                           degree_ids: [ Degree.first.id ],
@@ -118,8 +122,9 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
                           title: 'yoyos are cool',
                           abstract: 'We discovered it with science',
                           graduation_month: 'June',
-                          graduation_year: Date.today.year } }
-
+                          graduation_year: Date.today.year
+                        },
+              }
     assert_equal orig_count + 1, Thesis.count
     assert_equal 'yoyos are cool', Thesis.last.title
     assert_equal 'We discovered it with science', Thesis.last.abstract
@@ -151,11 +156,13 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test 'can assign advisors to theses via thesis panel' do
     needle = advisors(:second)
+    user = users(:yo)
     mock_auth(users(:thesis_admin))
     thesis = Thesis.first
     assert_equal thesis.advisors.count, 0
     patch admin_thesis_path(thesis),
-      params: { thesis: { advisor_ids: [needle.id] } }
+      params: { thesis: { user_ids: [user.id],
+                          advisor_ids: [needle.id] } }
     thesis.reload
     assert_equal thesis.advisors.count, 1
     assert_equal needle.name, thesis.advisors.first.name
@@ -506,5 +513,25 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     mock_auth(users(:thesis_admin))
     get "/admin/hold_sources/#{hold_sources(:tlo).id}/edit"
     assert_select "div.field-unit__field", text: theses(:with_hold).title
+  end
+
+  test 'thesis admins can access author dashboard' do
+    mock_auth(users(:thesis_admin))
+    get "/admin/authors"
+    assert_response :success
+  end
+
+  test 'admin users can access author dashboard' do 
+    mock_auth(users(:admin))
+    get "/admin/authors"
+    assert_response :success
+  end
+
+  test 'accessing author dashboard as basic user redirects to root' do
+    mock_auth(users(:basic))
+    get "/admin/authors"
+    assert_response :redirect
+    follow_redirect!
+    assert_equal('/', path)
   end
 end

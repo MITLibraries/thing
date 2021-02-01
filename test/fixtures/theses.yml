@@ -8,7 +8,6 @@
 #  grad_date          :date             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  user_id            :integer
 #  right_id           :integer
 #  status             :string           default("active")
 #  processor_note     :text
@@ -24,7 +23,6 @@ one:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -34,7 +32,6 @@ two:
   title:  Can apparent superluminal neutrino speeds be explained as a quantum weak measurement?
   abstract: Probably not.
   grad_date: 2017-09-13
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -43,7 +40,6 @@ downloaded:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -53,7 +49,6 @@ withdrawn:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -63,7 +58,6 @@ active:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -73,7 +67,6 @@ with_note:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -84,7 +77,6 @@ with_hold:
   title: MySensitiveThesis
   abstract: MyText
   grad_date: 2017-09-13
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -95,7 +87,6 @@ june_2018:
   title: MyString
   abstract: MyText
   grad_date: 2018-06-01
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -104,7 +95,6 @@ september_2018:
   title: MyString
   abstract: MyText
   grad_date: 2018-09-01
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -113,7 +103,6 @@ february_2019:
   title: MyString
   abstract: MyText
   grad_date: 2019-02-01
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -122,7 +111,6 @@ june_2019:
   title: MyString
   abstract: MyText
   grad_date: 2019-06-01
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -131,7 +119,6 @@ september_2019:
   title: MyString
   abstract: MyText
   grad_date: 2019-09-01
-  user: yo
   right: one
   departments: [one]
   degrees: [one]
@@ -140,6 +127,5 @@ multi_depts:
   title: MyOverAchievement
   abstract: MyText
   grad_date: 2019-02-01
-  user: yo
   right: one
   degrees: [one]

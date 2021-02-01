@@ -8,7 +8,6 @@
 #  grad_date          :date             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  user_id            :integer
 #  right_id           :integer
 #  status             :string           default("active")
 #  processor_note     :text
@@ -21,9 +20,6 @@
 require 'test_helper'
 
 class ThesisTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
   test 'valid thesis' do
     thesis = theses(:one)
     assert(thesis.valid?)
@@ -97,8 +93,15 @@ class ThesisTest < ActiveSupport::TestCase
 
   test 'invalid without user' do
     thesis = theses(:one)
-    thesis.user = nil
+    thesis.users = []
+    thesis.save
     assert(thesis.invalid?)
+  end
+
+  test 'valid with multiple authors' do
+    t = theses(:two)
+    assert(t.authors.count > 1)
+    assert(t.valid?)
   end
 
   test 'invalid without right' do

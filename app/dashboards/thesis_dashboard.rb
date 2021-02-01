@@ -12,7 +12,7 @@ class ThesisDashboard < Administrate::BaseDashboard
   # schema, but also about graduation_year and graduation_month, since Thesis
   # performs before_create validation on these objects.
   ATTRIBUTE_TYPES = {
-    user: Field::BelongsTo,
+    users: Field::HasMany,
     right: Field::BelongsTo,
     departments: Field::HasMany,
     degrees: Field::HasMany,
@@ -48,7 +48,7 @@ class ThesisDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
     title
-    user
+    users
     holds
     right
     grad_date
@@ -58,7 +58,7 @@ class ThesisDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
     id
-    user
+    users
     title
     abstract
     grad_date
@@ -85,7 +85,7 @@ class ThesisDashboard < Administrate::BaseDashboard
   # Make sure you display graduation_year and graduation_month on the form or
   # you will be unable to create Theses!
   FORM_ATTRIBUTES = %i[
-    user
+    users
     right
     departments
     degrees

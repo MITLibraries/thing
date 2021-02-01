@@ -12,13 +12,6 @@
       <%= link_to "All",magic_status_url('any'), { class: "btn button-small #{highlight_status('any')}"} %>
     </div>
   </div>
-  <div class="grid-item">
-    <div class="wrap-filters">
-      Sort by:
-      <%= link_to "Date", magic_sort_url('date'), { class: "btn button-small #{highlight_sort('date')}"} %>
-      <%= link_to "Name", magic_sort_url('name'), { class: "btn button-small #{highlight_sort('name')}"} %>
-    </div>
-  </div>
 </div>
 
 <% if show_form %>
