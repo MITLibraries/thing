@@ -1,0 +1,19 @@
+# == Schema Information
+#
+# Table name: department_theses
+#
+#  thesis_id     :integer
+#  department_id :integer
+#  id            :integer          not null, primary key
+#  primary       :boolean          default(FALSE), not null
+#
+
+primary:
+  thesis: multi_depts
+  department: one
+  primary: true
+
+other:
+  thesis: multi_depts
+  department: two
+  primary: false

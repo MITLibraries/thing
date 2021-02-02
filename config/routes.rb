@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     resources :advisors
     resources :degrees
     resources :departments
+    resources :department_theses
     resources :holds
     resources :hold_sources
     resources :rights

@@ -135,3 +135,11 @@ september_2019:
   right: one
   departments: [one]
   degrees: [one]
+
+multi_depts:
+  title: MyOverAchievement
+  abstract: MyText
+  grad_date: 2019-02-01
+  user: yo
+  right: one
+  degrees: [one]
