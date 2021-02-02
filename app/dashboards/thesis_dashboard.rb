@@ -26,7 +26,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     graduation_year: Field::Number,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
-    files: FileField,
+    files: AttachmentField,
     files_complete: Field::Boolean,
     status: Field::Select.with_options(
       collection: Thesis::STATUS_OPTIONS,

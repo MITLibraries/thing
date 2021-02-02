@@ -38,7 +38,12 @@
           <div class="files-list">
             <% if thesis.files.attached? %>
               <% thesis.files.each do |file| %>
-                 <%= link_to(file.filename, url_for(file)) %>
+                <ul>
+                  <li>Link: <%= link_to(file.filename, url_for(file)) %></li>
+                  <li>Purpose: <%= file.purpose %></li>
+                  <li>Description: <%= file.description %></li>
+                </ul>
+                <hr />
               <% end %>
             <% else %>
               No files attached
