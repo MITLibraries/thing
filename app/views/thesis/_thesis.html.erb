@@ -2,7 +2,7 @@
   <div class="panel-heading">
     <div class="layout-3q1q layout-band">
       <div class="col3q">
-        <h4><span >Submitted by: </span><%= thesis.user.name %></h4>
+        <h4><span >Submitted by: </span><%= thesis.users.map { |u| u.name }.join(",") %></h4>
       </div>
       <div class="col1q-r">
         <p class="status copy-sup">Status: <span class="thesis-status type-<%= thesis.css_alert_type %>"> <%= thesis.status %></span></p>

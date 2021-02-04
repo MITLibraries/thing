@@ -160,7 +160,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     yo = users(:yo)
     sign_in yo
 
-    thesis = Thesis.where(user: yo).first
+    thesis = yo.theses.first
     note_text = 'Yo dawg, I heard you like notes on your thesis'
     thesis.processor_note = note_text
     thesis.save
@@ -214,7 +214,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # first page.
     expected_theses = Thesis.order('grad_date ASC').first(25)
     expected_theses.each do |t|
-      assert @response.body.include? t.user.email
+      assert t.users.map {|u| @response.body.include? u.email}.all?
     end
   end
 
@@ -459,14 +459,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     theses = @controller.instance_variable_get(:@theses)
     assert theses.first.grad_date <= theses.second.grad_date
     assert theses.second.grad_date <= theses.third.grad_date
-  end
-
-  test 'can be sorted by name' do
-    sign_in users(:admin)
-    get process_path(sort: 'name')
-    theses = @controller.instance_variable_get(:@theses)
-    assert theses.first.user.surname <= theses.second.user.surname
-    assert theses.second.user.surname <= theses.third.user.surname
   end
 
   test 'can be filtered by start year' do

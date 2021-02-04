@@ -8,7 +8,6 @@
 #  grad_date          :date             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  user_id            :integer
 #  right_id           :integer
 #  status             :string           default("active")
 #  processor_note     :text
@@ -19,7 +18,6 @@
 #
 
 class Thesis < ApplicationRecord
-  belongs_to :user
   belongs_to :right
   has_many :degree_theses
   has_many :degrees, through: :degree_theses
@@ -32,6 +30,9 @@ class Thesis < ApplicationRecord
 
   has_many :advisor_theses
   has_many :advisors, through: :advisor_theses
+
+  has_many :authors
+  has_many :users, through: :authors
 
   has_many_attached :files
 
@@ -57,10 +58,11 @@ class Thesis < ApplicationRecord
     { message: VALIDATION_MSGS[:departments] }
   validates :degrees, presence:
     { message: VALIDATION_MSGS[:degrees] }
+
   validates :files_complete, exclusion: [nil]
   validates :metadata_complete, exclusion: [nil]
 
-  # validates :files, presence: true
+  validates :users, presence: true
 
   STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
   validates_inclusion_of :status, :in => STATUS_OPTIONS
@@ -76,9 +78,9 @@ class Thesis < ApplicationRecord
   before_create :combine_graduation_date
   after_find :split_graduation_date
 
-  scope :name_asc, lambda {
-    includes(:user).order('users.surname, users.given_name')
-  }
+  #scope :name_asc, lambda {
+  #  includes(:user).order('users.surname, users.given_name')
+  #}
   scope :date_asc, -> { order('grad_date') }
   scope :by_status, lambda { |status|
     if status == 'any'

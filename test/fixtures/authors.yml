@@ -1,0 +1,36 @@
+# == Schema Information
+#
+# Table name: authors
+#
+#  id                   :integer          not null, primary key
+#  user_id              :integer          not null
+#  thesis_id            :integer          not null
+#  graduation_confirmed :boolean          default(FALSE), not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#
+
+one:
+  user: yo
+  thesis: one
+  graduation_confirmed: false
+
+two:
+  user: yo
+  thesis: two
+  graduation_confirmed: true
+
+three:
+  user: basic
+  thesis: two
+  graduation_confirmed: false
+
+four:
+  user: basic
+  thesis: with_note
+  graduation_confirmed: false
+
+five:
+  user: basic
+  thesis: active
+  graduation_confirmed: false

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :users
     resources :advisors
+    resources :authors
     resources :degrees
     resources :departments
     resources :department_theses

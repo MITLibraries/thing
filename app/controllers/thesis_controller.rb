@@ -6,12 +6,12 @@ class ThesisController < ApplicationController
 
   def new
     @thesis = Thesis.new
-    @thesis.user = current_user
+    @thesis.users = [current_user]
   end
 
   def create
     @thesis = Thesis.new(thesis_params)
-    @thesis.user = current_user
+    @thesis.users = [current_user]
     @thesis.files.attach(params[:thesis][:files])
     if @thesis.save
       flash.notice = 'Thank you for your submission.'

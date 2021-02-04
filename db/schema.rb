@@ -48,6 +48,16 @@ ActiveRecord::Schema.define(version: 2021_01_28_183652) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "authors", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "thesis_id", null: false
+    t.boolean "graduation_confirmed", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["thesis_id"], name: "index_authors_on_thesis_id"
+    t.index ["user_id"], name: "index_authors_on_user_id"
+  end
+
   create_table "degree_theses", id: false, force: :cascade do |t|
     t.integer "thesis_id"
     t.integer "degree_id"
@@ -133,7 +143,6 @@ ActiveRecord::Schema.define(version: 2021_01_28_183652) do
     t.date "grad_date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id"
     t.integer "right_id"
     t.string "status", default: "active"
     t.text "processor_note"
@@ -142,7 +151,6 @@ ActiveRecord::Schema.define(version: 2021_01_28_183652) do
     t.boolean "metadata_complete", default: false, null: false
     t.string "publication_status", default: "Not ready for publication", null: false
     t.index ["right_id"], name: "index_theses_on_right_id"
-    t.index ["user_id"], name: "index_theses_on_user_id"
   end
 
   create_table "transfers", force: :cascade do |t|
@@ -170,6 +178,8 @@ ActiveRecord::Schema.define(version: 2021_01_28_183652) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "authors", "theses"
+  add_foreign_key "authors", "users"
   add_foreign_key "holds", "hold_sources"
   add_foreign_key "holds", "theses"
   add_foreign_key "submitters", "departments"
