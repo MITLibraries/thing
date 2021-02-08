@@ -11,10 +11,15 @@ class UserDashboard < Administrate::BaseDashboard
     theses: Field::HasMany,
     id: Field::Number,
     uid: Field::String,
+    kerberos_id: Field::String,
+    orcid: Field::String,
     email: Field::String,
     admin: Field::Boolean,
+    preferred_name: Field::String,
     given_name: Field::String,
+    middle_name: Field::String,
     surname: Field::String,
+    display_name: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     role: Field::Select.with_options(
@@ -29,8 +34,7 @@ class UserDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
     id
-    surname
-    given_name
+    display_name
     email
     role
     theses
@@ -39,11 +43,12 @@ class UserDashboard < Administrate::BaseDashboard
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
-    given_name
-    surname
+    display_name
     theses
     id
     uid
+    kerberos_id
+    orcid
     email
     admin
     created_at
@@ -54,8 +59,12 @@ class UserDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
+    preferred_name
     given_name
+    middle_name
     surname
+    kerberos_id
+    orcid
     theses
     email
     admin
@@ -66,8 +75,10 @@ class UserDashboard < Administrate::BaseDashboard
   # across all pages of the admin dashboard.
   #
   def display_resource(user)
-    if user.given_name.present? && user.surname.present?
-      "#{user.given_name} #{user.surname} (#{user.email})"
+    if user.preferred_name.present?
+      "#{user.preferred_name}"
+    elsif user.given_name.present? && user.surname.present?
+      "#{user.given_name} #{user.surname}"
     else
       user.email
     end

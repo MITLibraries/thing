@@ -33,6 +33,18 @@ class UserTest < ActiveSupport::TestCase
     assert(user.invalid?)
   end
 
+  test 'invalid without display_name' do
+    user = users(:yo)
+    user.display_name = nil
+    assert(user.invalid?)
+  end
+
+  test 'invalid without kerberos_id' do
+    user = users(:yo)
+    user.kerberos_id = nil
+    assert(user.invalid?)
+  end
+
   test 'invalid with duplicate uid' do
     uid = users(:yo).uid
     user = User.new(uid: uid,
@@ -42,6 +54,56 @@ class UserTest < ActiveSupport::TestCase
     assert_raises ActiveRecord::RecordNotUnique do
       user.save
     end
+  end
+
+  test 'generates kerb from uid when it should' do
+    u = User.new(email: 'kso@mit.edu',
+                 kerberos_id: 'ksoracle',
+                 given_name: 'Kendrick',
+                 surname: 'Scott')
+    u.save
+    assert u.valid?
+    assert_equal 'ksoracle@mit.edu', u.uid
+  end
+
+  test 'generates uid from kerb when it should' do
+    u = User.new(email: 'rgexperiment@mit.edu',
+                 uid: 'rglasper@mit.edu',
+                 given_name: 'Robert',
+                 surname: 'Glasper')
+    u.save
+    assert u.valid?
+    assert_equal 'rglasper', u.kerberos_id
+  end
+
+  test 'sets empty ORCID to nil on new record save' do
+    u = User.new(email: 'acoltrane@mit.edu',
+                 uid: 'acoltrane@mit.edu',
+                 given_name: 'Alice',
+                 surname: 'Coltrane',
+                 orcid: '')
+    u.save
+    assert u.valid?
+    assert_nil u.orcid
+  end
+
+  test 'sets empty ORCID to nil on existing record save' do
+    u = users(:yo)
+    u.orcid = ''
+    u.save
+    assert u.valid?
+    assert_nil u.orcid
+  end
+
+  test 'saves non-empty ORCIDs as expected' do
+    u = User.new(email: 'tyner@mit.edu',
+                 kerberos_id: 'tyner',
+                 given_name: 'McCoy',
+                 surname: 'Tyner',
+                 orcid: 'I-forget-how-these-are-structured')
+    u.save
+    assert u.valid?
+    assert_equal u.orcid, 'I-forget-how-these-are-structured'
   end
 
   # We don't do any validation of name properties, because
@@ -65,10 +127,21 @@ class UserTest < ActiveSupport::TestCase
     auth = OmniAuth::AuthHash.new(uid: '1234', provider: 'example',
                                   info: { given_name: 'Blue',
                                           surname: 'Cat',
+                                          display_name: 'Blue Cat',
                                           email: 'bcat@example.com' })
     omniuser = User.from_omniauth(auth)
     assert_equal(omniuser.given_name, 'Blue')
     assert_equal(omniuser.surname, 'Cat')
+    assert_equal(omniuser.display_name, 'Blue Cat')
+  end
+
+  test 'created user from omniauth has a kerb id' do
+    auth = OmniAuth::AuthHash.new(uid: 'bcat@mit.edu', provider: 'example',
+                                  info: { given_name: 'Blue',
+                                          surname: 'Cat',
+                                          email: 'bcat@example.com' })
+    omniuser = User.from_omniauth(auth)
+    assert_equal(omniuser.kerberos_id, 'bcat')
   end
 
   test 'uses existing user from omniauth' do
@@ -83,12 +156,68 @@ class UserTest < ActiveSupport::TestCase
 
   test 'name property' do
     user = users(:yo)
-    assert_equal 'Yobot, Yo (yo@example.com)', user.name
+    assert_equal 'Yobot, Yo', user.name
+  end
+
+  test 'generates kerberos_id from uid if not provided' do
+    u = User.new(uid: 'coltrane@mit.edu', email: 'coltrane@mit.edu')
+    u.save
+    assert(u.valid?)
+    assert_equal(u.kerberos_id, 'coltrane')
+  end
+
+  test 'generates display_name from name method if not provided' do
+    u1 = User.new(uid: 'coltrane@mit.edu', email: 'coltrane@mit.edu')
+    u1.save
+    u2 = User.new(uid: 'parker@mit.edu', email: 'parker@mit.edu', 
+                  preferred_name: 'Parker, Bird')
+    u2.save
+    u3 = User.new(uid: 'evans@mit.edu',email: 'evans@mit.edu', 
+                  given_name: 'Bill', surname: 'Evans')
+    assert(u1.valid?)
+    assert_equal(u1.display_name, 'coltrane@mit.edu')
+    assert(u2.valid?)
+    assert_equal(u2.display_name, 'Parker, Bird')
+    assert(u3.valid?)
+    assert_equal(u3.display_name, 'Evans, Bill')
+  end
+
+  test 'display_name includes middle initial if available' do
+    u = User.new(uid: 'jobim@mit.edu', email: 'jobim@mit.edu', 
+                  given_name: 'Antonio', middle_name: 'Carlos', surname: 'Jobim')
+    u.save
+    assert_equal(u.display_name, 'Jobim, Antonio C.')
+  end
+
+  test 'updates display_name on record update' do
+    u = users(:yo)
+    assert_equal(u.display_name, 'Yo Yobot')
+    u.given_name = 'John'
+    u.surname = 'Coltrane'
+    u.save
+    assert_equal(u.display_name, 'Coltrane, John')
+    u.preferred_name = 'Trane'
+    u.save
+    assert_equal(u.display_name, 'Trane')
+  end
+
+  test 'processing_queue_name adds email as needed' do
+    u = User.new(uid: 'mehldau@mit.edu', email: 'mehldau@mit.edu', 
+                 preferred_name: 'Mehldau, Brad')
+    u.save
+    assert_equal 'Mehldau, Brad (mehldau@mit.edu)', u.processing_queue_name
+  end
+
+  test 'processing_queue_name returns name method if email is in name' do
+    u = User.new(uid: 'mehldau@mit.edu', email: 'mehldau@mit.edu')
+    u.save
+    assert_equal 'mehldau@mit.edu', u.name
+    assert_equal 'mehldau@mit.edu', u.processing_queue_name
   end
 
   test 'can have one or more transfers' do
     u = User.last
-    assert(u.name == 'Yobot, Yo (yo@example.com)')
+    assert(u.name == 'Yobot, Yo')
     tcount = u.transfers.count
     t1 = Transfer.new
     t1.department = Department.first
@@ -102,7 +231,7 @@ class UserTest < ActiveSupport::TestCase
 
   test 'can access transfer from user' do
     u = users(:transfer_submitter)
-    assert(u.name == 'Ransfer, Terry (transfer@example.com)')
+    assert(u.name == 'Ransfer, Terry')
     ttest = u.transfers.first
     assert(ttest.grad_date.to_s == '2020-05-01')
   end

@@ -173,7 +173,14 @@ ActiveRecord::Schema.define(version: 2021_02_11_202602) do
     t.string "role", default: "basic"
     t.string "given_name"
     t.string "surname"
+    t.string "kerberos_id", null: false
+    t.string "display_name", null: false
+    t.string "middle_name"
+    t.string "preferred_name"
+    t.string "orcid"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["kerberos_id"], name: "index_users_on_kerberos_id", unique: true
+    t.index ["orcid"], name: "index_users_on_orcid", unique: true
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
