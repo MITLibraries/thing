@@ -475,6 +475,16 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_select "select#hold_status", text: "active\nexpired\nreleased"
   end
 
+  test 'audit trail includes the identity of the editor' do
+    mock_auth(users(:thesis_admin))
+    hold = Hold.first
+    patch admin_hold_path(hold),
+      params: { hold: { case_number: "2" } }
+    hold.reload
+    change = hold.versions.last
+    assert_equal change.whodunnit, users(:thesis_admin).id.to_s
+  end
+
   # Hold_sources
   test 'accessing hold_sources panel does not work with basic rights' do
     mock_auth(users(:basic))

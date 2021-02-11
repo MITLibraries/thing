@@ -15,6 +15,8 @@
 #  updated_at       :datetime         not null
 #
 class Hold < ApplicationRecord
+  has_paper_trail
+
   belongs_to :thesis
   belongs_to :hold_source
 
