@@ -325,4 +325,44 @@ class ThesisTest < ActiveSupport::TestCase
     assert thesis.holds.first.hold_source.source == 'technology licensing office'
     assert thesis.holds.first.status = 'active'
   end
+
+  test 'a thesis hold can be moved to another thesis' do
+    t1 = theses(:with_hold)
+    t2 = theses(:one)
+    assert t1.holds.any?
+    assert_not t2.holds.any?
+    t2.holds = [t1.holds.first]
+    assert_not t1.holds.any?
+    assert t2.holds.any?
+  end
+
+  test 'thesis with holds cannot be deleted' do
+    t = theses(:with_hold)
+    t.destroy
+    assert t.errors[:base].include? "Cannot delete record because dependent holds exist"
+    assert t.present?
+  end
+
+  test 'thesis with no holds can be deleted' do
+    t = theses(:one)
+    assert_equal false, t.holds.any?
+    assert_difference("Thesis.count", -1) { t.destroy }
+  end
+
+  test 'thesis with hold can be deleted after its hold has been removed' do
+    t = theses(:with_hold)
+    t.holds.first.destroy
+    assert_equal false, t.holds.any?
+    assert_difference("Thesis.count", -1) { t.destroy }
+  end
+
+  test 'thesis can be deleted after its hold has moved to another thesis' do
+    t1 = theses(:with_hold)
+    t2 = theses(:one)
+    h = t1.holds.first
+    t2.holds = [h]
+    assert t2.holds.count == 1
+    assert t1.holds.count == 0
+    assert_difference("Thesis.count", -1) { t1.destroy }
+  end
 end
