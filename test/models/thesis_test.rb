@@ -104,6 +104,34 @@ class ThesisTest < ActiveSupport::TestCase
     assert(t.valid?)
   end
 
+  test 'a thesis with associated authors and users can be deleted' do
+    t = theses(:one)
+    t.authors.any?
+    t.users.any?
+    assert_difference("Thesis.count", -1) { t.destroy }
+  end
+
+  test 'when a thesis is deleted, the associated author is also deleted' do
+    t = theses(:one)
+    t.authors.any?
+    assert_difference("Author.count", -1) { t.destroy }
+  end
+
+  test 'when a thesis is deleted, the associated user is not deleted' do
+    t = theses(:one)
+    assert t.users.count == 1
+    u = t.users.first
+    assert_includes(User.all, u) { t.destroy }
+  end
+
+  test 'thesis deletion does not delete other author entries for the associated user' do
+    t = theses(:one)
+    u = users(:yo)
+    assert_includes t.users, u
+    assert_equal 2, u.authors.count
+    assert_difference("u.authors.count", -1) { t.destroy }
+  end
+
   test 'invalid without right' do
     thesis = theses(:one)
     thesis.right = nil
