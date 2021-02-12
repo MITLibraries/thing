@@ -8,6 +8,7 @@ module Admin
   class ApplicationController < Administrate::ApplicationController
     before_action :authenticate_user!
     before_action :authenticate_admin
+    before_action :set_paper_trail_whodunnit
 
     # Ensure that current user has admin privileges.
     def authenticate_admin

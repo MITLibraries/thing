@@ -69,4 +69,23 @@ class HoldTest < ActiveSupport::TestCase
     hold.status = nil
     assert(hold.invalid?)
   end
+
+  test 'editing hold generates an audit trail' do
+    hold = holds(:valid)
+    hold.save
+    assert_equal hold.versions.count, 0
+    hold.case_number = 2
+    hold.save
+    assert_equal hold.versions.count, 1
+    assert_equal hold.versions.last.event, "update"
+  end
+
+  test 'audit records include the changeset' do
+    hold = holds(:valid)
+    hold.save
+    hold.case_number = "2"
+    hold.save
+    change = hold.versions.last
+    assert_equal change.changeset["case_number"], [nil, "2"]
+  end
 end
