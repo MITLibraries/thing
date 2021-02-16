@@ -88,4 +88,14 @@ class HoldTest < ActiveSupport::TestCase
     change = hold.versions.last
     assert_equal change.changeset["case_number"], [nil, "2"]
   end
+
+  test 'can list associated degrees' do
+    hold = holds(:valid)
+    assert_equal "MFA\nJD", hold.degrees
+  end
+
+  test 'can list associated grad date' do
+    hold = holds(:valid)
+    assert_equal Date.parse("2017-09-13"), hold.grad_date
+  end
 end

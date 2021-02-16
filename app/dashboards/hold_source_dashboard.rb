@@ -9,6 +9,7 @@ class HoldSourceDashboard < Administrate::BaseDashboard
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
     active_holds: Field::Number,
+    expired_holds: Field::Number,
     holds: Field::HasMany,
     id: Field::Number,
     source: Field::Text,
@@ -25,6 +26,7 @@ class HoldSourceDashboard < Administrate::BaseDashboard
   id
   source
   active_holds
+  expired_holds
   holds
   created_at
   ].freeze
@@ -34,7 +36,6 @@ class HoldSourceDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
   holds
   id
-  source
   created_at
   updated_at
   ].freeze
@@ -43,7 +44,6 @@ class HoldSourceDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
-  holds
   source
   ].freeze
 

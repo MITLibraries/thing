@@ -520,12 +520,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal needle, hold_source.source
   end
 
-  test 'editing hold_sources lists which holds that source has requested' do
-    mock_auth(users(:thesis_admin))
-    get "/admin/hold_sources/#{hold_sources(:tlo).id}/edit"
-    assert_select "div.field-unit__field", text: theses(:with_hold).title
-  end
-
   test 'thesis admins can access author dashboard' do
     mock_auth(users(:thesis_admin))
     get "/admin/authors"

@@ -20,4 +20,14 @@ class HoldSourceTest < ActiveSupport::TestCase
     holdsource.source = nil
     assert(holdsource.invalid?)
   end
+
+  test 'counts active holds associated with source' do
+    source = hold_sources(:tlo)
+    assert source.active_holds == 1
+  end
+
+  test 'counts expired holds associated with source' do
+    source = hold_sources(:tlo)
+    assert source.expired_holds == 2
+  end
 end
