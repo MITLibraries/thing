@@ -25,7 +25,7 @@ class User < ApplicationRecord
   validates :uid, presence: true #, uniqueness: true
   validates :email, presence: true
   has_many :authors
-  has_many :theses, through: :authors
+  has_many :theses, through: :authors, dependent: :restrict_with_error
   has_many :transfers
   has_many :submitters
   has_many :departments, through: :submitters

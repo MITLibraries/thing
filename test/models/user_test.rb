@@ -133,4 +133,28 @@ class UserTest < ActiveSupport::TestCase
     assert(u2.theses.empty?)
     assert(u2.valid?)
   end
+
+  test 'cannot destroy a user with an associated thesis' do
+    u = users(:yo)
+    assert u.theses.any?
+    u.destroy
+    assert u.errors[:base].include? "Cannot delete record because dependent theses exist"
+    assert u.present?
+  end
+
+  test 'can destroy a user without an associated thesis' do
+    u = users(:bad)
+    assert_not u.theses.any?
+    assert_difference("User.count", -1) { u.destroy }
+  end
+
+  test 'can destroy a user once associated thesis has been destroyed' do
+    u = users(:yo)
+    assert u.theses.any?
+    u.theses.destroy_all
+    assert_not u.theses.any?
+    assert_difference("User.count", -1) do
+      u.destroy
+    end
+  end
 end

@@ -31,7 +31,7 @@ class Thesis < ApplicationRecord
   has_many :advisor_theses
   has_many :advisors, through: :advisor_theses
 
-  has_many :authors
+  has_many :authors, dependent: :destroy
   has_many :users, through: :authors
 
   has_many_attached :files
