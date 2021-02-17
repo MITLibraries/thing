@@ -34,4 +34,11 @@ en:
     label:
       hold:
         grad_date: Degree date
-        
+        date_start: Start date
+        date_end: End date
+        created_at: Created on
+        updated_at: Updated on
+        case_number: TLO case number
+      hold_source:
+        created_at: Created on
+        updated_at: Updated on
