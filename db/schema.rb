@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_11_202602) do
+ActiveRecord::Schema.define(version: 2021_02_17_183612) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -122,6 +122,13 @@ ActiveRecord::Schema.define(version: 2021_02_11_202602) do
     t.index ["thesis_id"], name: "index_holds_on_thesis_id"
   end
 
+  create_table "registrars", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_registrars_on_user_id"
+  end
+
   create_table "rights", force: :cascade do |t|
     t.text "statement", null: false
     t.datetime "created_at", null: false
@@ -200,6 +207,7 @@ ActiveRecord::Schema.define(version: 2021_02_11_202602) do
   add_foreign_key "authors", "users"
   add_foreign_key "holds", "hold_sources"
   add_foreign_key "holds", "theses"
+  add_foreign_key "registrars", "users"
   add_foreign_key "submitters", "departments"
   add_foreign_key "submitters", "users"
   add_foreign_key "transfers", "departments"

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     root to: "theses#index"
   end
 
+  resources :registrar, only: [:new, :create, :show]
   resources :thesis, only: [:new, :create, :show]
   get 'process', to: 'thesis#process_theses', as: 'process'
   get 'process/:status', to: 'thesis#process_theses'

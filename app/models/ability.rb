@@ -58,5 +58,7 @@ class Ability
     can :create, Transfer
     can :read, Transfer
     can :administrate, Admin
+    can :create, Registrar
+    can :read, Registrar
   end
 end
