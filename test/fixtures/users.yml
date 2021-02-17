@@ -22,46 +22,60 @@
 yo:
   uid: 'some_id'
   email: 'yo@example.com'
+  kerberos_id: 'yo'
   given_name: 'Yo'
   surname: 'Yobot'
+  display_name: 'Yo Yobot'
 
 admin:
   uid: 'admin_id'
   email: 'admin@example.com'
+  kerberos_id: 'admin'
   admin: true
   given_name: 'Admin'
   surname: 'Robot'
+  display_name: 'Admin Robot'
 
 bad:
   uid: 'bad_id'
   email: 'bad@example.com'
+  kerberos_id: 'bad'
   given_name: 'Bad'
   surname: 'Robot'
+  display_name: 'Bad Robot'
 
 basic:
   uid: 'basic_id'
   email: 'basic@example.com'
+  kerberos_id: 'basic'
   role: 'basic'
   given_name: 'Basic'
   surname: 'Robot'
+  display_name: 'Basic Robot'
 
 processor:
   uid: 'processor_id'
   email: 'processor@example.com'
+  kerberos_id: 'processor'
   role: 'processor'
   given_name: 'Processor'
   surname: 'Robot'
+  display_name: 'Processor Robot'
 
 transfer_submitter:
   uid: 'transfer_submitter_id'
   email: 'transfer@example.com'
+  kerberos_id: 'transfer'
   role: 'transfer_submitter'
   given_name: 'Terry'
   surname: 'Ransfer'
+  display_name: 'Terry Ransfer'
 
 thesis_admin:
   uid: 'thesis_admin_id'
   email: 'thesis_admin@example.com'
+  kerberos_id: 'thesis_admin'
   role: 'thesis_admin'
   given_name: 'Thesis A.'
   surname: 'Robot'
+  display_name: 'Thesis A. Robot'

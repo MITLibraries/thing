@@ -14,6 +14,25 @@
 #
 
 class User < ApplicationRecord
+  # We need to initialize  some fields before validation, or 
+  # the record won't save.
+  before_validation(on: :create) do
+    self.kerberos_id = kerb unless self.kerberos_id
+    self.display_name = name unless self.display_name
+    self.uid = self.kerberos_id + '@mit.edu' unless self.uid
+  end
+
+  # Display name should be aligned with preferred name
+  before_update do
+    self.display_name = name
+  end
+
+  # ORCID has a unique constraint, so if it's empty, we need to save it 
+  # as nil instead of an empty string
+  before_save do
+    self.orcid = nil if self.orcid == ""
+  end
+
   default_scope { order('surname ASC') }
 
   if Rails.configuration.fake_auth_enabled  # Use config, not ENV. See README.
@@ -24,6 +43,8 @@ class User < ApplicationRecord
 
   validates :uid, presence: true #, uniqueness: true
   validates :email, presence: true
+  validates :display_name, presence: true
+  validates :kerberos_id, presence: true
   has_many :authors
   has_many :theses, through: :authors, dependent: :restrict_with_error
   has_many :transfers
@@ -48,28 +69,31 @@ class User < ApplicationRecord
       user.email = auth.info.email
       user.given_name = auth.info.given_name
       user.surname = auth.info.surname
+      user.display_name = auth.info.display_name
     end
   end
 
   # Definitely for sure wrong for some people. But staff want to be able to
   # sort on surname for processing purposes, so we're getting given name +
-  # surname.
+  # surname. This could pose a problem for those who prefer not to use 
+  # their legal surname. In an effort to make as few assumptions about 
+  # identity as possible, we are privileging preferred names for sorting.
   def name
-    if self.surname && self.given_name
-      "#{self.surname}, #{self.given_name} (#{self.email})"
+    if self.preferred_name.present?
+      "#{self.preferred_name}"
+    elsif self.surname.present? && self.given_name.present? && self.middle_name.present?
+      "#{self.surname}, #{self.given_name} #{self.middle_name.first}."
+    elsif self.surname.present? && self.given_name.present?
+      "#{self.surname}, #{self.given_name}"
     else
       "#{self.email}"
     end
   end
 
-  # We should really be getting the displayName property from Touchstone, but
-  # that was a scope creep at the time this feature was implemented.
-  def display_name
-    if self.surname && self.given_name
-      "#{self.given_name} #{self.surname} (#{self.email})"
-    else
-      "#{self.email}"
-    end
+  # We want to ensure that the email always appears in the processing 
+  # queue names, but not elsewhere in the application.
+  def processing_queue_name
+    self.name.include?(self.email) ? "#{self.name}" : "#{self.name} (#{self.email})"
   end
 
   # Users with the "thesis_admin" role can submit transfers for any department.
@@ -81,4 +105,11 @@ class User < ApplicationRecord
       departments.order(:name)
     end
   end
+
+  private
+
+    # For our purposes, kerberos_id is EPPN (uid) without '@mit.edu'
+    def kerb
+      self.uid.delete_suffix('@mit.edu') if uid
+    end
 end
