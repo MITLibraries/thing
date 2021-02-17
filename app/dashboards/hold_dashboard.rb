@@ -17,8 +17,8 @@ class HoldDashboard < Administrate::BaseDashboard
     case_number: Field::String,
     status: Field::Select.with_options(searchable: false, collection: ->(field) { field.resource.class.send(field.attribute.to_s.pluralize).keys }),
     processing_notes: Field::Text,
-    created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    created_at: Field::Date,
+    updated_at: Field::Date,
   }.freeze
 
   # COLLECTION_ATTRIBUTES

@@ -12,8 +12,8 @@ class HoldSourceDashboard < Administrate::BaseDashboard
     holds: Field::HasMany,
     id: Field::Number,
     source: Field::Text,
-    created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    created_at: Field::Date,
+    updated_at: Field::Date,
   }.freeze
 
   # COLLECTION_ATTRIBUTES
