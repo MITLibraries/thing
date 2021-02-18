@@ -34,4 +34,8 @@ class Hold < ApplicationRecord
   def grad_date
     self.thesis.grad_date
   end
+
+  def author_names
+    self.thesis.users.map { |u| u.name }.join("; ")
+  end
 end
