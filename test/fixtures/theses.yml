@@ -79,7 +79,7 @@ with_hold:
   grad_date: 2017-09-13
   right: one
   departments: [one]
-  degrees: [one]
+  degrees: [one, two]
   status: 'active'
   processor_note: 'Something sensitive'
 
