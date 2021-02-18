@@ -25,7 +25,7 @@ class Thesis < ApplicationRecord
   has_many :department_theses
   has_many :departments, through: :department_theses
 
-  has_many :holds
+  has_many :holds, dependent: :restrict_with_error
   has_many :hold_sources, through: :holds
 
   has_many :advisor_theses
