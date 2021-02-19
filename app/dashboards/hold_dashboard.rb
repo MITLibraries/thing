@@ -9,6 +9,7 @@ class HoldDashboard < Administrate::BaseDashboard
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
     thesis: Field::BelongsTo,
+    author_names: Field::String,
     degrees: Field::String,
     grad_date: Field::DateTime.with_options(
       format: "%Y %B",
@@ -32,6 +33,7 @@ class HoldDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
   id
+  author_names
   grad_date
   thesis
   hold_source
@@ -44,6 +46,7 @@ class HoldDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
   thesis
+  author_names
   degrees
   grad_date
   hold_source

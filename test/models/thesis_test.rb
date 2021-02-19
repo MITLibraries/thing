@@ -128,7 +128,7 @@ class ThesisTest < ActiveSupport::TestCase
     t = theses(:one)
     u = users(:yo)
     assert_includes t.users, u
-    assert_equal 2, u.authors.count
+    assert_equal 3, u.authors.count
     assert_difference("u.authors.count", -1) { t.destroy }
   end
 

@@ -34,3 +34,13 @@ five:
   user: basic
   thesis: active
   graduation_confirmed: false
+
+six:
+  user: yo
+  thesis: with_hold
+  graduation_confirmed: false
+
+seven:
+  user: basic
+  thesis: with_hold
+  graduation_confirmed: false
