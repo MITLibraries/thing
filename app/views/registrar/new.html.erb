@@ -1,0 +1,58 @@
+<%= content_for(:title, "Registrar Submission | MIT Libraries") %>
+
+<% content_for :additional_js do %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<% end %>
+
+<%= simple_form_for(@registrar, url: '/registrar', html: { class: 'registrarSubmission' }, validate: true ) do |f| %>
+
+  <%= f.error_notification %>
+  <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+
+  <%= f.input :graduation_list, as: :file,
+        wrapper_html: { class: 'field-wrap' },
+        input_html: { class: 'field field-upload',
+                      multiple: false,
+                      direct_upload: true,
+                      data: { msg: Registrar::VALIDATION_MSGS[:graduation_list] },
+                      'aria-describedby': 'registrar_file_ids-hint' },
+        label: 'File to upload',
+        required: true,
+        hint: 'This would be the hint text describing the bulk files fields.',
+        hint_html: { id: 'registrar_file_ids-hint' }  %>
+
+  <div class='field-wrap'>
+    <div id="file_to_upload"></div>
+  </div>
+
+  <div class='field-wrap'>
+    <%= submit_tag 'Submit Registrar data', class: 'btn button-primary' %>
+  </div>
+
+<% end # Ends simple_form_for %>
+
+  <script>
+    $("input:file").change(function () {
+        var filenames = '';
+        var fileblurb = '<p>The following file will be uploaded when this form is submitted:</p>';
+        for (var i = 0; i < this.file.length; i++) {
+            filenames += '<li>' + this.file[i].name + '</li>';
+        }
+        $("#file_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
+    });
+
+    $("#new_registrar").validate({
+      invalidHandler: function(event, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+          var message = errors == 1
+            ? 'The form was not submitted successfully - one required field needs to be fixed.'
+            : 'The form was not submitted successfully - ' + errors + ' required fields need to be fixed.';
+          $("div.error").html(message);
+          $("div.error").show();
+        } else {
+          $("div.error").hide();
+        }
+      }
+    });
+  </script>
