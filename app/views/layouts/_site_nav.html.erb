@@ -14,7 +14,7 @@
               <%= nav_link_to("Process submissions", process_path) %>
               <%= nav_link_to("Stats", stats_path) %>
             <% end %>
-            <% if can?(:transfer_submitter, Transfer) || can?(:thesis_admin, Transfer)  %>
+            <% if can? :create, Transfer %>
               <%= nav_link_to("Transfer theses", new_transfer_path) %>
             <% end %>
             <% if current_user.admin? || can?(:administrate, Admin) %>

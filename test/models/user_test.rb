@@ -245,6 +245,17 @@ class UserTest < ActiveSupport::TestCase
     assert(bad.departments.count == 0)
   end
 
+  test 'users have a submitter? helper method' do
+    basic = users(:basic)
+    assert_nil basic.submitter?
+    transfer_submitter = users(:transfer_submitter)
+    assert_equal transfer_submitter.submitter?, true
+    thesis_admin = users(:thesis_admin)
+    assert_equal thesis_admin.submitter?, true
+    admin = users(:admin)
+    assert_equal admin.submitter?, true
+  end
+
   test 'thesis_submitters can see specified departments' do
     assert_equal users(:transfer_submitter).submittable_departments.length, users(:transfer_submitter).submitters.length
   end

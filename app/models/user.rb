@@ -96,10 +96,17 @@ class User < ApplicationRecord
     self.name.include?(self.email) ? "#{self.name}" : "#{self.name} (#{self.email})"
   end
 
-  # Users with the "thesis_admin" role can submit transfers for any department.
-  # Users without that role are more limited.
+  # Certain ability checks may be easier when testing for a boolean, rather
+  # than the length of the submittable_departments list.
+  def submitter?
+    return true if submittable_departments.count > 0
+  end
+
+  # Users with the "thesis_admin" role, or the admin flag, can submit
+  # transfers for any department. Users with a submitter relationship to a
+  # department can only access those departments.
   def submittable_departments
-    if role == "thesis_admin"
+    if role == "thesis_admin" || admin
       Department.all.order(:name)
     else
       departments.order(:name)
