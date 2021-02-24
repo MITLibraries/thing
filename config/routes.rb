@@ -31,6 +31,10 @@ Rails.application.routes.draw do
                    id: /[0-9]+/,
                    as: 'annotate'
   get 'stats', to: 'thesis#stats', as: 'stats'
+  get 'harvest', to: 'registrar#list_registrar', as: 'harvest'
+  get 'harvest/:id', to: 'registrar#process_registrar',
+                     id: /[0-9]+/,
+                     as: 'process_registrar'
 
   devise_for :users, :controllers => {
     :omniauth_callbacks => 'users/omniauth_callbacks'

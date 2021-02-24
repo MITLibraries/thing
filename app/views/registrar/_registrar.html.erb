@@ -1,0 +1,27 @@
+<div class="panel">
+  
+  <div class="panel-heading">
+    <%= registrar.graduation_list.filename %>
+  </div>
+
+  <div class="panel-body">
+    <div class="layout-band layout-3q1q">
+      <div class="col3q">
+        <p><%= registrar.user.preferred_name %></p>
+      </div>
+      <div class="col1q-r">
+        <p><%= link_to( "Import batch", '/harvest/'+registrar.id.to_s, class: 'btn button-secondary button-small view-details') %></p>    
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-footer">
+    Created: <%= registrar.created_at %>
+    <% if (registrar.updated_at - registrar.created_at) > 0.01 %>
+    <br>Updated: <%= registrar.updated_at %>
+    <% end %>
+  </div>
+
+</div>
+
+<hr>

@@ -1,0 +1,29 @@
+<div class="panel">
+  
+  <div class="panel-heading">
+    Job <%= job.id %>
+  </div>
+
+  <div class="panel-body">
+    <p>
+      Priority: <%= job.priority %><br>
+      Attempts: <%= job.attempts %><br>
+      Handler: <%= pp job.handler %><br>
+      Last Error: <%= job.last_error %><br>
+      Run at: <%= job.run_at %><br>
+      Locked at: <%= job.locked_at %><br>
+      Failed at: <%= job.failed_at %><br>
+      Locked by: <%= job.locked_by %><br>
+      Queue: <%= job.queue %><br>
+    </p>
+  </div>
+
+  <div class="panel-footer">
+    <p>Created: <%= job.created_at %><br>
+    Updated: <%= job.updated_at %></p>
+    <p><%= pp job %></p>
+  </div>
+
+</div>
+
+<hr>
