@@ -99,7 +99,7 @@ class ThesisController < ApplicationController
   end
 
   def thesis_params
-    params.require(:thesis).permit(:title, :abstract, :graduation_month,
+    params.require(:thesis).permit(:title, :abstract, :coauthors, :graduation_month,
                                    :graduation_year, :right_id,
                                    :department_ids, :degree_ids)
   end

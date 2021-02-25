@@ -39,6 +39,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     metadata_complete: Field::Boolean,
     holds: Field::HasMany,
     advisors: Field::HasMany,
+    coauthors: Field::String,
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -60,6 +61,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     id
     users
     title
+    coauthors
     abstract
     grad_date
     right
@@ -91,6 +93,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     degrees
     advisors
     title
+    coauthors
     abstract
     status
     publication_status

@@ -8,6 +8,7 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
       degree_ids: Degree.first.id,
       title: 'yoyos are cool',
       abstract: 'We discovered it with science',
+      coauthors: 'My co-author',
       graduation_month: 'June',
       graduation_year: Time.zone.today.year,
       files: fixture_file_upload('test/fixtures/files/a_pdf.pdf',
@@ -58,6 +59,20 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     params[:files] = nil
     post thesis_index_path, params: { thesis: params }
     assert_select "input.required[data-msg='#{Thesis::VALIDATION_MSGS[:files]}']"
+  end
+
+  test 'coauthor field' do
+    mock_auth(users(:basic))
+    orig_count = Thesis.count
+    sample = @thesis_params
+    post thesis_index_path, params: { thesis: sample }
+    assert_equal Thesis.count, orig_count + 1
+    assert_equal 'My co-author', Thesis.last.coauthors
+
+    sample[:coauthors] = nil
+    post thesis_index_path, params: { thesis: sample }
+    assert_equal Thesis.count, orig_count + 2
+    assert_equal Thesis.last.coauthors, ''
   end
 
   test 'indicates active user' do

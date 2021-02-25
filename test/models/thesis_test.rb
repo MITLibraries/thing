@@ -15,6 +15,7 @@
 #  files_complete     :boolean          default(FALSE), not null
 #  metadata_complete  :boolean          default(FALSE), not null
 #  publication_status :string           default("Not ready for publication"), not null
+#  coauthors          :string
 #
 
 require 'test_helper'
@@ -310,6 +311,15 @@ class ThesisTest < ActiveSupport::TestCase
 
     thesis.graduation_month = 'December'
     assert thesis.invalid?
+  end
+
+  test 'coauthors field can be populated or nil' do
+    thesis = theses(:one)
+    thesis.coauthors = nil
+    assert thesis.valid?
+
+    thesis.coauthors = 'My freeloader'
+    assert thesis.valid?
   end
 
   test 'a thesis may have a hold' do

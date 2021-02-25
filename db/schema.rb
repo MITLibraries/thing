@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_17_183612) do
+ActiveRecord::Schema.define(version: 2021_02_25_164332) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(version: 2021_02_17_183612) do
     t.boolean "files_complete", default: false, null: false
     t.boolean "metadata_complete", default: false, null: false
     t.string "publication_status", default: "Not ready for publication", null: false
+    t.string "coauthors"
     t.index ["right_id"], name: "index_theses_on_right_id"
   end
 
