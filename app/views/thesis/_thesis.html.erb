@@ -53,7 +53,16 @@
       </div>
 
       <div class="col1q-r">
-        <p class="rights"><span class="label">Rights: </span> <%= thesis.right.statement %></p>
+        <p class="rights"><span class="label">Copyright:</span>
+          <% if thesis.copyright %>
+            <%= thesis.copyright.holder %>
+          <% end %>
+        </p>
+        <p class="rights"><span class="label">License:</span>
+          <% if thesis.license %>
+            <%= thesis.license.display_description %>
+          <% end %>
+        </p>
         <%= link_to("View details", thesis_path(thesis.id), class: 'btn button-secondary button-small view-details') %>
       </div>
     </div>

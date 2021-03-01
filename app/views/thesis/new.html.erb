@@ -78,16 +78,23 @@
                          hint: 'Select your primary degree as listed on your title page',
                          hint_html: { id: 'thesis_degrees_ids-hint' } %>
 
-    <%= f.association :right, label: 'Copyright',
-                              label_method: :statement, as: :select,
-                              include_hidden: false,
-                              wrapper_html: { class: 'field-wrap select' },
-                              input_html: { class: 'field field-select',
-                                            multiple: false,
-                                            data: { msg: Thesis::VALIDATION_MSGS[:right] },
-                                            'aria-describedby': 'thesis_copyright_ids-hint' },
-                              hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe,
-                              hint_html: { id: 'thesis_copyright_ids-hint' } %>
+    <%= f.association :copyright, label_method: :holder, as: :select,
+                         include_hidden: false,
+                         wrapper_html: { class: 'field-wrap select' },
+                         input_html: { class: 'field field-select', multiple: false,
+                           'aria-describedby': 'thesis_copyright_id-hint'
+                         },
+                         hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe,
+                         hint_html: { id: 'thesis_copyright_id-hint' } %>
+
+    <%= f.association :license, label_method: :display_description, as: :select,
+                         include_hidden: false,
+                         wrapper_html: { class: 'field-wrap select' },
+                         input_html: { class: 'field field-select', multiple: false,
+                           'aria-describedby': 'thesis_license_id-hint'
+                         },
+                         hint: '',
+                         hint_html: { id: 'thesis_license_id-hint' } %>
 
     <fieldset>
       <legend>Degree Date</legend>

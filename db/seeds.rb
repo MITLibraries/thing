@@ -3,14 +3,51 @@
 
 Rails.logger.info('Seeding DB Starting')
 
+# Create Copyrights
+Copyright.create_with(
+  display_to_author: true,
+  display_description: 'MIT holds copyright',
+  statement_dspace: 'In Copyright - Educational Use Permitted',
+  url: 'http://rightsstatements.org/page/InC-EDU/1.0/'
+).find_or_create_by(
+  holder: 'MIT'
+)
+Copyright.create_with(
+  display_to_author: true,
+  display_description: 'I hold copyright',
+  statement_dspace: 'In Copyright',
+  url: 'https://rightsstatements.org/page/InC/1.0/'
+).find_or_create_by(
+  holder: 'Author'
+)
+Copyright.create_with(
+  display_to_author: true,
+  display_description: 'I hold copyright and give it up to the public domain with no copyright',
+  statement_dspace: 'CC0 - Public Domain',
+  url: 'https://creativecommons.org/publicdomain/zero/1.0/'
+).find_or_create_by(
+  holder: 'Public Domain'
+)
+Copyright.create_with(
+  display_to_author: true,
+  display_description: 'This is a work of the U.S. Government',
+  statement_dspace: 'This material is declared a work of the U.S. Government and is not subject to copyright protection in the United States.',
+  url: 'https://rightsstatements.org/page/NoC-US/1.0/'
+).find_or_create_by(
+  holder: 'US Government'
+)
+Copyright.create_with(
+  display_to_author: true,
+  display_description: 'Another person or organization holds copyright',
+  statement_dspace: 'In Copyright',
+  url: 'http://rightsstatements.org/vocab/InC/1.0/'
+).find_or_create_by(
+  holder: 'Other Organization'
+)
+
 # Create Departments
 Department.find_or_create_by(name: 'Aeronautics and Astronautics')
 Department.find_or_create_by(name: 'Archaeology and Materials')
-
-# Create Rights
-Right.find_or_create_by(statement: 'MIT')
-Right.find_or_create_by(statement: 'Author Retains')
-Right.find_or_create_by(statement: 'Other')
 
 # Create Degrees
 Degree.find_or_create_by(name: 'Bachelor of Science')
@@ -20,5 +57,48 @@ Degree.find_or_create_by(name: 'Master of Business Analytics')
 HoldSource.find_or_create_by(source: 'TLO')
 HoldSource.find_or_create_by(source: 'Vice Chancellor')
 HoldSource.find_or_create_by(source: 'VPR')
+
+# Create Licenses
+License.create_with(
+  license_type: 'No Creative Commons License'
+).find_or_create_by(
+  display_description: 'No Creative Commons License'
+)
+License.create_with(
+  license_type: 'Attribution 4.0 International (CC BY 4.0)',
+  url: 'https://creativecommons.org/licenses/by/4.0/'
+).find_or_create_by(
+  display_description: 'Creative Commons (CC BY)'
+)
+License.create_with(
+  license_type: 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
+  url: 'https://creativecommons.org/licenses/by-sa/4.0/'
+).find_or_create_by(
+  display_description: 'Creative Commons (CC BY-SA)'
+)
+License.create_with(
+  license_type: 'Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)',
+  url: 'https://creativecommons.org/licenses/by-nc/4.0/'
+).find_or_create_by(
+  display_description: 'Creative Commons (CC BY-NC)'
+)
+License.create_with(
+  license_type: 'Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)',
+  url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
+).find_or_create_by(
+  display_description: 'Creative Commons (CC BY-NC-SA)'
+)
+License.create_with(
+  license_type: 'Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)',
+  url: 'https://creativecommons.org/licenses/by-nd/4.0/'
+).find_or_create_by(
+  display_description: 'Creative Commons (CC BY-ND)'
+)
+License.create_with(
+  license_type: 'Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
+  url: 'https://creativecommons.org/licenses/by-nc-nd/4.0/'
+).find_or_create_by(
+  display_description: 'Creative Commons (CC BY-NC-ND)'
+)
 
 Rails.logger.info('Seeding DB Complete')

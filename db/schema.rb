@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_25_164332) do
+ActiveRecord::Schema.define(version: 2021_03_02_215828) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -56,6 +56,16 @@ ActiveRecord::Schema.define(version: 2021_02_25_164332) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["thesis_id"], name: "index_authors_on_thesis_id"
     t.index ["user_id"], name: "index_authors_on_user_id"
+  end
+
+  create_table "copyrights", force: :cascade do |t|
+    t.text "holder", null: false
+    t.boolean "display_to_author", null: false
+    t.text "display_description", null: false
+    t.text "statement_dspace", null: false
+    t.text "url"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "degree_theses", id: false, force: :cascade do |t|
@@ -122,17 +132,19 @@ ActiveRecord::Schema.define(version: 2021_02_25_164332) do
     t.index ["thesis_id"], name: "index_holds_on_thesis_id"
   end
 
+  create_table "licenses", force: :cascade do |t|
+    t.text "display_description", null: false
+    t.text "license_type", null: false
+    t.text "url"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "registrars", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_registrars_on_user_id"
-  end
-
-  create_table "rights", force: :cascade do |t|
-    t.text "statement", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "submitters", force: :cascade do |t|
@@ -150,7 +162,6 @@ ActiveRecord::Schema.define(version: 2021_02_25_164332) do
     t.date "grad_date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "right_id"
     t.string "status", default: "active"
     t.text "processor_note"
     t.text "author_note"
@@ -158,7 +169,10 @@ ActiveRecord::Schema.define(version: 2021_02_25_164332) do
     t.boolean "metadata_complete", default: false, null: false
     t.string "publication_status", default: "Not ready for publication", null: false
     t.string "coauthors"
-    t.index ["right_id"], name: "index_theses_on_right_id"
+    t.integer "copyright_id"
+    t.integer "license_id"
+    t.index ["copyright_id"], name: "index_theses_on_copyright_id"
+    t.index ["license_id"], name: "index_theses_on_license_id"
   end
 
   create_table "transfers", force: :cascade do |t|
