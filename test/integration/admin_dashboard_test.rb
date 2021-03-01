@@ -485,6 +485,20 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal change.whodunnit, users(:thesis_admin).id.to_s
   end
 
+  test 'audit trail updates when a hold is moved to another thesis' do
+    mock_auth(users(:thesis_admin))
+    h = holds(:valid)
+    t = theses(:one)
+    prev_thesis_id = h.thesis_id
+    assert_not h.thesis == t
+    patch admin_hold_path(h),
+      params: { hold: { thesis_id: t.id.to_s } }
+    h.reload
+    assert_equal t, h.thesis
+    assert_equal users(:thesis_admin).id.to_s, h.versions.last.whodunnit
+    assert_equal [prev_thesis_id, h.thesis_id], h.versions.last.changeset[:thesis_id]
+  end
+
   # Hold_sources
   test 'accessing hold_sources panel does not work with basic rights' do
     mock_auth(users(:basic))
