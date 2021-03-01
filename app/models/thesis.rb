@@ -15,6 +15,7 @@
 #  files_complete     :boolean          default(FALSE), not null
 #  metadata_complete  :boolean          default(FALSE), not null
 #  publication_status :string           default("Not ready for publication"), not null
+#  coauthors          :string
 #
 
 class Thesis < ApplicationRecord
