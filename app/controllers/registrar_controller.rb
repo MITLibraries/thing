@@ -26,6 +26,22 @@ class RegistrarController < ApplicationController
     @registrar = Registrar.find(params[:id])
   end
 
+  def list_registrar
+    @registrars = Registrar.all
+    @jobs = Delayed::Job.all
+  end
+
+  # Do not name this simply 'process' or you will shadow a built-in controller
+  # function and then you will be sad.
+  def process_registrar
+    @registrar = Registrar.find(params[:id])
+
+    Delayed::Job.enqueue RegistrarImportJob.new("Does this appear?")
+
+    flash[:notice] = "Job started..."
+    redirect_to '/harvest'
+  end
+
   private
 
   def require_user

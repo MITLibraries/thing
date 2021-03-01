@@ -1,0 +1,15 @@
+<%= content_for(:title, "Registrar Data Import Queue | MIT Libraries") %>
+
+<h3 class="title title-page">Registrar Data Import Queue</h3>
+
+<h4>Running jobs</h4>
+
+<%= render(partial: 'registrar/job', collection: @jobs) || render('empty_job') %>
+
+<h4>Available files</h4>
+
+<p>These are the CSV files of Registrar data that have been uploaded to this application. Click the "Import batch" button to process that batch of data.</p>
+
+<p><strong>The import itself is processed asynchronously. You will receive a notification when it has completed.</strong></p>
+
+<%= render(partial: 'registrar/registrar', collection: @registrars) || render('empty_registrar') %>
