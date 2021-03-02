@@ -499,6 +499,68 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal [prev_thesis_id, h.thesis_id], h.versions.last.changeset[:thesis_id]
   end
 
+  test 'can identify the user who created a hold' do
+    creator = users(:thesis_admin)
+    mock_auth(creator)
+
+    orig_count = Hold.count
+
+    post admin_holds_path,
+      params: { hold: {       
+                        thesis_id: Thesis.first.id, 
+                        hold_source_id: HoldSource.first.id,
+                        date_requested: '2021-03-02',
+                        date_start: '2021-03-02',
+                        date_end:'2021-03-02',
+                        case_number: nil,
+                        status: 'active',
+                        processing_notes: nil
+                      },
+              }
+    assert_equal orig_count + 1, Hold.count
+
+    hold = Hold.last
+    hold_creator = User.find_by(id: hold.versions.first.whodunnit)
+    assert_equal hold_creator.id, creator.id
+    assert_equal hold_creator.kerberos_id, hold.created_by
+  end
+
+  test 'can identify the date a hold was released' do
+    mock_auth(users(:thesis_admin))
+
+    hold = holds(:valid)
+    assert_not_equal "released", hold.status
+
+    patch admin_hold_path(hold), params: { hold: { status: "released" } }
+    hold.reload
+    assert_equal "released", hold.status
+    assert_equal Date.today.strftime('%Y-%m-%d'), hold.date_released.strftime('%Y-%m-%d')
+  end
+
+  test 'hold release date is the most recent released status change' do
+    mock_auth(users(:thesis_admin))
+
+    hold = holds(:valid)
+    assert_not_equal "released", hold.status
+
+    patch admin_hold_path(hold), params: { hold: { status: "released" } }
+    hold.reload
+    first_release_date = hold.date_released
+    assert_equal "released", hold.status
+
+    patch admin_hold_path(hold), params: { hold: { status: "expired" } }
+    hold.reload
+    assert_equal "expired", hold.status
+    assert_equal first_release_date, hold.date_released
+
+    patch admin_hold_path(hold), params: { hold: { status: "released" } }
+    hold.reload
+    last_release_date = hold.date_released
+    assert_equal "released", hold.status
+    assert_not_equal first_release_date, hold.date_released
+    assert_equal last_release_date, hold.date_released
+  end
+
   # Hold_sources
   test 'accessing hold_sources panel does not work with basic rights' do
     mock_auth(users(:basic))

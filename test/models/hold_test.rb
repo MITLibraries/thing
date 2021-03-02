@@ -89,6 +89,12 @@ class HoldTest < ActiveSupport::TestCase
     assert_equal change.changeset["case_number"], [nil, "2"]
   end
 
+  test 'can return the formatted parent thesis create date' do
+    h = holds(:valid)
+    created_at = h.thesis.created_at.strftime('%Y-%m-%d')
+    assert_equal created_at, h.date_thesis_file_received
+  end
+
   test 'can list associated degrees' do
     hold = holds(:valid)
     assert_equal "MFA\nJD", hold.degrees
