@@ -20,7 +20,7 @@ class HoldDashboard < Administrate::BaseDashboard
     date_start: Field::Date,
     date_end: Field::Date,
     date_released: Field::Date,
-    date_thesis_file_received: Field::Date,
+    dates_thesis_files_received: Field::String,
     case_number: Field::String,
     status: Field::Select.with_options(searchable: false, collection: ->(field) { field.resource.class.send(field.attribute.to_s.pluralize).keys }),
     processing_notes: Field::Text,
@@ -58,7 +58,7 @@ class HoldDashboard < Administrate::BaseDashboard
   date_requested
   date_start
   date_end
-  date_thesis_file_received
+  dates_thesis_files_received
   case_number
   status
   processing_notes

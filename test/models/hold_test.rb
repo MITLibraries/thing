@@ -89,10 +89,18 @@ class HoldTest < ActiveSupport::TestCase
     assert_equal change.changeset["case_number"], [nil, "2"]
   end
 
-  test 'can return the formatted parent thesis create date' do
+  test 'can list the create dates and names of the parent thesis files' do
     h = holds(:valid)
-    created_at = h.thesis.created_at.strftime('%Y-%m-%d')
-    assert_equal created_at, h.date_thesis_file_received
+    f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    h.thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    thesis_file = h.thesis.files.first
+    assert_equal "a_pdf.pdf", thesis_file.filename.to_s
+    assert_equal h.dates_thesis_files_received, "#{thesis_file.created_at.strftime('%Y-%m-%d')} (#{thesis_file.filename.to_s})"
+
+    f2 = Rails.root.join('test','fixtures','files','registrar.csv')
+    h.thesis.files.attach(io: File.open(f2), filename: 'registrar.csv')
+    dates_display = h.thesis.files.map { |file| "#{file.created_at.strftime('%Y-%m-%d')} (#{file.filename.to_s})" }.join("\n")
+    assert_equal h.dates_thesis_files_received, dates_display
   end
 
   test 'can list associated degrees' do

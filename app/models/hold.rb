@@ -47,11 +47,14 @@ class Hold < ApplicationRecord
     end
   end
 
-  # Per internal discussions, we are setting this to the create date of 
-  # the parent thesis, which may be slightly different than the date the 
-  # file(s) were transferred.
-  def date_thesis_file_received
-    self.thesis.created_at.strftime('%Y-%m-%d')
+  # This may later list just the info for the file flagged 'primary', once 
+  # we implement that feature.
+  def dates_thesis_files_received
+    if self.thesis.files.present?
+      self.thesis.files.map do |file| 
+        "#{file.created_at.strftime('%Y-%m-%d')} (#{file.blob.filename})"
+      end.join("\n")
+    end
   end
 
   # In the unlikely scenario that the the status was changed to 'released' 
