@@ -14,6 +14,8 @@ and renders all form fields for a resource's editable attributes.
 [1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Form
 %>
 
+<% content_for(:custom_stylesheets) { stylesheet_link_tag "administrate" } %>
+
 <%= form_for([namespace, page.resource], html: { class: "form" }) do |f| %>
   <% if page.resource.errors.any? %>
     <div id="error_explanation">
@@ -34,10 +36,25 @@ and renders all form fields for a resource's editable attributes.
   <% end %>
 
   <% page.attributes.each do |attribute| -%>
-    <div class="field-unit field-unit--<%= attribute.html_class %> field-unit--<%= requireness(attribute) %>">
-      <%= render_field attribute, f: f %>
-    </div>
-  <% end -%>
+    <% if params[:thesis_id] && attribute.name == 'thesis' %>
+      <div class="panel">
+        <%= hidden_field_tag 'hold[thesis_id]', params[:thesis_id] %>
+        <div class="panel-heading">Thesis info</div>
+        <div class="panel-body">
+          <ul class="list-unbulleted">
+            <li>Title: <%= attribute.data.title %></li>
+            <li>Author(s): <%= attribute.data.users.map { |author| author.name }.join("; ") %></li>
+            <li>Degree(s): <%= attribute.data.degrees.map { |degree| degree.name }.join("; ") %></li>
+            <li>Degree date: <%= attribute.data.grad_date %></li>
+          </ul>
+        </div>
+      </div>
+    <% else %>
+      <div class="field-unit field-unit--<%= attribute.html_class %> field-unit--<%= requireness(attribute) %>">
+        <%= render_field attribute, f: f %>
+      </div>
+    <% end %>
+  <% end %>
 
   <div class="form-actions">
     <%= f.submit %>

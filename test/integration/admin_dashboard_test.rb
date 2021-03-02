@@ -154,6 +154,13 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert !Thesis.exists?(thesis_id)
   end
 
+  test 'thesis view includes a button to create a new hold for thesis' do
+    mock_auth(users(:admin))
+    t = theses(:one)
+    get "/admin/theses/#{t.id}"
+    assert_select "a[href=?]", "/admin/holds/new?thesis_id=#{t.id}"
+  end
+
   test 'can assign advisors to theses via thesis panel' do
     needle = advisors(:second)
     user = users(:yo)
@@ -588,6 +595,28 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal last_release_date, hold.date_released
   end
 
+  test 'new hold form includes thesis info panel if thesis_id param is present' do
+    mock_auth(users(:admin))
+    t = theses(:one)
+    get "/admin/holds/new?thesis_id=#{t.id}"
+    assert_response :success
+    assert_select "div.panel-heading", text: "Thesis info"
+    assert_select "div.panel-body", text: "Title: MyString
+            Author(s): Yobot, Yo
+            Degree(s): MFA
+            Degree date: 2017-09-13"
+    assert_select "select[name=?]", "hold[thesis_id]", false
+  end
+
+  test 'new hold form excludes thesis info panel if no thesis_id param is present' do
+    mock_auth(users(:admin))
+    get "/admin/holds/new"
+    assert_response :success
+    assert_select "div.panel-heading", false
+    assert_select "div.panel-body", false
+    assert_select "select[name=?]", "hold[thesis_id]"
+  end
+
   # Hold_sources
   test 'accessing hold_sources panel does not work with basic rights' do
     mock_auth(users(:basic))
@@ -623,6 +652,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal needle, hold_source.source
   end
 
+  # Authors
   test 'thesis admins can access author dashboard' do
     mock_auth(users(:thesis_admin))
     get "/admin/authors"

@@ -22,6 +22,7 @@ By default, it renders:
     <%= content_for(:title) %> - <%= application_title %>
   </title>
   <%= render "stylesheet" %>
+  <%= yield :custom_stylesheets %>
   <%= csrf_meta_tags %>
 </head>
 <body>
