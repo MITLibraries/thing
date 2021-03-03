@@ -33,9 +33,9 @@ class UserDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-    id
     display_name
     email
+    kerberos_id
     role
     theses
   ].freeze
@@ -45,7 +45,6 @@ class UserDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
     display_name
     theses
-    id
     uid
     kerberos_id
     orcid

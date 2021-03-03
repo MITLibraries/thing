@@ -8,9 +8,12 @@ class AuthorDashboard < Administrate::BaseDashboard
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
-    user: Field::BelongsTo,
-    thesis: Field::BelongsTo,
     id: Field::Number,
+    user: Field::BelongsTo.with_options(
+      searchable: true,
+      searchable_fields: ['kerberos_id', 'uid', 'display_name']
+    ),
+    thesis: Field::BelongsTo,
     graduation_confirmed: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
@@ -22,7 +25,6 @@ class AuthorDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-  id
   user
   thesis
   graduation_confirmed
@@ -31,7 +33,6 @@ class AuthorDashboard < Administrate::BaseDashboard
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
-  id
   user
   thesis
   graduation_confirmed

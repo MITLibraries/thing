@@ -42,5 +42,13 @@ module Admin
 
     # See https://administrate-prototype.herokuapp.com/customizing_controller_actions
     # for more information
+    def new
+      resource = new_resource
+      authorize_resource(resource)
+      resource.thesis_id = params[:thesis_id]
+      render locals: {
+        page: Administrate::Page::Form.new(dashboard, resource),
+      }
+    end
   end
 end
