@@ -525,6 +525,33 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal hold_creator.kerberos_id, hold.created_by
   end
 
+  test 'correctly handles a deleted user who created a hold' do
+    creator = User.new(uid: 'death@mit.edu', email: 'thanatos@mit.edu', 
+                       kerberos_id: 'destroyerofworlds')
+    creator.admin = true
+    creator.save
+    assert creator.valid?
+    mock_auth(creator)
+
+    post admin_holds_path,
+      params: { hold: {       
+                        thesis_id: Thesis.first.id, 
+                        hold_source_id: HoldSource.first.id,
+                        date_requested: '2021-03-02',
+                        date_start: '2021-03-02',
+                        date_end:'2021-03-02',
+                        case_number: nil,
+                        status: 'active',
+                        processing_notes: nil
+                      },
+              }
+    hold = Hold.last
+
+    mock_auth(users(:admin))
+    delete admin_user_path(creator)
+    assert_equal "User ID #{creator.id} no longer active.", hold.created_by
+  end
+
   test 'can identify the date a hold was released' do
     mock_auth(users(:thesis_admin))
 

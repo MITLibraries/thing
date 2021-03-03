@@ -42,8 +42,11 @@ class Hold < ApplicationRecord
   def created_by
     if self.versions.first.event == 'create'
       creator_id = self.versions.first.whodunnit
-      user = User.find_by(id: creator_id)
-      user.kerberos_id
+      if user = User.find_by(id: creator_id)
+        user.kerberos_id
+      else
+        "User ID #{creator_id} no longer active."
+      end
     end
   end
 

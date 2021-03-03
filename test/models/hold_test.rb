@@ -95,12 +95,15 @@ class HoldTest < ActiveSupport::TestCase
     h.thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
     thesis_file = h.thesis.files.first
     assert_equal "a_pdf.pdf", thesis_file.filename.to_s
-    assert_equal h.dates_thesis_files_received, "#{thesis_file.created_at.strftime('%Y-%m-%d')} (#{thesis_file.filename.to_s})"
+    assert_includes h.dates_thesis_files_received, thesis_file.created_at.strftime('%Y-%m-%d')
+    assert_includes h.dates_thesis_files_received, "a_pdf.pdf"
 
     f2 = Rails.root.join('test','fixtures','files','registrar.csv')
     h.thesis.files.attach(io: File.open(f2), filename: 'registrar.csv')
-    dates_display = h.thesis.files.map { |file| "#{file.created_at.strftime('%Y-%m-%d')} (#{file.filename.to_s})" }.join("\n")
-    assert_equal h.dates_thesis_files_received, dates_display
+    create_dates = h.thesis.files.map { |file| file.created_at.strftime('%Y-%m-%d') }
+    filenames = h.thesis.files.map { |file| file.filename.to_s }
+    assert create_dates.each { |date| h.dates_thesis_files_received.include?(date) }
+    assert filenames.each { |fname| h.dates_thesis_files_received.include?(fname) }
   end
 
   test 'can list associated degrees' do
