@@ -19,9 +19,12 @@ class HoldDashboard < Administrate::BaseDashboard
     date_requested: Field::Date,
     date_start: Field::Date,
     date_end: Field::Date,
+    date_released: Field::Date,
+    dates_thesis_files_received: Field::String,
     case_number: Field::String,
     status: Field::Select.with_options(searchable: false, collection: ->(field) { field.resource.class.send(field.attribute.to_s.pluralize).keys }),
     processing_notes: Field::Text,
+    created_by: Field::Text,
     created_at: Field::Date,
     updated_at: Field::Date,
   }.freeze
@@ -40,6 +43,7 @@ class HoldDashboard < Administrate::BaseDashboard
   status
   date_requested
   date_end
+  date_released
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -54,9 +58,11 @@ class HoldDashboard < Administrate::BaseDashboard
   date_requested
   date_start
   date_end
+  dates_thesis_files_received
   case_number
   status
   processing_notes
+  created_by
   created_at
   updated_at
   ].freeze

@@ -89,6 +89,23 @@ class HoldTest < ActiveSupport::TestCase
     assert_equal change.changeset["case_number"], [nil, "2"]
   end
 
+  test 'can list the create dates and names of the parent thesis files' do
+    h = holds(:valid)
+    f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    h.thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    thesis_file = h.thesis.files.first
+    assert_equal "a_pdf.pdf", thesis_file.filename.to_s
+    assert_includes h.dates_thesis_files_received, thesis_file.created_at.strftime('%Y-%m-%d')
+    assert_includes h.dates_thesis_files_received, "a_pdf.pdf"
+
+    f2 = Rails.root.join('test','fixtures','files','registrar.csv')
+    h.thesis.files.attach(io: File.open(f2), filename: 'registrar.csv')
+    create_dates = h.thesis.files.map { |file| file.created_at.strftime('%Y-%m-%d') }
+    filenames = h.thesis.files.map { |file| file.filename.to_s }
+    assert create_dates.each { |date| h.dates_thesis_files_received.include?(date) }
+    assert filenames.each { |fname| h.dates_thesis_files_received.include?(fname) }
+  end
+
   test 'can list associated degrees' do
     hold = holds(:valid)
     assert_equal "MFA\nJD", hold.degrees
