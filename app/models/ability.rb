@@ -13,9 +13,11 @@ class Ability
         can :manage, :all
       end
 
-      # Promote submitters who do not already have a more elevated role.
-      if (user.submitter? && @user.role == "basic")
-        @user.role = "transfer_submitter"
+      # Assign thesis_submitter rights directly to appropriate users as the
+      # process that follows will not pick them up as it is not an explicitly
+      # assigned role
+      if user.submitter?
+        transfer_submitter
       end
 
       # This line matches users' roles with the functions defined below,
