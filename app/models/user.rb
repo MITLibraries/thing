@@ -107,9 +107,9 @@ class User < ApplicationRecord
   # department can only access those departments.
   def submittable_departments
     if role == "thesis_admin" || admin
-      Department.all.order(:name)
+      Department.all.order(:name_dw)
     else
-      departments.order(:name)
+      departments.order(:name_dw)
     end
   end
 

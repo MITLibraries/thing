@@ -267,9 +267,9 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     mock_auth(users(:thesis_admin))
     department = Department.first
     patch admin_department_path(department),
-      params: { department: { name: 'Course LII' } }
+      params: { department: { name_dw: 'Course LII' } }
     department.reload
-    assert_equal 'Course LII', department.name
+    assert_equal 'Course LII', department.name_dw
   end
 
   test 'accessing degrees panel works with admin rights' do

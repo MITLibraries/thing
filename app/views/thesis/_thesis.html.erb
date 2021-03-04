@@ -25,7 +25,7 @@
           </li>
           <li>
             <span class="label"><%= "Department".pluralize(thesis.departments.count) %>:</span>
-              <%= thesis.departments.map{|d| d.name}.join(",") %>
+              <%= thesis.departments.map{|d| d.name_dw}.join(",") %>
           </li>
           <li>
             <span class="label"><%= "Degree".pluralize(thesis.degrees.count) %>:</span>

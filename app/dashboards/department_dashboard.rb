@@ -10,7 +10,9 @@ class DepartmentDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     theses: Field::HasMany,
     id: Field::Number,
-    name: Field::String,
+    name_dw: Field::String,
+    code_dw: Field::String,
+    name_dspace: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime
   }.freeze
@@ -21,7 +23,8 @@ class DepartmentDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-    name
+    name_dw
+    code_dw
     theses
     id
     created_at
@@ -32,7 +35,9 @@ class DepartmentDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
     theses
     id
-    name
+    name_dw
+    code_dw
+    name_dspace
     created_at
     updated_at
   ].freeze
@@ -42,13 +47,15 @@ class DepartmentDashboard < Administrate::BaseDashboard
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
     theses
-    name
+    name_dw
+    code_dw
+    name_dspace
   ].freeze
 
   # Overwrite this method to customize how departments are displayed
   # across all pages of the admin dashboard.
   #
   def display_resource(department)
-    department.name
+    department.name_dw
   end
 end

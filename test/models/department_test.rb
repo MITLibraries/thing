@@ -2,10 +2,12 @@
 #
 # Table name: departments
 #
-#  id         :integer          not null, primary key
-#  name       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  name_dw     :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  code_dw     :string           default(""), not null
+#  name_dspace :string
 #
 
 require 'test_helper'
@@ -16,10 +18,22 @@ class DepartmentTest < ActiveSupport::TestCase
     assert(department.valid?)
   end
 
-  test 'invalid without name' do
+  test 'invalid without Data Warehouse name' do
     department = departments(:one)
-    department.name = nil
+    department.name_dw = nil
     assert(department.invalid?)
+  end
+
+  test 'invalid without Data Warehouse code' do
+    department = departments(:one)
+    department.code_dw = nil
+    assert(department.invalid?)
+  end
+
+  test 'valid without DSpace name' do
+    department = departments(:one)
+    department.name_dspace = nil
+    assert(department.valid?)
   end
 
   test 'can have multiple theses' do
@@ -36,7 +50,7 @@ class DepartmentTest < ActiveSupport::TestCase
 
   test 'can have one or more transfers' do
     d = Department.last
-    assert(d.name == 'Underwater Basketweaving')
+    assert(d.name_dw == 'Department of Aeronautics and Astronautics')
     tcount = d.transfers.count
     t1 = Transfer.new
     t1.department = d
@@ -58,7 +72,7 @@ class DepartmentTest < ActiveSupport::TestCase
 
   test 'can access transfer information from department' do
     d = Department.last
-    assert(d.name == 'Underwater Basketweaving')
+    assert(d.name_dw == 'Department of Aeronautics and Astronautics')
     ttest = d.transfers.first
     assert(ttest.grad_date.to_s == '2020-05-01')
   end
