@@ -2,15 +2,20 @@
 #
 # Table name: users
 #
-#  id         :integer          not null, primary key
-#  uid        :string           not null
-#  email      :string           not null
-#  admin      :boolean          default(FALSE)
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  role       :string           default("basic")
-#  given_name :string
-#  surname    :string
+#  id             :integer          not null, primary key
+#  uid            :string           not null
+#  email          :string           not null
+#  admin          :boolean          default(FALSE)
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  role           :string           default("basic")
+#  given_name     :string
+#  surname        :string
+#  kerberos_id    :string           not null
+#  display_name   :string           not null
+#  middle_name    :string
+#  preferred_name :string
+#  orcid          :string
 #
 
 require 'test_helper'
