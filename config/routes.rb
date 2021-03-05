@@ -4,12 +4,13 @@ Rails.application.routes.draw do
     resources :users
     resources :advisors
     resources :authors
+    resources :copyrights
     resources :degrees
     resources :departments
     resources :department_theses
     resources :holds
     resources :hold_sources
-    resources :rights
+    resources :licenses
     resources :submitters
     resources :theses
     resources :transfers

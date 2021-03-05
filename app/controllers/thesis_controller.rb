@@ -100,8 +100,8 @@ class ThesisController < ApplicationController
 
   def thesis_params
     params.require(:thesis).permit(:title, :abstract, :coauthors, :graduation_month,
-                                   :graduation_year, :right_id,
-                                   :department_ids, :degree_ids)
+                                   :graduation_year, :copyright_id,
+                                   :license_id, :department_ids, :degree_ids)
   end
 
   def sorted_theses(queryset, sort)

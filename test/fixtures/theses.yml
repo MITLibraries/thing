@@ -8,7 +8,6 @@
 #  grad_date          :date             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  right_id           :integer
 #  status             :string           default("active")
 #  processor_note     :text
 #  author_note        :text
@@ -16,6 +15,8 @@
 #  metadata_complete  :boolean          default(FALSE), not null
 #  publication_status :string           default("Not ready for publication"), not null
 #  coauthors          :string
+#  copyright_id       :integer
+#  license_id         :integer
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
@@ -24,25 +25,26 @@ one:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  right: one
   departments: [one]
   degrees: [one]
   advisors: [first]
   coauthors: 'My co-author'
+  copyright: mit
+  license: nocc
 
 two:
   title:  Can apparent superluminal neutrino speeds be explained as a quantum weak measurement?
   abstract: Probably not.
   grad_date: 2017-09-13
-  right: one
   departments: [one]
   degrees: [one]
+  copyright: sacrificial
+  license: sacrificial
 
 downloaded:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  right: one
   departments: [one]
   degrees: [one]
   status: 'downloaded'
@@ -51,7 +53,6 @@ withdrawn:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  right: one
   departments: [one]
   degrees: [one]
   status: 'withdrawn'
@@ -60,7 +61,6 @@ active:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  right: one
   departments: [one]
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
@@ -69,7 +69,6 @@ with_note:
   title: MyString
   abstract: MyText
   grad_date: 2017-09-13
-  right: one
   departments: [one]
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
@@ -79,7 +78,6 @@ with_hold:
   title: MySensitiveThesis
   abstract: MyText
   grad_date: 2017-09-13
-  right: one
   departments: [one]
   degrees: [one, two]
   status: 'active'
@@ -89,7 +87,6 @@ june_2018:
   title: MyString
   abstract: MyText
   grad_date: 2018-06-01
-  right: one
   departments: [one]
   degrees: [one]
 
@@ -97,7 +94,6 @@ september_2018:
   title: MyString
   abstract: MyText
   grad_date: 2018-09-01
-  right: one
   departments: [one]
   degrees: [one]
 
@@ -105,7 +101,6 @@ february_2019:
   title: MyString
   abstract: MyText
   grad_date: 2019-02-01
-  right: one
   departments: [one]
   degrees: [one]
 
@@ -113,7 +108,6 @@ june_2019:
   title: MyString
   abstract: MyText
   grad_date: 2019-06-01
-  right: one
   departments: [one]
   degrees: [one]
 
@@ -121,7 +115,6 @@ september_2019:
   title: MyString
   abstract: MyText
   grad_date: 2019-09-01
-  right: one
   departments: [one]
   degrees: [one]
 
@@ -129,5 +122,4 @@ multi_depts:
   title: MyOverAchievement
   abstract: MyText
   grad_date: 2019-02-01
-  right: one
   degrees: [one]

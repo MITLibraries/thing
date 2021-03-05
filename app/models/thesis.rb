@@ -8,7 +8,6 @@
 #  grad_date          :date             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  right_id           :integer
 #  status             :string           default("active")
 #  processor_note     :text
 #  author_note        :text
@@ -16,10 +15,14 @@
 #  metadata_complete  :boolean          default(FALSE), not null
 #  publication_status :string           default("Not ready for publication"), not null
 #  coauthors          :string
+#  copyright_id       :integer
+#  license_id         :integer
 #
 
 class Thesis < ApplicationRecord
-  belongs_to :right
+  belongs_to :copyright, optional: true
+  belongs_to :license, optional: true
+
   has_many :degree_theses
   has_many :degrees, through: :degree_theses
 
@@ -44,7 +47,6 @@ class Thesis < ApplicationRecord
     graduation_month: 'Required - Please select your month of graduation.',
     departments: 'Required - Please select your primary department.',
     degrees: 'Required - Please select your primary degree.',
-    right: 'Required - Please select the appropriate copyright.',
     files: 'Required - Attaching your thesis is required.',
   }
 

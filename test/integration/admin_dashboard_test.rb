@@ -115,7 +115,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     # the grad_date attribute on the model instance.
     post admin_theses_path,
       params: { thesis: { user_ids: [ user.id ],
-                          right_id: Right.first.id,
                           department_ids: [ Department.first.id ],
                           degree_ids: [ Degree.first.id ],
                           advisor_ids: [ Advisor.first.id ],
@@ -175,6 +174,34 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal needle.name, thesis.advisors.first.name
   end
 
+  test 'can assign copyright to theses via thesis panel' do
+    needle = copyrights(:mit)
+    user = users(:yo)
+    mock_auth(users(:thesis_admin))
+    thesis = Thesis.first
+    assert_not_equal needle.id, thesis.copyright_id
+
+    patch admin_thesis_path(thesis),
+      params: { thesis: { user_ids: [user.id],
+                          copyright_id: needle.id } }
+    thesis.reload
+    assert_equal needle.id, thesis.copyright_id
+  end
+
+  test 'can assign license to theses via thesis panel' do
+    needle = licenses(:nocc)
+    user = users(:yo)
+    mock_auth(users(:thesis_admin))
+    thesis = Thesis.first
+    assert_not_equal needle.id, thesis.license_id
+
+    patch admin_thesis_path(thesis),
+      params: { thesis: { user_ids: [user.id],
+                          license_id: needle.id } }
+    thesis.reload
+    assert_equal needle.id, thesis.license_id
+  end
+
   test 'accessing users panel works with admin rights' do
     mock_auth(users(:admin))
     get '/admin/users'
@@ -208,41 +235,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
       params: { user: { role: 'thesis_admin' } }
     user.reload
     assert_equal 'thesis_admin', user.role
-  end
-
-  test 'accessing rights panel works with admin rights' do
-    mock_auth(users(:admin))
-    get '/admin/rights'
-    assert_response :success
-    assert_equal('/admin/rights', path)
-  end
-
-  test 'accessing rights panel works with thesis_admin rights' do
-    mock_auth(users(:thesis_admin))
-    get '/admin/rights'
-    assert_response :success
-    assert_equal('/admin/rights', path)
-  end
-
-  test 'accessing rights panel does not work with processor rights' do
-    mock_auth(users(:processor))
-    get '/admin/rights'
-    assert_response :redirect
-  end
-
-  test 'accessing rights panel does not work with basic rights' do
-    mock_auth(users(:basic))
-    get '/admin/rights'
-    assert_response :redirect
-  end
-
-  test 'thesis admins can edit rights through admin dashboard' do
-    mock_auth(users(:thesis_admin))
-    right = Right.first
-    patch admin_right_path(right),
-      params: { right: { statement: 'GPL 4.0' } }
-    right.reload
-    assert_equal 'GPL 4.0', right.statement
   end
 
   test 'accessing departments panel works with admin rights' do
@@ -400,6 +392,43 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
       params: { advisor: { thesis_ids: [needle.id] } }
     advisor.reload
     assert_equal needle.title, advisor.theses.first.title
+  end
+
+  # Copyrights
+  test 'accessing copyright panel with basic rights does not work' do
+    mock_auth(users(:basic))
+    get '/admin/copyrights'
+    assert_response :redirect
+  end
+
+  test 'accessing copyright panel with processor rights does not work' do
+    mock_auth(users(:processor))
+    get '/admin/copyrights'
+    assert_response :redirect
+  end
+
+  test 'accessing copyright panel with thesis_admin rights is successful' do
+    mock_auth(users(:thesis_admin))
+    get '/admin/copyrights'
+    assert_response :success
+  end
+
+  test 'accessing copyright panel with admin flag is successful' do
+    mock_auth(users(:admin))
+    get '/admin/copyrights'
+    assert_response :success
+  end
+
+  test 'can edit copyright record via admin dashboard' do
+    mock_auth(users(:thesis_admin))
+    newvalue = 'Cal Tech'
+    record = Copyright.first
+    assert_not_equal record.holder, newvalue
+
+    patch admin_copyright_path(record),
+      params: { copyright: { holder: newvalue } }
+    record.reload
+    assert_equal record.holder, newvalue
   end
 
   # Department_Theses
@@ -672,4 +701,42 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_equal('/', path)
   end
+
+  # Licenses
+  test 'accessing license panel with basic rights does not work' do
+    mock_auth(users(:basic))
+    get '/admin/licenses'
+    assert_response :redirect
+  end
+
+  test 'accessing license panel with processor rights does not work' do
+    mock_auth(users(:processor))
+    get '/admin/licenses'
+    assert_response :redirect
+  end
+
+  test 'accessing license panel with thesis_admin rights is successful' do
+    mock_auth(users(:thesis_admin))
+    get '/admin/licenses'
+    assert_response :success
+  end
+
+  test 'accessing license panel with admin flag is successful' do
+    mock_auth(users(:admin))
+    get '/admin/licenses'
+    assert_response :success
+  end
+
+  test 'can edit license record via admin dashboard' do
+    mock_auth(users(:thesis_admin))
+    newvalue = 'Public Domain'
+    record = License.first
+    assert_not_equal record.display_description, newvalue
+
+    patch admin_license_path(record),
+      params: { license: { display_description: newvalue } }
+    record.reload
+    assert_equal record.display_description, newvalue
+  end
+
 end

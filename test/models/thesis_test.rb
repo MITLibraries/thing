@@ -8,7 +8,6 @@
 #  grad_date          :date             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  right_id           :integer
 #  status             :string           default("active")
 #  processor_note     :text
 #  author_note        :text
@@ -16,6 +15,8 @@
 #  metadata_complete  :boolean          default(FALSE), not null
 #  publication_status :string           default("Not ready for publication"), not null
 #  coauthors          :string
+#  copyright_id       :integer
+#  license_id         :integer
 #
 
 require 'test_helper'
@@ -133,16 +134,19 @@ class ThesisTest < ActiveSupport::TestCase
     assert_difference("u.authors.count", -1) { t.destroy }
   end
 
-  test 'invalid without right' do
+  test 'can have copyright or not' do
     thesis = theses(:one)
-    thesis.right = nil
-    assert(thesis.invalid?)
+    assert_not_nil thesis.copyright
+    assert(thesis.valid?)
+
+    thesis.copyright = nil
+    assert(thesis.valid?)
   end
 
-  test 'invalid with multiple rights' do
+  test 'invalid with multiple copyrights' do
     thesis = theses(:one)
     assert_raises(ActiveRecord::AssociationTypeMismatch) do
-      thesis.right = [rights(:one), rights(:two)]
+      thesis.copyright = [copyrights(:mit), copyrights(:author)]
     end
   end
 
@@ -156,6 +160,22 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:one)
     thesis.departments = [departments(:one), departments(:two)]
     assert(thesis.valid?)
+  end
+
+  test 'can have license or not' do
+    thesis = theses(:one)
+    assert_not_nil thesis.license
+    assert(thesis.valid?)
+
+    thesis.license = nil
+    assert(thesis.valid?)
+  end
+
+  test 'invalid with multiple licenses' do
+    thesis = theses(:one)
+    assert_raises(ActiveRecord::AssociationTypeMismatch) do
+      thesis.license = [licenses(:nocc), licenses(:ccby)]
+    end
   end
 
   test 'invalid without degree' do

@@ -3,11 +3,13 @@ require 'test_helper'
 class ThesisIntegrationTest < ActionDispatch::IntegrationTest
   def setup
     auth_setup
-    @thesis_params = { right_id: Right.first.id,
+    @thesis_params = {
       department_ids: Department.first.id,
       degree_ids: Degree.first.id,
       title: 'yoyos are cool',
       abstract: 'We discovered it with science',
+      copyright_id: Copyright.first.id,
+      license_id: License.first.id,
       coauthors: 'My co-author',
       graduation_month: 'June',
       graduation_year: Time.zone.today.year,
@@ -26,6 +28,8 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal orig_count + 1, Thesis.count
     assert_equal 'yoyos are cool', Thesis.last.title
     assert_equal 'We discovered it with science', Thesis.last.abstract
+    assert_equal Copyright.first.id, Thesis.last.copyright_id
+    assert_equal License.first.id, Thesis.last.license_id
   end
 
   test 'invalid departments message' do
@@ -42,14 +46,6 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     params[:degree_ids] = nil
     post thesis_index_path, params: { thesis: params }
     assert_select 'span.error', text: Thesis::VALIDATION_MSGS[:degrees]
-  end
-
-  test 'invalid right message' do
-    mock_auth(users(:basic))
-    params = @thesis_params
-    params[:right_id] = nil
-    post thesis_index_path, params: { thesis: params }
-    assert_select "select.required[data-msg='#{Thesis::VALIDATION_MSGS[:right]}']"
   end
 
   test 'invalid files message' do

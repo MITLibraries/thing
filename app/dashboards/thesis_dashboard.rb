@@ -13,7 +13,6 @@ class ThesisDashboard < Administrate::BaseDashboard
   # performs before_create validation on these objects.
   ATTRIBUTE_TYPES = {
     users: Field::HasMany,
-    right: Field::BelongsTo,
     departments: Field::HasMany,
     degrees: Field::HasMany,
     id: Field::Number,
@@ -40,6 +39,8 @@ class ThesisDashboard < Administrate::BaseDashboard
     holds: Field::HasMany,
     advisors: Field::HasMany,
     coauthors: Field::String,
+    copyright: Field::BelongsTo,
+    license: Field::BelongsTo,
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -51,7 +52,6 @@ class ThesisDashboard < Administrate::BaseDashboard
     title
     users
     holds
-    right
     grad_date
   ].freeze
 
@@ -64,7 +64,8 @@ class ThesisDashboard < Administrate::BaseDashboard
     coauthors
     abstract
     grad_date
-    right
+    copyright
+    license
     created_at
     updated_at
     departments
@@ -88,7 +89,8 @@ class ThesisDashboard < Administrate::BaseDashboard
   # you will be unable to create Theses!
   FORM_ATTRIBUTES = %i[
     users
-    right
+    copyright
+    license
     departments
     degrees
     advisors

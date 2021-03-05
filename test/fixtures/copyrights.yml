@@ -1,0 +1,53 @@
+# == Schema Information
+#
+# Table name: copyrights
+#
+#  id                  :integer          not null, primary key
+#  holder              :text             not null
+#  display_to_author   :boolean          not null
+#  display_description :text             not null
+#  statement_dspace    :text             not null
+#  url                 :text
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#
+mit:
+  holder: MIT
+  display_to_author: true
+  display_description: "MIT holds copyright"
+  statement_dspace: "In Copyright - Educational Use Permitted"
+  url: http://rightsstatements.org/page/InC-EDU/1.0/
+
+author:
+  holder: Author
+  display_to_author: true
+  display_description: "I hold copyright"
+  statement_dspace: "In Copyright"
+  url: https://rightsstatements.org/page/InC/1.0/
+
+public:
+  holder: Public Domain
+  display_to_author: true
+  display_description: "I hold copyright and give it up to the public domain with no copyright"
+  statement_dspace: "CC0 - Public Domain"
+  url: https://creativecommons.org/publicdomain/zero/1.0/
+
+govt:
+  holder: US Government
+  display_to_author: true
+  display_description: "This is a work of the U.S. Government"
+  statement_dspace: "This material is declared a work of the U.S. Government and is not subject to copyright protection in the United States."
+  url: https://rightsstatements.org/page/NoC-US/1.0/
+
+other:
+  holder: Other organization
+  display_to_author: true
+  display_description: "Another person or organization holds copyright"
+  statement_dspace: "In Copyright"
+  url: http://rightsstatements.org/vocab/InC/1.0/
+
+sacrificial:
+  holder: Delete me
+  display_to_author: true
+  display_description: "This will be deleted during testing."
+  statement_dspace: "This will be deleted during testing."

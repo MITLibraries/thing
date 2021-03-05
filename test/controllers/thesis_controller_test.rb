@@ -23,7 +23,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
              abstract: 'Frook.',
              department_ids: departments(:one).id.to_s,
              degree_ids: degrees(:one).id.to_s,
-             right_id: rights(:one).id.to_s,
              graduation_year: (Time.current.year + 1).to_s,
              graduation_month: 'September',
              files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
@@ -47,7 +46,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
              abstract: 'Frook.',
              # The missing department ids here should cause the form to fail.
              degree_ids: degrees(:one).id.to_s,
-             right_id: rights(:one).id.to_s,
              graduation_year: (Time.current.year + 1).to_s,
              graduation_month: 'December',
              files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
