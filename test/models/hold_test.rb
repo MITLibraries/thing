@@ -118,6 +118,6 @@ class HoldTest < ActiveSupport::TestCase
 
   test 'can list associated author names' do
     h = holds(:valid)
-    assert_equal "Robot, Basic; Yobot, Yo", h.author_names
+    assert_equal "Student, Second; Yobot, Yo", h.author_names
   end
 end

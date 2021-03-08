@@ -18,7 +18,7 @@ class NavTest < ActionDispatch::IntegrationTest
 
   test 'new thesis page nav' do
     mock_auth(users(:basic))
-    get new_thesis_path
+    get thesis_start_path
     assert_select('.current') do |value|
       assert(value.text.include?('Submit thesis information'))
     end

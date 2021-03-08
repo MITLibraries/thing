@@ -41,6 +41,6 @@ six:
   graduation_confirmed: false
 
 seven:
-  user: basic
+  user: second
   thesis: with_hold
   graduation_confirmed: false

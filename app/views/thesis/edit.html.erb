@@ -1,0 +1,189 @@
+<%= content_for(:title, "Edit Thesis Submission | MIT Libraries") %>
+
+<% content_for :additional_js do %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<% end %>
+
+<div class="layout-3q1q layout-band">
+
+  <div class="col3q">
+    <h3 class="title title-page">Edit your thesis information</h3>
+
+    <%= render 'you_are' %>
+
+    <%= render 'welcome' %>
+
+    <%= simple_form_for(@thesis, url: thesis_path,
+                                 html: { class: 'thesisSubmission' },
+                                 validate: true ) do |f| %>
+
+      <%= f.error_notification %>
+      <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+
+      <h4>Your basic info</h4>
+
+      <div class="layout-1q3q layout-band field-wrap">
+        <div class="col1q"><strong>Name</strong></div>
+        <div class="col3q"><%= current_user.display_name %></div>
+      </div>
+
+      <div class="layout-1q3q layout-band field-wrap">
+        <div class="col1q"><strong>Email</strong></div>
+        <div class="col3q"><%= current_user.email %></div>
+      </div>
+
+      <%= f.simple_fields_for :users do |u| %>
+        <% if u.object.id == current_user.id %>
+          <%= u.input :id, :as => :hidden %>
+          <%= u.input :orcid, label: 'ORCID iD',
+                              label_html: { class: 'col1q' },
+                              wrapper_html: { class: 'field-wrap layout-1q3q layout-band field-row' },
+                              input_html: { class: 'field field-text col3q' },
+                              hint: '(e.g. https://orcid.org/0000-0001-2345-6789)<br>An ORCID iD is a free, unique, persistent identifier that you own and control - forever.<br><a href="https://orcid.mit.edu/cgi-bin/what_is_orcid_mit_ui.cgi">Learn more</a> and <a href="https://orcid.mit.edu/cgi-bin/researcher_ui.cgi">register for one</a>.'.html_safe,
+                              hint_html: { class: 'col3q' } %>
+        <% end # If IDs match %>
+      <% end # simple_fields_for loop %>
+
+      <h4>Your thesis information</h4>
+      <p>(as listed on thesis title page)</p>
+
+      <%= f.input :title, as: :text,
+                          required: true,
+                          validate: { presence: true },
+                          label: 'Thesis title',
+                          label_html: { class: 'col1q' },
+                          wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+                          input_html: { class: 'field field-text col3q',
+                            data: { msg: Thesis::VALIDATION_MSGS[:title] }
+                          },
+                          hint: 'Update if needed' %>
+
+      <%= f.simple_fields_for :users do |u| %>
+        <% if u.object.id == current_user.id %>
+          <%= u.input :preferred_name, label: 'Name as it appears on thesis',
+                                       label_html: { class: 'col1q' },
+                                       wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+                                       input_html: { class: 'field field-text col3q' },
+                                       hint: '(Enter as: Last/Surname, First/Given name Middle name)',
+                                       hint_html: { class: 'col3q' } %>
+        <% end # If IDs match %>
+      <% end # simple_fields_for loop %>
+
+      <%= f.input :coauthors, label: 'Co-author (if applicable)',
+                              label_html: { class: 'col1q' },
+                              wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+                              input_html: { class: 'field field-text col3q' },
+                              hint: '(Enter as: Last/Surname, First/Given name Middle name)',
+                              hint_html: { class: 'col3q' } %>
+
+      <div class="layout-1q3q layout-band field-wrap">
+        <div class="col1q"><strong>Department(s)</strong></div>
+        <div class="col3q">
+          <% f.object.departments.find_all do |dept| %>
+            <p><%= dept.name_dw %></p>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="layout-1q3q layout-band field-wrap">
+        <div class="col1q"><strong>Degree(s)</strong></div>
+        <div class="col3q">
+          <% f.object.degrees.find_all do |deg| %>
+            <p><%= deg.name_dw %></p>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="layout-1q3q layout-band field-wrap">
+        <div class="col1q"><strong>Degree date</strong></div>
+        <div class="col3q">
+          <%= f.object.graduation_month %>
+          <%= f.object.graduation_year %>
+        </div>
+      </div>
+
+      <%= f.association :copyright, as: :select,
+                                    required: true,
+                                    validate: { present: true },
+                                    include_hidden: false,
+                                    label: 'Copyright holder', label_method: :holder,
+                                    label_html: { class: 'col1q' },
+                                    wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
+                                    input_html: { class: 'field field-select col3q', multiple: false,
+                                      'aria-describedby': 'thesis_copyright_id-hint',
+                                      data: { msg: Thesis::VALIDATION_MSGS[:copyright] } },
+                                    hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright">Specifications for Thesis Preparation</a>.'.html_safe,
+                                    hint_html: { id: 'thesis_copyright_id-hint', class: 'col3q' } %>
+
+      <%= f.association :license, as: :select,
+                                  include_hidden: false,
+                                  label: 'License (if you retain copyright)',
+                                  label_method: :display_description,
+                                  label_html: { class: 'col1q' },
+                                  wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
+                                  input_html: { class: 'field field-select col3q', multiple: false } %>
+
+      <fieldset>
+        <legend>Thesis supervisor(s)</legend>
+        <p>(just supervisors, not entire committee)</p>
+        <%= f.simple_fields_for :advisors do |advisor| %>
+          <%= render 'advisor_fields', :f => advisor %>
+        <% end %>
+        <p class="links">
+          <%= link_to_add_association 'Add advisor', f, :advisors %>
+        </p>
+      </fieldset>
+
+      <%= f.input :abstract, as: :text,
+                             required: true,
+                             validate: { presence: true },
+                             label_html: { class: 'col1q' },
+                             wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+                             input_html: { class: 'field field-text col3q',
+                               data: { msg: Thesis::VALIDATION_MSGS[:abstract] }
+                             } %>
+
+      <%= f.input :author_note, as: :text,
+                                wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+                                input_html: { class: 'field field-text col3q',
+                                  'aria-describedby': 'thesis_author_note-hint' },
+                                label_html: { class: 'col1q' },
+                                hint: 'If anything is incorrect in the non-editable fields, tell us here'.html_safe,
+                                hint_html: { id: 'thesis_author_note-hint', class: 'col3q' } %>
+
+      <div class='field-wrap'>
+        <%= submit_tag 'Submit thesis information', class: 'btn button-primary' %>
+      </div>
+
+    <% end # simple_form_for %>
+
+  </div>
+
+  <aside class="content-sup col1q-r" role="complementary">
+    <%= render 'sidebar' %>
+  </aside>
+
+</div>
+
+<script type="text/javascript">
+  $("form.thesisSubmission").validate({
+    invalidHandler: function(event, validator) {
+      var errors = validator.numberOfInvalids();
+      if (errors) {
+        var message = errors == 1
+          ? 'The form was not submitted successfully - one required field needs to be fixed.'
+          : 'The form was not submitted successfully - ' + errors + ' required fields need to be fixed.';
+        $("div.error").html(message);
+        $("div.error").show();
+      } else {
+        $("div.error").hide();
+      }
+    }
+  });
+</script>
+
+<style type="text/css">
+  form .field-wrap {
+    margin-bottom: 1em;
+  }
+</style>  

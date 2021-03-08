@@ -345,4 +345,24 @@ class UserTest < ActiveSupport::TestCase
       u.destroy
     end
   end
+
+  test 'editable_theses returns a set of thesis records' do
+    u = users(:yo)
+    assert_equal 3, u.editable_theses.count
+  end
+
+  test 'users with no theses have no editable_theses' do
+    u = users(:admin)
+    assert_equal 0, u.editable_theses.count
+  end
+
+  test 'setting metadata_complete makes a thesis not editable' do
+    u = users(:yo)
+    count = u.editable_theses.count
+    t = u.editable_theses.first
+    t.metadata_complete = true
+    t.save
+    u.reload
+    assert_equal count - 1, u.editable_theses.count
+  end
 end

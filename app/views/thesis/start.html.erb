@@ -1,0 +1,30 @@
+<%= content_for(:title, "Thesis Submission | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+
+  <div class="col3q">
+    <h3 class="title title-page">Submit your thesis information</h3>
+
+    <%= render 'you_are' %>
+
+    <%= render 'welcome' %>
+
+    <h4>Your basic info</h4>
+
+    <dl>
+        <dt>Name</dt>
+        <dd><%= current_user.display_name %></dd>
+        <dt>Email</dt>
+        <dd><%= current_user.email %></dd>
+    </dl>
+
+    <h4>Select the thesis record you wish to review and edit</h4>
+
+    <% current_user.editable_theses.each do |t| %>
+      <p><%= link_to( title_helper(t), edit_thesis_path(t) ) %></p>
+    <% end %>
+  </div>
+  <aside class="content-sup col1q-r" role="complementary">
+    <%= render 'sidebar' %>
+  </aside>
+</div>

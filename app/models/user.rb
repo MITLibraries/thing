@@ -106,6 +106,14 @@ class User < ApplicationRecord
     end
   end
 
+  # This convenience method returns the list of the user's theses for which
+  # the user can submit metadata. The logic regarding which theses qualify for
+  # this list may be subject to change; initially this is all theses for which
+  # the "metadata_complete" flag is not set.
+  def editable_theses
+    self.theses.where(metadata_complete: false)
+  end
+
   # Definitely for sure wrong for some people. But staff want to be able to
   # sort on surname for processing purposes, so we're getting given name +
   # surname. This could pose a problem for those who prefer not to use 

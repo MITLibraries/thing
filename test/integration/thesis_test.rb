@@ -32,6 +32,28 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal License.first.id, Thesis.last.license_id
   end
 
+  test 'cannot post empty thesis record' do
+    mock_auth(users(:basic))
+    @empty_thesis = {
+    }
+    assert_raises ActionController::ParameterMissing do
+      post thesis_index_path, params: { thesis: @empty_thesis }
+    end
+  end
+
+  test 'posting minimal thesis' do
+    mock_auth(users(:basic))
+    orig_count = Thesis.count
+    @minimal_thesis = {
+      department_ids: Department.first.id,
+      degree_ids: Degree.first.id,
+      graduation_year: '2021',
+      graduation_month: 'February'
+    }
+    post thesis_index_path, params: { thesis: @minimal_thesis }
+    assert_equal orig_count + 1, Thesis.count
+  end
+
   test 'invalid departments message' do
     mock_auth(users(:basic))
     params = @thesis_params
@@ -73,8 +95,94 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
 
   test 'indicates active user' do
     mock_auth(users(:basic))
-    msg = "You are logged in and submitting as #{users(:basic).display_name}."
+    msg = "You are logged in and submitting as #{users(:basic).display_name} (#{users(:basic).email})."
     get new_thesis_path
+    assert @response.body.include? msg
+  end
+
+  test 'users with many theses need disambiguation when submitting metadata' do
+    mock_auth(users(:basic))
+    get thesis_start_path
+    assert_equal '/thesis/start', path
+  end
+
+  test 'users with one theses are asked to edit that record on submit' do
+    mock_auth(users(:second))
+    get thesis_start_path
+    assert_response :redirect
+
+    follow_redirect!
+    assert_equal edit_thesis_path, path
+  end
+
+  test 'users with no theses are asked to submit a new thesis record' do
+    mock_auth(users(:third))
+    get thesis_start_path
+    assert_response :redirect
+
+    follow_redirect!
+    assert_equal new_thesis_path, path
+  end
+
+  # Thesis editing form
+  test 'cannot request edit page for not-your-theses' do
+    mock_auth(users(:basic))
+    assert_raises CanCan::AccessDenied do
+      get thesis_path(theses(:one))
+    end
+  end
+
+  test 'can load edit page for your thesis' do
+    mock_auth(users(:basic))
+    get thesis_path(theses(:two))
+    assert_response 200
+  end
+
+  test 'edit form indicates current user' do
+    mock_auth(users(:basic))
+    get edit_thesis_path(theses(:two))
+    msg = "You are logged in and submitting as"
+    assert @response.body.include? msg
+  end
+
+  test 'users can post an updated thesis record via the edit form' do
+    mock_auth(users(:basic))
+    thesis_count = Thesis.count
+    example = theses(:two)
+    updated_title = 'My updated thesis title'
+    assert_not_equal example.title, updated_title
+
+    example.title = updated_title
+    patch thesis_path(theses(:two)), params: { thesis: example.serializable_hash }
+    example.reload
+    assert_equal example.title, updated_title
+
+    assert_equal thesis_count, Thesis.count
+  end
+
+  # Triaging through thesis/start path
+  test 'thesis start path sends users with no thesis to new thesis form' do
+    mock_auth(users(:admin))
+    get thesis_start_path
+    assert_response :redirect
+    follow_redirect!
+    assert_equal path, new_thesis_path
+  end
+
+  test 'thesis start path sends users with one thesis to edit thesis form' do
+    mock_auth(users(:second))
+    get thesis_start_path
+    assert_response :redirect
+    follow_redirect!
+    assert_equal path, edit_thesis_path(theses(:with_hold))
+  end
+
+  test 'thesis start path keeps users with multiple editable theses on disambiguation page' do
+    mock_auth(users(:basic))
+    get thesis_start_path
+    assert_response 200
+
+    msg = "Select the thesis record you wish to review and edit"
     assert @response.body.include? msg
   end
 end

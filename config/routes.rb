@@ -19,8 +19,10 @@ Rails.application.routes.draw do
     root to: "theses#index"
   end
 
+  get 'thesis/start', to: 'thesis#start', as: 'thesis_start'
+  get 'thesis/confirm', to: 'thesis#confirm', as: 'thesis_confirm'
   resources :registrar, only: [:new, :create, :show]
-  resources :thesis, only: [:new, :create, :show]
+  resources :thesis, only: [:new, :create, :edit, :show, :update]
   get 'process', to: 'thesis#process_theses', as: 'process'
   get 'process/:status', to: 'thesis#process_theses'
   post 'done/:id', to: 'thesis#mark_downloaded',

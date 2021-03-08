@@ -7,7 +7,7 @@
       <div class="wrap-bar">
         <nav class="local-nav" aria-label="Main menu">
           <%= nav_link_to("Home", root_path) %>
-          <%= nav_link_to("Submit thesis information", new_thesis_path) %>
+          <%= nav_link_to("Submit thesis information", thesis_start_path) %>
 
           <% if user_signed_in? %>
             <% if can? :process_theses, Thesis %>
