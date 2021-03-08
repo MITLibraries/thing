@@ -28,7 +28,7 @@ class Hold < ApplicationRecord
   validates :status, presence: true
 
   def degrees
-    self.thesis.degrees.map { |d| d.name}.join("\n")
+    self.thesis.degrees.map { |d| d.name_dw}.join("\n")
   end
 
   def grad_date

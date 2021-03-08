@@ -68,7 +68,7 @@
                          hint: 'Select your primary department as listed on your title page',
                          hint_html: { id: 'thesis_departments_ids-hint' } %>
 
-    <%= f.association :degrees, label_method: :name, as: :select,
+    <%= f.association :degrees, label_method: :name_dw, as: :select,
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
                          input_html: { class: 'field field-select', multiple: false,

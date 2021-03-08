@@ -2,10 +2,14 @@
 #
 # Table name: degrees
 #
-#  id         :integer          not null, primary key
-#  name       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id             :integer          not null, primary key
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  code_dw        :string           not null
+#  name_dw        :string
+#  abbreviation   :string
+#  name_dspace    :string
+#  degree_type_id :integer
 #
 
 require 'test_helper'
@@ -16,10 +20,28 @@ class DegreeTest < ActiveSupport::TestCase
     assert(degree.valid?)
   end
 
-  test 'invalid without name' do
+  test 'minimum valid degree' do
     degree = degrees(:one)
-    degree.name = nil
+    degree.name_dspace = nil
+    degree.name_dw = nil
+    degree.abbreviation = nil
+    degree.save
+    assert degree.valid?
+  end
+
+  test 'invalid without Data Warehouse code' do
+    degree = degrees(:one)
+    degree.code_dw = nil
     assert(degree.invalid?)
+  end
+
+  test 'Data Warehouse code must be unique' do
+    d1 = degrees(:one)
+    d2 = degrees(:two)
+    d2.code_dw = d1.code_dw
+    assert_raises ActiveRecord::RecordNotUnique do
+      d2.save
+    end
   end
 
   test 'can have multiple theses' do
@@ -32,5 +54,18 @@ class DegreeTest < ActiveSupport::TestCase
     degree = degrees(:one)
     degree.theses = []
     assert(degree.valid?)
+  end
+
+  test 'can have degree type' do
+    degree = degrees(:one)
+    degree.degree_type_id = degree_types(:bachelor).id
+    assert degree.degree_type.name == 'Bachelor'
+    assert degree.valid?
+  end
+
+  test 'valid without degree type' do 
+    degree = degrees(:one)
+    degree.degree_type_id = nil
+    assert degree.valid?
   end
 end

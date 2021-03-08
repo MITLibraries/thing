@@ -2,16 +2,27 @@
 #
 # Table name: degrees
 #
-#  id         :integer          not null, primary key
-#  name       :string           not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id             :integer          not null, primary key
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  code_dw        :string           not null
+#  name_dw        :string
+#  abbreviation   :string
+#  name_dspace    :string
+#  degree_type_id :integer
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MFA
+  name_dw: Master of Fine Arts
+  code_dw: MFA123
+  abbreviation: MFA
+  name_dspace: Master of Fine Arts
+  degree_type_id: 
 
 two:
-  name: JD
+  name_dw: Juris Doctor
+  code_dw: JD123
+  abbreviation: JD
+  name_dspace: Master of Fine Arts
