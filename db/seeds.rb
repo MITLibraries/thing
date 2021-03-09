@@ -46,8 +46,18 @@ Copyright.create_with(
 )
 
 # Create Departments
-Department.find_or_create_by(name: 'Aeronautics and Astronautics')
-Department.find_or_create_by(name: 'Archaeology and Materials')
+Department.create_with(
+  code_dw: '16',
+  name_dspace: 'Massachusetts Institute of Technology. Department of Aeronautics and Astronautics'
+).find_or_create_by(
+  name_dw: 'Department of Aeronautics and Astronautics'
+)
+Department.create_with(
+  code_dw: '21A',
+  name_dspace: 'MIT Anthropology Program'
+).find_or_create_by(
+  name_dw: 'Program in Anthropology'
+)
 
 # Create Degrees
 Degree.find_or_create_by(name: 'Bachelor of Science')

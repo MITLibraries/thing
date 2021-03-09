@@ -231,7 +231,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     get process_path
     expected_theses = Thesis.order('grad_date ASC').first(25)
     expected_theses.each do |t|
-      assert t.departments.map {|d| @response.body.include? d.name}.all?
+      assert t.departments.map {|d| @response.body.include? d.name_dw}.all?
     end
   end
 

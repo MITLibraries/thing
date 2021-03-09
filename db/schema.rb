@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_02_215828) do
+ActiveRecord::Schema.define(version: 2021_03_04_142225) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -106,9 +106,13 @@ ActiveRecord::Schema.define(version: 2021_03_02_215828) do
   end
 
   create_table "departments", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name_dw", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "code_dw", default: "", null: false
+    t.string "name_dspace"
+    t.index ["code_dw"], name: "index_departments_on_code_dw", unique: true
+    t.index ["name_dw"], name: "index_departments_on_name_dw", unique: true
   end
 
   create_table "hold_sources", force: :cascade do |t|

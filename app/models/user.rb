@@ -2,15 +2,20 @@
 #
 # Table name: users
 #
-#  id         :integer          not null, primary key
-#  uid        :string           not null
-#  email      :string           not null
-#  admin      :boolean          default(FALSE)
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  role       :string           default("basic")
-#  given_name :string
-#  surname    :string
+#  id             :integer          not null, primary key
+#  uid            :string           not null
+#  email          :string           not null
+#  admin          :boolean          default(FALSE)
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  role           :string           default("basic")
+#  given_name     :string
+#  surname        :string
+#  kerberos_id    :string           not null
+#  display_name   :string           not null
+#  middle_name    :string
+#  preferred_name :string
+#  orcid          :string
 #
 
 class User < ApplicationRecord
@@ -107,9 +112,9 @@ class User < ApplicationRecord
   # department can only access those departments.
   def submittable_departments
     if role == "thesis_admin" || admin
-      Department.all.order(:name)
+      Department.all.order(:name_dw)
     else
-      departments.order(:name)
+      departments.order(:name_dw)
     end
   end
 

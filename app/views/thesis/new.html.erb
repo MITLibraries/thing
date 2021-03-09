@@ -56,8 +56,8 @@
                         wrapper_html: { class: 'field-wrap' },
                         input_html: { class: 'field field-text wide' } %>
 
-    <%= f.association :departments, label_method: :name, as: :select,
-                         collection: Department.order(:name),
+    <%= f.association :departments, label_method: :name_dw, as: :select,
+                         collection: Department.order(:name_dw),
                          validate: { presence: true },
                          include_hidden: false,
                          wrapper_html: { class: 'field-wrap select' },
