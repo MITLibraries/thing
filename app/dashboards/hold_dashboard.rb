@@ -76,6 +76,7 @@ class HoldDashboard < Administrate::BaseDashboard
   date_requested
   date_start
   date_end
+  dates_thesis_files_received
   case_number
   status
   processing_notes
@@ -102,6 +103,6 @@ class HoldDashboard < Administrate::BaseDashboard
   #   "Hold ##{hold.id}"
   # end
   def display_resource(hold)
-    "#{hold.thesis.title}"
+    "Hold for: #{hold.thesis.title}"
   end
 end

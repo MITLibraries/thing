@@ -42,6 +42,7 @@ en:
         created_at: Created on
         updated_at: Updated on
         case_number: TLO case number
+        processing_notes: Hold notes
       hold_source:
         created_at: Created on
         updated_at: Updated on
