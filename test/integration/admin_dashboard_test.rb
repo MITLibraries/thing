@@ -272,6 +272,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal 'Course LII', department.name_dw
   end
 
+  # Degrees
   test 'accessing degrees panel works with admin rights' do
     mock_auth(users(:admin))
     get '/admin/degrees'
@@ -295,9 +296,22 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     mock_auth(users(:thesis_admin))
     degree = Degree.first
     patch admin_degree_path(degree),
-      params: { degree: { name: 'Master of Fine Arts' } }
+      params: { degree: { name_dspace: 'Master of Fine Arts' } }
     degree.reload
-    assert_equal 'Master of Fine Arts', degree.name
+    assert_equal 'Master of Fine Arts', degree.name_dspace
+  end
+
+  test 'thesis admins can associate a degree type with a degree' do
+    mock_auth users(:thesis_admin)
+    degree = Degree.first
+    degree_type = degree_types(:bachelor)
+    patch admin_degree_path(degree),
+      params: { degree: { degree_type_id: degree_type.id } }
+    degree.reload
+    assert_equal degree_type.id, degree.degree_type.id
+
+    get "/admin/degrees/#{degree.id}"
+    assert_select "a[href='/admin/degree_types/#{degree_type.id}']", text: 'Bachelor'
   end
 
   test 'thesis admins can access transfer panel' do 
@@ -632,7 +646,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_select "div.panel-heading", text: "Thesis info"
     assert_select "div.panel-body", text: "Title: MyString
             Author(s): Yobot, Yo
-            Degree(s): MFA
+            Degree(s): Master of Fine Arts
             Degree date: 2017-09-13"
     assert_select "select[name=?]", "hold[thesis_id]", false
   end

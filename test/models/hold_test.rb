@@ -108,7 +108,7 @@ class HoldTest < ActiveSupport::TestCase
 
   test 'can list associated degrees' do
     hold = holds(:valid)
-    assert_equal "MFA\nJD", hold.degrees
+    assert_equal "Master of Fine Arts\nJuris Doctor", hold.degrees
   end
 
   test 'can list associated grad date' do

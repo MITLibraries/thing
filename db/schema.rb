@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_04_142225) do
+ActiveRecord::Schema.define(version: 2021_03_05_212632) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -75,10 +75,22 @@ ActiveRecord::Schema.define(version: 2021_03_04_142225) do
     t.index ["thesis_id"], name: "index_degree_theses_on_thesis_id"
   end
 
-  create_table "degrees", force: :cascade do |t|
+  create_table "degree_types", force: :cascade do |t|
     t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_degree_types_on_name", unique: true
+  end
+
+  create_table "degrees", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "code_dw", null: false
+    t.string "name_dw"
+    t.string "abbreviation"
+    t.string "name_dspace"
+    t.integer "degree_type_id"
+    t.index ["code_dw"], name: "index_degrees_on_code_dw", unique: true
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -224,6 +236,7 @@ ActiveRecord::Schema.define(version: 2021_03_04_142225) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "authors", "theses"
   add_foreign_key "authors", "users"
+  add_foreign_key "degrees", "degree_types"
   add_foreign_key "holds", "hold_sources"
   add_foreign_key "holds", "theses"
   add_foreign_key "registrars", "users"

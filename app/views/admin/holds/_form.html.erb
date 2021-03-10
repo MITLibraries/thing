@@ -44,7 +44,7 @@ and renders all form fields for a resource's editable attributes.
           <ul class="list-unbulleted">
             <li>Title: <%= attribute.data.title %></li>
             <li>Author(s): <%= attribute.data.users.map { |author| author.name }.join("; ") %></li>
-            <li>Degree(s): <%= attribute.data.degrees.map { |degree| degree.name }.join("; ") %></li>
+            <li>Degree(s): <%= attribute.data.degrees.map { |degree| degree.name_dw }.join("; ") %></li>
             <li>Degree date: <%= attribute.data.grad_date %></li>
           </ul>
         </div>

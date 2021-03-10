@@ -60,8 +60,19 @@ Department.create_with(
 )
 
 # Create Degrees
-Degree.find_or_create_by(name: 'Bachelor of Science')
-Degree.find_or_create_by(name: 'Master of Business Analytics')
+Degree.create_with(
+  name_dw: 'Music and Theater Arts',
+  abbreviation: 'S.B.'
+).find_or_create_by(code_dw: 'SB21M2')
+Degree.create_with(
+  name_dw: 'Environmental Engineer',
+  abbreviation: 'Env.E.'
+).find_or_create_by(code_dw: 'ENENV')
+
+# Create Rights
+# Right.find_or_create_by(statement: 'MIT')
+# Right.find_or_create_by(statement: 'Author Retains')
+# Right.find_or_create_by(statement: 'Other')
 
 # Create Hold Sources
 HoldSource.find_or_create_by(source: 'TLO')
@@ -110,5 +121,11 @@ License.create_with(
 ).find_or_create_by(
   display_description: 'Creative Commons (CC BY-NC-ND)'
 )
+
+# Create Degree Types
+DegreeType.find_or_create_by(name: 'Bachelor')
+DegreeType.find_or_create_by(name: 'Doctoral')
+DegreeType.find_or_create_by(name: 'Engineer')
+DegreeType.find_or_create_by(name: 'Master')
 
 Rails.logger.info('Seeding DB Complete')
