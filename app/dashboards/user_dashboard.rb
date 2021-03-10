@@ -20,6 +20,7 @@ class UserDashboard < Administrate::BaseDashboard
     middle_name: Field::String,
     surname: Field::String,
     display_name: Field::String,
+    submitters: UserSubmitterField,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     role: Field::Select.with_options(
@@ -50,6 +51,7 @@ class UserDashboard < Administrate::BaseDashboard
     orcid
     email
     admin
+    submitters
     created_at
     updated_at
   ].freeze
