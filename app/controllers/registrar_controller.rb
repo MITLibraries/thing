@@ -28,7 +28,7 @@ class RegistrarController < ApplicationController
 
   def list_registrar
     @registrars = Registrar.all
-    @jobs = Delayed::Job.all
+    @jobs = Delayed::Job.where(queue: 'default')
   end
 
   # Do not name this simply 'process' or you will shadow a built-in controller
@@ -36,7 +36,7 @@ class RegistrarController < ApplicationController
   def process_registrar
     @registrar = Registrar.find(params[:id])
 
-    Delayed::Job.enqueue RegistrarImportJob.new("Does this appear?")
+    RegistrarImportJob.perform_later(@registrar.graduation_list_path)
 
     flash[:notice] = "Job started..."
     redirect_to '/harvest'

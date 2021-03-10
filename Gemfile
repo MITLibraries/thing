@@ -40,6 +40,7 @@ end
 
 group :development do
   gem 'annotate'
+  gem 'dotenv-rails'
   gem 'listen'
   gem 'rubocop'
   gem 'web-console'

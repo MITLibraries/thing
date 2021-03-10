@@ -18,6 +18,7 @@
 #  orcid          :string
 #
 
+require 'csv'
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
@@ -157,6 +158,47 @@ class UserTest < ActiveSupport::TestCase
                                           email: user.email })
     omniuser = User.from_omniauth(auth)
     assert_equal(omniuser.id, user.id)
+  end
+
+  test 'finds existing user from csv' do
+    filepath = 'test/fixtures/files/registrar_data_user_existing.csv'
+    row = CSV.readlines(open(filepath), headers: true).first
+    user = User.create_or_update_from_csv(row)
+    assert_equal users(:yo), user
+  end
+
+  test 'creates user from csv with all attributes' do
+    filepath = 'test/fixtures/files/registrar_data_user_new.csv'
+    row = CSV.readlines(open(filepath), headers: true).first
+    assert_not(User.find_by(kerberos_id: 'finleyjessica'))
+    user = User.create_or_update_from_csv(row)
+    assert_equal 'finleyjessica', user.kerberos_id
+    assert_equal 'finleyjessica@mit.edu', user.uid
+    assert_equal 'Jennifer', user.given_name
+    assert_equal 'Marie', user.middle_name
+    assert_equal 'Klein', user.surname
+    assert_equal 'Klein, Jennifer', user.preferred_name
+    assert_equal 'finleyjessica@example.com', user.email
+  end
+
+  test 'updates user from csv' do
+    filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
+    row = CSV.readlines(open(filepath), headers: true).first
+    user = User.create_or_update_from_csv(row)
+    assert_equal 'New', user.given_name
+    assert_equal 'N.', user.middle_name
+    assert_equal 'Name', user.surname
+    assert_equal 'New Preferred Name', user.preferred_name
+    assert_equal 'new@example.com', user.email
+  end
+
+  test 'only updates preferred_name from csv if blank' do
+    filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
+    row = CSV.readlines(open(filepath), headers: true).first
+    user = users(:yo)
+    user.update(preferred_name: 'Old Preferred Name')
+    User.create_or_update_from_csv(row)
+    assert_equal 'Old Preferred Name', user.preferred_name
   end
 
   test 'name property' do

@@ -14,4 +14,21 @@ class DepartmentThesis < ApplicationRecord
 
   validates_uniqueness_of :department_id, scope: [:thesis_id], message: 'has already been assigned to this thesis'
   validates_uniqueness_of :primary, scope: [:thesis_id], conditions: -> { where(primary: true) }, message: 'department has already been declared for this thesis'
+
+  # Given a boolean value, set the primary attribute to match the
+  # provided value if needed. If the provided value is true, first
+  # checks to see if there is an existing primary department_thesis
+  # relationship for this thesis, and if so changes it to false
+  # because there can only be one primary department for a thesis.
+  def set_primary(primary_value)
+    if not self.primary == primary_value
+      was_primary = self.thesis.department_theses.find_by(primary: true)
+      if primary_value && was_primary
+        was_primary.update!(primary: false)
+        Rails.logger.info("Old primary department unset: " + was_primary.department.code_dw)
+      end
+      self.update!(primary: primary_value)
+      Rails.logger.info("Primary department set to: " + self.department.code_dw)
+    end
+  end
 end

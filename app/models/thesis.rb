@@ -139,4 +139,44 @@ class Thesis < ApplicationRecord
       'success'
     end
   end
+
+  # Given a row of CSV data from Registrar import plus existing
+  # instances of user, degree, and department, and a THing formatted
+  # graduation date, find a thesis by Kerberos ID of author from CSV data and
+  # update all thesis attributes for which the Registrar has authoritative
+  # data, or create a new thesis from the provided attributes and CSV data.
+  # or create one from the provided attributes and CSV data. Raises an error if
+  # multiple theses are found for an author in a given degree period, as that
+  # scenario needs to be handled manually by a Processor.
+  def self.create_or_update_from_csv(author, degree, department, grad_date, row)
+    theses = Thesis.joins(:authors).where(authors: {user_id: author.id}).where(grad_date: grad_date)
+    if theses.empty?
+      new_thesis = Thesis.create(
+        coauthors: row['Thesis Coauthor'],
+        degrees: [degree],
+        departments: [department],
+        graduation_month: grad_date.strftime('%B'),
+        graduation_year: grad_date.year,
+        title: row['Thesis Title'],
+        users: [author],
+      )
+      Rails.logger.info("New thesis created: " + author.name + ", " + grad_date.to_s)
+      return new_thesis
+    elsif theses.size == 1
+      thesis = theses.first
+      if thesis.coauthors.blank?
+        thesis.coauthors = row['Thesis Coauthor']
+      else
+        thesis.coauthors += "; " + row['Thesis Coauthor']
+      end
+      thesis.degrees << degree if not thesis.degrees.include?(degree)
+      thesis.departments << department if not thesis.departments.include?(department)
+      thesis.title = row['Thesis Title'] if thesis.title.blank?
+      thesis.save
+      Rails.logger.info("Thesis updated: " + author.name + ", " + grad_date.to_s)
+      return thesis
+    else
+      raise "Multiple theses found"
+    end
+  end
 end

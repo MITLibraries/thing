@@ -43,4 +43,33 @@ class DepartmentThesisTest < ActiveSupport::TestCase
     link.department = departments(:three)
     assert(link.valid?)
   end
+
+  test 'sets primary to true if false and no other primary dept set' do
+    link = department_theses(:primary)
+    link.primary = false
+    link.set_primary(true)
+    assert link.primary
+  end
+
+  test 'sets primary to true if false and unsets existing primary' do
+    link = department_theses(:other)
+    old_primary = department_theses(:primary)
+    link.set_primary(true)
+    assert link.primary
+    old_primary.reload
+    assert_not old_primary.primary
+  end
+
+  test 'sets primary to false if true' do
+    link = department_theses(:primary)
+    link.set_primary(false)
+    assert_not link.primary
+  end
+
+  test 'primary value stays the same if set to same value' do
+    link = department_theses(:primary)
+    link.set_primary(true)
+    assert link.primary
+  end
+
 end

@@ -113,7 +113,7 @@ class HoldTest < ActiveSupport::TestCase
 
   test 'can list associated grad date' do
     hold = holds(:valid)
-    assert_equal Date.parse("2017-09-13"), hold.grad_date
+    assert_equal Date.parse("2017-09-01"), hold.grad_date
   end
 
   test 'can list associated author names' do

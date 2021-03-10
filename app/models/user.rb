@@ -78,6 +78,33 @@ class User < ApplicationRecord
     end
   end
 
+  # Given a row of CSV data from Registrar import, find a user by Kerberos ID
+  # and update all user attributes for which the Registrar is the authoritative
+  # data source, or create a new user from the CSV data if not found.
+  def self.create_or_update_from_csv(row)
+    user = User.find_by(kerberos_id: row['Krb Name'])
+    if user.nil?
+      new_user = User.create!(
+        kerberos_id: row['Krb Name'],
+        email: row['Email Address'].downcase,
+        given_name: row['First Name'],
+        surname: row['Last Name'],
+        middle_name: row['Middle Name'],
+        preferred_name: row['Full Name']
+      )
+      Rails.logger.info("New user created: " + new_user.name)
+      return new_user
+    else
+      user.email = row['Email Address'].downcase
+      user.given_name = row['First Name']
+      user.surname =  row['Last Name']
+      user.middle_name = row['Middle Name']
+      user.preferred_name = row['Full Name'] if user.preferred_name.blank?
+      Rails.logger.info("User updated: " + user.name)
+      return user
+    end
+  end
+
   # Definitely for sure wrong for some people. But staff want to be able to
   # sort on surname for processing purposes, so we're getting given name +
   # surname. This could pose a problem for those who prefer not to use 
