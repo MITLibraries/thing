@@ -53,10 +53,10 @@ class Hold < ApplicationRecord
   # This may later list just the info for the file flagged 'primary', once 
   # we implement that feature.
   def dates_thesis_files_received
-    if self.thesis.files.present?
+    if self.thesis.present? && self.thesis.files.present?
       self.thesis.files.map do |file| 
         "#{file.created_at.strftime('%Y-%m-%d')} (#{file.blob.filename})"
-      end.join("\n")
+      end.join("; ")
     end
   end
 

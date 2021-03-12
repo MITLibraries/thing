@@ -51,7 +51,16 @@ and renders all form fields for a resource's editable attributes.
       </div>
     <% else %>
       <div class="field-unit field-unit--<%= attribute.html_class %> field-unit--<%= requireness(attribute) %>">
-        <%= render_field attribute, f: f %>
+        <% if attribute.name == 'dates_thesis_files_received' %>
+          <div class="field-unit__label">
+            <label for="hold_dates_files_received">Dates thesis files received</label>
+          </div>
+          <div class="field-unit__field">
+            <input type="text" id="hold_dates_files_received" value="<%= attribute.data %>" readonly>
+          </div>
+        <% else %>
+          <%= render_field attribute, f: f %>
+        <% end %>
       </div>
     <% end %>
   <% end %>
