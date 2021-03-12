@@ -166,11 +166,11 @@ class Thesis < ApplicationRecord
       thesis = theses.first
       if thesis.coauthors.blank?
         thesis.coauthors = row['Thesis Coauthor']
-      else
+      elsif thesis.coauthors.exclude? row['Thesis Coauthor']
         thesis.coauthors += "; " + row['Thesis Coauthor']
       end
-      thesis.degrees << degree if not thesis.degrees.include?(degree)
-      thesis.departments << department if not thesis.departments.include?(department)
+      thesis.degrees << degree unless thesis.degrees.include?(degree)
+      thesis.departments << department unless thesis.departments.include?(department)
       thesis.title = row['Thesis Title'] if thesis.title.blank?
       thesis.save
       Rails.logger.info("Thesis updated: " + author.name + ", " + grad_date.to_s)

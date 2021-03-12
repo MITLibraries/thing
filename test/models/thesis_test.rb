@@ -401,7 +401,7 @@ class ThesisTest < ActiveSupport::TestCase
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
     row = CSV.readlines(open(filepath), headers: true).first
     user = users(:yo)
-    user.theses= [theses(:one)]
+    user.update(theses: [theses(:one)])
     thesis = Thesis.create_or_update_from_csv(user, degrees(:one), departments(:one), Date.new(2017, 9, 1), row)
     user.reload
     assert_equal 1, user.theses.size
@@ -412,7 +412,7 @@ class ThesisTest < ActiveSupport::TestCase
     filepath = 'test/fixtures/files/registrar_data_thesis_new.csv'
     row = CSV.readlines(open(filepath), headers: true).first
     user = users(:yo)
-    user.theses = []
+    user.update(theses: [])
     thesis = Thesis.create_or_update_from_csv(user, degrees(:one), departments(:one), Date.new(2017, 9, 1), row)
     user.reload
     assert_equal 'Coauthor, Mine', thesis.coauthors
@@ -429,20 +429,19 @@ class ThesisTest < ActiveSupport::TestCase
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
     row = CSV.readlines(open(filepath), headers: true).first
     thesis = theses(:one)
-    thesis.update(title: '', coauthors: '')
+    thesis.update(
+      coauthors: '',
+      degrees: [degrees(:one)],
+      departments: [departments(:one)],
+      title: ''
+    )
     user = users(:yo)
-    user.theses = [thesis]
-    degree_count = thesis.degrees.size
-    department_count = thesis.departments.size
-    new_degree = degrees(:two)
-    new_department = departments(:two)
-    Thesis.create_or_update_from_csv(user, new_degree, new_department, Date.new(2017, 9, 1), row)
+    user.update(theses: [thesis])
+    Thesis.create_or_update_from_csv(user, degrees(:two), departments(:two), Date.new(2017, 9, 1), row)
     thesis.reload
     assert_equal 'My new co-author', thesis.coauthors
-    assert_includes thesis.degrees, new_degree
-    assert_equal degree_count + 1, thesis.degrees.size
-    assert_includes thesis.departments, new_department
-    assert_equal department_count + 1, thesis.departments.size
+    assert_includes thesis.degrees, degrees(:two)
+    assert_includes thesis.departments, departments(:two)
     assert_equal 'A New Title', thesis.title
   end
 
@@ -450,10 +449,14 @@ class ThesisTest < ActiveSupport::TestCase
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
     row = CSV.readlines(open(filepath), headers: true).first
     thesis = theses(:one)
-    thesis.degrees = [degrees(:two)]
-    thesis.departments = [departments(:two)]
+    thesis.update(
+      coauthors: 'My co-author; My new co-author',
+      degrees: [degrees(:two)],
+      departments:[departments(:two)]
+    )
+    assert_equal 'MyString', thesis.title
     user = users(:yo)
-    user.theses = [thesis]
+    user.update(theses: [thesis])
     Thesis.create_or_update_from_csv(user, degrees(:two), departments(:two), Date.new(2017, 9, 1), row)
     thesis.reload
     assert_equal 'My co-author; My new co-author', thesis.coauthors
