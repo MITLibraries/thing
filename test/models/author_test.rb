@@ -21,30 +21,43 @@ class AuthorTest < ActiveSupport::TestCase
     assert(a.valid?)
   end
 
-  test 'updates graduation status from csv' do
+  test 'sets graduation status to true if false in db and true in csv' do
     filepath = 'test/fixtures/files/registrar_data_user_existing.csv'
     row = CSV.readlines(open(filepath), headers: true).first
     author = authors(:one)
-    assert_not author.graduation_confirmed
+    refute author.graduation_confirmed
     author.set_graduated_from_csv(row)
+    author.reload
     assert author.graduation_confirmed
   end
 
-  test 'only updates graduation status if true' do
-    filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
-    author = authors(:one)
-    assert_not author.graduation_confirmed
-    author.set_graduated_from_csv(row)
-    assert_not author.graduation_confirmed
-  end
-
-  test 'reverts graduation confirmed to false if needed' do
+  test 'sets graduation status to false if true in db and false in csv' do
     filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
     row = CSV.readlines(open(filepath), headers: true).first
     author = authors(:two)
     assert author.graduation_confirmed
     author.set_graduated_from_csv(row)
-    assert_not author.graduation_confirmed
+    refute author.graduation_confirmed
+  end
+
+  test 'leaves graduation status false if false in db and false in csv' do
+    filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
+    row = CSV.readlines(open(filepath), headers: true).first
+    author = authors(:one)
+    refute author.graduation_confirmed
+    author.set_graduated_from_csv(row)
+    author.reload
+    refute author.graduation_confirmed
+  end
+
+  test 'leaves graduation status true if true in db and true in csv' do
+    filepath = 'test/fixtures/files/registrar_data_user_existing.csv'
+    row = CSV.readlines(open(filepath), headers: true).first
+    author = authors(:one)
+    author.graduation_confirmed = true
+    author.save
+    author.set_graduated_from_csv(row)
+    author.reload
+    assert author.graduation_confirmed
   end
 end
