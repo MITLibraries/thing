@@ -25,7 +25,7 @@ class RegistrarImportJob < ActiveJob::Base
       begin
         thesis = Thesis.create_or_update_from_csv(user, degree, department, grad_date, row)
       rescue RuntimeError
-        Logger.warn("Multiple theses found for author " + user.name + " for term " + grad_date.to_s + ", requires Processor attention")
+        Logger.warn("Multiple theses found for author " + user.name + " for term " + grad_date.to_s + ", requires Processor attention. CSV row data: " + row.inspect)
         results[:errors] += 1
         next
       end
