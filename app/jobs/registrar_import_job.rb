@@ -30,7 +30,7 @@ class RegistrarImportJob < ActiveJob::Base
         next
       end
 
-      primary = row['Is Primary Course Of Major'] = true
+      primary = row['Is Primary Course Of Major'] == "Y"
       thesis_department = thesis.department_theses.find_by!(department_id: department.id)
       thesis_department.set_primary(primary)
       author = thesis.authors.find_by!(user_id: user.id)
