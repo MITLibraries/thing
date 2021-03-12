@@ -21,14 +21,13 @@ class DepartmentThesis < ApplicationRecord
   # relationship for this thesis, and if so changes it to false
   # because there can only be one primary department for a thesis.
   def set_primary(primary_value)
-    if not self.primary == primary_value
-      was_primary = self.thesis.department_theses.find_by(primary: true)
-      if primary_value && was_primary
-        was_primary.update!(primary: false)
-        Rails.logger.info("Old primary department unset: " + was_primary.department.code_dw)
-      end
-      self.update!(primary: primary_value)
-      Rails.logger.info("Primary department set to: " + self.department.code_dw)
+    return if self.primary == primary_value
+    was_primary = self.thesis.department_theses.find_by(primary: true)
+    if primary_value && was_primary
+      was_primary.update!(primary: false)
+      Rails.logger.info("Old primary department unset: " + was_primary.department.code_dw)
     end
+    self.update!(primary: primary_value)
+    Rails.logger.info("Primary department set to: " + self.department.code_dw)
   end
 end
