@@ -36,7 +36,7 @@ class RegistrarController < ApplicationController
   def process_registrar
     @registrar = Registrar.find(params[:id])
 
-    RegistrarImportJob.perform_later(@registrar.graduation_list_path)
+    RegistrarImportJob.perform_later(@registrar)
 
     flash[:notice] = "Job started..."
     redirect_to '/harvest'

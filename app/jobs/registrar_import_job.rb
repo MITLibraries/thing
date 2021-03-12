@@ -3,10 +3,10 @@ require 'csv'
 class RegistrarImportJob < ActiveJob::Base
   queue_as :default
 
-  def perform(filepath)
+  def perform(registrar)
     results = {read: 0, processed: 0, errors: 0}
 
-    CSV.new(open(filepath), headers: true).each.with_index(1) do |row, i|
+    CSV.new(registrar.graduation_list.download, headers: true).each.with_index(1) do |row, i|
       Rails.logger.info("Parsing row " + i.to_s)
       results[:read] += 1
 

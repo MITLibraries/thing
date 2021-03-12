@@ -18,7 +18,4 @@ class Registrar < ApplicationRecord
 
   validates :graduation_list, presence: true
 
-  def graduation_list_path
-    ActiveStorage::Blob.service.path_for(graduation_list.key)
-  end
 end

@@ -91,9 +91,10 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
 
   test 'Loading a request page initiates the import job' do
     sign_in users(:admin)
-    Registrar.last.graduation_list.attach(io: File.open('test/fixtures/files/registrar.csv'), filename: 'registrar.csv')
+    registrar = Registrar.last
+    registrar.graduation_list.attach(io: File.open('test/fixtures/files/registrar.csv'), filename: 'registrar.csv')
     assert_enqueued_with(job: RegistrarImportJob) do
-      get "/harvest/" + Registrar.last.id.to_s
+      get "/harvest/" + registrar.id.to_s
     end
   end
 end
