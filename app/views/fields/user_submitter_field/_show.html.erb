@@ -34,5 +34,6 @@ from the associated resource class's dashboard.
   <%= t("administrate.fields.has_many.none", default: "–") %>
 <% end %>
 
-<br />
-<%= link_to("Authorize User to new Department as Submitter", new_admin_submitter_path(user_id: page.resource.id), class: 'button') %>
+<div class='new-submitter-button'>
+  <%= link_to("Authorize User to new Department as Submitter", new_admin_submitter_path(user_id: page.resource.id), class: 'button') %>
+</div>

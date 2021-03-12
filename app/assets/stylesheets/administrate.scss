@@ -6,15 +6,19 @@
   border-top: 4px solid #000;
   .panel-heading {
     font-size: 1.6rem;
-    margin: 1.5rem 2rem .5rem 2rem;
+    margin: 1.5rem 2rem 0.5rem 2rem;
   }
   .panel-body {
-    margin: .5rem 2rem 1.5rem 2rem;
+    margin: 0.5rem 2rem 1.5rem 2rem;
   }
 }
 
 .new-hold-button {
-  margin-left: 2rem
+  margin-left: 2rem;
+}
+
+.new-submitter-button {
+  margin-top: 1rem;
 }
 
 #hold_dates_files_received {
