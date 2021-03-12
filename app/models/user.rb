@@ -100,6 +100,7 @@ class User < ApplicationRecord
       user.surname =  row['Last Name']
       user.middle_name = row['Middle Name']
       user.preferred_name = row['Full Name'] if user.preferred_name.blank?
+      user.save
       Rails.logger.info("User updated: " + user.name)
       return user
     end

@@ -185,6 +185,7 @@ class UserTest < ActiveSupport::TestCase
     filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
     row = CSV.readlines(open(filepath), headers: true).first
     user = User.create_or_update_from_csv(row)
+    user.reload
     assert_equal 'New', user.given_name
     assert_equal 'N.', user.middle_name
     assert_equal 'Name', user.surname
