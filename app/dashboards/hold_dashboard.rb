@@ -15,7 +15,7 @@ class HoldDashboard < Administrate::BaseDashboard
       format: "%Y %B",
     ),
     hold_source: Field::BelongsTo,
-    id: Field::Number,
+    id: HoldHistoryField,
     date_requested: Field::Date,
     date_start: Field::Date,
     date_end: Field::Date,
@@ -35,7 +35,6 @@ class HoldDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-  id
   author_names
   grad_date
   thesis

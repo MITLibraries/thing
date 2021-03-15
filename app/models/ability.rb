@@ -62,6 +62,7 @@ class Ability
     can :stats, Thesis
     
     can :read, Transfer
+    can :read, Hold
   end
 
   # Library staff who can use the admin dashboards (which includes operations

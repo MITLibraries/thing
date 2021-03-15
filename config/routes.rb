@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   get 'harvest', to: 'registrar#list_registrar', as: 'harvest'
   get 'harvest/:id', to: 'registrar#process_registrar',
                      as: 'process_registrar'
+  get 'hold_history/:id', to: 'hold#show', as: 'hold_history'
 
   devise_for :users, :controllers => {
     :omniauth_callbacks => 'users/omniauth_callbacks'

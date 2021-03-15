@@ -1,0 +1,32 @@
+<%= content_for(:title, "Thesis Submission | MIT Libraries") %>
+
+<h3 class="hd-3"><%= "Full hold history: #{@hold.thesis.title}" %></h3>
+<p><%= link_to 'Return to hold record', admin_hold_path(@hold) %></p>
+<% @hold.versions.reverse_each do |version| %>
+  <div class="box-content">
+    <h4 class="hd-4">Version <%= version.index + 1 %></h4>
+    <ul class="list-unbulleted">
+      <li>Event type: <%= version.event %></li>
+      <li>Modified by: <%= modified_by(version) %></li>
+      <li>
+        <table class="table table-simplified table-cozy">
+          <tbody>
+            <tr>
+              <th scope="col">Field name</th>
+              <th scope="col">Previous value</th>
+              <th scope="col">New value</th>
+            </tr>
+            <% version.changeset.each do |key, value| %>
+              <tr>
+                <td><%= t("hold_history.#{key}") %></td>
+                <td><%= render_hold_history_field(key, value[0]) %></td>
+                <td><%= render_hold_history_field(key, value[1]) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </div>
+  <br/>
+<% end %>
