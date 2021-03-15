@@ -68,4 +68,23 @@ class DegreeTest < ActiveSupport::TestCase
     degree.degree_type_id = nil
     assert degree.valid?
   end
+
+  test 'finds existing degree from csv' do
+    filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
+    row = CSV.readlines(open(filepath), headers: true).first
+    degree = Degree.from_csv(row)
+    assert_equal degrees(:one), degree
+  end
+
+  test 'creates degree from csv with all expected attributes' do
+    filepath = 'test/fixtures/files/registrar_data_thesis_new.csv'
+    row = CSV.readlines(open(filepath), headers: true).first
+    assert_not(Degree.find_by(code_dw: 'UBWXYZ'))
+    degree = Degree.from_csv(row)
+    assert_equal 'UBWXYZ', degree.code_dw
+    assert_equal 'Master of Weaving', degree.name_dw
+    assert_equal 'UBW', degree.abbreviation
+    assert_nil(degree.name_dspace)
+    assert_nil(degree.degree_type)
+  end
 end

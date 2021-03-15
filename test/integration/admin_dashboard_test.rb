@@ -92,9 +92,9 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     new_title = 'yoyos are cool'
     assert_not_equal thesis.title, new_title
 
-    patch admin_thesis_path(thesis),
+    patch admin_thesis_path(thesis), 
       params: { thesis: { user_ids: [ User.first.id ], 
-                          title: new_title 
+                          title: new_title
                         } 
               }
 
@@ -647,7 +647,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_select "div.panel-body", text: "Title: MyString
             Author(s): Yobot, Yo
             Degree(s): Master of Fine Arts
-            Degree date: 2017-09-13"
+            Degree date: 2017-09-01"
     assert_select "select[name=?]", "hold[thesis_id]", false
   end
 

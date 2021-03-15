@@ -19,4 +19,20 @@ class Department < ApplicationRecord
 
   validates :name_dw, presence: true
   validates :code_dw, presence: true
+
+  # Given a row of CSV data from Registrar import, find a department by Data
+  # Warehouse code or create one from the CSV data.
+  def self.from_csv(row)
+    department = Department.find_by(code_dw: row['Degree Department'])
+    if department.nil?
+      new_department = Department.create!(
+        code_dw: row['Degree Department'],
+        name_dw: row['Dept Name In Commencement Bk']
+      )
+      Rails.logger.warn("New department created, requires Processor attention: " + new_department.code_dw)
+      return new_department
+    else
+      return department
+    end
+  end
 end

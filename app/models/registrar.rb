@@ -17,4 +17,5 @@ class Registrar < ApplicationRecord
   }
 
   validates :graduation_list, presence: true
+
 end

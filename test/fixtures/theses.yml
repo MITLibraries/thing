@@ -24,7 +24,7 @@
 one:
   title: MyString
   abstract: MyText
-  grad_date: 2017-09-13
+  grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
   advisors: [first]
@@ -35,7 +35,7 @@ one:
 two:
   title:  Can apparent superluminal neutrino speeds be explained as a quantum weak measurement?
   abstract: Probably not.
-  grad_date: 2017-09-13
+  grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
   copyright: sacrificial
@@ -44,7 +44,7 @@ two:
 downloaded:
   title: MyString
   abstract: MyText
-  grad_date: 2017-09-13
+  grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
   status: 'downloaded'
@@ -52,7 +52,7 @@ downloaded:
 withdrawn:
   title: MyString
   abstract: MyText
-  grad_date: 2017-09-13
+  grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
   status: 'withdrawn'
@@ -60,7 +60,7 @@ withdrawn:
 active:
   title: MyString
   abstract: MyText
-  grad_date: 2017-09-13
+  grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
@@ -68,7 +68,7 @@ active:
 with_note:
   title: MyString
   abstract: MyText
-  grad_date: 2017-09-13
+  grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
@@ -77,7 +77,7 @@ with_note:
 with_hold:
   title: MySensitiveThesis
   abstract: MyText
-  grad_date: 2017-09-13
+  grad_date: 2017-09-01
   departments: [one]
   degrees: [one, two]
   status: 'active'
