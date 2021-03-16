@@ -46,3 +46,5 @@ en:
       hold_source:
         created_at: Created on
         updated_at: Updated on
+      user:
+        submitters: Authorized Submitter for

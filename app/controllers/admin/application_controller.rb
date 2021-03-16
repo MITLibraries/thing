@@ -6,30 +6,25 @@
 # you're free to overwrite the RESTful controller actions.
 module Admin
   class ApplicationController < Administrate::ApplicationController
-    before_action :authenticate_user!
-    before_action :authenticate_admin
+    before_action :require_user
+    before_action :authorized_or_redirect
     before_action :set_paper_trail_whodunnit
 
-    # Ensure that current user has admin privileges.
-    def authenticate_admin
-      admin_actions = %w[show update index create edit]
-
-      if current_user
-        if [can?(:administrate, Admin) &&
-            admin_actions.include?(params[:action]),
-            current_user.admin?].any?
-
-          return
-        end
-      end
-
-      redirect_to '/', alert: 'Not authorized.'
+    def require_user
+      return if current_user
+      redirect_to root_path, alert: 'Please login to continue'
     end
 
-    # Override this value to specify the number of elements to display at a time
-    # on index pages. Defaults to 20.
-    # def records_per_page
-    #   params[:per_page] || 20
-    # end
+    def authorized_or_redirect
+      return if can?(action_name, resource_name)
+      
+      redirect_to root_path, alert: 'Not authorized.'
+    end
+   
+    # Hide links to actions if the user is not allowed to do them.
+    # This is an override of an Administrate method to work with CanCan
+    def show_action?(action, resource)
+      can? action, resource
+    end
   end
 end

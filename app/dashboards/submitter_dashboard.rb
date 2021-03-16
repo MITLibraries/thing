@@ -23,7 +23,6 @@ class SubmitterDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
   user
   department
-  id
   created_at
   ].freeze
 
