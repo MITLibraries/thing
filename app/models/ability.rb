@@ -48,12 +48,19 @@ class Ability
   # but not the admin dashboards.
   def processor
     basic
+
+    can "index", :all
+    can "show", :all
+
+    can :manage, :submitter
+
+    can %i[read update], Thesis
+    can :annotate, Thesis
     can :mark_downloaded, Thesis
     can :mark_withdrawn, Thesis
-    can :annotate, Thesis
     can :process_theses, Thesis
     can :stats, Thesis
-    can :read, Thesis
+    
     can :read, Transfer
   end
 
@@ -61,11 +68,13 @@ class Ability
   # on departments).
   def thesis_admin
     processor
-    can %i[create update], Thesis
-    can :create, Transfer
-    can :read, Transfer
-    can :administrate, Admin
-    can :create, Registrar
-    can :read, Registrar
+
+    can :manage, :all  
+    cannot "destroy", :copyright
+    cannot "destroy", :degree
+    cannot "destroy", :department
+    cannot "destroy", :hold_source
+    cannot "destroy", :license
+    cannot "destroy", :thesis
   end
 end

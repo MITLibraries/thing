@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class AuthenticationTest < ActionDispatch::IntegrationTest
+class AdminDashboardTest < ActionDispatch::IntegrationTest
   def setup
     auth_setup
   end
@@ -25,12 +25,11 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal('/', path)
   end
 
-  test 'accessing admin panel as a processor user redirects to root' do
+  test 'accessing admin panel as a processor user works' do
     mock_auth(users(:processor))
     get '/admin'
-    assert_response :redirect
-    follow_redirect!
-    assert_equal('/', path)
+    assert_response :success
+    assert_equal('/admin', path)
   end
 
   test 'accessing admin panel as a thesis admin works' do
@@ -61,10 +60,10 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal('/admin/theses', path)
   end
 
-  test 'accessing theses panel does not work with processor rights' do
+  test 'accessing theses panel works with processor rights' do
     mock_auth(users(:processor))
     get '/admin/theses'
-    assert_response :redirect
+    assert_response :success
   end
 
   test 'accessing theses panel does not work with basic rights' do
@@ -136,6 +135,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     # Cache this, because the thesis will stop existing if the delete goes
     # through.
     thesis_id = thesis.id
+    assert Thesis.exists?(thesis_id)
 
     delete admin_thesis_path(thesis)
     assert Thesis.exists?(thesis_id)
@@ -148,9 +148,32 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     # Cache this, because the thesis will stop existing if the delete goes
     # through.
     thesis_id = thesis.id
+    assert Thesis.exists?(thesis_id)
 
     delete admin_thesis_path(thesis)
     assert !Thesis.exists?(thesis_id)
+  end
+
+  test 'basic users cannot destroy theses' do
+    mock_auth(users(:basic))
+
+    thesis = Thesis.first
+    # Cache this, because the thesis will stop existing if the delete goes
+    # through.
+    thesis_id = thesis.id
+
+    delete admin_thesis_path(thesis)
+    assert Thesis.exists?(thesis_id)
+  end
+
+  test 'anonymous users cannot destroy theses' do
+    thesis = Thesis.first
+    # Cache this, because the thesis will stop existing if the delete goes
+    # through.
+    thesis_id = thesis.id
+
+    delete admin_thesis_path(thesis)
+    assert Thesis.exists?(thesis_id)
   end
 
   test 'thesis view includes a button to create a new hold for thesis' do
@@ -216,10 +239,10 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal('/admin/users', path)
   end
 
-  test 'accessing users panel does not work with processor rights' do
+  test 'accessing users panel works with processor rights' do
     mock_auth(users(:processor))
     get '/admin/users'
-    assert_response :redirect
+    assert_response :success
   end
 
   test 'accessing users panel does not work with basic rights' do
@@ -251,10 +274,11 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal('/admin/departments', path)
   end
 
-  test 'accessing departments panel does not work with processor rights' do
+  test 'accessing departments panel works with processor rights' do
     mock_auth(users(:processor))
     get '/admin/departments'
-    assert_response :redirect
+    assert_response :success
+    assert_equal('/admin/departments', path)
   end
 
   test 'accessing departments panel does not work with basic rights' do
@@ -280,10 +304,10 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal('/admin/degrees', path)
   end
 
-  test 'accessing degrees panel does not work with processor rights' do
+  test 'accessing degrees panel works with processor rights' do
     mock_auth(users(:processor))
     get '/admin/degrees'
-    assert_response :redirect
+    assert_response :success
   end
 
   test 'accessing degrees panel does not work with basic rights' do
@@ -330,12 +354,16 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     mock_auth(users(:basic))
     get "/admin/transfers"
     assert_response :redirect
-    mock_auth(users(:processor))
-    get "/admin/transfers"
-    assert_response :redirect
+
     mock_auth(users(:transfer_submitter))
     get "/admin/transfers"
     assert_response :redirect
+  end
+
+  test 'transfer dashboard renders for processors' do
+    mock_auth(users(:processor))
+    get "/admin/transfers"
+    assert_response :success
   end
 
   test 'transfer dashboard renders for admin users' do
@@ -367,9 +395,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     mock_auth(users(:basic))
     get '/admin/advisors'
     assert_response :redirect
-    mock_auth(users(:processor))
-    get '/admin/advisors'
-    assert_response :redirect
   end
 
   test 'accessing advisors panel as an admin user works' do
@@ -381,6 +406,13 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test 'accessing advisors panel as a thesis_admin user works' do
     mock_auth(users(:thesis_admin))
+    get '/admin/advisors'
+    assert_response :success
+    assert_equal('/admin/advisors', path)
+  end
+
+  test 'accessing advisors panel as a processor user works' do
+    mock_auth(users(:processor))
     get '/admin/advisors'
     assert_response :success
     assert_equal('/admin/advisors', path)
@@ -415,10 +447,10 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
-  test 'accessing copyright panel with processor rights does not work' do
+  test 'accessing copyright panel with processor rights works' do
     mock_auth(users(:processor))
     get '/admin/copyrights'
-    assert_response :redirect
+    assert_response :success
   end
 
   test 'accessing copyright panel with thesis_admin rights is successful' do
@@ -450,9 +482,13 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     mock_auth(users(:basic))
     get '/admin/department_theses'
     assert_response :redirect
+  end
+
+  test 'accessing department_thesis panel as a processor user works' do
     mock_auth(users(:processor))
     get '/admin/department_theses'
-    assert_response :redirect
+    assert_response :success
+    assert_equal('/admin/department_theses', path)
   end
 
   test 'accessing department_thesis panel as an admin user works' do
@@ -489,9 +525,6 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     mock_auth(users(:basic))
     get '/admin/holds'
     assert_response :redirect
-    mock_auth(users(:processor))
-    get '/admin/holds'
-    assert_response :redirect
   end
 
   test 'accessing holds panel as an admin user works' do
@@ -503,6 +536,13 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
   test 'accessing holds panel as a thesis_admin user works' do
     mock_auth(users(:thesis_admin))
+    get '/admin/holds'
+    assert_response :success
+    assert_equal('/admin/holds', path)
+  end
+
+  test 'accessing holds panel as a processor user works' do
+    mock_auth(users(:processor))
     get '/admin/holds'
     assert_response :success
     assert_equal('/admin/holds', path)
@@ -665,9 +705,13 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     mock_auth(users(:basic))
     get '/admin/hold_sources'
     assert_response :redirect
+  end
+
+  test 'accessing hold_sources panel as processor user works' do
     mock_auth(users(:processor))
     get '/admin/hold_sources'
-    assert_response :redirect
+    assert_response :success
+    assert_equal('/admin/hold_sources', path)
   end
 
   test 'accessing hold_sources panel as an admin user works' do
@@ -723,10 +767,10 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
-  test 'accessing license panel with processor rights does not work' do
+  test 'accessing license panel with processor rights works' do
     mock_auth(users(:processor))
     get '/admin/licenses'
-    assert_response :redirect
+    assert_response :success
   end
 
   test 'accessing license panel with thesis_admin rights is successful' do
@@ -752,5 +796,4 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     record.reload
     assert_equal record.display_description, newvalue
   end
-
 end
