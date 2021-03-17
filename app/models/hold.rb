@@ -40,7 +40,7 @@ class Hold < ApplicationRecord
   end
 
   def created_by
-    if self.versions.first.event == 'create'
+    if self.versions.present? && self.versions.first.event == 'create'
       creator_id = self.versions.first.whodunnit
       if user = User.find_by(id: creator_id)
         user.kerberos_id

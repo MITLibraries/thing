@@ -30,12 +30,22 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+  hold_history:
+    id: Hold ID
+    thesis_id: Thesis
+    date_start: Start date
+    date_end: End date
+    created_at: Created on
+    updated_at: Updated on
+    case_number: TLO case number
+    processing_notes: Hold notes
   helpers:
     label:
       degree:
         name_dw: Name (Data Warehouse)
         name_dspace: Name (Dspace)
       hold:
+        id: Audit trail
         grad_date: Degree date
         date_start: Start date
         date_end: End date

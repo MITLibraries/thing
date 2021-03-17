@@ -700,6 +700,14 @@ class AdminDashboardTest < ActionDispatch::IntegrationTest
     assert_select "select[name=?]", "hold[thesis_id]"
   end
 
+  test 'custom field displays link to hold history' do
+    mock_auth(users(:thesis_admin))
+    hold = holds(:valid)
+    get "/admin/holds/#{hold.id}"
+    assert_response :success
+    assert_select "a[href='/hold_history/#{hold.id}']", "View hold history"
+  end
+
   # Hold_sources
   test 'accessing hold_sources panel does not work with basic rights' do
     mock_auth(users(:basic))
