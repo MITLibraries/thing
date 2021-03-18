@@ -20,7 +20,7 @@ class NavTest < ActionDispatch::IntegrationTest
     mock_auth(users(:basic))
     get new_thesis_path
     assert_select('.current') do |value|
-      assert(value.text.include?('Submit Thesis'))
+      assert(value.text.include?('Submit thesis information'))
     end
   end
 

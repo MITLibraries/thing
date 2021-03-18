@@ -1,67 +1,29 @@
 <%= content_for(:title, "Thesis Submission | MIT Libraries") %>
 
 <div class="layout-3q1q layout-band">
+  <div class="col3q box-content">
+    <p><strong>Students -</strong> this tool allows you to review 
+    and submit your thesis information. This information will help 
+    us to more quickly catalog and make your thesis available in 
+    DSpace.</p>
+    <p><%= link_to('Submit information', new_thesis_path, class: 'btn button-primary') %></p>
+    <br/>
 
-  <div class="col3q">
-    <h3 class="title title-page">Preserve and share your scholarship</h3>
+    <p><strong>Department Administrators -</strong> this tool allows 
+    you to transfer your department or program’s theses to the MIT 
+    Libraries. <em>(Prior authorization required)</em></p>
+    <p><%= link_to('Transfer theses', new_transfer_path, class: 'btn button-primary') %></p>
+    <br/>
 
-    <div class="well">
-      <h4>May or September 2020 degree list candidates</h4>
-
-      <ul>
-        <li>Your thesis must be submitted electronically to your department or
-        program. For this degree period Libraries will not accept PDFs directly
-        from the author.</li>
-
-        <li>For doctoral theses only: after submitting your thesis to your
-        department, please use this site to submit your
-        <a href="https://libraries.mit.edu/wp-content/uploads/2019/08/umi-proquest-form.pdf">ProQuest form</a>
-        and a copy of your title and abstract pages.</li>
-      </ul>
-
-      <h4>Departments</h4>
-
-      Please do not submit via this site. Email
-      <a href="mailto:mit-theses@mit.edu?Subject=Thesis%20submission%20help">mit-theses@mit.edu</a>
-      with any questions.
-
-    </div>
-
-    <p>
-      Adding your thesis or dissertation to MIT's DSpace thesis collection is a great way to preserve the record of your scholarship at MIT. Theses in DSpace are visible to anyone in the world, and will be preserved digitally for long term use and access.
-    </p>
-
-    <p>
-      Adding your thesis only takes a few minutes, and preserves color content, text searchability, and embedded links within your thesis.
-    </p>
-
-    <p>
-      Information about your thesis will be indexed by search engines like Google after your thesis is loaded into DSpace. All theses in DSpace can be accessed via a persistent URL (also called a handle) which will not change.
-    </p>
-
-    <p>
-      <% if user_signed_in? %>
-        <%= link_to('Get started', new_thesis_path, class: 'btn button-primary') %>
-      <% else %>
-        <% if Rails.configuration.fake_auth_enabled %>
-          <%= link_to("Sign in to get started", user_developer_omniauth_authorize_path, id: "sign_in", class: 'btn button-primary') %>
-        <% else %>
-          <%= link_to("Sign in to get started", user_saml_omniauth_authorize_path, id: "sign_in", class: 'btn button-primary') %>
-        <% end %>
-      <% end %>
-    </p>
-
+    <p><a href="mailto:mit-theses@mit.edu?Subject=Thesis%20submission%20help">
+    Contact us</a> with any questions.</p>
   </div>
 
   <aside class="content-sup col1q-r" role="complementary">
     <div class="bit">
       <h3 class="title">Need help?</h3>
-        <p>
-          Email us at <a href="mailto:etheses-admin@mit.edu?Subject=Thesis%20submission%20help">etheses-admin@mit.edu</a> for further assistance.
-        </p>
-        <p><a href="https://libraries.mit.edu/archives/thesis-specs/index.html">Review the Thesis Specifications</a></p>
-        <p><a href="https://libguides.mit.edu/c.php?g=176367&p=1159611">Tips for a Successful e-submission</a></p>
-      </div>
-    </aside>
-
+      <p><a href="mailto:etheses-admin@mit.edu?Subject=Thesis%20submission%20help">
+        Contact us</a> with any questions.</p>
+    </div>
+  </aside>
 </div>
