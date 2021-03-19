@@ -40,13 +40,31 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_equal(usercount + 1, User.count)
   end
 
-  test 'redirect to root path after login for normal users' do
+  test 'redirect to new thesis path after login for basic users' do
     mock_auth(users(:yo))
     follow_redirect!
     assert_equal '/thesis/new', @request.path
   end
 
-  test 'redirect to root path after login for admin users' do
+  test 'redirect to new transfer path after login for submitters' do
+    mock_auth(users(:transfer_submitter))
+    follow_redirect!
+    assert_equal '/transfer/new', @request.path
+  end
+
+  test 'redirect to thesis processing path after login for processors' do
+    mock_auth(users(:processor))
+    follow_redirect!
+    assert_equal '/process', @request.path
+  end
+
+  test 'redirect to thesis processing path after login for thesis admins' do
+    mock_auth(users(:thesis_admin))
+    follow_redirect!
+    assert_equal '/process', @request.path
+  end
+
+  test 'redirect to thesis processing path after login for admins' do
     mock_auth(users(:admin))
     follow_redirect!
     assert_equal '/process', @request.path
