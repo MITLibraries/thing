@@ -58,6 +58,22 @@ basic:
   surname: 'Robot'
   display_name: 'Basic Robot'
 
+second:
+  uid: 'second'
+  email: 'second@example.com'
+  kerberos_id: 'second'
+  given_name: 'Second'
+  surname: 'Student'
+  display_name: 'Second Student'
+
+third:
+  uid: 'third'
+  email: 'third@example.com'
+  kerberos_id: 'third'
+  given_name: 'Third'
+  surname: 'Student'
+  display_name: 'Third Student'
+
 processor:
   uid: 'processor_id'
   email: 'processor@example.com'

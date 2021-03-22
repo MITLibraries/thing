@@ -29,7 +29,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
            }
          }
     assert_response :redirect
-    assert_redirected_to thesis_path(Thesis.last)
+    assert_redirected_to thesis_confirm_path
 
     # Check assumption.
     assert_equal title, Thesis.last.title

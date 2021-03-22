@@ -35,6 +35,11 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
                              info: { uid: '123545', email: 'bob@asdf.com' })
     usercount = User.count
     get '/users/auth/saml/callback'
+    # Follow the post-authentication triaging by user role
+    follow_redirect!
+    # Follow the student-specific triaging in /thesis/start, sorting
+    # users by how many existing thesis records we have for them. In this
+    # case, a new user with no theses will end up on `/thesis/new`
     follow_redirect!
     assert_response :success
     assert_equal(usercount + 1, User.count)
@@ -43,7 +48,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   test 'redirect to new thesis path after login for basic users' do
     mock_auth(users(:yo))
     follow_redirect!
-    assert_equal '/thesis/new', @request.path
+    assert_equal '/thesis/start', @request.path
   end
 
   test 'redirect to new transfer path after login for submitters' do

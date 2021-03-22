@@ -31,9 +31,12 @@ class Ability
   def basic
     # Any user can create a new Thesis.
     can :create, Thesis
+    can :start, Thesis
+    can :confirm, Thesis
 
     # Only the Thesis author can view their Thesis.
     can :read, Thesis, users: { id: @user.id }
+    can :update, Thesis, users: { id: @user.id }
   end
 
   # Users who can submit and view transfers.

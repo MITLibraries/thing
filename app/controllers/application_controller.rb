@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
     elsif can?(:create, Transfer)
       new_transfer_path
     else
-      new_thesis_path
+      thesis_start_path
     end
   end
 

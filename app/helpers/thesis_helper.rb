@@ -83,4 +83,11 @@ module ThesisHelper
       group_by_month(:grad_date, format: "%b %Y", series: false).
       count
   end
+
+  # Handles UI situations where a thesis may not have a title but we need to
+  # provide a link via its (undefined) title.
+  def title_helper(thesis)
+    return "Untitled thesis" if thesis.title.strip.length < 1
+    thesis.title
+  end
 end

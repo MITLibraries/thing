@@ -40,14 +40,18 @@ class Thesis < ApplicationRecord
 
   has_many_attached :files
 
+  accepts_nested_attributes_for :users, :advisors
+
   attr_accessor :graduation_year, :graduation_month
 
   VALIDATION_MSGS = {
+    abstract: 'Required - Please provide an abstract.',
+    copyright: 'Required - Please identify the copyright holder.',
     graduation_year: 'Required - Please input your year of graduation.',
     graduation_month: 'Required - Please select your month of graduation.',
     departments: 'Required - Please select your primary department.',
     degrees: 'Required - Please select your primary degree.',
-    files: 'Required - Attaching your thesis is required.',
+    title: 'Required - Please provide your thesis title.'
   }
 
   validates :graduation_year, presence:

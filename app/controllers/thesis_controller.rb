@@ -1,7 +1,7 @@
 class ThesisController < ApplicationController
   before_action :require_user
   before_action :authenticate_user!
-  load_and_authorize_resource
+  load_and_authorize_resource except: :create
   protect_from_forgery with: :exception
 
   def new
@@ -10,20 +10,50 @@ class ThesisController < ApplicationController
   end
 
   def create
-    @thesis = Thesis.new(thesis_params)
+    # First, build a minimum viable thesis from the provided parameters.
+    @thesis = Thesis.new()
     @thesis.users = [current_user]
-    @thesis.files.attach(params[:thesis][:files])
+    @thesis.department_ids = thesis_params[:department_ids]
+    @thesis.degree_ids = thesis_params[:degree_ids]
+    @thesis.graduation_year = thesis_params[:graduation_year]
+    @thesis.graduation_month = thesis_params[:graduation_month]
+    @thesis.combine_graduation_date
+
+    # Save this minimum viable thesis
     if @thesis.save
-      flash.notice = 'Thank you for your submission.'
-      ReceiptMailer.receipt_email(@thesis).deliver_later
-      redirect_to thesis_path(@thesis)
+      # Now that we've saved something, the rest is handled via update.
+      params[:id] = @thesis.id
+      update
     else
       render 'new'
     end
   end
 
+  def edit
+    @thesis = Thesis.find(params[:id])
+  end
+
   def show
     @thesis = Thesis.find(params[:id])
+  end
+
+  def start
+    editable_theses = current_user.editable_theses
+    if 0 == editable_theses.count
+      redirect_to new_thesis_path
+    elsif 1 == editable_theses.count
+      redirect_to edit_thesis_path(editable_theses.first.id)
+    end
+  end
+
+  def update
+    @thesis = Thesis.find(params[:id])
+    if @thesis.update(thesis_params)
+      flash[:info] = "#{@thesis.title} has been updated."
+    else
+      flash[:error] = "#{@thesis.title} was unable to be edited."
+    end
+    redirect_to thesis_confirm_path
   end
 
   # Do not name this simply 'process' or you will shadow a built-in controller
@@ -100,8 +130,10 @@ class ThesisController < ApplicationController
 
   def thesis_params
     params.require(:thesis).permit(:title, :abstract, :coauthors, :graduation_month,
-                                   :graduation_year, :copyright_id,
-                                   :license_id, :department_ids, :degree_ids)
+                                   :graduation_year, :copyright_id, :author_note,
+                                   :license_id, :department_ids, :degree_ids,
+                                   users_attributes: [:id, :orcid, :preferred_name],
+                                   advisors_attributes: [:id, :name])
   end
 
   def sorted_theses(queryset, sort)
