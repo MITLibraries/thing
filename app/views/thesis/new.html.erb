@@ -9,7 +9,7 @@
   <div class="col3q">
     <h3 class="title title-page">Submit your thesis information</h3>
 
-    <%= render 'you_are' %>
+    <%= render 'shared/you_are' %>
 
     <%= render 'welcome' %>
 
@@ -115,7 +115,6 @@
                                wrapper_html: { class: 'field-wrap' },
                                input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
                                'aria-describedby': 'thesis_date_ids-hint' } %>
-
           <%= f.input :graduation_year, label: 'Year *', as: :string,
                               wrapper_html: { class: 'field-wrap' },
                               input_html: { class: 'field field-select',

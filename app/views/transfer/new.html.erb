@@ -4,74 +4,96 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
 <% end %>
 
-<%= simple_form_for(@transfer, url: '/transfer', html: { class: 'transferSubmission' }, validate: true ) do |f| %>
+<h3 class="title title-page">Transfer theses</h3>
 
-  <%= f.error_notification %>
-  <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+<%= render 'shared/you_are' %>
 
-  <%= f.association :department, label_method: :name_dw, as: :select,
-        collection: current_user.submittable_departments,
-        validate: { presence: true },
-        include_hidden: false,
-        wrapper_html: { class: 'field-wrap select' },
-        input_html: { class: 'field field-select', multiple: false,
-          data: { msg: Transfer::VALIDATION_MSGS[:department] },
-          'aria-describedby': 'transfer_department-hint'
-        },
-        hint: 'Select the department for which you are submitting theses',
-        hint_html: { id: 'transfer_department-hint' } %>
+<div class="layout-3q1q">
+  <div class="col3q">
+    <%= render 'welcome' %>
 
-  <fieldset>
-    <legend>Degree Date</legend>
-    <span id="thesis_date_ids-hint" class="hint">For the degree date, enter the semester in which these degrees will be conferred.</span>
-    <div class='group-inline'>
+    <%= simple_form_for(@transfer, url: '/transfer', html: { class: 'transferSubmission' }, validate: true ) do |f| %>
 
-      <%= f.input :graduation_month, label: 'Month', as: :select,
-            collection: Thesis::VALID_MONTHS,
-            wrapper_html: { class: 'field-wrap' },
-            input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
-            'aria-describedby': 'thesis_date_ids-hint' } %>
+      <%= f.error_notification %>
+      <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
 
-      <%= f.input :graduation_year, label: 'Year', as: :string,
-            wrapper_html: { class: 'field-wrap' },
-            input_html: { class: 'field field-select',
-              data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] },
-            type: 'number',
-            step: 1 } %>
+      <%= f.association :department, label_method: :name_dw, as: :select,
+            collection: current_user.submittable_departments,
+            validate: { presence: true },
+            include_hidden: false,
+            wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
+            input_html: { class: 'field field-select col3q', multiple: false,
+              data: { msg: Transfer::VALIDATION_MSGS[:department] },
+              'aria-describedby': 'transfer_department-hint'
+            },
+            label_html: { class: 'col1q' },
+            label: 'Your department',
+            hint: 'Select the department or program for which you are 
+                   submitting theses.',
+            hint_html: { id: 'transfer_department-hint', class: 'col3q' } %>
 
-    </div>
-  </fieldset>
+      <div class="layout-1q3q layout-band field-wrap">
+        <label class="col1q required field-label" for="thesis_date_ids">Degree date</label>
+        <div class="col3q group-inline" id="thesis_date_ids">
+          <%= f.input :graduation_month, label: 'Month', as: :select,
+                collection: Thesis::VALID_MONTHS,
+                wrapper_html: { class: 'field-wrap' },
+                input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
+                'aria-describedby': 'thesis_date_ids-hint' } %>
+          <%= f.input :graduation_year, label: 'Year', as: :string,
+                wrapper_html: { class: 'field-wrap' },
+                input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] },
+                type: 'number',
+                step: 1 } %>
+          <div id="thesis_date_ids-hint" class="hint">Enter the month and year 
+          in which these degrees will be conferred.</div>
+        </div>
+      </div>
 
-  <%= f.input :files, as: :file,
-        wrapper_html: { class: 'field-wrap' },
-        input_html: { class: 'field field-upload',
-                      multiple: true,
-                      direct_upload: true,
-                      data: { msg: Transfer::VALIDATION_MSGS[:files] },
-                      'aria-describedby': 'transfer_files_ids-hint' },
-        label: 'Files to upload',
-        required: true,
-        hint: 'This would be the hint text describing the bulk files fields.',
-        hint_html: { id: 'transfer_files_ids-hint' }  %>
+      <%= f.input :files, as: :file,
+            wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+            input_html: { class: 'field field-upload col3q',
+                          multiple: true,
+                          direct_upload: true,
+                          data: { msg: Transfer::VALIDATION_MSGS[:files] },
+                          'aria-describedby': 'transfer_files_ids-hint' },
+            label_html: { class: 'col1q' },
+            label: 'Files to upload',
+            required: true,
+            hint: 'Please upload individual files. Do not upload a zip file.',
+            hint_html: { id: 'transfer_files_ids-hint', class: 'col3q' }  %>
 
-  <div class='field-wrap'>
-    <div id="files_to_upload"></div>
+      <div class='field-wrap'>
+        <div id="files_to_upload"></div>
+      </div>
+
+      <%= f.input :note, as: :text,
+            wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+            input_html: { class: 'field field-note col3q', :rows => 10,
+              'aria-describedby': 'transfer_note-hint' },
+            label_html: { class: 'col1q' },
+            label: 'Notes (optional)',
+            required: false,
+            hint: 'Anything else we should know? If you have questions, email 
+                   mit-theses@mit.edu for the fastest response.',
+            hint_html: { id: 'transfer_note-hint', class: 'col3q' } %>
+
+      <%= f.input :transfer_certified, as: :boolean,
+                  required: true,
+                  wrapper_html: { class: 'field-wrap layout-band layout-1q3q' },
+                  input_html: { class: 'checkbox-input' },
+                  label_html: { class: 'col3q', style: 'font-weight: normal;' },
+                  label: " I confirm the theses in this transfer have been approved and certified by my department or program." %>
+
+      <div class='field-wrap layout-3q1q'>
+        <div class="col1q-r">
+          <%= submit_tag 'Complete transfer', class: 'btn button-primary' %>
+        </div>
+      </div>
+
+    <% end # Ends simple_form_for %>
   </div>
-
-  <%= f.input :note, as: :text,
-        wrapper_html: { class: 'field-wrap' },
-        input_html: { class: 'field field-note', :rows => 10,
-          'aria-describedby': 'transfer_note-hint' },
-        label: 'Note',
-        required: false,
-        hint: 'This is where we describe what we think a note would inclue.',
-        hint_html: { id: 'transfer_note-hint' } %>
-
-  <div class='field-wrap'>
-    <%= submit_tag 'Submit Transfer', class: 'btn button-primary' %>
-  </div>
-
-<% end # Ends simple_form_for %>
+</div>
 
   <script>
     $("input:file").change(function () {
