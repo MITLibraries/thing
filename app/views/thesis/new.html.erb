@@ -93,6 +93,7 @@
     <% # TODO: Make Degrees an "add-another" field %>
     <%= f.association :degrees, label_method: :name_dw, as: :select,
                          include_hidden: false,
+                         collection: Degree.all.order(:name_dw).group(:name_dw),
                          label_html: { class: 'col1q' },
                          wrapper_html: { class: 'field-wrap select layout-band layout-1q3q' },
                          input_html: { class: 'field field-select col3q', multiple: false,
