@@ -170,7 +170,7 @@ class Thesis < ApplicationRecord
       thesis = theses.first
       if thesis.coauthors.blank?
         thesis.coauthors = row['Thesis Coauthor']
-      elsif thesis.coauthors.exclude? row['Thesis Coauthor']
+      elsif thesis.coauthors.exclude? row['Thesis Coauthor'].to_s
         thesis.coauthors += "; " + row['Thesis Coauthor']
       end
       thesis.degrees << degree unless thesis.degrees.include?(degree)
