@@ -88,10 +88,37 @@ textarea.full-width {
   }
 }
 
+// simple form styles
+form.simple_form {
+  label {
+    font-size: 16px;
+  }
+  .field-wrap {
+    margin-bottom: 2em;
+  }
+}
 
 // info
 .label.subtitle3 {
   margin-top: 2rem;
   margin-bottom: .2rem;
   font-weight: normal;
+}
+
+// sidebar
+.bit {
+  &.no-top-border {
+    border-top: none;
+  }
+  ul.list-bulleted {
+    list-style: disc;
+    margin-left: 1em;
+  }
+}
+
+// thesis-start page
+ul.thesis-start {
+  li {
+    margin-bottom: 1em;
+  }
 }

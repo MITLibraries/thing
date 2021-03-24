@@ -20,9 +20,11 @@
 
     <h4>Select the thesis record you wish to review and edit</h4>
 
+    <ul class="thesis-start">
     <% current_user.editable_theses.each do |t| %>
-      <p><%= link_to( title_helper(t), edit_thesis_path(t) ) %></p>
+      <li><%= link_to( title_helper(t), edit_thesis_path(t) ) %></li>
     <% end %>
+    </ul>
   </div>
   <aside class="content-sup col1q-r" role="complementary">
     <%= render 'sidebar' %>
