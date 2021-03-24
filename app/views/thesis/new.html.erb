@@ -45,13 +45,13 @@
 
     <p>&nbsp;</p>
 
-    <h4>Your thesis information</h4>
-    <p>(as listed on thesis title page)</p>
+    <h4>Your thesis information (as listed on thesis title page)</h4>
+    <p>Fields marked with an asterisk (*) are required.<br>&nbsp;</p>
 
     <%= f.input :title, as: :text,
                         required: true,
                         validate: { presence: true },
-                        label: 'Thesis title',
+                        label: 'Thesis title *',
                         label_html: { class: 'col1q' },
                         wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
                         input_html: { class: 'field field-text col3q',
@@ -81,6 +81,7 @@
                          collection: Department.order(:name_dw),
                          validate: { presence: true },
                          include_hidden: false,
+                         label: 'Department *',
                          label_html: { class: 'col1q' },
                          wrapper_html: { class: 'field-wrap select layout-band layout-1q3q' },
                          input_html: { class: 'field field-select col3q', multiple: false,
@@ -94,27 +95,28 @@
     <%= f.association :degrees, label_method: :name_dw, as: :select,
                          include_hidden: false,
                          collection: Degree.all.order(:name_dw),
+                         label: 'Degree *',
                          label_html: { class: 'col1q' },
                          wrapper_html: { class: 'field-wrap select layout-band layout-1q3q' },
                          input_html: { class: 'field field-select col3q', multiple: false,
                            data: { msg: Thesis::VALIDATION_MSGS[:degrees] },
                            'aria-describedby': 'thesis_degrees_ids-hint'
                          },
-                         hint: 'Select your primary degree as listed on your title page. If additionl degrees are needed, use the Notes field below.',
+                         hint: 'Select your primary degree as listed on your title page. If additional degrees are needed, use the Notes field below.',
                          hint_html: { id: 'thesis_degrees_ids-hint', class: 'col3q' } %>
 
     <div class="layout-band layout-1q3q">
-      <p class="col1q"><strong style="font-size: 14px;">Degree date</strong></p>
+      <p class="col1q"><strong>Degree date</strong></p>
       <div class="col3q">
         <span id="thesis_date_ids-hint" class="hint">For the degree date, enter the semester in which your degree will be conferred (typically your graduation semester).</span>
         <div class='group-inline'>
-          <%= f.input :graduation_month, label: 'Month', as: :select,
+          <%= f.input :graduation_month, label: 'Month *', as: :select,
                                collection: Thesis::VALID_MONTHS,
                                wrapper_html: { class: 'field-wrap' },
                                input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
                                'aria-describedby': 'thesis_date_ids-hint' } %>
 
-          <%= f.input :graduation_year, label: 'Year', as: :string,
+          <%= f.input :graduation_year, label: 'Year *', as: :string,
                               wrapper_html: { class: 'field-wrap' },
                               input_html: { class: 'field field-select',
                                 data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] },
@@ -128,8 +130,9 @@
                                   required: true,
                                   validate: { presence: true },
                                   include_hidden: false,
-                                  label: 'Copyright holder', label_method: :holder,
+                                  label: 'Copyright holder *',
                                   label_html: { class: 'col1q' },
+                                  label_method: :display_description,
                                   wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
                                   input_html: { class: 'field field-select col3q', multiple: false,
                                     'aria-describedby': 'thesis_copyright_id-hint',
@@ -139,30 +142,35 @@
 
     <%= f.association :license, as: :select,
                                 include_hidden: false,
-                                label: 'License (if you retain copyright)',
+                                label: 'License',
                                 label_method: :display_description,
                                 label_html: { class: 'col1q' },
                                 wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
-                                input_html: { class: 'field field-select col3q', multiple: false } %>
+                                input_html: { class: 'field field-select col3q', multiple: false },
+                                hint: '(if you retain copyright',
+                                hint_html: { class: 'col1q' } %>
 
-    <fieldset>
-      <legend>Thesis supervisor(s)</legend>
-      <p>(just supervisors, not entire committee)</p>
+    <div class="layout-band layout-1q3q field-wrap">
+      <div class="col1q">
+        <strong>Thesis supervisor(s)</strong>
+        <p class="hint">(just supervisors, not entire committee)</p>
+      </div>
       <%= f.simple_fields_for :advisors do |advisor| %>
         <%= render 'advisor_fields', :f => advisor %>
       <% end %>
-      <p class="links">
-        <%= link_to_add_association 'Add advisor', f, :advisors %>
+      <p class="links col3q">
+        <%= link_to_add_association 'Add supervisor', f, :advisors %>
       </p>
-    </fieldset>
+    </div>
 
     <%= f.input :abstract, as: :text,
                            required: true,
                            validate: { presence: true },
-                           label: 'Abstract',
+                           label: 'Abstract *',
                            label_html: { class: 'col1q' },
                            wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
                            input_html: { class: 'field field-text col3q',
+                             rows: 10,
                              data: { msg: Thesis::VALIDATION_MSGS[:abstract] }
                            } %>
 
@@ -170,7 +178,10 @@
                                 label: 'Notes',
                                 label_html: { class: 'col1q' },
                                 wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
-                                input_html: { class: 'field field-text col3q' } %>
+                                input_html: { class: 'field field-text col3q',
+                                  rows: 5 },
+                                hint: 'If anything is incorrect in the non-editable fields, tell us here.'.html_safe,
+                                hint_html: { id: 'thesis_author_note-hint', class: 'col3q' } %>
 
 
 
@@ -181,13 +192,7 @@
 
 </div>
 <aside class="content-sup col1q-r" role="complementary">
-  <div class="bit">
-    <h3 class="title">Need help?</h3>
-    <p>
-      Email us at <a href="mailto:etheses-admin@mit.edu?Subject=Thesis%20submission%20help">etheses-admin@mit.edu</a> for further assistance.
-    </p>
-    <p><a href="https://libraries.mit.edu/archives/thesis-specs/index.html">Review the Thesis Specifications</a></p>
-  </div>
+  <%= render 'sidebar' %>
 </aside>
 </div>
 
@@ -207,9 +212,3 @@
     }
   });
 </script>
-
-<style type="text/css">
-  form .field-wrap {
-    margin-bottom: 1em;
-  }
-</style>

@@ -49,7 +49,7 @@ class ThesisController < ApplicationController
   def update
     @thesis = Thesis.find(params[:id])
     if @thesis.update(thesis_params)
-      flash[:info] = "#{@thesis.title} has been updated."
+      flash[:success] = "#{@thesis.title} has been updated."
     else
       flash[:error] = "#{@thesis.title} was unable to be edited."
     end

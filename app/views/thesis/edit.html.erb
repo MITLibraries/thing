@@ -44,19 +44,19 @@
         <% end # If IDs match %>
       <% end # simple_fields_for loop %>
 
-      <h4>Your thesis information</h4>
-      <p>(as listed on thesis title page)</p>
+      <h4>Your thesis information (as listed on thesis title page)</h4>
+      <p>Fields marked with an asterisk (*) are required.<br>&nbsp;</p>
 
       <%= f.input :title, as: :text,
                           required: true,
                           validate: { presence: true },
-                          label: 'Thesis title',
+                          label: 'Thesis title *',
                           label_html: { class: 'col1q' },
                           wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
                           input_html: { class: 'field field-text col3q',
                             data: { msg: Thesis::VALIDATION_MSGS[:title] }
                           },
-                          hint: 'Update if needed' %>
+                          hint: '(update if needed)' %>
 
       <%= f.simple_fields_for :users do |u| %>
         <% if u.object.id == current_user.id %>
@@ -106,8 +106,9 @@
                                     required: true,
                                     validate: { present: true },
                                     include_hidden: false,
-                                    label: 'Copyright holder', label_method: :holder,
+                                    label: 'Copyright holder *',
                                     label_html: { class: 'col1q' },
+                                    label_method: :display_description,
                                     wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
                                     input_html: { class: 'field field-select col3q', multiple: false,
                                       'aria-describedby': 'thesis_copyright_id-hint',
@@ -117,22 +118,26 @@
 
       <%= f.association :license, as: :select,
                                   include_hidden: false,
-                                  label: 'License (if you retain copyright)',
+                                  label: 'License',
                                   label_method: :display_description,
                                   label_html: { class: 'col1q' },
                                   wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
-                                  input_html: { class: 'field field-select col3q', multiple: false } %>
+                                  input_html: { class: 'field field-select col3q', multiple: false },
+                                  hint: '(if you retain copyright)',
+                                  hint_html: { class: 'col1q' } %>
 
-      <fieldset>
-        <legend>Thesis supervisor(s)</legend>
-        <p>(just supervisors, not entire committee)</p>
+      <div class="layout-band layout-1q3q field-wrap">
+        <div class="col1q">
+          <strong>Thesis supervisor(s)</strong>
+          <p class="hint">(just supervisors, not entire committee)</p>
+        </div>
         <%= f.simple_fields_for :advisors do |advisor| %>
           <%= render 'advisor_fields', :f => advisor %>
         <% end %>
-        <p class="links">
-          <%= link_to_add_association 'Add advisor', f, :advisors %>
+        <p class="links col3q">
+          <%= link_to_add_association 'Add supervisor', f, :advisors %>
         </p>
-      </fieldset>
+      </div>
 
       <%= f.input :abstract, as: :text,
                              required: true,
@@ -140,15 +145,18 @@
                              label_html: { class: 'col1q' },
                              wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
                              input_html: { class: 'field field-text col3q',
+                               rows: 10,
                                data: { msg: Thesis::VALIDATION_MSGS[:abstract] }
                              } %>
 
       <%= f.input :author_note, as: :text,
                                 wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
                                 input_html: { class: 'field field-text col3q',
+                                  rows: 5,
                                   'aria-describedby': 'thesis_author_note-hint' },
+                                label: 'Notes',
                                 label_html: { class: 'col1q' },
-                                hint: 'If anything is incorrect in the non-editable fields, tell us here'.html_safe,
+                                hint: 'If anything is incorrect in the non-editable fields, tell us here.'.html_safe,
                                 hint_html: { id: 'thesis_author_note-hint', class: 'col3q' } %>
 
       <div class='field-wrap'>
@@ -181,9 +189,3 @@
     }
   });
 </script>
-
-<style type="text/css">
-  form .field-wrap {
-    margin-bottom: 1em;
-  }
-</style>  
