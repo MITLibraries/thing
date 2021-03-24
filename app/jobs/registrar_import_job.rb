@@ -4,7 +4,7 @@ class RegistrarImportJob < ActiveJob::Base
   queue_as :default
 
   def perform(registrar)
-    results = {read: 0, processed: 0, errors: 0}
+    results = {read: 0, processed: 0, errors: []}
 
     CSV.new(registrar.graduation_list.download, headers: true).each.with_index(1) do |row, i|
       Rails.logger.info("Parsing row " + i.to_s)
@@ -13,8 +13,9 @@ class RegistrarImportJob < ActiveJob::Base
       # Check CSV for Kerberos ID, required to process data
       kerb = row['Krb Name']
       if kerb.blank?
-        Rails.logger.warn("Row missing a Kerberos ID: " + row.inspect)
-        results[:errors] += 1
+        e = "Row ##{i.to_s} missing a Kerberos ID: #{row.inspect}"
+        Rails.logger.warn(e)
+        results[:errors] << e
         next
       end
 
@@ -25,8 +26,9 @@ class RegistrarImportJob < ActiveJob::Base
       begin
         thesis = Thesis.create_or_update_from_csv(user, degree, department, grad_date, row)
       rescue RuntimeError
-        Logger.warn("Multiple theses found for author " + user.name + " for term " + grad_date.to_s + ", requires Processor attention. CSV row data: " + row.inspect)
-        results[:errors] += 1
+        e = "Multiple theses found for author #{user.name} for term #{grad_date.to_s}, requires Processor attention. CSV row ##{i.to_s}: #{row.inspect}"
+        Logger.warn(e)
+        results[:errors] << e
         next
       end
 
