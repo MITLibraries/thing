@@ -147,7 +147,7 @@
         <%= render 'advisor_fields', :f => advisor %>
       <% end %>
       <p class="links col3q">
-        <%= link_to_add_association 'Add supervisor', f, :advisors %>
+        <%= link_to_add_association 'Add another supervisor', f, :advisors %>
       </p>
     </div>
 
@@ -203,6 +203,9 @@
         min: 1861
       }
     }
+  });
+  $("#new_thesis").on('cocoon:after-insert', function(e, insertedItem) {
+    $(insertedItem).find("input").focus();
   });
   $('#thesis_copyright_id').change(function() {
     conditionalLicenseField();
