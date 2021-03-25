@@ -20,11 +20,16 @@ class RegistrarImportJob < ActiveJob::Base
       end
 
       user = User.create_or_update_from_csv(row)
+      logger.info("User is #{user.inspect}")
       degree = Degree.from_csv(row)
+      logger.info("Degree is #{degree.inspect}")
       department = Department.from_csv(row)
+      logger.info("Department is #{department.inspect}")
       grad_date = reformat_grad_date(row['Degree Award Date'])
+      logger.info("Grad date is #{grad_date.inspect}")
       begin
         thesis = Thesis.create_or_update_from_csv(user, degree, department, grad_date, row)
+        logger.info("Thesis is #{thesis.inspect}")
       rescue RuntimeError
         e = "Multiple theses found for author #{user.name} for term #{grad_date.to_s}, requires Processor attention. CSV row ##{i.to_s}: #{row.inspect}"
         Logger.warn(e)
