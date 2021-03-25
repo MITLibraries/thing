@@ -48,7 +48,7 @@ class RegistrarImportJob < ActiveJob::Base
     # assume that the day is always 1 (because this will be true for any theses
     # created from the UI)
     def reformat_grad_date(csv_grad_date)
-      csv_date = Date.strptime(csv_grad_date.split[0], '%m/%d/%y')
+      csv_date = Date.strptime(csv_grad_date.split[0], '%m/%d/%Y')
       thing_date = csv_date.change(day: 1)
       return thing_date
     end
