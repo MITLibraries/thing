@@ -9,6 +9,7 @@ class NavTest < ActionDispatch::IntegrationTest
     auth_teardown
   end
 
+  # Testing navigation link text
   test 'home page nav' do
     get '/'
     assert_select('.current') do |value|
@@ -37,6 +38,93 @@ class NavTest < ActionDispatch::IntegrationTest
     get stats_path
     assert_select('.current') do |value|
       assert(value.text.include?('Stats'))
+    end
+  end
+
+  test 'transfer page nav' do
+    mock_auth(users(:admin))
+    get new_transfer_path
+    assert_select('.current') do |value|
+      assert(value.text.include?('Transfer theses'))
+    end
+  end
+
+  # Basic user navigation
+  test 'basic navigation' do
+    mock_auth(users(:basic))
+    get '/'
+
+    assert_select "nav" do
+      assert_select "a[href=?]", root_path
+      assert_select "a[href=?]", thesis_start_path
+
+      # Navigation should not include:
+      assert_select "a[href=?]", process_path, count: 0
+      assert_select "a[href=?]", stats_path, count: 0
+      assert_select "a[href=?]", new_transfer_path, count: 0
+      assert_select "a[href=?]", admin_root_path, count: 0
+    end
+  end
+
+  # Submitter navigation
+  test 'transfer_submitter navigation' do
+    mock_auth(users(:transfer_submitter))
+    get '/'
+
+    assert_select "nav" do
+      assert_select "a[href=?]", root_path
+      assert_select "a[href=?]", thesis_start_path
+      assert_select "a[href=?]", new_transfer_path
+
+      # Navigation should not include:
+      assert_select "a[href=?]", process_path, count: 0
+      assert_select "a[href=?]", stats_path, count: 0
+      assert_select "a[href=?]", admin_root_path, count: 0
+    end
+  end
+
+  # Processor navigation
+  test 'thesis_processor navigation' do
+    mock_auth(users(:processor))
+    get '/'
+
+    assert_select "nav" do
+      assert_select "a[href=?]", root_path
+      assert_select "a[href=?]", thesis_start_path
+      # assert_select "a[href=?]", new_transfer_path
+      assert_select "a[href=?]", process_path
+      assert_select "a[href=?]", stats_path
+      # assert_select "a[href=?]", admin_root_path
+    end
+  end
+
+  # Thesis admin navigation
+  test 'thesis_admin navigation' do
+    mock_auth(users(:thesis_admin))
+    get '/'
+
+    assert_select "nav" do
+      assert_select "a[href=?]", root_path
+      assert_select "a[href=?]", thesis_start_path
+      assert_select "a[href=?]", new_transfer_path
+      assert_select "a[href=?]", process_path
+      assert_select "a[href=?]", stats_path
+      assert_select "a[href=?]", admin_root_path
+    end
+  end
+
+  # Admin navigation
+  test 'admin navigation' do
+    mock_auth(users(:admin))
+    get '/'
+
+    assert_select "nav" do
+      assert_select "a[href=?]", root_path
+      assert_select "a[href=?]", thesis_start_path
+      assert_select "a[href=?]", new_transfer_path
+      assert_select "a[href=?]", process_path
+      assert_select "a[href=?]", stats_path
+      assert_select "a[href=?]", admin_root_path
     end
   end
 end
