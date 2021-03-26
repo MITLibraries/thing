@@ -16,6 +16,7 @@ class Transfer < ApplicationRecord
 
   has_many_attached :files
 
+  attr_accessor :transfer_certified
   attr_accessor :graduation_year, :graduation_month
 
   VALIDATION_MSGS = {
