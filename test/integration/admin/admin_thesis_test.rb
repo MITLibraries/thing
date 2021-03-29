@@ -187,4 +187,21 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     thesis.reload
     assert_equal needle.id, thesis.license_id
   end
- end
+
+  test 'updating theses through admin panel does not send emails' do
+    mock_auth(users(:thesis_admin))
+
+    thesis = Thesis.first
+
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      assert_emails 0 do
+        patch admin_thesis_path(thesis),
+          params: { thesis: { user_ids: [ User.first.id ],
+                              title: 'new title'
+                            }
+                  }
+
+      end
+    end
+  end
+end

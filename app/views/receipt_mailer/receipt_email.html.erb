@@ -1,28 +1,45 @@
-<p>Hello,</p>
+<p>Hello <%= @user.given_name %>,</p>
 
-<p>You are receiving this message to confirm your successful submission of
-either your ProQuest form, title page, and abstract or the electronic version of
-your <%= @thesis.graduation_month %> <%=
-@thesis.graduation_year %> thesis "<%= @thesis.title %>" to the MIT Libraries.
-</p>
+<p>You have successfully updated your thesis information. 
+Here is the information we have on record:</p>
 
-<p>If you submitted a May or September 2020 thesis, please note that only the
-ProQuest form, title page, and abstract should have been submitted here. The
-actual thesis should go directly to your department. For degree periods prior to
-May 2020, we accept all electronic copies via this form.</p>
+<ul>
+  <li>Name: <%= @user.display_name %></li>
+  <li>Email: <%= @user.email %></li>
+  <li>ORCID iD: <%= @user.orcid %></li>
+  <li>Thesis title: <%= @thesis.title %></li>
+  <li>Name as it appears on your thesis: <%= @user.preferred_name %></li>
+  <li>Co-author: <%= @thesis.coauthors %></li>
+  <li>Department(s): <%= @thesis.departments.map { |d| d.name_dw }.join(', ') %></li>
+  <li>Degree(s): <%= @thesis.degrees.map { |d| d.name_dw }.join(', ') %></li>
+  <li>Degree date: <%= @thesis.graduation_month %> <%= @thesis.graduation_year %></li>
+  <li>Copyright holder: <%= @thesis.copyright.holder %></li>
+  <li>License: <%= @thesis.license_id ? @thesis.license.display_description : "" %></li>
+  <li>Thesis supervisors: <%= @thesis.advisors.map { |a| a.name }.join(', ') %></li>
+  <li>Abstract: <%= @thesis.abstract %></li>
+  <li>Notes: <%= @thesis.author_note %></li>
+</ul>
 
-<p>You do not need to reply to this message.</p>
+<p>You have until graduation day to update this information.</p>
 
-<p>Theses will be added to DSpace after degrees have been awarded and the thesis
-has been fully processed by the MIT Libraries (typically 3-6 months after the
-degree date).</p>
+<p>A few reminders:</p>
+<ul>
+  <li>Save your files in the correct format.
+    <ul>
+      <li>Thesis PDF: macdonald-mssimon-mcp-dusp-2019-thesis.pdf</li>
+      <li>Proquest Form: macdonald-mssimon-mcp-dusp-2019-proquest.pdf</li>
+      <li>Signature Page: macdonald-mssimon-mcp-dusp-2019-sig.pdf</li>
+    </ul>
+  </li>
+  <li>Submit your thesis files and Proquest form (PhDs only) directly to 
+  your department.</li>
+  <li>Be sure that all of the elements on your title page match the 
+  information you have provided to the Libraries today!</li>
+</ul>
 
-<p>If you require further assistance, please send an email to
-etheses-admin@mit.edu.</p>
 
-<p>Thank you,<br />
-MIT Libraries</p>
+<p>Please let us know if you have any questions. And again, congratulations 
+on finishing (or almost finishing) your degree!</p>
 
-<p>We would like your feedback!<br />
-Please take a moment to fill out a short survey about this service:<br />
-<a href="https://goo.gl/QwE7ay">https://goo.gl/QwE7ay</a></p>
+<p>Thanks,</p>
+<p>The Thesis team at the MIT Libraries</p>

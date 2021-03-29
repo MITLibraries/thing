@@ -40,6 +40,7 @@ admin:
   given_name: 'Admin'
   surname: 'Robot'
   display_name: 'Admin Robot'
+  preferred_name: 'Robot, Admin'
 
 bad:
   uid: 'bad_id'

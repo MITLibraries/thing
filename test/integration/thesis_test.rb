@@ -167,6 +167,56 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal new_thesis_path, path
   end
 
+  test 'a confirmation email is sent when a thesis is created' do
+    mock_auth(users(:basic))
+
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      assert_emails 1 do
+        post thesis_index_path, params: { thesis: @thesis_params }
+      end
+    end
+  end
+
+  test 'a confirmation email is sent when a thesis is updated' do
+    mock_auth(users(:basic))
+    thesis = theses(:two)
+
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      assert_emails 1 do
+        patch thesis_path(thesis), params: { thesis: thesis.serializable_hash }
+      end
+    end
+  end
+
+  test 'no confirmation email is sent when emails are disabled' do
+    mock_auth(users(:basic))
+    thesis = theses(:two)
+
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'true' do
+      assert_emails 0 do
+        patch thesis_path(thesis), params: { thesis: thesis.serializable_hash }
+      end
+    end
+  end
+
+  test 'confirmation emails are sent to current user, not the author' do
+    author = users(:basic)
+    user = users(:thesis_admin)
+    thesis = theses(:two)
+
+    mock_auth(user)
+
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      assert_emails 1 do
+        patch thesis_path(thesis), params: { thesis: thesis.serializable_hash }
+      end
+
+      email = ReceiptMailer.receipt_email(thesis, user)
+      assert_not_equal [author.email], email.to
+      assert_equal [user.email], email.to
+    end
+  end
+
   # Thesis editing form
   test 'cannot request edit page for not-your-theses' do
     mock_auth(users(:basic))

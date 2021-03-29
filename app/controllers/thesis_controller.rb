@@ -50,6 +50,7 @@ class ThesisController < ApplicationController
     @thesis = Thesis.find(params[:id])
     if @thesis.update(thesis_params)
       flash[:success] = "#{@thesis.title} has been updated."
+      ReceiptMailer.receipt_email(@thesis, current_user).deliver_later
     else
       flash[:error] = "#{@thesis.title} was unable to be edited."
     end

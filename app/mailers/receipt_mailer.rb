@@ -1,10 +1,10 @@
 class ReceiptMailer < ApplicationMailer
-  def receipt_email(thesis)
-    return if ENV['DISABLE_ALL_EMAIL'] # allows PR builds to disable emails
+  def receipt_email(thesis, user)
+    return unless ENV.fetch('DISABLE_ALL_EMAIL', 'true') == 'false' # allows PR builds to disable emails
+    @user = user
     @thesis = thesis
-    emails = thesis.users.map { |u| u.email }.join(",")
-    mail(to: emails,
-         cc: ENV['THESIS_ADMIN_EMAIL'],
-         subject: 'Thesis Submission Receipt - MIT Libraries')
+    mail(from: "MIT Libraries <#{ENV['THESIS_ADMIN_EMAIL']}>",
+         to: @user.email,
+         subject: 'Your thesis information submission')
   end
 end
