@@ -93,6 +93,49 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal Thesis.last.coauthors, ''
   end
 
+  test 'students can create their advisor via thesis form' do
+    mock_auth(users(:basic))
+    new_advisor = { name: 'New Advisor' }
+    count = Advisor.count
+    params = @thesis_params
+    params[:advisors_attributes] = [new_advisor]
+    post thesis_index_path, params: { thesis: params }
+    assert_equal count + 1, Advisor.count
+  end
+
+  test 'students can end up submitting duplicate advisor names' do
+    mock_auth(users(:basic))
+    new_advisor = { name: Advisor.first.name }
+    count = Advisor.count
+    assert_not_equal Advisor.first.name, Advisor.last.name
+
+    params = @thesis_params
+    params[:advisors_attributes] = [new_advisor]
+    post thesis_index_path, params: { thesis: params }
+    assert_equal count + 1, Advisor.count
+
+    assert_equal Advisor.first.name, Advisor.last.name
+  end
+
+  test 'students can edit their advisor name via thesis form' do
+    mock_auth(users(:yo))
+    count = Advisor.count
+    sample = users(:yo).theses.third
+    sample_advisor = sample.advisors.first
+    assert_not_equal "Another Name", sample_advisor.name
+
+    updated = sample.serializable_hash
+    sample_advisor.name = "Another Name"
+    updated["advisors_attributes"] = sample_advisor.serializable_hash
+    patch thesis_path(sample), params: { thesis: updated }
+    follow_redirect!
+    assert_equal thesis_confirm_path, path
+    sample.reload
+    assert_equal "Another Name", sample.advisors.first.name
+
+    assert_equal count, Advisor.count
+  end
+
   test 'indicates active user' do
     mock_auth(users(:basic))
     msg = "You are logged in and submitting as #{users(:basic).display_name} (#{users(:basic).email})."
