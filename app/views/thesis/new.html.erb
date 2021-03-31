@@ -208,6 +208,11 @@
       } else {
         $("div.error").hide();
       }
+    },
+    rules: {
+      "thesis[graduation_year]": {
+        min: 1861
+      }
     }
   });
   $('#thesis_copyright_id').change(function() {
