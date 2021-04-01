@@ -57,7 +57,7 @@ this automatically. It is often nice in development as well.
 
 ### Development
 
-`THESIS_ADMIN_EMAIL` - used for both `from` and `cc` of receipt emails.
+`THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails.
 
 ### Production
 
@@ -98,13 +98,14 @@ Assigning roles and the `Admin` flag is done in the web UI.
 `SMTP_PASSWORD`
 `SMTP_PORT`
 `SMTP_USER`
-`THESIS_ADMIN_EMAIL` - used for both `from` and `cc` of receipt emails.
+`THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails.
+`DISABLE_ALL_EMAIL` - emails won't be sent unless this is set to `false`
 
 In development, emails are written to a file in `tmp`. In testing, they are
 stored in memory. You still need the `THESIS_ADMIN_EMAIL` set for the tmp file
 to be written without errors.
 
-On staging, the default is disabled email. Unset `DISABLE_ALL_EMAIL` if you
+On staging, the default is disabled email. Set `DISABLE_ALL_EMAIL` to `false` if you
 have a reason to turn them on. Due to the potential of unwanted emails being
 sent when `FAKE_AUTH_ENABLED` is enabled (like on PR builds), it's best to
 leave email off unless you are actively testing it. Staging and Production use
