@@ -68,9 +68,10 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'user cannot view another user thesis' do
     sign_in users(:bad)
-    assert_raises CanCan::AccessDenied do
-      get "/thesis/#{theses(:one).id}"
-    end
+    get "/thesis/#{theses(:one).id}"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'anonymous user cannot view another user thesis' do
@@ -182,9 +183,10 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'basic users cannot see submissions processing page' do
     sign_in users(:basic)
-    assert_raises(CanCan::AccessDenied) do
-      get process_path
-    end
+    get process_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'processor users can see submissions processing page' do
@@ -622,9 +624,10 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'basic users cannot mark as downloaded' do
     sign_in users(:basic)
     thesis = theses(:active)
-    assert_raises CanCan::AccessDenied do
-      post mark_downloaded_url(thesis), xhr: true
-    end
+    post mark_downloaded_url(thesis), xhr: true
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
     assert_equal 'active', thesis.reload.status
   end
 
@@ -682,9 +685,10 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'basic users cannot mark as withdrawn' do
     sign_in users(:basic)
     thesis = theses(:active)
-    assert_raises CanCan::AccessDenied do
-      post mark_withdrawn_url(thesis), xhr: true
-    end
+    post mark_withdrawn_url(thesis), xhr: true
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
     assert_equal 'active', thesis.reload.status
   end
 
@@ -755,10 +759,12 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     orig_note = thesis.processor_note
     target_note = 'Best consumed with scooby snacks'
     note_field_id = "note_#{thesis.id}"
-    assert_raises CanCan::AccessDenied do
-      post annotate_url(thesis),
-        params: Hash[note_field_id, target_note], xhr: true
-    end
+    post annotate_url(thesis),
+      params: Hash[note_field_id, target_note], xhr: true
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+
     assert_equal orig_note, thesis.reload.processor_note
   end
 
@@ -803,9 +809,10 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'basic users cannot see stats' do
     sign_in users(:basic)
-    assert_raises CanCan::AccessDenied do
-      get stats_path
-    end
+    get stats_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'thesis processors can see stats' do

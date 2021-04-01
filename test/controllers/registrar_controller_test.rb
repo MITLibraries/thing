@@ -58,35 +58,44 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
 
   test 'basic user cannot submit or view a registrar' do
     sign_in users(:basic)
-    assert_raises CanCan::AccessDenied do
-      get "/registrar/new"
-    end
+    get "/registrar/new"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+
     sign_in users(:basic)
-    assert_raises CanCan::AccessDenied do
-      get "/registrar/#{registrar(:valid).id}"
-    end
+    get "/registrar/#{registrar(:valid).id}"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'processors cannot submit or view a registrar' do
     sign_in users(:processor)
-    assert_raises CanCan::AccessDenied do
-      get "/registrar/new"
-    end
+    get "/registrar/new"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+
     sign_in users(:processor)
-    assert_raises CanCan::AccessDenied do
-      get "/registrar/#{registrar(:valid).id}"
-    end
+    get "/registrar/#{registrar(:valid).id}"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'transfer_submitters cannot submit or view a registrar' do
     sign_in users(:transfer_submitter)
-    assert_raises CanCan::AccessDenied do
-      get "/registrar/new"
-    end
+    get "/registrar/new"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+
     sign_in users(:transfer_submitter)
-    assert_raises CanCan::AccessDenied do
-      get "/registrar/#{registrar(:valid).id}"
-    end
+    get "/registrar/#{registrar(:valid).id}"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'Loading a request page initiates the import job' do

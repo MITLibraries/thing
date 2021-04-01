@@ -2,6 +2,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :ensure_domain
 
+  rescue_from CanCan::AccessDenied do
+    redirect_to root_path, alert: 'Not authorized.'
+  end
+
   def new_session_path(_scope)
     root_path
   end

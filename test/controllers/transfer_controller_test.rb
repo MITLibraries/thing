@@ -28,20 +28,24 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
 
   test 'basic user cannot submit or view a transfer' do
     sign_in users(:basic)
-    assert_raises CanCan::AccessDenied do
-      get "/transfer/new"
-    end
+    get "/transfer/new"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+
     sign_in users(:basic)
-    assert_raises CanCan::AccessDenied do
-      get "/transfer/#{transfers(:valid).id}"
-    end
+    get "/transfer/#{transfers(:valid).id}"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'processor cannot submit a transfer' do
     sign_in users(:processor)
-    assert_raises CanCan::AccessDenied do
-      get "/transfer/new"
-    end
+    get "/transfer/new"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'transfer submitter can view their own transfer' do
@@ -52,9 +56,10 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
 
   test 'transfer submitter cannot view transfers they did not submit' do
     sign_in users(:transfer_submitter)
-    assert_raises CanCan::AccessDenied do
-      get "/transfer/#{transfers(:alsovalid).id}"
-    end
+    get "/transfer/#{transfers(:alsovalid).id}"
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'thesis admin can view any transfer' do
