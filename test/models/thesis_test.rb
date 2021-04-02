@@ -179,12 +179,6 @@ class ThesisTest < ActiveSupport::TestCase
     end
   end
 
-  test 'invalid without degree' do
-    thesis = theses(:one)
-    thesis.degrees = []
-    assert(thesis.invalid?)
-  end
-
   test 'can have multiple degrees' do
     thesis = theses(:one)
     thesis.degrees = [degrees(:one), degrees(:two)]
