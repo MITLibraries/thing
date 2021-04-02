@@ -206,12 +206,17 @@
     }
   });
   $("#new_thesis").on('cocoon:after-insert', function(e, insertedItem) {
+    hideOnlySupervisorLink();
     $(insertedItem).find("input").focus();
+  });
+  $("#new_thesis").on('cocoon:after-remove', function(e) {
+    hideOnlySupervisorLink();
   });
   $('#thesis_copyright_id').change(function() {
     conditionalLicenseField();
   });
   $(function() {
     conditionalLicenseField();
+    hideOnlySupervisorLink();
   });
 </script>

@@ -138,7 +138,7 @@ class ThesisController < ApplicationController
                                    :graduation_year, :copyright_id, :author_note,
                                    :license_id, :department_ids, :degree_ids,
                                    users_attributes: [:id, :orcid, :preferred_name],
-                                   advisors_attributes: [:id, :name])
+                                   advisors_attributes: [:id, :name, :_destroy])
   end
 
   def sorted_theses(queryset, sort)

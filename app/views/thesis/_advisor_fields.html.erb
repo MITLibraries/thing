@@ -1,11 +1,11 @@
-<div class="nested-fields col3q">
+<div class="advisor nested-fields col3q">
   <%= f.input :name, required: true,
                      validate: { presence: true },
                      label: 'Name *',
-                     label_html: { class: 'col1q' },
-                     wrapper_html: { class: 'layout-band layout-1q3q' },
-                     input_html: { class: 'field field-text col3q' },
+                     label_html: { class: '' },
+                     wrapper_html: { class: '' },
+                     input_html: { class: 'field field-text wide' },
                      hint: '(Enter as Last/Surname, First/Given name Middle name)',
-                     hint_html: { class: 'col3q' } %>
-  <br>&nbsp;
+                     hint_html: { class: '' } %>
+  <aside><%= link_to_remove_association "Remove this supervisor", f %></aside>
 </div>

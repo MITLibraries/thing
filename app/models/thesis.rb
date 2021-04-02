@@ -40,7 +40,8 @@ class Thesis < ApplicationRecord
 
   has_many_attached :files
 
-  accepts_nested_attributes_for :users, :advisors
+  accepts_nested_attributes_for :users
+  accepts_nested_attributes_for :advisors, allow_destroy: :true
 
   attr_accessor :graduation_year, :graduation_month
 
