@@ -63,8 +63,6 @@ class Thesis < ApplicationRecord
 
   validates :departments, presence:
     { message: VALIDATION_MSGS[:departments] }
-  validates :degrees, presence:
-    { message: VALIDATION_MSGS[:degrees] }
 
   validates :files_complete, exclusion: [nil]
   validates :metadata_complete, exclusion: [nil]

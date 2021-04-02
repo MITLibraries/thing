@@ -62,14 +62,6 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     assert_select 'span.error', text: Thesis::VALIDATION_MSGS[:departments]
   end
 
-  test 'invalid degrees message' do
-    mock_auth(users(:basic))
-    params = @thesis_params
-    params[:degree_ids] = nil
-    post thesis_index_path, params: { thesis: params }
-    assert_select 'span.error', text: Thesis::VALIDATION_MSGS[:degrees]
-  end
-
   test 'invalid files message' do
     skip("Unclear why this used to pass but now fails, but the data model never properly validated attached thesis so this failing is not surprising")
     mock_auth(users(:basic))

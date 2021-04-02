@@ -94,20 +94,6 @@
                          hint: 'Select your primary department as listed on your title page. If additional departments are needed, use the Notes field below.',
                          hint_html: { id: 'thesis_departments_ids-hint', class: 'col3q' } %>
 
-    <% # TODO: Make Degrees an "add-another" field %>
-    <%= f.association :degrees, label_method: :name_dw, as: :select,
-                         include_hidden: false,
-                         collection: Degree.all.order(:name_dw),
-                         label: 'Degree *',
-                         label_html: { class: 'col1q' },
-                         wrapper_html: { class: 'field-wrap select layout-band layout-1q3q' },
-                         input_html: { class: 'field field-select col3q', multiple: false,
-                           data: { msg: Thesis::VALIDATION_MSGS[:degrees] },
-                           'aria-describedby': 'thesis_degrees_ids-hint'
-                         },
-                         hint: 'Select your primary degree as listed on your title page. If additional degrees are needed, use the Notes field below.',
-                         hint_html: { id: 'thesis_degrees_ids-hint', class: 'col3q' } %>
-
     <div class="layout-band layout-1q3q">
       <p class="col1q"><strong>Degree date *</strong></p>
       <div class="col3q">
