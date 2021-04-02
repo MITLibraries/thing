@@ -22,19 +22,22 @@
 
       <h4>Your basic info</h4>
 
-      <div class="layout-1q3q layout-band field-wrap">
-        <div class="col1q"><strong>Name</strong></div>
-        <div class="col3q"><%= current_user.display_name %></div>
-      </div>
-
-      <div class="layout-1q3q layout-band field-wrap">
-        <div class="col1q"><strong>Email</strong></div>
-        <div class="col3q"><%= current_user.email %></div>
-      </div>
-
       <%= f.simple_fields_for :users do |u| %>
         <% if u.object.id == current_user.id %>
           <%= u.input :id, :as => :hidden %>
+
+          <%= u.input :display_name, label: 'Name',
+                                     label_html: { class: 'col1q' },
+                                     wrapper_html: { class: 'field-wrap layout-1q3q layout-band field-row' },
+                                     input_html: { class: 'field field-text col3q disabled' },
+                                     readonly: true %>
+
+          <%= u.input :email, label: 'Email',
+                              label_html: { class: 'col1q' },
+                              wrapper_html: { class: 'field-wrap layout-1q3q layout-band field-row' },
+                              input_html: { class: 'field field-text col3q disabled' },
+                              readonly: true %>
+
           <%= u.input :orcid, label: 'ORCID iD',
                               label_html: { class: 'col1q' },
                               wrapper_html: { class: 'field-wrap layout-1q3q layout-band field-row' },
@@ -76,30 +79,43 @@
                               hint: '(Enter as: Last/Surname, First/Given name Middle name)',
                               hint_html: { class: 'col3q' } %>
 
-      <div class="layout-1q3q layout-band field-wrap">
-        <div class="col1q"><strong>Department(s)</strong></div>
-        <div class="col3q">
-          <% f.object.departments.find_all do |dept| %>
-            <p><%= dept.name_dw %></p>
-          <% end %>
+      <%
+        f.object.departments.find_all do |dept|
+          if f.object.departments.count == 1
+            field_id = "department"
+            field_label = "Department"
+          else
+            number = (f.object.departments.find_index(dept).to_i+1).to_s
+            field_id = "department-" + number
+            field_label = "Department " + number
+          end
+      %>
+        <div class="layout-1q3q layout-band field-wrap">
+          <label class="col1q field-label" for="<%= field_id %>"><%= field_label %></label>
+          <input id="<%= field_id %>" type="text" name="department[]" readonly="readonly" value="<%= dept.name_dw %>" class="field field-text col3q disabled">
         </div>
-      </div>
+      <% end %>
+
+      <%
+        f.object.degrees.find_all do |deg|
+          if f.object.degrees.count == 1
+            field_id = "degree"
+            field_label = "Degree"
+          else
+            number = (f.object.degrees.find_index(deg).to_i+1).to_s
+            field_id = "degree-" + number
+            field_label = "Degree " + number
+          end
+      %>
+        <div class="layout-1q3q layout-band field-wrap">
+          <label class="col1q field-label" for="<%= field_id %>"><%= field_label %></label>
+          <input id="<%= field_id %>" type="text" name="degree[]" readonly="readonly" value="<%= deg.name_dw %>" class="field field-text col3q disabled">
+        </div>
+      <% end %>
 
       <div class="layout-1q3q layout-band field-wrap">
-        <div class="col1q"><strong>Degree(s)</strong></div>
-        <div class="col3q">
-          <% f.object.degrees.find_all do |deg| %>
-            <p><%= deg.name_dw %></p>
-          <% end %>
-        </div>
-      </div>
-
-      <div class="layout-1q3q layout-band field-wrap">
-        <div class="col1q"><strong>Degree date *</strong></div>
-        <div class="col3q">
-          <%= f.object.graduation_month %>
-          <%= f.object.graduation_year %>
-        </div>
+        <label class="colq1 field-label" for="graduation_date">Degree date</label>
+        <input id="graduation_date" type="text" name="graduation_date" readonly="readonly" value="<%= f.object.graduation_month %> <%= f.object.graduation_year %>" class="field field-text col3q disabled">
       </div>
 
       <%= f.association :copyright, as: :select,
