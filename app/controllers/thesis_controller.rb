@@ -6,6 +6,7 @@ class ThesisController < ApplicationController
 
   def new
     @thesis = Thesis.new
+    @thesis.association(:advisors).add_to_target(Advisor.new())
     @thesis.users = [current_user]
   end
 
@@ -31,6 +32,9 @@ class ThesisController < ApplicationController
 
   def edit
     @thesis = Thesis.find(params[:id])
+    if @thesis.advisors.count == 0
+      @thesis.association(:advisors).add_to_target(Advisor.new())
+    end
   end
 
   def show
