@@ -104,12 +104,13 @@
                                wrapper_html: { class: 'field-wrap' },
                                input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
                                'aria-describedby': 'thesis_date_ids-hint' } %>
-          <%= f.input :graduation_year, label: 'Year *', as: :string,
+          <%= f.input :graduation_year, label: 'Year *',
+                                        collection: [Date.today.last_year.strftime('%Y'), 
+                                                     Date.today.strftime('%Y'), 
+                                                     Date.today.next_year.strftime('%Y')],
                               wrapper_html: { class: 'field-wrap' },
                               input_html: { class: 'field field-select',
-                                data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] },
-                              type: 'number',
-                              step: 1 } %>
+                                data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] } } %>
         </div>
       </div>
     </div>
