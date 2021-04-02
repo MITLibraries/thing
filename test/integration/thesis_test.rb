@@ -220,9 +220,10 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
   # Thesis editing form
   test 'cannot request edit page for not-your-theses' do
     mock_auth(users(:basic))
-    assert_raises CanCan::AccessDenied do
-      get thesis_path(theses(:one))
-    end
+    get thesis_path(theses(:one))
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'can load edit page for your thesis' do

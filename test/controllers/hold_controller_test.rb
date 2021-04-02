@@ -18,9 +18,10 @@ class HoldControllerTest < ActionDispatch::IntegrationTest
   test "basic users cannot view hold history" do
     sign_in users(:basic)
     @hold = Hold.first
-    assert_raises CanCan::AccessDenied do
-      get hold_history_path(@hold)
-    end
+    get hold_history_path(@hold)
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test "anonymous users cannot view hold history" do
