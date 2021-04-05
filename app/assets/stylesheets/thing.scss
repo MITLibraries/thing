@@ -100,6 +100,25 @@ form.simple_form {
     height: 20px;
     width: 20px;
   }
+  .advisor.nested-fields {
+    margin-bottom: 1.5rem;
+
+    div.input {
+      float: left;
+      width: 75%;
+    }
+
+    aside {
+      float: right;
+      margin-left: 3%;
+      margin-top: 2rem;
+      width: 20%;
+
+      a.remove_fields.only {
+        display: none;
+      }
+    }
+  }
 }
 
 // info
