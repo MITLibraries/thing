@@ -52,6 +52,7 @@ class Thesis < ApplicationRecord
     graduation_month: 'Required - Please select your month of graduation.',
     departments: 'Required - Please select your primary department.',
     degrees: 'Required - Please select your primary degree.',
+    preferred_name: 'Required - Please confirm your name.',
     title: 'Required - Please provide your thesis title.'
   }
 

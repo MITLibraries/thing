@@ -130,8 +130,13 @@ form.simple_form {
 
 // sidebar
 .bit {
+  font-size: 1.6rem;
+
   &.no-top-border {
     border-top: none;
+  }
+  .title {
+    font-size: 2rem;
   }
   ul.list-bulleted {
     list-style: disc;

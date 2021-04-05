@@ -7,7 +7,7 @@
 <div class="layout-3q1q layout-band">
 
   <div class="col3q">
-    <h3 class="title title-page">Edit your thesis information</h3>
+    <h3 class="title title-page">Review and submit your thesis information</h3>
 
     <%= render 'shared/you_are' %>
 
@@ -63,11 +63,15 @@
 
       <%= f.simple_fields_for :users do |u| %>
         <% if u.object.id == current_user.id %>
-          <%= u.input :preferred_name, label: 'Name on thesis (if different than above)',
+          <%= u.input :preferred_name, required: true,
+                                       validate: { presence: true },
+                                       label: 'Confirm name on thesis *',
                                        label_html: { class: 'col1q' },
                                        wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
-                                       input_html: { class: 'field field-text col3q' },
-                                       hint: '(Enter as: Last/Surname, First/Given name Middle name)',
+                                       input_html: { class: 'field field-text col3q',
+                                         data: { msg: Thesis::VALIDATION_MSGS[:preferred_name] }
+                                       },
+                                       hint: '(Enter as: Last/Surname, First/Given Middle)',
                                        hint_html: { class: 'col3q' } %>
         <% end # If IDs match %>
       <% end # simple_fields_for loop %>
@@ -76,7 +80,7 @@
                               label_html: { class: 'col1q' },
                               wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
                               input_html: { class: 'field field-text col3q' },
-                              hint: '(Enter as: Last/Surname, First/Given name Middle name)',
+                              hint: '(Enter as: Last/Surname, First/Given Middle)',
                               hint_html: { class: 'col3q' } %>
 
       <%
@@ -129,18 +133,18 @@
                                     input_html: { class: 'field field-select col3q', multiple: false,
                                       'aria-describedby': 'thesis_copyright_id-hint',
                                       data: { msg: Thesis::VALIDATION_MSGS[:copyright] } },
-                                    hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright" target="_blank">Specifications for Thesis Preparation</a>.'.html_safe,
+                                    hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright" target="_blank">Specifications for Thesis Preparation</a> and our <a href="https://libguides.mit.edu/c.php?g=176367&p=8229377#s-lg-box-wrapper-30720662" target="_blank">Copyright & Licensing information</a>.'.html_safe,
                                     hint_html: { id: 'thesis_copyright_id-hint', class: 'col3q' } %>
 
       <%= f.association :license, as: :select,
                                   include_hidden: false,
-                                  label: 'License',
+                                  label: 'License (if you retain copyright)',
                                   label_method: :display_description,
                                   label_html: { class: 'col1q' },
                                   wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
                                   input_html: { class: 'field field-select col3q', multiple: false },
-                                  hint: '(if you retain copyright)',
-                                  hint_html: { class: 'col1q' } %>
+                                  hint: 'Not sure what to select? Learn more about <a href="https://creativecommons.org/licenses/" target="_blank">Creative Commons licenses</a>.'.html_safe,
+                                  hint_html: { class: 'col3q' } %>
 
       <div class="layout-band layout-1q3q field-wrap">
         <div class="col1q">
