@@ -1,44 +1,44 @@
 <p>Hello <%= @user.given_name %>,</p>
 
-<p>You have successfully updated your thesis information. 
-Here is the information we have on record:</p>
+<p>You've successfully updated your thesis information. 
+Here's the information we have on record:</p>
 
-<ul>
-  <li>Name: <%= @user.display_name %></li>
-  <li>Email: <%= @user.email %></li>
-  <li>ORCID iD: <%= @user.orcid %></li>
-  <li>Thesis title: <%= @thesis.title %></li>
-  <li>Name as it appears on your thesis: <%= @user.preferred_name %></li>
-  <li>Co-author: <%= @thesis.coauthors %></li>
-  <li>Department(s): <%= @thesis.departments.map { |d| d.name_dw }.join(', ') %></li>
-  <li>Degree(s): <%= @thesis.degrees.map { |d| d.name_dw }.join(', ') %></li>
-  <li>Degree date: <%= @thesis.graduation_month %> <%= @thesis.graduation_year %></li>
-  <li>Copyright holder: <%= @thesis.copyright.holder %></li>
-  <li>License: <%= @thesis.license_id ? @thesis.license.display_description : "" %></li>
-  <li>Thesis supervisors: <%= @thesis.advisors.map { |a| a.name }.join(', ') %></li>
-  <li>Abstract: <%= @thesis.abstract %></li>
-  <li>Notes: <%= @thesis.author_note %></li>
-</ul>
+<p>
+<strong>Name:</strong> <%= @user.display_name %><br>
+<strong>Email:</strong> <%= @user.email %><br>
+<strong>ORCID iD:</strong> <%= @user.orcid %><br>
+</p>
 
-<p>You have until graduation day to update this information.</p>
+<p>
+<strong>Thesis title:</strong> <%= @thesis.title %><br>
+<strong>Name as it appears on your thesis:</strong> <%= @user.preferred_name %><br>
+<strong>Co-author:</strong> <%= @thesis.coauthors %><br>
+<strong>Department(s):</strong> <%= @thesis.departments.map { |d| d.name_dw }.join('; ') %><br>
+<strong>Degree(s):</strong> <%= @thesis.degrees.map { |d| d.name_dw }.join('; ') %><br>
+<strong>Degree date:</strong> <%= @thesis.graduation_month %> <%= @thesis.graduation_year %><br>
+<strong>Copyright holder:</strong> <%= @thesis.copyright.holder %><br>
+<strong>License:</strong> <%= @thesis.license_id? ? @thesis.license.display_description : "" %><br>
+<strong>Thesis supervisors:</strong> <%= @thesis.advisors.map { |a| a.name }.join('; ') %><br>
+</p>
+
+<p>
+<strong>Abstract:</strong> <%= @thesis.abstract %><br>
+<strong>Notes:</strong> <%= @thesis.author_note %><br>
+</p>
 
 <p>A few reminders:</p>
 <ul>
-  <li>Save your files in the correct format.
-    <ul>
-      <li>Thesis PDF: macdonald-mssimon-mcp-dusp-2019-thesis.pdf</li>
-      <li>Proquest Form: macdonald-mssimon-mcp-dusp-2019-proquest.pdf</li>
-      <li>Signature Page: macdonald-mssimon-mcp-dusp-2019-sig.pdf</li>
-    </ul>
-  </li>
-  <li>Submit your thesis files and Proquest form (PhDs only) directly to 
-  your department.</li>
-  <li>Be sure that all of the elements on your title page match the 
-  information you have provided to the Libraries today!</li>
+  <li>The title page of your thesis must match the information you provided 
+  us today.</li>
+  <li>Submit your thesis files using the <a href="https://libguides.mit.edu/c.php?g=176367&p=8229377#s-lg-box-wrapper-30716057">required filename 
+  format</a>, along with the <a href="https://libraries.mit.edu/wp-content/uploads/2019/08/umi-proquest-form.pdf">Proquest form</a> (PhDs only) directly to your 
+  departments.</li>
+  <li>You have until graduation day to update this information by returning 
+  to your <a href="https://thesis-submit.mit.edu/thesis/start">thesis 
+  information submission form</a>.</li>
 </ul>
 
-
-<p>Please let us know if you have any questions. And again, congratulations 
+<p>Let us know if you have any questions. And again, congratulations 
 on finishing (or almost finishing) your degree!</p>
 
 <p>Thanks,</p>
