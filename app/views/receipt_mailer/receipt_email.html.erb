@@ -1,15 +1,30 @@
 <p>Hello <%= @user.given_name %>,</p>
 
 <p>You've successfully updated your thesis information. 
-Here's the information we have on record:</p>
+The information we have on record is listed below.</p>
 
-<p>
+<p>A few things to remember:</p>
+
+<ul>
+  <li>The title page of your thesis must match the information you provided 
+  us today.</li>
+  <li>Submit your thesis files using the <a href="https://libguides.mit.edu/c.php?g=176367&p=8229377#s-lg-box-wrapper-30716057">required filename 
+  format</a>, along with the <a href="https://libraries.mit.edu/wp-content/uploads/2019/08/umi-proquest-form.pdf">Proquest form</a> (PhDs only) 
+  <strong>directly to your departments.</strong></li>
+  <li>You have until graduation day to update this information by returning 
+  to your <a href="https://thesis-submit.mit.edu/thesis/start">thesis 
+  information submission form</a>.</li>
+</ul>
+
+<p><strong>Your thesis information:</strong></p>
+
+<p style="margin-left: 40px;">
 <strong>Name:</strong> <%= @user.display_name %><br>
 <strong>Email:</strong> <%= @user.email %><br>
 <strong>ORCID iD:</strong> <%= @user.orcid %><br>
 </p>
 
-<p>
+<p style="margin-left: 40px;">
 <strong>Thesis title:</strong> <%= @thesis.title %><br>
 <strong>Name as it appears on your thesis:</strong> <%= @user.preferred_name %><br>
 <strong>Co-author:</strong> <%= @thesis.coauthors %><br>
@@ -19,24 +34,9 @@ Here's the information we have on record:</p>
 <strong>Copyright holder:</strong> <%= @thesis.copyright.holder %><br>
 <strong>License:</strong> <%= @thesis.license_id? ? @thesis.license.display_description : "" %><br>
 <strong>Thesis supervisors:</strong> <%= @thesis.advisors.map { |a| a.name }.join('; ') %><br>
-</p>
-
-<p>
 <strong>Abstract:</strong> <%= @thesis.abstract %><br>
 <strong>Notes:</strong> <%= @thesis.author_note %><br>
 </p>
-
-<p>A few reminders:</p>
-<ul>
-  <li>The title page of your thesis must match the information you provided 
-  us today.</li>
-  <li>Submit your thesis files using the <a href="https://libguides.mit.edu/c.php?g=176367&p=8229377#s-lg-box-wrapper-30716057">required filename 
-  format</a>, along with the <a href="https://libraries.mit.edu/wp-content/uploads/2019/08/umi-proquest-form.pdf">Proquest form</a> (PhDs only) directly to your 
-  departments.</li>
-  <li>You have until graduation day to update this information by returning 
-  to your <a href="https://thesis-submit.mit.edu/thesis/start">thesis 
-  information submission form</a>.</li>
-</ul>
 
 <p>Let us know if you have any questions. And again, congratulations 
 on finishing (or almost finishing) your degree!</p>
