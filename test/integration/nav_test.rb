@@ -11,7 +11,7 @@ class NavTest < ActionDispatch::IntegrationTest
 
   # Testing navigation link text
   test 'home page nav' do
-    get '/'
+    get root_path
     assert_select('.current') do |value|
       assert(value.text.include?('Home'))
     end
@@ -41,6 +41,25 @@ class NavTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'registrar page nav' do
+    mock_auth(users(:admin))
+    get new_registrar_path
+    assert_select('.current') do |value|
+      assert(value.text.include?('Upload CSV'))
+    end
+  end
+
+  test 'harvest page nav' do
+    @registrar = registrar(:valid)
+    f = Rails.root.join('test','fixtures','files','registrar.csv')
+    @registrar.graduation_list.attach(io: File.open(f), filename: 'registrar.csv')
+    mock_auth(users(:admin))
+    get harvest_path
+    assert_select('.current') do |value|
+      assert(value.text.include?('Harvest CSV'))
+    end
+  end
+
   test 'transfer page nav' do
     mock_auth(users(:admin))
     get new_transfer_path
@@ -62,6 +81,8 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select "a[href=?]", process_path, count: 0
       assert_select "a[href=?]", stats_path, count: 0
       assert_select "a[href=?]", new_transfer_path, count: 0
+      assert_select "a[href=?]", new_registrar_path, count: 0
+      assert_select "a[href=?]", harvest_path, count: 0
       assert_select "a[href=?]", admin_root_path, count: 0
     end
   end
@@ -79,6 +100,8 @@ class NavTest < ActionDispatch::IntegrationTest
       # Navigation should not include:
       assert_select "a[href=?]", process_path, count: 0
       assert_select "a[href=?]", stats_path, count: 0
+      assert_select "a[href=?]", new_registrar_path, count: 0
+      assert_select "a[href=?]", harvest_path, count: 0
       assert_select "a[href=?]", admin_root_path, count: 0
     end
   end
@@ -94,6 +117,8 @@ class NavTest < ActionDispatch::IntegrationTest
       # assert_select "a[href=?]", new_transfer_path
       assert_select "a[href=?]", process_path
       assert_select "a[href=?]", stats_path
+      assert_select "a[href=?]", new_registrar_path, count: 0
+      assert_select "a[href=?]", harvest_path, count: 0
       # assert_select "a[href=?]", admin_root_path
     end
   end
@@ -109,6 +134,8 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select "a[href=?]", new_transfer_path
       assert_select "a[href=?]", process_path
       assert_select "a[href=?]", stats_path
+      assert_select "a[href=?]", new_registrar_path
+      assert_select "a[href=?]", harvest_path
       assert_select "a[href=?]", admin_root_path
     end
   end
@@ -124,6 +151,8 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select "a[href=?]", new_transfer_path
       assert_select "a[href=?]", process_path
       assert_select "a[href=?]", stats_path
+      assert_select "a[href=?]", new_registrar_path
+      assert_select "a[href=?]", harvest_path
       assert_select "a[href=?]", admin_root_path
     end
   end

@@ -30,6 +30,9 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'confirmation of successful submission' do
+    @registrar = registrar(:valid)
+    f = Rails.root.join('test','fixtures','files','registrar.csv')
+    @registrar.graduation_list.attach(io: File.open(f), filename: 'registrar.csv')
     sign_in users(:thesis_admin)
     post '/registrar',
       params: {
@@ -39,7 +42,7 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
       }
     assert_response :redirect
     follow_redirect!
-    assert_equal path, '/'
+    assert_equal path, harvest_path
     assert_not @response.body.include? "Error"
     assert @response.body.include? "Thank you for submitting this Registrar file."
   end
