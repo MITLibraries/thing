@@ -4,8 +4,9 @@
                      label: 'Name *',
                      label_html: { class: '' },
                      wrapper_html: { class: '' },
-                     input_html: { class: 'field field-text wide' },
+                     input_html: { class: 'field field-text wide',
+                       aria: { describedby: "thesis_supervisor_#{f.index}-hint" } },
                      hint: '(Enter as Last/Surname, First/Given Middle)',
-                     hint_html: { class: '' } %>
+                     hint_html: { class: '', id: "thesis_supervisor_#{f.index}-hint" } %>
   <aside><%= link_to_remove_association "Remove this supervisor", f %></aside>
 </div>
