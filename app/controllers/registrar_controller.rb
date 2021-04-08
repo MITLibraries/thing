@@ -15,7 +15,7 @@ class RegistrarController < ApplicationController
     @registrar.graduation_list.attach(params[:registrar][:graduation_list])
     if @registrar.save
       flash.notice = 'Thank you for submitting this Registrar file.'
-      redirect_to root_path()
+      redirect_to harvest_path()
     else
       flash[:error] = "Error saving Registrar file: #{@registrar.errors.full_messages}"
       render 'new'
