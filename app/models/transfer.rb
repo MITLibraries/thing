@@ -21,8 +21,8 @@ class Transfer < ApplicationRecord
 
   VALIDATION_MSGS = {
     department: 'Required - Please specify the department submitting the transfer.',
-    graduation_year: 'Required - Please input the graduation year for these theses.',
-    graduation_month: 'Required - Please select the graduation month for these theses.',
+    graduation_year: 'Required - Please select degree year.',
+    graduation_month: 'Required - Please select degree month.',
     files: 'Required - Attaching at least one file is required.',
   }
 

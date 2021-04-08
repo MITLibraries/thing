@@ -17,8 +17,8 @@ class TransferController < ApplicationController
       @transfer.department = Department.find(params[:transfer][:department_id])
     end
     if @transfer.save
-      flash.notice = 'Thank you for your submission.'
-      redirect_to root_path()
+      flash[:success] = "<h3>Success!</h3><p>#{@transfer.files.count} files have been transferred. You will receive an email confirmation with a list of the files you transferred.</p>"
+      redirect_to transfer_confirm_path
     else
       flash[:error] = "Error saving transfer: #{@transfer.errors.full_messages}"
       render 'new'

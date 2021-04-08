@@ -43,6 +43,7 @@ class Ability
   def transfer_submitter
     basic
     can :create, Transfer
+    can :confirm, Transfer
     can :read, Transfer, user_id: @user.id
   end
 

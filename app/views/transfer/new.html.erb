@@ -21,7 +21,7 @@
             collection: current_user.submittable_departments,
             validate: { presence: true },
             include_hidden: false,
-            wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
+            wrapper_html: { class: 'field-row select layout-1q3q layout-band' },
             input_html: { class: 'field field-select col3q', multiple: false,
               data: { msg: Transfer::VALIDATION_MSGS[:department] },
               'aria-describedby': 'transfer_department-hint'
@@ -32,26 +32,28 @@
                    submitting theses.',
             hint_html: { id: 'transfer_department-hint', class: 'col3q' } %>
 
-      <div class="layout-1q3q layout-band field-wrap">
+      <div class="field-row layout-1q3q layout-band">
         <label class="col1q required field-label" for="thesis_date_ids">Degree date</label>
         <div class="col3q group-inline" id="thesis_date_ids">
           <%= f.input :graduation_month, label: 'Month', as: :select,
-                collection: Thesis::VALID_MONTHS,
+                collection: Transfer::VALID_MONTHS,
                 wrapper_html: { class: 'field-wrap' },
-                input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
+                input_html: { class: 'field field-select', data: { msg: Transfer::VALIDATION_MSGS[:graduation_month] },
                 'aria-describedby': 'thesis_date_ids-hint' } %>
-          <%= f.input :graduation_year, label: 'Year', as: :string,
+          <%= f.input :graduation_year, label: 'Year',
+                collection: [Date.today.last_year.strftime('%Y'),
+                             Date.today.strftime('%Y'),
+                             Date.today.next_year.strftime('%Y')],
                 wrapper_html: { class: 'field-wrap' },
-                input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] },
-                type: 'number',
-                step: 1 } %>
+                input_html: { class: 'field field-select',
+                  data: { msg: Transfer::VALIDATION_MSGS[:graduation_year] } } %>
           <div id="thesis_date_ids-hint" class="hint">Enter the month and year 
           in which these degrees will be conferred.</div>
         </div>
       </div>
 
       <%= f.input :files, as: :file,
-            wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+            wrapper_html: { class: 'field-row layout-1q3q layout-band' },
             input_html: { class: 'field field-upload col3q',
                           multiple: true,
                           direct_upload: true,
@@ -68,24 +70,24 @@
       </div>
 
       <%= f.input :note, as: :text,
-            wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
+            wrapper_html: { class: 'field-row layout-1q3q layout-band' },
             input_html: { class: 'field field-note col3q', :rows => 10,
               'aria-describedby': 'transfer_note-hint' },
             label_html: { class: 'col1q' },
             label: 'Notes (optional)',
             required: false,
             hint: 'Anything else we should know? If you have questions, email 
-                   mit-theses@mit.edu for the fastest response.',
+                   <a href="mailto:mit-theses@mit.edu?Subject=Transfer%20submission%20help" target="_blank">mit-theses@mit.edu</a> for the fastest response.'.html_safe,
             hint_html: { id: 'transfer_note-hint', class: 'col3q' } %>
 
       <%= f.input :transfer_certified, as: :boolean,
                   required: true,
-                  wrapper_html: { class: 'field-wrap layout-band layout-1q3q' },
+                  wrapper_html: { class: 'field-row layout-band layout-1q3q' },
                   input_html: { class: 'checkbox-input' },
                   label_html: { class: 'col3q', style: 'font-weight: normal;' },
                   label: " I confirm the theses in this transfer have been approved and certified by my department or program." %>
 
-      <div class='field-wrap layout-3q1q'>
+      <div class='field-row layout-3q1q'>
         <div class="col1q-r">
           <%= submit_tag 'Complete transfer', class: 'btn button-primary' %>
         </div>
