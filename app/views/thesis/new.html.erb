@@ -40,9 +40,10 @@
         <%= u.input :orcid, label: 'ORCID iD',
                             label_html: { class: 'col1q' },
                             wrapper_html: { class: 'field-wrap layout-1q3q layout-band field-row' },
-                            input_html: { class: 'field field-text col3q' },
+                            input_html: { class: 'field field-text col3q',
+                              aria: { describedby: 'thesis_orcid-hint' } },
                             hint: '(e.g. https://orcid.org/0000-0001-2345-6789)<br>An ORCID iD is a free, unique, persistent identifier that you own and control - forever.<br><a href="https://orcid.mit.edu/cgi-bin/what_is_orcid_mit_ui.cgi" target="_blank">Learn more</a> and <a href="https://orcid.mit.edu/cgi-bin/researcher_ui.cgi" target="_blank">register for one</a>.'.html_safe,
-                            hint_html: { class: 'col3q' } %>
+                            hint_html: { class: 'col3q', id: 'thesis_orcid-hint' } %>
       <% end # If IDs match %>
     <% end # simple_fields_for loop %>
 
@@ -69,19 +70,21 @@
                                      label_html: { class: 'col1q' },
                                      wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
                                      input_html: { class: 'field field-text col3q',
+                                       aria: { describedby: 'thesis_preferred_name-hint' },
                                        data: { msg: Thesis::VALIDATION_MSGS[:preferred_name] }
                                      },
                                      hint: '(Enter as: Last/Surname, First/Given Middle)',
-                                     hint_html: { class: 'col3q' } %>
+                                     hint_html: { class: 'col3q', id: 'thesis_preferred_name-hint' } %>
       <% end # If IDs match %>
     <% end # simple_fields_for loop %>
 
     <%= f.input :coauthors, label: 'Co-author (if applicable)',
                             label_html: { class: 'col1q' },
                             wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
-                            input_html: { class: 'field field-text col3q' },
+                            input_html: { class: 'field field-text col3q',
+                                aria: { describedby: 'thesis_coauthors-hint' } },
                             hint: '(Enter as: Last/Surname, First/Given Middle)',
-                            hint_html: { class: 'col3q' } %>
+                            hint_html: { class: 'col3q', id: 'thesis_coauthors-hint' } %>
 
     <% # TODO: Make Departments an "add-another" field %>
     <%= f.association :departments, label_method: :name_dw, as: :select,
@@ -93,7 +96,7 @@
                          wrapper_html: { class: 'field-wrap select layout-band layout-1q3q' },
                          input_html: { class: 'field field-select col3q', multiple: false,
                            data: { msg: Thesis::VALIDATION_MSGS[:departments] },
-                           'aria-describedby': 'thesis_departments_ids-hint'
+                           aria: { describedby: 'thesis_departments_ids-hint' }
                          },
                          hint: 'Select your primary department as listed on your title page. If additional departments are needed, use the Notes field below.',
                          hint_html: { id: 'thesis_departments_ids-hint', class: 'col3q' } %>
@@ -107,7 +110,8 @@
                                collection: Thesis::VALID_MONTHS,
                                wrapper_html: { class: 'field-wrap' },
                                input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
-                               'aria-describedby': 'thesis_date_ids-hint' } %>
+                               aria: { describedby: 'thesis_date_ids-hint' }
+                               } %>
           <%= f.input :graduation_year, label: 'Year *',
                                         collection: [Date.today.last_year.strftime('%Y'), 
                                                      Date.today.strftime('%Y'), 
@@ -128,7 +132,7 @@
                                   label_method: :display_description,
                                   wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
                                   input_html: { class: 'field field-select col3q', multiple: false,
-                                    'aria-describedby': 'thesis_copyright_id-hint',
+                                    aria: { describedby: 'thesis_copyright_id-hint' },
                                     data: { msg: Thesis::VALIDATION_MSGS[:copyright] } },
                                   hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright" target="_blank">Specifications for Thesis Preparation</a> and our <a href="https://libguides.mit.edu/c.php?g=176367&p=8229377#s-lg-box-wrapper-30720662" target="_blank">Copyright & Licensing information</a>.'.html_safe,
                                   hint_html: { id: 'thesis_copyright_id-hint', class: 'col3q' } %>
@@ -139,9 +143,10 @@
                                 label_method: :display_description,
                                 label_html: { class: 'col1q' },
                                 wrapper_html: { class: 'field-wrap select layout-1q3q layout-band' },
-                                input_html: { class: 'field field-select col3q', multiple: false },
+                                input_html: { class: 'field field-select col3q', multiple: false,
+                                  aria: { describedby: 'thesis_license-hint' } },
                                 hint: 'Not sure what to select? Learn more about <a href="https://creativecommons.org/licenses/" target="_blank">Creative Commons licenses</a>.'.html_safe,
-                                hint_html: { class: 'col3q' } %>
+                                hint_html: { class: 'col3q', id: 'thesis_license-hint' } %>
 
     <div class="layout-band layout-1q3q field-wrap">
       <div class="col1q">
@@ -172,7 +177,9 @@
                                 label_html: { class: 'col1q' },
                                 wrapper_html: { class: 'field-wrap layout-1q3q layout-band' },
                                 input_html: { class: 'field field-text col3q',
-                                  rows: 5 },
+                                  rows: 5,
+                                  aria: { describedby: 'thesis_author_note-hint' }
+                                },
                                 hint: 'If anything is incorrect in the non-editable fields, tell us here.'.html_safe,
                                 hint_html: { id: 'thesis_author_note-hint', class: 'col3q' } %>
 
@@ -211,7 +218,9 @@
   });
   $("#new_thesis").on('cocoon:after-insert', function(e, insertedItem) {
     hideOnlySupervisorLink();
-    $(insertedItem).find("input").focus();
+    ts = "hint-" + Date.now();
+    $(insertedItem).find("span.hint").attr("id", ts);
+    $(insertedItem).find("input[type=text]").attr("aria-describedby", ts).focus();
   });
   $("#new_thesis").on('cocoon:after-remove', function(e) {
     hideOnlySupervisorLink();
