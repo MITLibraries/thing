@@ -101,6 +101,33 @@ class ThesisTest < ActiveSupport::TestCase
     assert(thesis.invalid?)
   end
 
+  test 'combine grad_date from month and year for new theses' do
+    t = Thesis.new()
+    t.title = 'Sample'
+    t.abstract = 'abstract'
+    t.users.append(users(:yo))
+    t.departments.append(departments(:one))
+    t.graduation_month = "February"
+    t.graduation_year = "2020"
+    assert t.valid?
+    t.save
+
+    assert_equal "2020-02-01", t.grad_date.to_s
+  end
+
+  test 'combine grad_date from month and year for thesis updates' do
+    t = Thesis.second
+    old_year = t.graduation_year
+    old_date = t.grad_date
+    t.graduation_year = t.graduation_year.to_i + 1
+    assert t.valid?
+    t.save
+
+    t = Thesis.second
+    assert_not_equal old_year.to_s, t.graduation_year.to_s
+    assert_not_equal old_date.to_s, t.grad_date.to_s
+  end
+
   test 'valid with multiple authors' do
     t = theses(:two)
     assert(t.authors.count > 1)
