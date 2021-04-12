@@ -44,6 +44,7 @@ Rails.application.routes.draw do
     :omniauth_callbacks => 'users/omniauth_callbacks'
   }
 
+  get 'transfer/confirm', to: 'transfer#confirm', as: 'transfer_confirm'
   resources :transfer, only: [:new, :create, :show]
 
   devise_scope :user do

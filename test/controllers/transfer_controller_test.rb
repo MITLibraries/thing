@@ -77,4 +77,37 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     get "/transfer/#{transfers(:alsovalid).id}"
     assert_response(:success)
   end
+
+  test 'redirect after successful submission' do
+    sign_in users(:transfer_submitter)
+    post '/transfer',
+      params: {
+        transfer: {
+          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
+          graduation_year: "2020",
+          graduation_month: "February",
+          user: User.find_by(uid: "transfer_submitter_id"),
+          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+        }
+      }
+    assert_response :redirect
+    assert_redirected_to transfer_confirm_path
+    follow_redirect!
+    assert_select 'div.alert.success', count: 1
+  end
+
+  test 'rerender after failed submission' do
+    original_count = Transfer.count
+    sign_in users(:transfer_submitter)
+    post '/transfer',
+      params: {
+        transfer: {
+          user: User.find_by(uid: "transfer_submitter_id")
+        }
+      }
+    assert_response :success
+    assert_equal 'create', @controller.action_name
+    assert_match "Error saving transfer", response.body
+    assert_equal original_count, Transfer.count
+  end
 end
