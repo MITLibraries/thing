@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ReceiptMailerTest < ActionMailer::TestCase
-  test 'sends confirmation emails' do
+  test 'sends confirmation emails for thesis records' do
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       thesis = theses(:one)
       user = users(:admin)
@@ -17,6 +17,36 @@ class ReceiptMailerTest < ActionMailer::TestCase
       assert_equal ['admin@example.com'], email.to
       assert_equal 'Your thesis information submission', email.subject
       assert_equal read_fixture('receipt_email').join, email.body.to_s
+    end
+  end
+
+  test 'sends confirmation emails for transfer records' do
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      transfer = transfers(:valid)
+      f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+      transfer.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+      user = users(:transfer_submitter)
+      email = ReceiptMailer.transfer_receipt_email(transfer, user)
+
+      # Send the email, then test that it got queued
+      assert_emails 1 do
+        email.deliver_now
+      end
+
+      # Test the body of the sent email contains what we expect it to
+      assert_equal ['test@example.com'], email.from
+      assert_equal ['transfer@example.com'], email.to
+      assert_equal 'Thesis files transferred', email.subject
+      # Please note: we are not attempting to assert_equal on the entire
+      # message because this email currently includes a reference to the
+      # transfer.created_at value, which puts us into dealing with timezones.
+      # I have lost more hours testing timezones than I care to calculate.
+      # Instead, we test for the presence of values we actually care about in
+      # the email body (filenames, and a greeting).
+      # Test that we are greeting the submitter by name
+      assert_match 'Hello Terry,', email.body.to_s
+      # Test that the filename we transferred appears in the body of the email
+      assert_match 'a_pdf.pdf', email.body.to_s
     end
   end
 

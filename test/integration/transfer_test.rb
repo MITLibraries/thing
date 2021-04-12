@@ -60,4 +60,15 @@ class TransferIntegrationTest < ActionDispatch::IntegrationTest
     post transfer_index_path, params: { transfer: @transfer_params }
     assert_select 'span.error', text: Transfer::VALIDATION_MSGS[:generic]
   end
+
+  test 'a confirmation email is sent when a transfer is created' do
+    mock_auth(users(:transfer_submitter))
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      assert_emails 1 do
+        post transfer_index_path, params: {
+          transfer: @transfer_params
+        }
+      end
+    end
+  end
 end

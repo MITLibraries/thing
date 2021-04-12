@@ -18,6 +18,7 @@ class TransferController < ApplicationController
     end
     if @transfer.save
       flash[:success] = "<h3>Success!</h3><p>#{@transfer.files.count} files have been transferred. You will receive an email confirmation with a list of the files you transferred.</p>"
+      ReceiptMailer.transfer_receipt_email(@transfer, current_user).deliver_later
       redirect_to transfer_confirm_path
     else
       flash[:error] = "Error saving transfer: #{@transfer.errors.full_messages}"

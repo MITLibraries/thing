@@ -60,4 +60,20 @@ class AdminTransferTest < ActionDispatch::IntegrationTest
     get "/admin/transfers/#{transfers(:valid).id}"
     assert_response :success
   end
+
+  test 'updating transfer through admin panel does not send emails' do
+    mock_auth(users(:thesis_admin))
+    transfer = Transfer.first
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      assert_emails 0 do
+        patch admin_transfer_path(transfer),
+          params: {
+            transfer: {
+              user_ids: [ User.first.id ],
+              note: 'I hope we do not use this in the fixture'
+            }
+          }
+      end
+    end
+  end
 end
