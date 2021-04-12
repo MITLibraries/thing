@@ -21,7 +21,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     grad_date: Field::DateTime.with_options(
       format: "%Y %B"
     ),
-    graduation_month: Field::Number,
+    graduation_month: Field::Text,
     graduation_year: Field::Number,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,

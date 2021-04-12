@@ -82,7 +82,7 @@ class Thesis < ApplicationRecord
 
   VALID_MONTHS = ['February', 'May', 'June', 'September']
 
-  before_create :combine_graduation_date
+  before_save :combine_graduation_date
   after_find :split_graduation_date
 
   #scope :name_asc, lambda {
