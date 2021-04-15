@@ -1,0 +1,23 @@
+<p>Hello <%= @user.given_name %>,</p>
+
+<p>Below is a record of the files you submitted on <%= @transfer.created_at.strftime('%b %-d, %Y at %l:%M %p') %>.</p>
+
+<p>A couple reminders:</p>
+
+<ul>
+  <li>We will not begin processing theses until after graduation.</li>
+  <li>Theses will be published in DSpace@MIT, it may take up to 3 months for theses to appear in the collection.</li>
+</ul>
+
+<p>Files transferred:</p>
+
+<ol>
+  <% @transfer.files.each do |file| %>
+    <li><%= file.filename %></li>
+  <% end %>
+</ol>
+
+<p>Let us know if you have any questions.</p>
+
+<p>Thanks,</p>
+<p>The Thesis team at the MIT Libraries</p>
