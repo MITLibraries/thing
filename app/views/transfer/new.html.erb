@@ -50,21 +50,8 @@
     </div>
   </div>
 
-  <%= f.input :files, as: :file,
-        wrapper_html: { class: 'field-row layout-1q3q layout-band' },
-        input_html: { class: 'field field-upload col3q',
-                      multiple: true,
-                      direct_upload: true,
-                      data: { msg: Transfer::VALIDATION_MSGS[:files] },
-                      'aria-describedby': 'transfer_files_ids-hint' },
-        label_html: { class: 'col1q' },
-        label: 'Files to upload',
-        required: true,
-        hint: 'Do not upload a zip file.',
-        hint_html: { id: 'transfer_files_ids-hint', class: 'col3q' }  %>
-
-  <div class='field-wrap'>
-    <div id="files_to_upload"></div>
+  <div class="field-row">
+    <%= f.drag_and_drop_file_field :files, 'Drag and drop PDF files here' %>
   </div>
 
   <%= f.input :note, as: :text,
