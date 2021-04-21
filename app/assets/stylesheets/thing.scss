@@ -97,6 +97,18 @@ form.simple_form {
   }
   .field-row {
     margin-bottom: 2em;
+
+    label.asdndzone {
+      font-weight: bold;
+
+      div.asdndz__icon-container {
+        border: 1px solid gray;
+        display: block;
+        margin-left: 27%;
+        min-height: 10rem;
+        width: 73%;
+      }
+    }
   }
   .checkbox-input {
     height: 20px;

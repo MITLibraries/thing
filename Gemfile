@@ -6,6 +6,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'active_storage_drag_and_drop'
 gem 'administrate'
 gem 'aws-sdk-s3'
 gem 'bootsnap'
