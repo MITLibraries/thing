@@ -1,12 +1,12 @@
 <p>Hello <%= @user.given_name %>,</p>
 
-<p>Below is a record of the files you submitted on <%= @transfer.created_at.strftime('%b %-d, %Y at %l:%M %p') %>.</p>
+<p>Below is a record of the files you submitted on <%= @transfer.created_at.in_time_zone("America/New_York").strftime('%b %-d, %Y at %l:%M %p %Z') %>.</p>
 
 <p>A couple reminders:</p>
 
 <ul>
   <li>We will not begin processing theses until after graduation.</li>
-  <li>Theses will be published in DSpace@MIT, it may take up to 3 months for theses to appear in the collection.</li>
+  <li>Theses will be published in <a href="https://dspace.mit.edu/handle/1721.1/7582">DSpace@MIT</a>, it may take up to 3 months for theses to appear in the collection.</li>
 </ul>
 
 <p>Files transferred:</p>
