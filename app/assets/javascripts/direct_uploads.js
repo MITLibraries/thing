@@ -3,14 +3,32 @@
    http://edgeguides.rubyonrails.org/active_storage_overview.html#example */
 
 var storageErrorDetected = false;
+var completedInTransfer = 0;
+var filesInTransfer = 0;
+
+addEventListener("direct-uploads:start", event => {
+  location.hash = "direct-upload-panel"
+  document.getElementById("direct-upload-panel").insertAdjacentHTML("afterbegin", `
+    <div class="direct-upload__summary">
+      <div class="alert alert-banner" aria-live="polite">
+        <p>Upload in progress: <span id="direct-upload-status"></span></p>
+      </div>
+    </div>
+  `)
+  document.getElementById("direct-upload-status").innerHTML = `${completedInTransfer} of ${filesInTransfer} files have been transferred.`
+})
 
 addEventListener("direct-upload:initialize", event => {
   const { target, detail } = event
   const { id, file } = detail
-  target.insertAdjacentHTML("beforebegin", `
-    <div id="direct-upload-${id}" class="direct-upload direct-upload--pending">
+  filesInTransfer++
+  document.getElementById("direct-upload-panel").insertAdjacentHTML("beforeend", `
+    <div id="direct-upload-${id}" class="direct-upload direct-upload--pending alert alert-banner">
       <div id="direct-upload-progress-${id}" class="direct-upload__progress" style="width: 0%"></div>
-      <span class="direct-upload__filename">${file.name}</span>
+      <p>
+        <i id="direct-upload-icon-${id}" class="fa fa-lg"></i>
+        <span class="direct-upload__filename">${file.name}</span>
+      </p>
     </div>
   `)
 })
@@ -25,6 +43,7 @@ addEventListener("direct-upload:progress", event => {
   const { id, progress } = event.detail
   const progressElement = document.getElementById(`direct-upload-progress-${id}`)
   progressElement.style.width = `${progress}%`
+  progressElement.style.background = "#008700"
 })
 
 addEventListener("direct-upload:error", event => {
@@ -46,6 +65,11 @@ addEventListener("direct-upload:end", event => {
   const { id } = event.detail
   const element = document.getElementById(`direct-upload-${id}`)
   element.classList.add("direct-upload--complete")
+  element.classList.add("success")
+  const icon = document.getElementById(`direct-upload-icon-${id}`)
+  icon.classList.add("fa-check-circle")
+  completedInTransfer++
+  document.getElementById("direct-upload-status").innerHTML = `${completedInTransfer} of ${filesInTransfer} files have been transferred.`
 })
 
 addEventListener("direct-uploads:end", event => {
