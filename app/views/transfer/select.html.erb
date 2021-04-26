@@ -1,0 +1,63 @@
+<%= content_for(:title, "Transfer Processing | MIT Libraries") %>
+
+<% content_for :additional_js do %>
+  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<% end %>
+
+<link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<h3 class="title title-page">Transfer Processing Queue</h3>
+
+<div id="term-list" class="filter-row">
+  <button data-filter="*">Show<br>all</button>
+</div>
+
+<table class="table" id="transferQueue">
+  <thead>
+    <tr>
+      <th scope="col">Transfer date</th>
+      <th scope="col">Degree date</th>
+      <th scope="col">Department</th>
+      <th scope="col">Dept. Admin</th>
+      <th scope="col">Files</th>
+      <th scope="col">Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render(partial: 'transfer/transfer', collection: @transfers) || render('empty') %>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+$(document).ready( function () {
+  if( document.getElementById('transferQueue').getElementsByClassName('empty').length === 0 ) {
+    var table = $('#transferQueue').DataTable({
+      "order": [[ 1, "asc" ]]
+    });
+
+    // Populate filter buttons with found values
+    var terms = [...new Set( table.columns(1).data()[0] )];
+    terms.forEach(element => {
+      document
+        .getElementById("term-list")
+        .insertAdjacentHTML("beforeend", `
+        <button data-filter="${element}">${element.replace(' ', '<br>')}</button>
+      `);
+    });
+
+    // Perform filtering when buttons are clicked
+    $(".filter-row button").click(function() {
+      var needle = $(this).data("filter");
+      $.fn.dataTable.ext.search.push(
+        function( settings, data, dataIndex ) {
+          return ( data[1] === needle || needle === "*" )
+            ? true
+            : false
+        }
+      );
+      table.draw();
+      $.fn.dataTable.ext.search.pop();
+    });
+  }
+});
+</script>

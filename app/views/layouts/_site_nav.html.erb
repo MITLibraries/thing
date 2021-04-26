@@ -17,6 +17,9 @@
             <% if can? :create, Transfer %>
               <%= nav_link_to("Transfer theses", new_transfer_path) %>
             <% end %>
+            <% if can? :select, Transfer %>
+              <%= nav_link_to("Process transfers", transfer_select_path) %>
+            <% end %>
             <% if can? :create, Registrar %>
               <%= nav_link_to("Upload CSV", new_registrar_path) %>
             <% end %>

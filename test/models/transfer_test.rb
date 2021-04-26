@@ -28,7 +28,9 @@ class TransferTest < ActiveSupport::TestCase
   end
 
   test 'needs valid user' do
-    @transfer = transfers(:baduser)
+    @transfer = transfers(:valid)
+    assert @transfer.valid?
+    @transfer.user = nil
     assert @transfer.invalid?
   end
 

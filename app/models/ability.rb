@@ -66,6 +66,7 @@ class Ability
     can :stats, Thesis
     
     can :read, Transfer
+    can :select, Transfer
     can :read, Hold
   end
 
