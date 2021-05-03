@@ -11,7 +11,7 @@ addEventListener("direct-uploads:start", event => {
   document.getElementById("direct-upload-panel").insertAdjacentHTML("afterbegin", `
     <div class="direct-upload__summary">
       <div class="alert alert-banner" aria-live="polite">
-        <p>Upload in progress: <span id="direct-upload-status"></span></p>
+        <p>Upload in progress: <span id="direct-upload-status"></span> <strong>Do not close this browser window during transfer.</strong></p>
       </div>
     </div>
   `)
