@@ -2,6 +2,12 @@
 /* original source:
    http://edgeguides.rubyonrails.org/active_storage_overview.html#example */
 
+#direct-upload-panel {
+  .alert-banner {
+    font-weight: normal;
+  }
+}
+
 .direct-upload {
   /* display: inline-block; */
   position: relative;
