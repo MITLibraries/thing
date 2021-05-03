@@ -1,4 +1,4 @@
 <p class="copy-sup">
   You are logged in and submitting as <%= current_user.display_name %> (<%= current_user.email %>).
-  Not you? <%= link_to("Sign out.", destroy_user_session_path, method: :delete) %>.
+  Not you? <%= link_to("Sign out", destroy_user_session_path, method: :delete) %>.
 </p>
