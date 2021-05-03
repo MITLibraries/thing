@@ -110,4 +110,60 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     assert_match "Error saving transfer", response.body
     assert_equal original_count, Transfer.count
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~ transfer processing queue ~~~~~~~~~~~~~~~~~~~~~
+  test 'transfer processing queue exists' do
+    sign_in users(:admin)
+    get transfer_select_path
+    assert_response :success
+  end
+
+  test 'anonymous users cannot see transfer queue' do
+    # Note that nobody signed in.
+    get transfer_select_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see transfer queue' do
+    sign_in users(:basic)
+    get transfer_select_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'transfer submitters cannot see transfer queue' do
+    sign_in users(:transfer_submitter)
+    get transfer_select_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see transfer queue' do
+    sign_in users(:processor)
+    get transfer_select_path
+    assert_response :success
+  end
+
+  test 'thesis admins can set transfer queue' do
+    sign_in users(:thesis_admin)
+    get transfer_select_path
+    assert_response :success
+  end
+
+  test 'admins can see transfer queue' do
+    sign_in users(:admin)
+    get transfer_select_path
+    assert_response :success
+  end
+
+  test 'transfer processing queue has links to transfer pages' do
+    sign_in users(:thesis_admin)
+    get transfer_select_path
+    expected_transfers = Transfer.all
+    expected_transfers.each do |t|
+      assert @response.body.include? transfer_path(t)
+    end
+  end
 end

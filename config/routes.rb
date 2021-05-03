@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   }
 
   get 'transfer/confirm', to: 'transfer#confirm', as: 'transfer_confirm'
+  get 'transfer/select', to: 'transfer#select', as: 'transfer_select'
   resources :transfer, only: [:new, :create, :show]
 
   devise_scope :user do

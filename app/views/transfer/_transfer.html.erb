@@ -1,0 +1,8 @@
+<tr>
+  <td data-sort="<%= transfer.created_at %>"><%= link_to transfer.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y<br>%l:%M %p').html_safe, url_for(transfer) %></td>
+  <td data-sort="<%= transfer.grad_date %>"><%= transfer.graduation_month[...3] %> <%= transfer.graduation_year %></td>
+  <td><%= transfer.department.name_dw %></td>
+  <td><%= transfer.user.display_name %></td>
+  <td><%= transfer.files.count %></td>
+  <td><%= transfer.note.present? ? "<span title='#{transfer.note}'>#{transfer.note[..10]}...</span>".html_safe : "" %></td>
+</tr>

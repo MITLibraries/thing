@@ -26,6 +26,10 @@ class TransferController < ApplicationController
     end
   end
 
+  def select
+    @transfer = Transfer.all
+  end
+
   def show
     @transfer = Transfer.find(params[:id])
   end
