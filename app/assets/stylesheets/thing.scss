@@ -123,6 +123,25 @@ form.simple_form {
   }
 }
 
+// transfer processing form
+ul.list-files {
+  li {
+    padding: 0.5rem;
+
+    &:hover,
+    &:focus {
+      background: #ccc;
+    }
+
+    input {
+      height: 1em;
+      margin-right: 1em;
+      width: 1em;
+      vertical-align: middle;
+    }
+  }
+}
+
 // info
 .label.subtitle3 {
   margin-top: 2rem;

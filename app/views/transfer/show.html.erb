@@ -1,7 +1,57 @@
 <%= content_for(:title, "Transfer Processing | MIT Libraries") %>
 
-<h3 class="title title-page">Transfer file list</h3>
-
 <p><%= link_to "Back to Transfer queue", transfer_select_path %></p>
 
-<p>This will be the display of all files in this Transfer, for processing into Thesis records.</p>
+<h3 class="title title-page">Transfer from <%= @transfer.department.name_dw %> on <%= @transfer.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y at %l:%M %p') %></h3>
+
+<div class="well">
+  <div class="layout-band layout-1q3q">
+    <div class="col1q">Received:</div>
+    <div class="col3q"><%= @transfer.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y<br>%l:%M %p').html_safe %></div>
+  </div>
+  <div class="layout-band layout-1q3q">
+    <div class="col1q">Department:</div>
+    <div class="col3q"><%= @transfer.department.name_dw %></div>
+  </div>
+  <div class="layout-band layout-1q3q">
+    <div class="col1q">Submitter:</div>
+    <div class="col3q"><%= @transfer.user.display_name %></div>
+  </div>
+  <% if @transfer.note && @transfer.note.length > 0 %>
+    <div class="layout-band layout-1q3q">
+      <div class="col1q">Submitter's note:</div>
+      <div class="col3q"><%= @transfer.note %></div>
+    </div>
+  <% end %>
+</div>
+
+<div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+
+<%= form_tag(transfer_files_path, method: "post") do %>
+  <%= hidden_field_tag( 'id', @transfer.id ) %>
+
+  <div class="gridband layout-2c">
+    <div class="grid-item">
+      <h4>Assign these files ...</h4>
+      <fieldset>
+        <legend>Select the files to move</legend>
+        <ul class="list-unbulleted list-files">
+          <% @transfer.files.each do |file| %>
+            <li>
+              <label>
+              <%= check_box_tag "transfer[file_ids][]", file.id %>
+              <%= file.filename.to_s %>
+              </label>
+            </li>
+          <% end %>
+        </ul>
+      </fieldset>
+
+    </div>
+    <div class="grid-item">
+      <h4>...to this thesis:</h4>
+    </div>
+  </div>
+
+  <%= submit_tag('Transfer files', class: 'btn button-primary') %>
+<% end %>

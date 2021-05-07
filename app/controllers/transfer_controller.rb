@@ -26,6 +26,17 @@ class TransferController < ApplicationController
     end
   end
 
+  def files
+    @transfer = Transfer.find(params[:id])
+    flash[:success] = "This is a test of the files method.<br>".html_safe
+    filelist = params[:transfer][:file_ids]
+    filelist.each do |file|
+      flash[:success] += ("File ID: " + file.to_s + "<br>").html_safe
+    end
+    flash[:success] += "This has been a test of the files method. If this were an actual method, these " + filelist.count.to_s + " files would have been transferred."
+    redirect_to transfer_path(@transfer.id)
+  end
+
   def select
     @transfer = Transfer.all
   end
@@ -49,6 +60,6 @@ class TransferController < ApplicationController
 
   def transfer_params
     params.require(:transfer).permit(:graduation_month, :graduation_year, 
-                                     :department_id, :note)
+                                     :department_id, :note, :file_ids)
   end
 end
