@@ -66,6 +66,8 @@ class Ability
     
     can :read, Transfer
     can :select, Transfer
+    can :files, Transfer
+
     can :read, Hold
   end
 

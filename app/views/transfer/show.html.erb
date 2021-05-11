@@ -1,5 +1,12 @@
 <%= content_for(:title, "Transfer Processing | MIT Libraries") %>
 
+<% content_for :additional_js do %>
+  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<% end %>
+
+<link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
+
 <p><%= link_to "Back to Transfer queue", transfer_select_path %></p>
 
 <h3 class="title title-page">Transfer from <%= @transfer.department.name_dw %> on <%= @transfer.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y at %l:%M %p') %></h3>
@@ -14,6 +21,10 @@
     <div class="col3q"><%= @transfer.department.name_dw %></div>
   </div>
   <div class="layout-band layout-1q3q">
+    <div class="col1q">Graduation Date:</div>
+    <div class="col3q"><%= @transfer.graduation_month %> <%= @transfer.graduation_year %></div>
+  </div>
+  <div class="layout-band layout-1q3q">
     <div class="col1q">Submitter:</div>
     <div class="col3q"><%= @transfer.user.display_name %></div>
   </div>
@@ -25,33 +36,76 @@
   <% end %>
 </div>
 
-<div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+<%= form_tag(transfer_files_path, method: "post", id: "process_transfer") do %>
 
-<%= form_tag(transfer_files_path, method: "post") do %>
+  <% # f.error_notification %>
+  <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+
   <%= hidden_field_tag( 'id', @transfer.id ) %>
 
-  <div class="gridband layout-2c">
-    <div class="grid-item">
-      <h4>Assign these files ...</h4>
-      <fieldset>
-        <legend>Select the files to move</legend>
-        <ul class="list-unbulleted list-files">
-          <% @transfer.files.each do |file| %>
-            <li>
-              <label>
-              <%= check_box_tag "transfer[file_ids][]", file.id %>
-              <%= file.filename.to_s %>
-              </label>
-            </li>
-          <% end %>
-        </ul>
-      </fieldset>
+  <h4>Assign these files ...</h4>
+  <fieldset>
+    <legend>Select the files to move</legend>
+    <ul class="list-unbulleted list-files">
+      <% @transfer.files.each do |file| %>
+        <li>
+          <label>
+            <%= check_box_tag( "transfer[file_ids][]", file.id, false, data: { "msg" => "Required - please select at least one file to transfer." }, class: "required" ) %>
+            <%= file.filename.to_s %>
+          </label>
+        </li>
+      <% end %>
+    </ul>
+  </fieldset>
 
-    </div>
-    <div class="grid-item">
-      <h4>...to this thesis:</h4>
-    </div>
-  </div>
+  <h4 class="thesis-heading">...to this thesis:</h4>
+  <table class="table list-theses" id="thesisTargets">
+    <caption>Select the thesis to receive the files. If the needed thesis is not in this list, edit either the transfer or thesis record in <%= link_to("the administrative interface", admin_root_path) %> so they share a department and graduation date.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Select</th>
+        <th scope="col">Authors</th>
+        <th scope="col">Title</th>
+        <th scope="col">Degrees</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render(partial: 'transfer/thesis_target', collection: @theses) || render('empty_target') %>
+    </tbody>
+  </table>
 
   <%= submit_tag('Transfer files', class: 'btn button-primary') %>
 <% end %>
+
+<script>
+  $(document).ready( function() {
+    if( document.getElementById('thesisTargets').getElementsByClassName('empty').length === 0) {
+      var table = $('#thesisTargets').DataTable({
+
+      });
+    }
+  });
+  $("#process_transfer").validate({
+    errorPlacement: function(error, element) {
+      if (element.attr("name") == "transfer[file_ids][]") {
+        error.insertBefore("ul.list-files");
+      } else if (element.attr("name") == "thesis") {
+        error.insertAfter("h4.thesis-heading");
+      } else {
+        error.insertAfter(element);
+      }
+    },
+    invalidHandler: function(event, validator) {
+      var errors = validator.numberOfInvalids();
+      if (errors) {
+        var message = errors == 1
+          ? 'The form was not submitted successfully - one required field needs to be fixed.'
+          : 'The form was not submitted successfully - ' + errors + ' required fields need to be fixed.';
+        $("div.error").html(message);
+        $("div.error").show();
+      } else {
+        $("div.error").hide();
+      }
+    }
+  });
+</script>
