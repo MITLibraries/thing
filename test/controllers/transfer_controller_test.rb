@@ -1,14 +1,14 @@
 require 'test_helper'
 
 class TransferControllerTest < ActionDispatch::IntegrationTest
-  test 'new redirects to login if not logged in' do
+  # ~~~~~~~~~~~~~~~~~~~~~~~~ access to new transfer form ~~~~~~~~~~~~~~~~~~~~~
+  test 'anonymous users are redirected to login when accessing new transfer form' do
     get '/transfer/new'
     assert_response :redirect
     assert_redirected_to '/users/auth/saml'
   end
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~ new transfer form ~~~~~~~~~~~~~~~~~~~~~
-  test 'basic user cannot submit a transfer' do
+  test 'basic user cannot access new transfer form' do
     sign_in users(:basic)
     get "/transfer/new"
     assert_redirected_to '/'
@@ -16,13 +16,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
-  test 'transfer_submitter can submit a transfer' do
+  test 'transfer_submitter can access new transfer form' do
     sign_in users(:transfer_submitter)
     get '/transfer/new'
     assert_response :success
   end
 
-  test 'thesis_processor cannot submit a transfer' do
+  test 'thesis_processor cannot access new transfer form' do
     sign_in users(:processor)
     get "/transfer/new"
     assert_redirected_to '/'
@@ -30,20 +30,93 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
-  test 'thesis admins can submit a transfer' do
+  test 'thesis admins can access new transfer form' do
     sign_in users(:thesis_admin)
     get '/transfer/new'
     assert_response :success
   end
 
-  test 'admins can submit a transfer' do
+  test 'admins can access new transfer form' do
     sign_in users(:admin)
     get '/transfer/new'
     assert_response :success
   end
 
-  test 'redirect after successful submission' do
+  # ~~~~~~~~~~~~~~~~~~~~ post transfer form / redirect ~~~~~~~~~~~~~~~~~~~~~~~
+  test 'basic users cannot post the transfer form' do
+    sign_in users(:basic)
+    post '/transfer',
+      params: {
+        transfer: {
+          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
+          graduation_year: "2020",
+          graduation_month: "February",
+          user: User.find_by(uid: "transfer_submitter_id"),
+          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+        }
+      }
+    assert_response :redirect
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'transfer_submitter can post the transfer form' do
     sign_in users(:transfer_submitter)
+    post '/transfer',
+      params: {
+        transfer: {
+          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
+          graduation_year: "2020",
+          graduation_month: "February",
+          user: User.find_by(uid: "transfer_submitter_id"),
+          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+        }
+      }
+    assert_response :redirect
+    assert_redirected_to transfer_confirm_path
+    follow_redirect!
+    assert_select 'div.alert.success', count: 1
+  end
+
+  test 'thesis_processor cannot post the transfer form' do
+    sign_in users(:processor)
+    post '/transfer',
+      params: {
+        transfer: {
+          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
+          graduation_year: "2020",
+          graduation_month: "February",
+          user: User.find_by(uid: "transfer_submitter_id"),
+          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+        }
+      }
+    assert_response :redirect
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'thesis admins can post the transfer form' do
+    sign_in users(:thesis_admin)
+    post '/transfer',
+      params: {
+        transfer: {
+          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
+          graduation_year: "2020",
+          graduation_month: "February",
+          user: User.find_by(uid: "transfer_submitter_id"),
+          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+        }
+      }
+    assert_response :redirect
+    assert_redirected_to transfer_confirm_path
+    follow_redirect!
+    assert_select 'div.alert.success', count: 1
+  end
+
+  test 'admins can post the transfer form' do
+    sign_in users(:admin)
     post '/transfer',
       params: {
         transfer: {
