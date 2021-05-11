@@ -33,7 +33,7 @@ class TransferController < ApplicationController
     filelist.each do |file|
       flash[:success] += ("File ID: " + file.to_s + "<br>").html_safe
     end
-    flash[:success] += "This has been a test of the files method. If this were an actual method, these " + filelist.count.to_s + " files would have been transferred."
+    flash[:success] += "This has been a test of the files method. If this were an actual method, these " + filelist.count.to_s + " files would have been attached to the selected thesis."
     redirect_to transfer_path(@transfer.id)
   end
 
