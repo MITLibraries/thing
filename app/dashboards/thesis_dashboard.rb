@@ -41,6 +41,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     coauthors: Field::String,
     copyright: Field::BelongsTo,
     license: Field::BelongsTo,
+    dspace_handle: Field::String,
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -74,6 +75,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     holds
     status
     publication_status
+    dspace_handle
     author_note
     processor_note
     metadata_complete

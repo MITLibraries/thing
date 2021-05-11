@@ -17,6 +17,7 @@
 #  coauthors          :string
 #  copyright_id       :integer
 #  license_id         :integer
+#  dspace_handle      :string
 #
 
 class Thesis < ApplicationRecord

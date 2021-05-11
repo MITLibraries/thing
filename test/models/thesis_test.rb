@@ -17,6 +17,7 @@
 #  coauthors          :string
 #  copyright_id       :integer
 #  license_id         :integer
+#  dspace_handle      :string
 #
 
 require 'csv'
@@ -253,6 +254,13 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.save
     assert thesis.valid?
   end
+
+    test 'can have dspace handle' do
+      thesis = theses(:one)
+      thesis.dspace_handle = 'https://example.com/12345.54321'
+      thesis.save
+      assert thesis.valid?
+    end
 
   test 'invalid without files complete' do
     thesis = theses(:one)
