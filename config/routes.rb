@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   }
 
   get 'transfer/confirm', to: 'transfer#confirm', as: 'transfer_confirm'
+  post 'transfer/files', to: 'transfer#files', as: 'transfer_files'
   get 'transfer/select', to: 'transfer#select', as: 'transfer_select'
   resources :transfer, only: [:new, :create, :show]
 

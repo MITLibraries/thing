@@ -44,7 +44,6 @@ class Ability
     basic
     can :create, Transfer
     can :confirm, Transfer
-    can :read, Transfer, user_id: @user.id
   end
 
   # Library staff who process the thesis queue. They should be able to use the
