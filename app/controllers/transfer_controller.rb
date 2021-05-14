@@ -29,13 +29,13 @@ class TransferController < ApplicationController
   def files
     @transfer = Transfer.find(params[:id])
     @thesis = Thesis.find(params[:thesis])
-    flash[:success] = "This is a test of the files method.<br><br>".html_safe
+    flash[:success] = ("The following files have been assigned to '" + @thesis.title + "'<br><br>").html_safe
     filelist = params[:transfer][:file_ids]
     filelist.each do |file|
-      flash[:success] += ("File ID: " + file.to_s + "<br>").html_safe
+      @file = @transfer.files.find_by id: file
+      @thesis.files.attach(@file.blob)
+      flash[:success] += (@file.filename.to_s + "<br>").html_safe
     end
-    flash[:success] += ("Thesis ID: " + @thesis.id.to_s + "<br><br>").html_safe
-    flash[:success] += "This has been a test of the files method. If this were an actual method, these " + filelist.count.to_s + " files would have been attached to the thesis."
     redirect_to transfer_path(@transfer.id)
   end
 
