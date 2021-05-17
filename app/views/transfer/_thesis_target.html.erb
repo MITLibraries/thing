@@ -1,0 +1,16 @@
+<tr>
+  <td><%= radio_button_tag "thesis", thesis_target.id, false, data: { msg: "Required - please select which thesis should receive the files." }, class: "required" %></td>
+  <td>
+    <label for="thesis_<%= thesis_target.id %>">
+      <% thesis_target.authors.each do |author| %>
+        <%= author.user.kerberos_id.to_s + ": " + author.user.display_name.to_s %><br>
+      <% end %>
+    </label>
+  </td>
+  <td><%= title_helper(thesis_target) %></td>
+  <td>
+    <% thesis_target.degrees.each do |degree| %>
+      <%= degree.name_dw %><br>
+    <% end %>
+  </td>
+</tr>

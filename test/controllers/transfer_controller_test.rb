@@ -1,6 +1,23 @@
 require 'test_helper'
 
 class TransferControllerTest < ActionDispatch::IntegrationTest
+  def create_transfer_with_file
+    # Ideally our fixtures would have already-attached files, but they do not
+    # yet. So we create a new Transfer here, with a file.
+    sign_in users(:thesis_admin)
+    post '/transfer',
+      params: {
+        transfer: {
+          department_id: User.find_by(uid: "thesis_admin_id").submittable_departments.first.id.to_s,
+          graduation_year: "2020",
+          graduation_month: "February",
+          user: User.find_by(uid: "thesis_admin_id"),
+          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+        }
+      }
+    sign_out users(:thesis_admin)
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~ access to new transfer form ~~~~~~~~~~~~~~~~~~~~~
   test 'anonymous users are redirected to login when accessing new transfer form' do
     get '/transfer/new'
@@ -265,33 +282,111 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'submitting transfer processing form provides feedback' do
-    # Ideally our fixtures would have already-attached files, but they do not
-    # yet. So we create a new Transfer here, with a file.
-    sign_in users(:thesis_admin)
-    post '/transfer',
-      params: {
-        transfer: {
-          department_id: User.find_by(uid: "thesis_admin_id").submittable_departments.first.id.to_s,
-          graduation_year: "2020",
-          graduation_month: "February",
-          user: User.find_by(uid: "thesis_admin_id"),
-          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
-        }
-      }
-
-    # Now we test the files method, for submitting a transfer processing form.
+  # ~~~~~~~~~~~~~~~~~ submitting transfer processing form ~~~~~~~~~~~~~~~~~~~~
+  test 'basic users cannot post the transfer processing form' do
+    create_transfer_with_file
+    sign_in users(:basic)
     post transfer_files_path,
       params: {
         id: Transfer.last.id,
         transfer: {
           file_ids: [Transfer.last.files.first.id]
-        }
+        },
+        thesis: Thesis.last.id
+      }
+    follow_redirect!
+    assert_equal path, '/'
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'transfer_submitters cannot post the transfer processing form' do
+    create_transfer_with_file
+    sign_in users(:transfer_submitter)
+    post transfer_files_path,
+      params: {
+        id: Transfer.last.id,
+        transfer: {
+          file_ids: [Transfer.last.files.first.id]
+        },
+        thesis: Thesis.last.id
+      }
+    follow_redirect!
+    assert_equal path, '/'
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'thesis processors can post the transfer processing form' do
+    create_transfer_with_file
+    sign_in users(:processor)
+    post transfer_files_path,
+      params: {
+        id: Transfer.last.id,
+        transfer: {
+          file_ids: [Transfer.last.files.first.id]
+        },
+        thesis: Thesis.last.id
       }
     follow_redirect!
     assert_equal path, transfer_path(Transfer.last)
     assert_select 'div.alert.success', count: 1
     assert @response.body.include? Transfer.last.files.first.id.to_s
     assert @response.body.include? 'these 1 files would have been'
+  end
+
+  test 'thesis admins can post the transfer processing form' do
+    create_transfer_with_file
+    sign_in users(:thesis_admin)
+    post transfer_files_path,
+      params: {
+        id: Transfer.last.id,
+        transfer: {
+          file_ids: [Transfer.last.files.first.id]
+        },
+        thesis: Thesis.last.id
+      }
+    follow_redirect!
+    assert_equal path, transfer_path(Transfer.last)
+    assert_select 'div.alert.success', count: 1
+    assert @response.body.include? Transfer.last.files.first.id.to_s
+    assert @response.body.include? 'these 1 files would have been'
+  end
+
+  test 'admins can post the transfer processing form' do
+    create_transfer_with_file
+    sign_in users(:admin)
+    post transfer_files_path,
+      params: {
+        id: Transfer.last.id,
+        transfer: {
+          file_ids: [Transfer.last.files.first.id]
+        },
+        thesis: Thesis.last.id
+      }
+    follow_redirect!
+    assert_equal path, transfer_path(Transfer.last)
+    assert_select 'div.alert.success', count: 1
+    assert @response.body.include? Transfer.last.files.first.id.to_s
+    assert @response.body.include? 'these 1 files would have been'
+  end
+
+  test 'transfer processing form requires both an array of files and a thesis id' do
+    create_transfer_with_file
+    sign_in users(:processor)
+    assert_raises(NoMethodError) do
+      post transfer_files_path,
+        params: {
+          id: Transfer.last.id,
+          thesis: Thesis.last.id
+        }
+    end
+    assert_raises(ActiveRecord::RecordNotFound) do
+      post transfer_files_path,
+        params: {
+          id: Transfer.last.id,
+          transfer: {
+            file_ids: [Transfer.last.files.first.id]
+          }
+        }
+    end
   end
 end
