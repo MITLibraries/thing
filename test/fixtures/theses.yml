@@ -17,6 +17,7 @@
 #  coauthors          :string
 #  copyright_id       :integer
 #  license_id         :integer
+#  dspace_handle      :string
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
