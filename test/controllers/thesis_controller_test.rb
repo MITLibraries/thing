@@ -168,6 +168,93 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_no_match note_text, response.body
   end
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~ thesis processing queue ~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'thesis processing queue exists' do
+    sign_in users(:admin)
+    get thesis_select_path
+    assert_response :success
+  end
+
+  test 'anonymous users are prompted to log in by processing queue' do
+    # Note that nobody is signed in.
+    get thesis_select_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see processing queue' do
+    sign_in users(:basic)
+    get thesis_select_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see processing queue' do
+    sign_in users(:transfer_submitter)
+    get thesis_select_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see processing queue' do
+    sign_in users(:processor)
+    get thesis_select_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see processing queue' do
+    sign_in users(:thesis_admin)
+    get thesis_select_path
+    assert_response :success
+  end
+
+  test 'admins can see processing queue' do
+    sign_in users(:admin)
+    get thesis_select_path
+    assert_response :success
+  end
+
+  test 'processing queue shows nothing without work done' do
+    sign_in users(:processor)
+    get thesis_select_path
+    assert @response.body.include? "No theses found"
+  end
+
+  test 'processing queue shows a record with file attached' do
+    # Attach a file to the thesis
+    t = theses(:with_hold)
+    f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    t.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+
+    # Make sure each thesis' timestamp appears on the page
+    sign_in users(:processor)
+    get thesis_select_path
+    expected_theses = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', "Published")
+    expected_theses.each do |et|
+      assert et.files.map {|item| @response.body.include? item.created_at.to_s}.all?
+    end
+  end
+
+  test 'processing queue allows filtering by term' do
+    # Attach files to two theses
+    t1 = theses(:with_hold)
+    t2 = theses(:active)
+    f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    t1.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    t2.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+
+    # Request the processing queue and note two records, with three filter
+    # options (two specific terms, and the "all terms" option)
+    sign_in users(:processor)
+    get thesis_select_path
+    assert_select 'table#thesisQueue tbody tr', count: 2
+    assert_select 'select[name="graduation"] option', count: 3
+    # Now request the queue with a filter applied, and see only one record
+    get thesis_select_path, params: { graduation: '2018-09-01' }
+    assert_select 'table#thesisQueue tbody tr', count: 1
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~ the processing queue ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'submissions processing page exists' do
     sign_in users(:admin)

@@ -43,7 +43,7 @@ two:
   license: sacrificial
 
 downloaded:
-  title: MyString
+  title: MyStringDownloaded
   abstract: MyText
   grad_date: 2017-09-01
   departments: [one]
@@ -51,7 +51,7 @@ downloaded:
   status: 'downloaded'
 
 withdrawn:
-  title: MyString
+  title: MyStringWithdrawn
   abstract: MyText
   grad_date: 2017-09-01
   departments: [one]
@@ -59,15 +59,15 @@ withdrawn:
   status: 'withdrawn'
 
 active:
-  title: MyString
+  title: MyStringActive
   abstract: MyText
-  grad_date: 2017-09-01
+  grad_date: 2018-09-01
   departments: [one]
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
 
 with_note:
-  title: MyString
+  title: MyStringNote
   abstract: MyText
   grad_date: 2017-09-01
   departments: [one]
@@ -85,35 +85,35 @@ with_hold:
   processor_note: 'Something sensitive'
 
 june_2018:
-  title: MyString
+  title: MyStringJune
   abstract: MyText
   grad_date: 2018-06-01
   departments: [one]
   degrees: [one]
 
 september_2018:
-  title: MyString
+  title: MyStringSeptember
   abstract: MyText
   grad_date: 2018-09-01
   departments: [one]
   degrees: [one]
 
 february_2019:
-  title: MyString
+  title: MyStringFebruary
   abstract: MyText
   grad_date: 2019-02-01
   departments: [one]
   degrees: [one]
 
 june_2019:
-  title: MyString
+  title: MyString2019
   abstract: MyText
   grad_date: 2019-06-01
   departments: [one]
   degrees: [one]
 
 september_2019:
-  title: MyString
+  title: MyStringSept2019
   abstract: MyText
   grad_date: 2019-09-01
   departments: [one]

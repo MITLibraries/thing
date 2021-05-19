@@ -21,6 +21,7 @@ Rails.application.routes.draw do
 
   get 'thesis/start', to: 'thesis#start', as: 'thesis_start'
   get 'thesis/confirm', to: 'thesis#confirm', as: 'thesis_confirm'
+  get 'thesis/select', to: 'thesis#select', as: 'thesis_select'
   resources :registrar, only: [:new, :create, :show]
   resources :thesis, only: [:new, :create, :edit, :show, :update]
   get 'process', to: 'thesis#process_theses', as: 'process'

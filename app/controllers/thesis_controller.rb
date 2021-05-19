@@ -37,6 +37,15 @@ class ThesisController < ApplicationController
     end
   end
 
+  def select
+    @graduation = params[:graduation]
+    @thesis = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', "Published")
+    if @graduation && @graduation != "all"
+      @thesis = @thesis.where('grad_date = ?', @graduation)
+    end
+    @terms = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', "Published").select(:grad_date).map(&:grad_date).uniq.sort
+  end
+
   def show
     @thesis = Thesis.find(params[:id])
   end
