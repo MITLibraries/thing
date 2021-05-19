@@ -70,4 +70,12 @@ class Transfer < ApplicationRecord
     self.graduation_year = grad_date.strftime('%Y')
     self.graduation_month = grad_date.strftime('%B')
   end
+
+  def unassigned_files
+    count = 0
+    self.files.blobs.all.each do |blob|
+      count += 1 if blob.attachment_ids.count == 1
+    end
+    count
+  end
 end

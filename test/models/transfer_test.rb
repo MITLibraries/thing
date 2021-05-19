@@ -142,4 +142,16 @@ class TransferTest < ActiveSupport::TestCase
     @transfer.files.attach(io: File.open(file2), filename: 'a_pdf.pdf')
     assert @transfer.valid?
   end
+
+  test 'unassigned_files updates as needed' do
+    assert_equal @transfer.unassigned_files, 1
+
+    @newfile = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    @transfer.files.attach(io: File.open(@newfile), filename: 'a_pdf.pdf')
+    assert_equal @transfer.unassigned_files, 2
+
+    @thesis = theses(:one)
+    @thesis.files.attach(@transfer.files.blobs.first)
+    assert_equal @transfer.unassigned_files, 1
+  end
 end

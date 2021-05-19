@@ -3,6 +3,6 @@
   <td data-sort="<%= transfer.grad_date %>"><%= transfer.graduation_month[...3] %> <%= transfer.graduation_year %></td>
   <td><%= transfer.department.name_dw %></td>
   <td><%= transfer.user.display_name %></td>
-  <td><%= transfer.files.count %></td>
+  <td data-sort="<%= transfer.unassigned_files %>"><%= transfer.unassigned_files %> / <%= transfer.files.count %></td>
   <td><%= transfer.note.present? ? "<span title='#{transfer.note}'>#{transfer.note[..10]}...</span>".html_safe : "" %></td>
 </tr>

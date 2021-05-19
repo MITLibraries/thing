@@ -38,7 +38,10 @@
 
 <%= form_tag(transfer_files_path, method: "post", id: "process_transfer") do %>
 
-  <% # f.error_notification %>
+  <% if @transfer.unassigned_files == 0 %>
+    <div class="alert alert-banner">All the files that were included in this Transfer have been assigned to thesis records. No work remains to be done. This page is for informational purposes only.</div>
+  <% end %>
+
   <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
 
   <%= hidden_field_tag( 'id', @transfer.id ) %>
@@ -49,10 +52,14 @@
     <ul class="list-unbulleted list-files">
       <% @transfer.files.each do |file| %>
         <li>
+          <% if file.blob.attachments.where('record_type = ?', "Thesis").count == 0 %>
           <label>
             <%= check_box_tag( "transfer[file_ids][]", file.id, false, data: { "msg" => "Required - please select at least one file to transfer." }, class: "required" ) %>
             <%= file.filename.to_s %>
           </label>
+          <% else %>
+            <span class="assigned"><%= file.filename.to_s %></span> attached to "<%= title_helper( file.blob.attachments.where('record_type = ?', "Thesis").first.record ) %>"
+          <% end %>
         </li>
       <% end %>
     </ul>
@@ -74,7 +81,11 @@
     </tbody>
   </table>
 
-  <%= submit_tag('Transfer files', class: 'btn button-primary') %>
+  <% if @transfer.unassigned_files == 0 %>
+    <%= submit_tag('All files assigned', class: 'btn button-secondary disabled', disabled: true) %>
+  <% else %>
+    <%= submit_tag('Transfer files', class: 'btn button-primary') %>
+  <% end %>
 <% end %>
 
 <script>

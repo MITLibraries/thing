@@ -139,6 +139,11 @@ ul.list-files {
       width: 1em;
       vertical-align: middle;
     }
+
+    span.assigned {
+      margin-left: 37px;
+      text-decoration: line-through;
+    }
   }
 }
 

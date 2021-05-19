@@ -308,7 +308,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
         transfer: {
           file_ids: [Transfer.last.files.first.id]
         },
-        thesis: Thesis.last.id
+        thesis: theses(:one).id
       }
     follow_redirect!
     assert_equal path, '/'
@@ -324,13 +324,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
         transfer: {
           file_ids: [Transfer.last.files.first.id]
         },
-        thesis: Thesis.last.id
+        thesis: theses(:one).id
       }
     follow_redirect!
     assert_equal path, transfer_path(Transfer.last)
     assert_select 'div.alert.success', count: 1
-    assert @response.body.include? Transfer.last.files.first.id.to_s
-    assert @response.body.include? 'these 1 files would have been'
+    assert @response.body.include? Transfer.last.files.first.filename.to_s
+    assert @response.body.include? theses(:one).title
   end
 
   test 'thesis admins can post the transfer processing form' do
@@ -342,13 +342,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
         transfer: {
           file_ids: [Transfer.last.files.first.id]
         },
-        thesis: Thesis.last.id
+        thesis: theses(:one).id
       }
     follow_redirect!
     assert_equal path, transfer_path(Transfer.last)
     assert_select 'div.alert.success', count: 1
-    assert @response.body.include? Transfer.last.files.first.id.to_s
-    assert @response.body.include? 'these 1 files would have been'
+    assert @response.body.include? Transfer.last.files.first.filename.to_s
+    assert @response.body.include? theses(:one).title
   end
 
   test 'admins can post the transfer processing form' do
@@ -360,13 +360,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
         transfer: {
           file_ids: [Transfer.last.files.first.id]
         },
-        thesis: Thesis.last.id
+        thesis: theses(:one).id
       }
     follow_redirect!
     assert_equal path, transfer_path(Transfer.last)
     assert_select 'div.alert.success', count: 1
-    assert @response.body.include? Transfer.last.files.first.id.to_s
-    assert @response.body.include? 'these 1 files would have been'
+    assert @response.body.include? Transfer.last.files.first.filename.to_s
+    assert @response.body.include? theses(:one).title
   end
 
   test 'transfer processing form requires both an array of files and a thesis id' do
@@ -376,7 +376,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
       post transfer_files_path,
         params: {
           id: Transfer.last.id,
-          thesis: Thesis.last.id
+          thesis: theses(:one).id
         }
     end
     assert_raises(ActiveRecord::RecordNotFound) do
@@ -388,5 +388,22 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
           }
         }
     end
+  end
+
+  test 'posting transfer processing form updates unassigned_files' do
+    create_transfer_with_file
+    sign_in users(:processor)
+    @transfer = Transfer.last
+    assert_equal @transfer.unassigned_files, 1
+
+    post transfer_files_path,
+      params: {
+        id: @transfer.id,
+        transfer: {
+          file_ids: [@transfer.files.first.id]
+        },
+        thesis: theses(:one).id
+      }
+    assert_equal @transfer.unassigned_files, 0
   end
 end
