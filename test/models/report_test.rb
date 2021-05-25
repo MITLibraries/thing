@@ -44,34 +44,20 @@ class ReportTest < ActiveSupport::TestCase
 
   # ~~~~ Dashboard report
   test 'dashboard includes a table of departments' do
-    # Because our fixtures don't have files attached all the returned values will be zero unless we
-    # manually attach files here.
-    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
-    t = theses(:one)
-    t.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
-    t.save
-
     r = Report.new
     result = r.index_data
     assert_equal Department.count, result['departments'].pluck(:label).length
     assert_includes result['departments'].pluck(:label), Department.first.name_dw
-    assert_equal result['departments'][0][:data].values, [1, 0, 0, 0, 0, 0, 0, 0]
+    assert_equal result['departments'][0][:data].values, [0, 3, 0, 0, 0, 0, 0, 4]
   end
 
   # ~~~~ Term detail report
   test 'term detail includes a breakdown of departments' do
-    # Because our fixtures don't have files attached all the returned values will be zero unless we
-    # manually attach files here.
-    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
-    t = theses(:one)
-    t.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
-    t.save
-
     r = Report.new
-    subset = Thesis.where('grad_date = ?', '2017-09-01')
+    subset = Thesis.where('grad_date = ?', '2018-06-01')
     result = r.term_tables subset
     assert_equal Department.count, result['departments']['data'].length
     assert_includes result['departments']['data'].keys, Department.first.name_dw
-    assert_equal [1, 0, 0], result['departments']['data'].values
+    assert_equal [3, 0, 0], result['departments']['data'].values
   end
 end

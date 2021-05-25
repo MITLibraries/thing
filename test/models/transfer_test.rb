@@ -15,12 +15,12 @@ require 'test_helper'
 class TransferTest < ActiveSupport::TestCase
   setup do
     @transfer = transfers(:valid)
-    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
-    @transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    # file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    # @transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
   end
 
   teardown do
-    @transfer.files.purge
+    # @transfer.files.purge
   end
 
   test 'valid transfer' do
@@ -144,14 +144,14 @@ class TransferTest < ActiveSupport::TestCase
   end
 
   test 'unassigned_files updates as needed' do
-    assert_equal @transfer.unassigned_files, 1
+    assert_equal 0, @transfer.unassigned_files
 
     @newfile = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     @transfer.files.attach(io: File.open(@newfile), filename: 'a_pdf.pdf')
-    assert_equal @transfer.unassigned_files, 2
+    assert_equal 1, @transfer.unassigned_files
 
     @thesis = theses(:one)
-    @thesis.files.attach(@transfer.files.blobs.first)
-    assert_equal @transfer.unassigned_files, 1
+    @thesis.files.attach(@transfer.files.blobs.last)
+    assert_equal 0, @transfer.unassigned_files
   end
 end
