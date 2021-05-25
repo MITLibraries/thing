@@ -90,20 +90,6 @@ class Thesis < ApplicationRecord
   #  includes(:user).order('users.surname, users.given_name')
   #}
   scope :date_asc, -> { order('grad_date') }
-  scope :by_status, lambda { |status|
-    if status == 'any'
-      @theses = self.all
-    elsif status.present?
-      # We could also test that Thesis::STATUS_OPTIONS.include? status,
-      # but we aren't, because:
-      # 1) if some URL hacker enters status=purple, they'll get 200 OK, not
-      #    500;
-      # 2) also they deserve the blank page they get.
-      @theses = self.where(status: status)
-    else
-      @theses = self.where(status: 'active')
-    end
-  }
   scope :valid_months_only, lambda {
     select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
   }
@@ -133,16 +119,6 @@ class Thesis < ApplicationRecord
   def split_graduation_date
     self.graduation_year = grad_date.strftime('%Y')
     self.graduation_month = grad_date.strftime('%B')
-  end
-
-  def css_alert_type
-    if self.status == 'active'
-      'info'
-    elsif self.status == 'withdrawn'
-      'danger'
-    elsif self.status == 'downloaded'
-      'success'
-    end
   end
 
   # Given a row of CSV data from Registrar import plus existing
