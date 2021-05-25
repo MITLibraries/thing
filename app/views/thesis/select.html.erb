@@ -1,0 +1,52 @@
+<%= content_for(:title, "Thesis Processing | MIT Libraries") %>
+
+<% content_for :additional_js do %>
+  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<% end %>
+
+<link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<h3 class="title title-page">Thesis Processing Queue</h3>
+
+<%= render 'shared/you_are' %>
+
+<%= form_tag(thesis_select_path, method: "get") do %>
+  <label>
+    Show only theses from: 
+    <select name="graduation">
+      <option value="all">All terms</option>
+      <% @terms.each do |term| %>
+        <option value="<%= term %>"<%= ' selected="selected"'.html_safe if @graduation.to_s == term.to_s %>>
+          <%= term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') %>
+        </option>
+      <% end %>
+    </select>    
+  </label>
+
+  <%= submit_tag('Apply filter', class: 'btn button-primary') %>
+<% end %>
+
+<table class="table" id="thesisQueue" title="Thesis processing queue">
+  <thead>
+    <tr>
+      <th scope="col">File transfer date</th>
+      <th scope="col">Degree date</th>
+      <th scope="col">Department(s)</th>
+      <th scope="col">Author(s)</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render(partial: 'thesis/select_thesis', collection: @thesis) || render('select_empty') %>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+$(document).ready( function () {
+  if( document.getElementById('thesisQueue').getElementsByClassName('empty').length === 0 ) {
+    var table = $('#thesisQueue').DataTable({
+      "order": [[ 1, "asc" ]]
+    });
+  };
+});
+</script>

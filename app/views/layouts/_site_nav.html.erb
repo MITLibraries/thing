@@ -10,6 +10,9 @@
           <%= nav_link_to("Submit thesis information", thesis_start_path) %>
 
           <% if user_signed_in? %>
+            <% if can? :select, Thesis %>
+              <%= nav_link_to("Process theses", thesis_select_path) %>
+            <% end %>
             <% if can? :process_theses, Thesis %>
               <%= nav_link_to("Process submissions", process_path) %>
               <%= nav_link_to("Stats", stats_path) %>
