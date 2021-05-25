@@ -227,12 +227,12 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
     t.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
 
-    # Make sure each thesis' timestamp appears on the page
+    # Make sure the url for each thesis processing form is included
     sign_in users(:processor)
     get thesis_select_path
     expected_theses = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', "Published")
     expected_theses.each do |et|
-      assert et.files.map {|item| @response.body.include? item.created_at.to_s}.all?
+      assert @response.body.include? thesis_process_path(et.id).to_s
     end
   end
 
@@ -254,4 +254,103 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     get thesis_select_path, params: { graduation: '2018-09-01' }
     assert_select 'table#thesisQueue tbody tr', count: 1
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~ thesis processing form ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'thesis processing form exists' do
+    sign_in users(:admin)
+    get thesis_process_path(theses(:one))
+    assert_response :success
+  end
+
+  test 'anonymous users are prompted to log in by processing form' do
+    # Note that nobody is signed in.
+    get thesis_process_path(theses(:one))
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see processing form' do
+    sign_in users(:basic)
+    get thesis_process_path(theses(:one))
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see processing form' do
+    sign_in users(:transfer_submitter)
+    get thesis_process_path(theses(:one))
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see processing form' do
+    sign_in users(:processor)
+    get thesis_process_path(theses(:one))
+    assert_response :success
+  end
+
+  test 'thesis_admins can see processing form' do
+    sign_in users(:thesis_admin)
+    get thesis_process_path(theses(:one))
+    assert_response :success
+  end
+
+  test 'admins can see processing form' do
+    sign_in users(:admin)
+    get thesis_process_path(theses(:one))
+    assert_response :success
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~ submitting thesis processing form ~~~~~~~~~~~~~~~~~~~~~
+  test 'anonymous users cannot submit thesis processing form' do
+    patch thesis_process_update_path(theses(:one)),
+      params: { thesis: { title: 'Something nonsensical' } }
+    assert_response :redirect
+  end
+
+  test 'basic users cannot submit thesis processing form' do
+    sign_in users(:basic)
+    patch thesis_process_update_path(theses(:one)),
+      params: { thesis: { title: 'Any value' } }
+    assert_response :redirect
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'transfer_submitters cannot submit thesis processing form' do
+    sign_in users(:transfer_submitter)
+    patch thesis_process_update_path(theses(:one)),
+      params: { thesis: { title: 'Any value' } }
+    assert_response :redirect
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'thesis_processors can submit thesis processing form' do
+    sign_in users(:processor)
+    patch thesis_process_update_path(theses(:one)),
+      params: { thesis: { title: 'Any value' } }
+    follow_redirect!
+    assert_equal path, thesis_process_path(theses(:one))
+  end
+
+  test 'thesis_admins can submit thesis processing form' do
+    sign_in users(:thesis_admin)
+    patch thesis_process_update_path(theses(:one)),
+      params: { thesis: { title: 'Any value' } }
+    follow_redirect!
+    assert_equal path, thesis_process_path(theses(:one))
+  end
+
+  test 'admins can submit thesis processing form' do
+    sign_in users(:admin)
+    patch thesis_process_update_path(theses(:one)),
+      params: {
+        thesis: { title: 'Something nonsensical' }
+      }
+    follow_redirect!
+    assert_equal path, thesis_process_path(theses(:one))
+  end
+
 end

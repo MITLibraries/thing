@@ -14,20 +14,22 @@ function conditionalLicenseField() {
 
 // Hide/show "remove this supervisor" link if only one
 // field is present (one value is required)
-function hideOnlySupervisorLink() {
-  var visible_fields = visibleAdvisorFields();
+function hideOnlyLink(group) {
+  var visible_fields = visibleFields(group);
+  console.log('I see the following visible ' + group + ' fields:');
+  console.log(visible_fields);
   if ( visible_fields.length === 1 ) {
-    $("a.remove_fields").addClass("only");
+    $("div." + group + " a.remove_fields").addClass("only");
   } else {
-    $("a.remove_fields").removeClass("only")
+    $("div." + group + " a.remove_fields").removeClass("only")
   }
 }
 
 // Sets the form's focus on the first visible supervisor
 // field. Called after one is removed, to ensure focus
 // is always defined.
-function focusOnFirstVisibleSupervisor() {
-  var visible_fields = visibleAdvisorFields();
+function focusOnFirstVisibleField(group) {
+  var visible_fields = visibleFields(group);
   $( $(visible_fields)[0] ).find("input[type=text]").focus();
 }
 
@@ -40,8 +42,8 @@ function focusOnFirstVisibleSupervisor() {
 //
 // This is called by both the focus and hideOnly functions
 // above.
-function visibleAdvisorFields() {
-  return $('div.advisor.nested-fields').filter(function() {
+function visibleFields(group) {
+  return $('div.' + group + '.nested-fields').filter(function() {
     if ( $(this).attr('style')==='display: none;') {
       return false;
     }

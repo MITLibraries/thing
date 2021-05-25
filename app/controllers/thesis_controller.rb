@@ -70,6 +70,20 @@ class ThesisController < ApplicationController
     redirect_to thesis_confirm_path
   end
 
+  def process_theses
+    @thesis = Thesis.find(params[:id])
+  end
+
+  def process_theses_update
+    thesis = Thesis.find(params[:id])
+    if thesis.update(thesis_params)
+      flash[:success] = "Your changes to '#{thesis.title}' have been saved."
+    else
+      flash[:error] = "An error has occurred while saving your changes to '#{thesis.title}'."
+    end
+    redirect_to thesis_process_path
+  end
+
   private
 
   def require_user
@@ -87,8 +101,11 @@ class ThesisController < ApplicationController
     params.require(:thesis).permit(:title, :abstract, :coauthors, :graduation_month,
                                    :graduation_year, :copyright_id, :author_note,
                                    :license_id, :department_ids, :degree_ids,
-                                   users_attributes: [:id, :orcid, :preferred_name],
-                                   advisors_attributes: [:id, :name, :_destroy])
+                                   :processor_note, :files_complete, :metadata_complete,
+                                   advisors_attributes: [:id, :name, :_destroy],
+                                   department_theses_attributes: [:id, :thesis_id, :department_id, :_destroy],
+                                   files_attachments_attributes: [:id, :purpose, :description],
+                                   users_attributes: [:id, :orcid, :preferred_name])
   end
 
   def sorted_theses(queryset, sort)

@@ -19,9 +19,11 @@ Rails.application.routes.draw do
     root to: "theses#index"
   end
 
-  get 'thesis/start', to: 'thesis#start', as: 'thesis_start'
   get 'thesis/confirm', to: 'thesis#confirm', as: 'thesis_confirm'
+  get 'thesis/:id/process', to: 'thesis#process_theses', as: 'thesis_process'
+  patch 'thesis/:id/process', to: 'thesis#process_theses_update', as: 'thesis_process_update'
   get 'thesis/select', to: 'thesis#select', as: 'thesis_select'
+  get 'thesis/start', to: 'thesis#start', as: 'thesis_start'
   resources :registrar, only: [:new, :create, :show]
   resources :thesis, only: [:new, :create, :edit, :show, :update]
   get 'harvest', to: 'registrar#list_registrar', as: 'harvest'

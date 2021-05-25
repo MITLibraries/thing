@@ -102,7 +102,7 @@ form.simple_form {
     height: 20px;
     width: 20px;
   }
-  .advisor.nested-fields {
+  .nested-fields {
     margin-bottom: 1.5rem;
 
     div.input {
@@ -119,6 +119,20 @@ form.simple_form {
       a.remove_fields.only {
         display: none;
       }
+    }
+  }
+  .author.nested-fields {
+    margin-bottom: 1.5rem;
+  }
+  .thesis-files {
+    width: 100%;
+
+    label {
+      font-weight: normal;
+    }
+
+    .thesis_files_attachments_description textarea {
+      width: 100%;
     }
   }
 }

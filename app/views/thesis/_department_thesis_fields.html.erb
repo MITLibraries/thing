@@ -1,0 +1,13 @@
+<div class="department nested-fields col3q">
+  <%= f.input :id, as: :hidden %>
+  <%= f.input :thesis_id, as: :hidden %>
+  <%= f.input :department_id, as: :select,
+                        collection: Department.order(:name_dw),
+                        selected: f.object.department_id,
+                        required: true,
+                        validate: { presence: true },
+                        label: 'Department *',
+                        label_method: :name_dw,
+                        input_html: { class: 'field field-select wide' } %>
+  <aside><%= link_to_remove_association "Remove this department", f %></aside>
+</div>

@@ -60,7 +60,7 @@
             <% end %>
           </label>
           <% else %>
-            <span class="assigned"><%= link_to rails_blob_path(file, disposition: 'inline'), target: :_blank do %><%= file.filename.to_s %><% end %></span> attached to "<%= title_helper( file.blob.attachments.where('record_type = ?', "Thesis").first.record ) %>"
+            <span class="assigned"><%= link_to rails_blob_path(file, disposition: 'inline'), target: :_blank do %><%= file.filename.to_s %><% end %></span> attached to "<%= link_to( title_helper( file.blob.attachments.where('record_type = ?', "Thesis").first.record ), thesis_process_path( file.blob.attachments.where('record_type = ?', "Thesis").first.record ) ) %>"
           <% end %>
         </li>
       <% end %>

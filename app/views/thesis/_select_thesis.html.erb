@@ -1,5 +1,5 @@
 <tr>
-  <td data-sort="<%= select_thesis.files.blobs.first.created_at %>"><%= select_thesis.files.blobs.first.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y<br>%l:%M %p').html_safe %></td>
+  <td data-sort="<%= select_thesis.files.blobs.first.created_at %>"><%= link_to(select_thesis.files.blobs.first.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y<br>%l:%M %p').html_safe, thesis_process_path(select_thesis.id)) %></td>
   <td><%= select_thesis.graduation_month[...3] %> <%= select_thesis.graduation_year %></td>
   <td>
     <% select_thesis.departments.each do |dept| %>

@@ -501,4 +501,57 @@ class ThesisTest < ActiveSupport::TestCase
       Thesis.create_or_update_from_csv(users(:yo), degrees(:one), departments(:one), Date.new(2017, 9, 1), row)
     end
   end
+
+  test 'active_holds? returns "Yes" with an "active" hold' do
+    thesis = theses(:with_hold)
+    assert_equal 'active', thesis.holds.first.status
+    assert_equal "Yes", thesis.active_holds?
+  end
+
+  test 'active_holds? returns "Yes" with an "expired" hold' do
+    thesis = theses(:downloaded)
+    assert_equal 'expired', thesis.holds.first.status
+    assert_equal "Yes", thesis.active_holds?
+  end
+
+  test 'active_holds? returns "No" with only "released" holds' do
+    thesis = theses(:released_hold)
+    assert_equal 1, thesis.holds.count
+    assert_equal 'released', thesis.holds.first.status
+    assert_equal "No", thesis.active_holds?
+  end
+
+  test 'active_holds? returns "No" with zero holds' do
+    thesis = theses(:one)
+    assert_equal 0, thesis.holds.count
+    assert_equal "No", thesis.active_holds?
+  end
+
+  test 'active_holds? returns "Yes" with any active/expired hold' do
+    thesis = theses(:multiple_holds)
+    assert_equal 2, thesis.holds.count
+    assert_equal ["released", "expired"], thesis.holds.map(&:status)
+    assert_equal "Yes", thesis.active_holds?
+  end
+
+  test 'authors_graduated? returns "Yes" if sole author graduated' do
+    thesis = theses(:with_note)
+    assert_equal 1, thesis.authors.count
+    assert_equal true, thesis.authors.first.graduation_confirmed
+    assert_equal "Yes", thesis.authors_graduated?
+  end
+
+  test 'authors_graduated? returns "No" if sole author has not graduated' do
+    thesis = theses(:one)
+    assert_equal 1, thesis.authors.count
+    assert_equal false, thesis.authors.first.graduation_confirmed
+    assert_equal "No", thesis.authors_graduated?
+  end
+
+  test 'authors_graduated? returns "No" if any author has not graduated' do
+    thesis = theses(:two)
+    assert_equal 2, thesis.authors.count
+    assert_equal [false, true], thesis.authors.map(&:graduation_confirmed)
+    assert_equal "No", thesis.authors_graduated?
+  end
 end

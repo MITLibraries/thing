@@ -28,7 +28,7 @@ three:
 four:
   user: basic
   thesis: with_note
-  graduation_confirmed: false
+  graduation_confirmed: true
 
 five:
   user: basic

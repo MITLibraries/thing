@@ -43,3 +43,33 @@ also_expired:
   case_number: null
   status: expired
   processing_notes: null
+
+released:
+  thesis: released_hold
+  date_requested: 2021-01-03
+  date_start: 2021-01-01
+  date_end: 2021-04-01
+  hold_source: tlo
+  case_number: null
+  status: released
+  processing_notes: null
+
+multiple_expired:
+  thesis: multiple_holds
+  date_requested: 2021-01-03
+  date_start: 2021-01-01
+  date_end: 2021-05-01
+  hold_source: tlo
+  case_number: null
+  status: expired
+  processing_notes: null
+
+multiple_released:
+  thesis: multiple_holds
+  date_requested: 2021-01-03
+  date_start: 2021-01-01
+  date_end: 2021-04-01
+  hold_source: vpf
+  case_number: null
+  status: released
+  processing_notes: null

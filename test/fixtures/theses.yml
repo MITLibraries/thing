@@ -84,6 +84,24 @@ with_hold:
   status: 'active'
   processor_note: 'Something sensitive'
 
+released_hold:
+  title: MyReleasedThesis
+  abstract: MyText
+  grad_date: 2021-06-01
+  departments: [one]
+  degrees: [one]
+  status: 'active'
+  processor_note: 'One hold, which was released'
+
+multiple_holds:
+  title: MyComplexThesis
+  abstract: MyText
+  grad_date: 2021-06-01
+  departments: [one]
+  degrees: [one]
+  status: 'active'
+  processor_note: 'Multiple holds in various states'
+
 june_2018:
   title: MyStringJune
   abstract: MyText

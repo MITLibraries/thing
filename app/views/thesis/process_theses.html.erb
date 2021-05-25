@@ -1,0 +1,312 @@
+<%= content_for(:title, "Thesis Processing Form | MIT Libraries") %>
+
+<% content_for :additional_js do %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<% end %>
+
+<%= simple_form_for(@thesis, url: thesis_process_update_path,
+                             html: { class: 'thesisProcessing' },
+                             validate: true ) do |f| %>
+  <div class="layout-2t1t layout-band">
+    <div class="col2t">
+      <h3 class="title title-page">Thesis Processing Form</h3>
+
+      <%= render 'shared/you_are' %>
+
+      <%= f.error_notification %>
+      <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+
+      <div class="well">
+        <% @thesis.authors.each do |author| %>
+          <p>
+            <strong>Display name: <%= author.user.display_name %></strong><br>
+            Preferred name: <%= author.user.preferred_name %><br>
+            Kerberos: <%= author.user.kerberos_id %><br>
+            Graduated: <%= author.graduation_confirmed %>
+          </p>
+        <% end %>
+        <p>Degree date: <%= @thesis.graduation_month.to_s %> <%= @thesis.graduation_year.to_s %></p>
+      </div>
+    </div>
+
+    <div class="col1t-r">
+      <h4>Publication status</h4>
+      <p class="box-content">
+        <%= @thesis.publication_status %>
+      </p>
+
+      <h4>Status of all the things</h4>
+      <ul class="list-unbulleted">
+        <li>
+          <%= f.input :authors_graduated?, as: :string,
+                                readonly: true,
+                                label_html: { style: 'width: 50%' },
+                                input_html: { class: 'disabled', style: 'width: 40%' },
+                                label: 'Authors graduated' %>
+        </li>
+        <li>
+          <%= f.input :active_holds?, as: :string,
+                                      readonly: true,
+                                      label_html: { style: 'width: 50%' },
+                                      input_html: { class: 'disabled', style: 'width: 40%' },
+                                      hint_html: { style: 'display: block' },
+                                      hint: link_to('See details in admin interface',admin_thesis_path(f.object)) %>
+          
+        </li>
+        <li>
+          <%= f.input :files_complete, as: :radio_buttons,
+                                       label_html: { style: 'width: 50%' },
+                                       item_wrapper_class: 'field-radio fields-inline',
+                                       label: 'Files ok' %>
+        </li>
+        <li>
+          <%= f.input :metadata_complete, as: :radio_buttons,
+                                          label_html: { style: 'width: 50%' },
+                                          item_wrapper_class: 'field-radio fields-inline',
+                                          label: 'Metadata ok' %>
+        </li>
+        <li>Issues found</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="layout-band">
+    <h4>Thesis metadata</h4>
+    <div class="field-row layout-band layout-1q3q">
+      <div class="col1q"><strong>Authors</strong></div>
+      <%= f.simple_fields_for :users do |u| %>
+        <div class="author nested-fields col3q">
+          <%= u.input :preferred_name, required: true,
+                                       validate: { presence: true },
+                                       label: 'Name on thesis *',
+                                       label_html: { class: '' },
+                                       wrapper_html: { class: '' },
+                                       input_html: { class: 'field field-text wide',
+                                         aria: { describedby: "thesis_preferred_name_#{u.index}-hint" },
+                                         data: { msg: Thesis::VALIDATION_MSGS[:preferred_name] }
+                                       },
+                                       hint: '(Enter as: Last/Surname, First/Given Middle)',
+                                       hint_html: { class: '', id: "thesis_preferred_name_#{u.index}-hint" } %>
+        </div>
+      <% end # simple_fields_for loop %>
+    </div>
+
+    <%= f.input :title, as: :text,
+                        required: true,
+                        validate: { presence: true },
+                        label: 'Thesis title *',
+                        label_html: { class: 'col1q' },
+                        wrapper_html: { class: 'field-row layout-1q3q layout-band' },
+                        input_html: { class: 'field field-text col3q',
+                          data: { msg: Thesis::VALIDATION_MSGS[:title] }
+                        },
+                        hint: '' %>
+
+    <%= f.input :coauthors, label: 'Co-author (if applicable)',
+                            label_html: { class: 'col1q' },
+                            wrapper_html: { class: 'field-row layout-1q3q layout-band' },
+                            input_html: { class: 'field field-text col3q',
+                              aria: { describedby: 'thesis_coauthors-hint' } },
+                            hint: '(Enter as: Last/Surname, First/Given Middle)',
+                            hint_html: { class: 'col3q', id: 'thesis_coauthors-hint' } %>
+
+    <div class="layout-band layout-1q3q field-row">
+      <div class="col1q">
+        <strong>Department(s)*</strong>
+      </div>
+      <%= f.simple_fields_for :department_theses do |dept| %>
+        <%= render 'department_thesis_fields', :f => dept %>
+      <% end %>
+      <p class="links col3q">
+        <%= link_to_add_association 'Add another department', f, :department_theses %>
+      </p>
+    </div>
+
+    <div class="layout-1q3q layout-band">
+      <div class="col3q">Please note: Degree information should be edited via <%= link_to 'the administrative interface', admin_thesis_path(f.object.id) %>.</div>
+    </div>
+    <%
+      f.object.degrees.find_all do |deg|
+        if f.object.degrees.count == 1
+          field_id = "degree"
+          field_label = "Degree"
+        else
+          number = (f.object.degrees.find_index(deg).to_i+1).to_s
+          field_id = "degree-" + number
+          field_label = "Degree " + number
+        end
+    %>
+      <div class="field-row layout-1q3q layout-band">
+        <label class="col1q field-label" for="<%= field_id %>"><%= field_label %></label>
+        <input id="<%= field_id %>" type="text" name="degree[]" readonly="readonly" value="<%= deg.name_dw %>" class="field field-text col3q disabled">
+      </div>
+    <% end %>
+
+    <div class="field-row layout-band layout-1q3q">
+      <p class="col1q"><strong>Degree date *</strong></p>
+      <div class="col3q">
+        <span id="thesis_date_ids-hint" class="hint">For the degree date, enter the semester in which this degree will be conferred (typically the graduation semester).</span>
+        <div class='group-inline'>
+          <%= f.input :graduation_month, label: 'Month *', as: :select,
+                               collection: Thesis::VALID_MONTHS,
+                               wrapper_html: { class: 'field-wrap' },
+                               input_html: { class: 'field field-select', data: { msg: Thesis::VALIDATION_MSGS[:graduation_month] },
+                               aria: { describedby: 'thesis_date_ids-hint' }
+                               } %>
+          <%= f.input :graduation_year, label: 'Year *',
+                                        collection: [Date.today.last_year.strftime('%Y'),
+                                                     Date.today.strftime('%Y'),
+                                                     Date.today.next_year.strftime('%Y')],
+                              wrapper_html: { class: 'field-wrap' },
+                              input_html: { class: 'field field-select',
+                                data: { msg: Thesis::VALIDATION_MSGS[:graduation_year] } } %>
+        </div>
+      </div>
+    </div>
+
+
+    <%= f.association :copyright, as: :select,
+                                  required: true,
+                                  validate: { present: true },
+                                  include_hidden: false,
+                                  label: 'Copyright holder *',
+                                  label_html: { class: 'col1q' },
+                                  label_method: :display_description,
+                                  wrapper_html: { class: 'field-row select layout-1q3q layout-band' },
+                                  input_html: { class: 'field field-select col3q', multiple: false,
+                                    aria: { describedby: 'thesis_copyright_id-hint' },
+                                    data: { msg: Thesis::VALIDATION_MSGS[:copyright] } },
+                                  hint: 'For more information about thesis copyright please review the Copyright section of the <a href="https://libraries.mit.edu/archives/thesis-specs/#copyright" target="_blank">Specifications for Thesis Preparation</a> and our <a href="https://libguides.mit.edu/c.php?g=176367&p=8229377#s-lg-box-wrapper-30720662" target="_blank">Copyright & Licensing information</a>.'.html_safe,
+                                  hint_html: { id: 'thesis_copyright_id-hint', class: 'col3q' } %>
+
+    <%= f.association :license, as: :select,
+                                include_hidden: false,
+                                label: 'License (if you retain copyright)',
+                                label_method: :display_description,
+                                label_html: { class: 'col1q' },
+                                wrapper_html: { class: 'field-row select layout-1q3q layout-band' },
+                                input_html: { class: 'field field-select col3q', multiple: false,
+                                  aria: { describedby: 'thesis_license-hint' } },
+                                hint: 'Not sure what to select? Learn more about <a href="https://creativecommons.org/licenses/" target="_blank">Creative Commons licenses</a>.'.html_safe,
+                                hint_html: { class: 'col3q', id: 'thesis_license-hint' } %>
+
+    <div class="field-row layout-band layout-1q3q">
+      <div class="col1q">
+        <strong>Thesis supervisor(s)*</strong>
+        <p class="hint">(just supervisors, not entire committee)</p>
+      </div>
+      <%= f.simple_fields_for :advisors do |advisor| %>
+        <%= render 'advisor_fields', :f => advisor %>
+      <% end %>
+      <p class="links col3q">
+        <%= link_to_add_association 'Add another supervisor', f, :advisors %>
+      </p>
+    </div>
+
+    <%= f.input :abstract, as: :text,
+                           required: true,
+                           validate: { presence: true },
+                           label: 'Abstract *',
+                           label_html: { class: 'col1q' },
+                           wrapper_html: { class: 'field-row layout-1q3q layout-band' },
+                           input_html: { class: 'field field-text col3q',
+                             rows: 10,
+                             data: { msg: Thesis::VALIDATION_MSGS[:abstract] }
+                           } %>
+
+    <%= f.input :author_note, readonly: true,
+                              as: :text,
+                              wrapper_html: { class: 'field-row layout-1q3q layout-band' },
+                              input_html: { class: 'field field-text col3q disabled',
+                                rows: 5,
+                                aria: { describedby: 'thesis_author_note-hint' }
+                              },
+                              label: 'Author Notes',
+                              label_html: { class: 'col1q' },
+                              hint: '',
+                              hint_html: { id: 'thesis_author_note-hint', class: 'col3q' } %>
+
+    <h4>Thesis files</h4>
+
+    <table class="table thesis-files">
+      <thead>
+        <tr>
+          <th scope="col">File</th>
+          <th scope="col">Received</th>
+          <th scope="col">Purpose</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.simple_fields_for :files_attachments do |file| %>
+          <tr>
+            <td>
+              <%= link_to rails_blob_path(file.object, disposition: "inline"), target: :_blank do %>
+                <%= file.object.blob.filename %>
+              <% end %>
+            </td>
+            <td>
+              <%= file.object.blob.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y<br>%l:%M %p').html_safe %>
+            </td>
+            <td>
+              <%= file.input :purpose, as: :select,
+                                          collection: {"Thesis PDF" => :thesis_pdf, "Thesis source" => :thesis_source, "Supplementary file" => :thesis_supplementary_file, "Proquest form" => :proquest_form, "Signature page" => :signature_page},
+                                          label: 'Purpose' %>
+            </td>
+            <td>
+              <%= file.input :description, as: :text, label: 'Description' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= f.input :processor_note, as: :text,
+                                 wrapper_html: { class: 'field-row layout-1q3q layout-band' },
+                                 input_html: { class: 'field field-text col3q',
+                                   rows: 10
+                                  },
+                                 label: 'Processing note',
+                                 label_html: { class: 'col1q' } %>
+
+    <%= submit_tag 'Update', class: 'btn button-primary' %>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  $("form.thesisProcessing").validate({
+    invalidHandler: function(event, validator) {
+      var errors = validator.numberOfInvalids();
+      if (errors) {
+        var message = errors == 1
+          ? 'The form was not submitted successfully - one required field needs to be fixed.'
+          : 'The form was not submitted successfully - ' + errors + ' required fields need to be fixed.';
+        $("div.error").html(message);
+        $("div.error").show();
+      } else {
+        $("div.error").hide();
+      }
+    }
+  });
+  $('#thesis_copyright_id').change(function() {
+    conditionalLicenseField();
+  });
+  $("form.thesisProcessing").on('cocoon:after-insert', function(e, insertedItem) {
+    hideOnlyLink('advisor');
+    hideOnlyLink('department');
+    ts = "hint-" + Date.now();
+    $(insertedItem).find("span.hint").attr("id", ts);
+    $(insertedItem).find("input[type=text]").attr("aria-describedby", ts).focus();
+  });
+  $("form.thesisProcessing").on('cocoon:after-remove', function(e) {
+    focusOnFirstVisibleField('advisor');
+    hideOnlyLink('advisor');
+    focusOnFirstVisibleField('department');
+    hideOnlyLink('department');
+  });
+  $(function() {
+    conditionalLicenseField();
+    hideOnlyLink('advisor');
+    hideOnlyLink('department');
+  });
+</script>
