@@ -11,8 +11,8 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(_resource_or_scope)
-    if can?(:process_theses, Thesis)
-      process_path
+    if can?(:select, Transfer)
+      transfer_select_path
     elsif can?(:create, Transfer)
       new_transfer_path
     else

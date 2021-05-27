@@ -60,18 +60,18 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   test 'redirect to thesis processing path after login for processors' do
     mock_auth(users(:processor))
     follow_redirect!
-    assert_equal '/process', @request.path
+    assert_equal transfer_select_path, @request.path
   end
 
   test 'redirect to thesis processing path after login for thesis admins' do
     mock_auth(users(:thesis_admin))
     follow_redirect!
-    assert_equal '/process', @request.path
+    assert_equal transfer_select_path, @request.path
   end
 
   test 'redirect to thesis processing path after login for admins' do
     mock_auth(users(:admin))
     follow_redirect!
-    assert_equal '/process', @request.path
+    assert_equal transfer_select_path, @request.path
   end
 end

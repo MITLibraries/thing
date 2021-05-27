@@ -61,9 +61,7 @@ class Ability
     can :annotate, Thesis
     can :mark_downloaded, Thesis
     can :mark_withdrawn, Thesis
-    can :process_theses, Thesis
     can :select, Thesis
-    can :stats, Thesis
     
     can :read, Transfer
     can :select, Transfer

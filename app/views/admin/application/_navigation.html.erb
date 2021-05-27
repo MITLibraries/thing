@@ -9,7 +9,7 @@ as defined by the routes in the `admin/` namespace
 
 <nav class="navigation" role="navigation">
 
-  <%= link_to('Process Theses', process_path, class: "navigation__link") %>
+  <%= link_to('Home', root_path, class: "navigation__link") %>
 
   <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
     <%= link_to(

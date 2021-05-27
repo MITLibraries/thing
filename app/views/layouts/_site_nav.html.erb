@@ -13,10 +13,6 @@
             <% if can? :select, Thesis %>
               <%= nav_link_to("Process theses", thesis_select_path) %>
             <% end %>
-            <% if can? :process_theses, Thesis %>
-              <%= nav_link_to("Process submissions", process_path) %>
-              <%= nav_link_to("Stats", stats_path) %>
-            <% end %>
             <% if can? :create, Transfer %>
               <%= nav_link_to("Transfer theses", new_transfer_path) %>
             <% end %>

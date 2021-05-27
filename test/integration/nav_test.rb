@@ -33,22 +33,6 @@ class NavTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'processing page nav' do
-    mock_auth(users(:admin))
-    get process_path
-    assert_select('.current') do |value|
-      assert(value.text.include?('Process submissions'))
-    end
-  end
-
-  test 'stats page nav' do
-    mock_auth(users(:admin))
-    get stats_path
-    assert_select('.current') do |value|
-      assert(value.text.include?('Stats'))
-    end
-  end
-
   test 'registrar page nav' do
     mock_auth(users(:admin))
     get new_registrar_path
@@ -95,8 +79,6 @@ class NavTest < ActionDispatch::IntegrationTest
 
       # Navigation should not include:
       assert_select "a[href=?]", thesis_select_path, count: 0
-      assert_select "a[href=?]", process_path, count: 0
-      assert_select "a[href=?]", stats_path, count: 0
       assert_select "a[href=?]", new_transfer_path, count: 0
       assert_select "a[href=?]", transfer_select_path, count: 0
       assert_select "a[href=?]", new_registrar_path, count: 0
@@ -117,8 +99,6 @@ class NavTest < ActionDispatch::IntegrationTest
 
       # Navigation should not include:
       assert_select "a[href=?]", thesis_select_path, count: 0
-      assert_select "a[href=?]", process_path, count: 0
-      assert_select "a[href=?]", stats_path, count: 0
       assert_select "a[href=?]", transfer_select_path, count: 0
       assert_select "a[href=?]", new_registrar_path, count: 0
       assert_select "a[href=?]", harvest_path, count: 0
@@ -137,8 +117,6 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select "a[href=?]", thesis_select_path
       # assert_select "a[href=?]", new_transfer_path
       assert_select "a[href=?]", transfer_select_path
-      assert_select "a[href=?]", process_path
-      assert_select "a[href=?]", stats_path
       assert_select "a[href=?]", new_registrar_path, count: 0
       assert_select "a[href=?]", harvest_path, count: 0
       # assert_select "a[href=?]", admin_root_path
@@ -156,8 +134,6 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select "a[href=?]", thesis_select_path
       assert_select "a[href=?]", new_transfer_path
       assert_select "a[href=?]", transfer_select_path
-      assert_select "a[href=?]", process_path
-      assert_select "a[href=?]", stats_path
       assert_select "a[href=?]", new_registrar_path
       assert_select "a[href=?]", harvest_path
       assert_select "a[href=?]", admin_root_path
@@ -175,8 +151,6 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select "a[href=?]", thesis_select_path
       assert_select "a[href=?]", new_transfer_path
       assert_select "a[href=?]", transfer_select_path
-      assert_select "a[href=?]", process_path
-      assert_select "a[href=?]", stats_path
       assert_select "a[href=?]", new_registrar_path
       assert_select "a[href=?]", harvest_path
       assert_select "a[href=?]", admin_root_path
