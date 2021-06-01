@@ -14,6 +14,7 @@ class ReceiptMailer < ApplicationMailer
     @transfer = transfer
     mail(from: "MIT Libraries <#{ENV['THESIS_ADMIN_EMAIL']}>",
          to: @user.email,
+         cc: ENV['THESIS_ADMIN_EMAIL'],
          subject: 'Thesis files transferred')
   end
 end
