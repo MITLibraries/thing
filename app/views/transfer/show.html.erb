@@ -55,10 +55,12 @@
           <% if file.blob.attachments.where('record_type = ?', "Thesis").count == 0 %>
           <label>
             <%= check_box_tag( "transfer[file_ids][]", file.id, false, data: { "msg" => "Required - please select at least one file to transfer." }, class: "required" ) %>
-            <%= file.filename.to_s %>
+            <%= link_to rails_blob_path(file, disposition: 'inline'), target: :_blank do %>
+              <%= file.filename.to_s %>
+            <% end %>
           </label>
           <% else %>
-            <span class="assigned"><%= file.filename.to_s %></span> attached to "<%= title_helper( file.blob.attachments.where('record_type = ?', "Thesis").first.record ) %>"
+            <span class="assigned"><%= link_to rails_blob_path(file, disposition: 'inline'), target: :_blank do %><%= file.filename.to_s %><% end %></span> attached to "<%= title_helper( file.blob.attachments.where('record_type = ?', "Thesis").first.record ) %>"
           <% end %>
         </li>
       <% end %>
@@ -67,7 +69,7 @@
 
   <h4 class="thesis-heading">...to this thesis:</h4>
   <table class="table list-theses" id="thesisTargets">
-    <caption>Select the thesis to receive the files. If the needed thesis is not in this list, edit either the transfer or thesis record in <%= link_to("the administrative interface", admin_root_path) %> so they share a department and graduation date.</caption>
+    <caption>Select the thesis to receive the files. If the needed thesis is not in this list, edit either the transfer or thesis record in <%= link_to("the administrative interface", admin_authors_path, target: :_blank) %> so they share a department and graduation date.</caption>
     <thead>
       <tr>
         <th scope="col">Select</th>
@@ -82,9 +84,9 @@
   </table>
 
   <% if @transfer.unassigned_files == 0 %>
-    <%= submit_tag('All files assigned', class: 'btn button-secondary disabled', disabled: true) %>
+    <%= submit_tag('All files matched', class: 'btn button-secondary disabled', disabled: true) %>
   <% else %>
-    <%= submit_tag('Transfer files', class: 'btn button-primary') %>
+    <%= submit_tag('Match', class: 'btn button-primary') %>
   <% end %>
 <% end %>
 
