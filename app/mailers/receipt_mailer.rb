@@ -17,4 +17,13 @@ class ReceiptMailer < ApplicationMailer
          cc: ENV['THESIS_ADMIN_EMAIL'],
          subject: 'Thesis files transferred')
   end
+
+  def virus_detected_email(transfer)
+    return unless ENV.fetch('DISABLE_ALL_EMAIL', 'true') == 'false' # allows PR builds to disable emails
+    @transfer = transfer
+    mail(from: "MIT Libraries <#{ENV['THESIS_ADMIN_EMAIL']}>",
+      to: ENV['MAINTAINER_EMAIL'],
+      cc: ENV['THESIS_ADMIN_EMAIL'],
+      subject: 'Thesis files with virus detected')
+  end
 end

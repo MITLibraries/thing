@@ -31,6 +31,8 @@ class TransferController < ApplicationController
     rescue Aws::S3::Errors::AccessDenied
       flash[:error] = "We detected a potential problem with a file in your upload. Library staff will contact you with details when we have more details."
       ReceiptMailer.transfer_receipt_email(@transfer, current_user).deliver_later
+
+      ReceiptMailer.virus_detected_email(@transfer).deliver_later
       redirect_to transfer_confirm_path
 
   end

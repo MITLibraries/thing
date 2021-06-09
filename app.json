@@ -27,6 +27,9 @@
     "LANG": {
       "required": true
     },
+    "MAINTAINER_EMAIL": {
+      "required": true
+    }
     "RACK_ENV": {
       "required": true
     },
