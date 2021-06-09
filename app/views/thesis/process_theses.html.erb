@@ -41,14 +41,14 @@
           <%= f.input :authors_graduated?, as: :string,
                                 readonly: true,
                                 label_html: { style: 'width: 50%' },
-                                input_html: { class: 'disabled', style: 'width: 40%' },
+                                input_html: { class: 'disabled', style: 'width: 40%', value: f.object.authors_graduated?? 'Yes' : 'No' },
                                 label: 'Authors graduated' %>
         </li>
         <li>
           <%= f.input :active_holds?, as: :string,
                                       readonly: true,
                                       label_html: { style: 'width: 50%' },
-                                      input_html: { class: 'disabled', style: 'width: 40%' },
+                                      input_html: { class: 'disabled', style: 'width: 40%', value: f.object.active_holds?? 'Yes' : 'No' },
                                       hint_html: { style: 'display: block' },
                                       hint: link_to('See details in admin interface',admin_thesis_path(f.object)) %>
           

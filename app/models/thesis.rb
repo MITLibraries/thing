@@ -100,13 +100,13 @@ class Thesis < ApplicationRecord
   # holds with a status of either 'active' or 'expired'. A false/"No" is
   # only returned if all holds are 'released'.
   def active_holds?
-    return holds.map { |h| h.status.in? ['active','expired'] }.any? ? "Yes" : "No"
+    return holds.map { |h| h.status.in? ['active','expired'] }.any?
   end
 
   # Returns a true/false value (rendered as "yes" or "no") if all authors
   # have graduated. Any author having not graduated results in a false/"No".
   def authors_graduated?
-    return authors.map { |a| a.graduation_confirmed? }.reduce(:&)? "Yes" : "No"
+    return authors.map { |a| a.graduation_confirmed? }.reduce(:&)
   end
 
   # Ensures submitted graduation year is a four-digit integer, not less than
