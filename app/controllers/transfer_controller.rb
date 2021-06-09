@@ -24,6 +24,15 @@ class TransferController < ApplicationController
       flash[:error] = "Error saving transfer: #{@transfer.errors.full_messages}"
       render 'new'
     end
+
+    # A virus detected prior to the Transfer being saved throws this error but
+    # our application and the files in s3 are in a state where it is safe to
+    # continue and investigate which file was problematic asynchronously
+    rescue Aws::S3::Errors::AccessDenied
+      flash[:error] = "We detected a potential problem with a file in your upload. Library staff will contact you with details when we have more details."
+      ReceiptMailer.transfer_receipt_email(@transfer, current_user).deliver_later
+      redirect_to transfer_confirm_path
+
   end
 
   def files
