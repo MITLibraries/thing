@@ -43,6 +43,8 @@ class Thesis < ApplicationRecord
 
   accepts_nested_attributes_for :users
   accepts_nested_attributes_for :advisors, allow_destroy: :true
+  accepts_nested_attributes_for :department_theses, allow_destroy: :true
+  accepts_nested_attributes_for :files_attachments
 
   attr_accessor :graduation_year, :graduation_month
 
@@ -93,6 +95,19 @@ class Thesis < ApplicationRecord
   scope :valid_months_only, lambda {
     select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
   }
+
+  # Returns a true/false value (rendered as "yes" or "no") if there are any
+  # holds with a status of either 'active' or 'expired'. A false/"No" is
+  # only returned if all holds are 'released'.
+  def active_holds?
+    return holds.map { |h| h.status.in? ['active','expired'] }.any?
+  end
+
+  # Returns a true/false value (rendered as "yes" or "no") if all authors
+  # have graduated. Any author having not graduated results in a false/"No".
+  def authors_graduated?
+    return authors.map { |a| a.graduation_confirmed? }.reduce(:&)
+  end
 
   # Ensures submitted graduation year is a four-digit integer, not less than
   # the year of the Institute's founding.

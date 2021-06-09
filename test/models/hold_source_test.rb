@@ -28,6 +28,6 @@ class HoldSourceTest < ActiveSupport::TestCase
 
   test 'counts expired holds associated with source' do
     source = hold_sources(:tlo)
-    assert source.expired_holds == 2
+    assert source.expired_holds == 3
   end
 end

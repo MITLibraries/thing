@@ -217,20 +217,20 @@
     }
   });
   $("#new_thesis").on('cocoon:after-insert', function(e, insertedItem) {
-    hideOnlySupervisorLink();
+    hideOnlyLink('advisor');
     ts = "hint-" + Date.now();
     $(insertedItem).find("span.hint").attr("id", ts);
     $(insertedItem).find("input[type=text]").attr("aria-describedby", ts).focus();
   });
   $("#new_thesis").on('cocoon:after-remove', function(e) {
-    focusOnFirstVisibleSupervisor();
-    hideOnlySupervisorLink();
+    focusOnFirstVisibleField('advisor');
+    hideOnlyLink('advisor');
   });
   $('#thesis_copyright_id').change(function() {
     conditionalLicenseField();
   });
   $(function() {
     conditionalLicenseField();
-    hideOnlySupervisorLink();
+    hideOnlyLink('advisor');
   });
 </script>
