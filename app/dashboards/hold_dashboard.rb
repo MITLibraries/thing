@@ -8,9 +8,10 @@ class HoldDashboard < Administrate::BaseDashboard
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
-    thesis: Field::BelongsTo,
-    author_names: Field::String,
-    degrees: Field::String,
+    thesis: Field::BelongsTo.with_options(searchable: true, 
+                                          searchable_fields: ['title']),
+    author_names: Field::Text,
+    degrees: Field::Text,
     grad_date: Field::DateTime.with_options(
       format: "%Y %B",
     ),
@@ -20,9 +21,9 @@ class HoldDashboard < Administrate::BaseDashboard
     date_start: Field::Date,
     date_end: Field::Date,
     date_released: Field::Date,
-    dates_thesis_files_received: Field::String,
+    dates_thesis_files_received: Field::Text,
     case_number: Field::String,
-    status: Field::Select.with_options(searchable: false, collection: ->(field) { field.resource.class.send(field.attribute.to_s.pluralize).keys }),
+    status: Field::Select.with_options(searchable: true, collection: ->(field) { field.resource.class.send(field.attribute.to_s.pluralize).keys }),
     processing_notes: Field::Text,
     created_by: Field::Text,
     created_at: Field::Date,
@@ -92,7 +93,9 @@ class HoldDashboard < Administrate::BaseDashboard
   #     open: ->(resources) { resources.where(open: true) }
   #   }.freeze
   COLLECTION_FILTERS = {
-    active: ->(resources) { resources.where(status: :active) }
+    active: ->(resources) { resources.where(status: :active) },
+    expired: ->(resources) { resources.where(status: :expired) },
+    released: ->(resources) { resources.where(status: :released) }
   }.freeze
 
   # Overwrite this method to customize how holds are displayed

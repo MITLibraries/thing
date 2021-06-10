@@ -195,4 +195,31 @@ class AdminHoldDashboardTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "a[href='/hold_history/#{hold.id}']", "View hold history"
   end
+
+  test 'can filter active holds' do
+    mock_auth users(:thesis_admin)
+    get "/admin/holds?search=active%3A"
+    assert_response :success
+    assert_select 'a', 'active'
+    assert_select 'a', {count: 0, text: 'expired'}
+    assert_select 'a', {count: 0, text: 'released'}
+  end
+
+  test 'can filter expired holds' do
+    mock_auth users(:thesis_admin)
+    get "/admin/holds?search=expired%3A"
+    assert_response :success
+    assert_select 'a', 'expired'
+    assert_select 'a', {count: 0, text: 'active'}
+    assert_select 'a', {count: 0, text: 'released'}
+  end
+
+  test 'can filter released holds' do
+    mock_auth users(:thesis_admin)
+    get "/admin/holds?search=released%3A"
+    assert_response :success
+    assert_select 'a', 'released'
+    assert_select 'a', {count: 0, text: 'active'}
+    assert_select 'a', {count: 0, text: 'expired'}
+  end
  end
