@@ -57,6 +57,7 @@ this automatically. It is often nice in development as well.
 
 ### Development
 
+`MAINTAINER_EMAIL` - used for `to` field of virus detected emails.
 `THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails.
 
 ### Production

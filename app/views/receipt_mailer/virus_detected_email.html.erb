@@ -1,0 +1,9 @@
+<p>A file was flagged with a virus during Transfer <%= @transfer.created_at.in_time_zone("America/New_York").strftime('%b %-d, %Y at %l:%M %p %Z') %>.</p>
+
+<p>Files transferred:</p>
+
+<ol>
+  <% @transfer.files.each do |file| %>
+    <li><%= file.filename %></li>
+  <% end %>
+</ol>
