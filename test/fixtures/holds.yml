@@ -69,7 +69,27 @@ multiple_released:
   date_requested: 2021-01-03
   date_start: 2021-01-01
   date_end: 2021-04-01
-  hold_source: vpf
+  hold_source: vpr
   case_number: null
   status: released
   processing_notes: null
+
+update_to_change_thesis_status:
+  thesis: publication_review
+  date_requested: 2021-01-03
+  date_start: 2021-01-01
+  date_end: 2021-04-01
+  hold_source: vpr
+  case_number: null
+  status: released
+  processing_notes: "This gets updated to watch the thesis' publication_status change"
+
+update_to_release_thesis:
+  thesis: publication_review_except_hold
+  date_requested: 2021-01-03
+  date_start: 2021-01-01
+  date_end: 2021-04-01
+  hold_source: vpr
+  case_number: null
+  status: active
+  processing_notes: "This gets updated to watch the thesis' publication_status change"

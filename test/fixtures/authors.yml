@@ -44,3 +44,18 @@ seven:
   user: second
   thesis: with_hold
   graduation_confirmed: false
+
+review:
+  user: yo
+  thesis: publication_review
+  graduation_confirmed: true
+
+eight:
+  user: basic
+  thesis: publication_review_except_hold
+  graduation_confirmed: true
+
+nine:
+  user: basic
+  thesis: pending_publication
+  graduation_confirmed: true

@@ -65,7 +65,12 @@
                                           item_wrapper_class: 'field-radio fields-inline',
                                           label: 'Metadata ok' %>
         </li>
-        <li>Issues found</li>
+        <li>
+          <%= f.input :issues_found, as: :radio_buttons,
+                                     label_html: { style: 'width: 50%' },
+                                     item_wrapper_class: 'field-radio fields-inline',
+                                     label: 'Issues found' %>
+        </li>
       </ul>
     </div>
   </div>

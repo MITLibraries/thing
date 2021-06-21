@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_11_192431) do
+ActiveRecord::Schema.define(version: 2021_06_21_143516) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -188,6 +188,7 @@ ActiveRecord::Schema.define(version: 2021_05_11_192431) do
     t.integer "copyright_id"
     t.integer "license_id"
     t.string "dspace_handle"
+    t.boolean "issues_found", default: false, null: false
     t.index ["copyright_id"], name: "index_theses_on_copyright_id"
     t.index ["license_id"], name: "index_theses_on_license_id"
   end

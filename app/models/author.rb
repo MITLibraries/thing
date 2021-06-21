@@ -15,6 +15,8 @@ class Author < ApplicationRecord
 
   validates :graduation_confirmed, exclusion: [nil]
 
+  after_save :update_thesis_status
+
   # Given a row of CSV data from registrar import, update graduation
   # confirmed attribute (if needed) to true or false based on CSV data
   def set_graduated_from_csv(row)
@@ -23,5 +25,12 @@ class Author < ApplicationRecord
       self.update!(graduation_confirmed: graduated)
       Rails.logger.info("Author " + self.user.name + " graduation status updated to " + graduated.to_s)
     end
+  end
+
+  # The thesis' publication_status is recalculated every time the record is
+  # saved, so in case this author's graduation status has changed, we force a
+  # recalculation.
+  def update_thesis_status
+    self.thesis.save
   end
 end

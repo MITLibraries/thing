@@ -18,6 +18,7 @@
 #  copyright_id       :integer
 #  license_id         :integer
 #  dspace_handle      :string
+#  issues_found       :boolean          default(FALSE), not null
 #
 
 class Thesis < ApplicationRecord
@@ -71,6 +72,7 @@ class Thesis < ApplicationRecord
 
   validates :files_complete, exclusion: [nil]
   validates :metadata_complete, exclusion: [nil]
+  validates :issues_found, exclusion: [nil]
 
   validates :users, presence: true
 
@@ -79,13 +81,13 @@ class Thesis < ApplicationRecord
 
   PUBLICATION_STATUS_OPTIONS = ['Not ready for publication', 
                                 'Publication review', 
-                                'Ready for publication',
+                                'Pending publication',
                                 'Published']
   validates_inclusion_of :publication_status, :in => PUBLICATION_STATUS_OPTIONS
 
   VALID_MONTHS = ['February', 'May', 'June', 'September']
 
-  before_save :combine_graduation_date
+  before_save :combine_graduation_date, :update_status
   after_find :split_graduation_date
 
   #scope :name_asc, lambda {
@@ -96,6 +98,14 @@ class Thesis < ApplicationRecord
     select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
   }
 
+  # This inverts the issues_found field, so that the checks inside the
+  # update_status method below are all written the same way.
+  # The UI will still rely on the issues_found field directly, as its
+  # framing is more logical for the user.
+  def no_issues_found?
+    return !issues_found
+  end
+
   # Returns a true/false value (rendered as "yes" or "no") if there are any
   # holds with a status of either 'active' or 'expired'. A false/"No" is
   # only returned if all holds are 'released'.
@@ -103,10 +113,45 @@ class Thesis < ApplicationRecord
     return holds.map { |h| h.status.in? ['active','expired'] }.any?
   end
 
+  # This just inverts the active_holds? method above, so that the checks
+  # inside the update_status method below are all written the same way.
+  # The UI will rely on active_holds? because its framing is more logical
+  # for the user.
+  def no_active_holds?
+    return !active_holds?
+  end
+
   # Returns a true/false value (rendered as "yes" or "no") if all authors
   # have graduated. Any author having not graduated results in a false/"No".
   def authors_graduated?
     return authors.map { |a| a.graduation_confirmed? }.reduce(:&)
+  end
+
+  # This contains the logic for a thesis to have its status set to either
+  # 'Not ready for publication' or 'Publication review'. Setting the status
+  # to 'Pending publication' and 'Published' is handled via separate methods.
+  def update_status
+    # If a thesis has been set to 'Pending publication' or 'Published', this
+    # method cannot change it; other methods will set/revert that status.
+    return if ['Pending publication','Published'].include? self.publication_status
+    # Still here? Then we proceed...
+    # By default, a thesis is set to 'Not ready for production'
+    self.publication_status = 'Not ready for publication'
+    # If the five qualifying conditions are met, then we set status to
+    # 'publication review'. This will leave unchanged a thesis that was
+    # already set to 'Pending publication' via another method.
+    if
+       [
+          self.files_complete,
+          self.metadata_complete,
+          self.no_issues_found?,
+          self.no_active_holds?,
+          self.authors_graduated?
+       ].all?
+      self.publication_status = 'Publication review'
+    end
+    # Please note that the 'pending publiation' and 'published' statuses can
+    # not be set via this method - they get assigned elsewhere.
   end
 
   # Ensures submitted graduation year is a four-digit integer, not less than

@@ -18,6 +18,7 @@
 #  copyright_id       :integer
 #  license_id         :integer
 #  dspace_handle      :string
+#  issues_found       :boolean          default(FALSE), not null
 #
 
 require 'csv'
@@ -159,7 +160,7 @@ class ThesisTest < ActiveSupport::TestCase
     t = theses(:one)
     u = users(:yo)
     assert_includes t.users, u
-    assert_equal 3, u.authors.count
+    assert_equal 4, u.authors.count
     assert_difference("u.authors.count", -1) { t.destroy }
   end
 
@@ -286,39 +287,17 @@ class ThesisTest < ActiveSupport::TestCase
     assert(thesis.metadata_complete == false)
   end
 
-  test 'invalid without publication status' do
+  test 'invalid without issues_found' do
     thesis = theses(:one)
-    thesis.publication_status = nil
+    assert thesis.valid?
+    thesis.issues_found = nil
     thesis.save
     assert_not thesis.valid?
   end
 
-  test 'publication status defaults to not ready for publication' do
+  test 'issues_found defaults to false' do
     thesis = Thesis.new
-    assert thesis.publication_status == 'Not ready for publication'
-  end
-
-  test 'invalid without accepted publication status' do
-    thesis = theses(:one)
-    thesis.publication_status = 'Not ready for publication'
-    thesis.save
-    assert thesis.valid?
-
-    thesis.publication_status = 'Publication review'
-    thesis.save
-    assert thesis.valid?
-
-    thesis.publication_status = 'Ready for publication'
-    thesis.save
-    assert thesis.valid?
-
-    thesis.publication_status = 'Published'
-    thesis.save
-    assert thesis.valid?
-
-    thesis.publication_status = 'Foo'
-    thesis.save
-    assert_not thesis.valid?
+    assert(thesis.issues_found == false)
   end
 
   test 'only May, June, September, and February are valid months' do
@@ -571,5 +550,169 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal 2, thesis.authors.count
     assert_equal [false, false], thesis.authors.map(&:graduation_confirmed)
     assert_equal false, thesis.authors_graduated?
+  end
+
+  test 'publication status defaults to not ready for publication' do
+    thesis = Thesis.new
+    assert thesis.publication_status == 'Not ready for publication'
+  end
+
+  test 'invalid without publication status' do
+    thesis = theses(:one)
+    assert thesis.valid?
+    thesis.publication_status = nil
+    thesis.save
+    assert_not thesis.valid?
+  end
+
+  test 'invalid without accepted publication status' do
+    thesis = theses(:one)
+    thesis.publication_status = 'Not ready for publication'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.publication_status = 'Publication review'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.publication_status = 'Pending publication'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.publication_status = 'Published'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.publication_status = 'Foo'
+    thesis.save
+    assert_not thesis.valid?
+  end
+
+  test 'publication status gets set to "Publication review" when conditions are met' do
+    thesis = theses(:publication_review)
+    # Fixture meets all conditions
+    assert_equal true, thesis.files_complete
+    assert_equal true, thesis.metadata_complete
+    assert_equal false, thesis.issues_found
+    assert_equal true, thesis.authors_graduated?
+    assert_equal false, thesis.active_holds?
+    assert_equal 'Publication review', thesis.publication_status
+    # Attempting to set a different status will be overwritten by the update_status method
+    thesis.publication_status = 'Not ready for publication'
+    thesis.update(thesis.as_json)
+    assert_equal 'Publication review', thesis.publication_status
+  end
+
+  test 'Unsetting files_complete sets status to "Not ready for publication"' do
+    thesis = theses(:publication_review)
+    assert_equal 'Publication review', thesis.publication_status
+    thesis.files_complete = false
+    thesis.update(thesis.as_json)
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Unsetting metadata_complete sets status to "Not ready for publication"' do
+    thesis = theses(:publication_review)
+    assert_equal 'Publication review', thesis.publication_status
+    thesis.metadata_complete = false
+    thesis.update(thesis.as_json)
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Setting issues_found sets status to "Not ready for publication"' do
+    thesis = theses(:publication_review)
+    assert_equal 'Publication review', thesis.publication_status
+    thesis.issues_found = true
+    thesis.update(thesis.as_json)
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Unsetting author graduation_confirmed sets status to "Not ready for publication"' do
+    thesis = theses(:publication_review)
+    assert_equal 'Publication review', thesis.publication_status
+    author = thesis.authors.first
+    author.graduation_confirmed = false
+    author.save
+    thesis.reload
+    assert_equal false, thesis.authors_graduated?
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Adding an active hold sets status to "Not ready for publication"' do
+    thesis = theses(:publication_review)
+    assert_equal 'Publication review', thesis.publication_status
+    assert_equal 1, thesis.holds.count
+    hold = thesis.holds.first
+    hold.status = 'active'
+    hold.save
+    thesis.reload
+    assert_equal true, thesis.active_holds?
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Setting an existing hold to "expired" will set the thesis status back to "Not ready for publication"' do
+    thesis = theses(:publication_review)
+    assert_equal 'Publication review', thesis.publication_status
+    assert_equal 1, thesis.holds.count
+    hold = thesis.holds.first
+    hold.status = 'expired'
+    hold.save
+    thesis.reload
+    assert_equal true, thesis.active_holds?
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Setting an existing hold to "released" can put the thesis into "Publication review" status' do
+    thesis = theses(:publication_review_except_hold)
+    assert_equal 'Not ready for publication', thesis.publication_status
+    assert_equal 1, thesis.holds.count
+    hold = thesis.holds.first
+    hold.status = 'released'
+    hold.save
+    thesis.reload
+    assert_equal 'Publication review', thesis.publication_status
+  end
+
+  test 'Adding a new hold will set the thesis status back to "Not ready for publication"' do
+    thesis = theses(:publication_review)
+    assert_equal 'Publication review', thesis.publication_status
+    hold = Hold.new({
+      "thesis" => thesis,
+      "date_requested" => "2021-01-03",
+      "date_start" => "2021-01-01",
+      "date_end" => "2021-04-01",
+      "hold_source" => HoldSource.first,
+      "status" => "active",
+    })
+    assert_equal true, hold.valid?
+    hold.save
+    thesis.reload
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Adding a new hold when a thesis is in "Pending publication" will change nothing' do
+    thesis = theses(:pending_publication)
+    assert_equal 'Pending publication', thesis.publication_status
+    hold = Hold.new({
+      "thesis" => thesis,
+      "date_requested" => "2021-01-03",
+      "date_start" => "2021-01-01",
+      "date_end" => "2021-04-01",
+      "hold_source" => HoldSource.first,
+      "status" => "active",
+    })
+    assert_equal true, hold.valid?
+    hold.save
+    thesis.reload
+    assert_equal 'Pending publication', thesis.publication_status
+  end
+
+  test 'Flagging an issue when a thesis is in "Pending publication" will change nothing' do
+    thesis = theses(:pending_publication)
+    assert_equal 'Pending publication', thesis.publication_status
+    thesis.issues_found = true
+    thesis.save
+    thesis.reload
+    assert_equal 'Pending publication', thesis.publication_status
   end
 end
