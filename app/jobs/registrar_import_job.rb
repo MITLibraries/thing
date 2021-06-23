@@ -32,7 +32,7 @@ class RegistrarImportJob < ActiveJob::Base
         logger.info("Thesis is #{thesis.inspect}")
       rescue RuntimeError
         e = "Multiple theses found for author #{user.name} for term #{grad_date.to_s}, requires Processor attention. CSV row ##{i.to_s}: #{row.inspect}"
-        Logger.warn(e)
+        logger.warn(e)
         results[:errors] << e
         next
       end
