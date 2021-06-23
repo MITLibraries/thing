@@ -1,6 +1,22 @@
 require 'test_helper'
 
 class ThesisControllerTest < ActionDispatch::IntegrationTest
+  def attach_files_to_records(tr, th)
+    # Ideally our fixtures would have already-attached files, but they do not
+    # yet. So we attach two files to a transfer and thesis record, to prepare
+    # for tests involving the thesis processing workflow.
+    f1 = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    f2 = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    tr.files.attach(io: File.open(f1), filename: 'a_pdf.pdf')
+    tr.files.attach(io: File.open(f2), filename: 'a_pdf.pdf')
+    tr.save
+    tr.reload
+    th.files.attach(tr.files.first.blob)
+    th.files.attach(tr.files.second.blob)
+    th.save
+    th.reload
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~ the submission system ~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'new prompts for login' do
     get '/thesis/new'
@@ -353,4 +369,92 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_equal path, thesis_process_path(theses(:one))
   end
 
+  test 'submitting the thesis processing form without deleting a file does not affect file counts' do
+    sign_in users(:processor)
+    tr = transfers(:valid)
+    th = theses(:publication_review_except_hold)
+    attach_files_to_records(tr, th)
+    transfer_file_count = tr.files.count
+    thesis_file_count = th.files.count
+    attachment_count = ActiveStorage::Attachment.count
+    blob_count = ActiveStorage::Blob.count
+    patch thesis_process_update_path(theses(:publication_review_except_hold)),
+      params: {
+        thesis: {
+          "title": "My Almost-Ready Thesis",
+          "issues_found": "true",
+          "files_attachments_attributes": {
+            "0": {
+                "id": th.files.first.id,
+                "description": "A phrase to describe the file"
+              }
+          }
+        }
+      }
+    follow_redirect!
+    # Unlinking does not reduce the number of blobs, nor how many are attached to the transfer.
+    # However, the number of files on the thesis does decrease (as does the total number of attachments).
+    tr.reload
+    th.reload
+    assert_equal transfer_file_count, tr.files.count
+    assert_equal thesis_file_count, th.files.count
+    assert_equal attachment_count, ActiveStorage::Attachment.count
+    assert_equal blob_count, ActiveStorage::Blob.count
+  end
+
+  test 'removing one of two files from a thesis will adjust counts appropriately' do
+    sign_in users(:processor)
+    tr = transfers(:valid)
+    th = theses(:publication_review_except_hold)
+    attach_files_to_records(tr, th)
+    transfer_file_count = tr.files.count
+    thesis_file_count = th.files.count
+    attachment_count = ActiveStorage::Attachment.count
+    blob_count = ActiveStorage::Blob.count
+    patch thesis_process_update_path(theses(:publication_review_except_hold)),
+      params: {
+        thesis: {
+          "title": "My Almost-Ready Thesis",
+          "issues_found": "true",
+          "files_attachments_attributes": {
+            "0": {
+                "id": th.files.first.id,
+                "_destroy": 1
+              }
+          }
+        }
+      }
+    follow_redirect!
+    # Unlinking does not reduce the number of blobs, nor how many are attached to the transfer.
+    # However, the number of files on the thesis does decrease (as does the total number of attachments).
+    tr.reload
+    th.reload
+    assert_equal transfer_file_count, tr.files.count
+    assert_equal thesis_file_count - 1, th.files.count
+    assert_equal attachment_count - 1, ActiveStorage::Attachment.count
+    assert_equal blob_count, ActiveStorage::Blob.count
+  end
+
+  test 'removing a file from a thesis will be reflected with a link to its transfer in the flash message' do
+    sign_in users(:processor)
+    tr = transfers(:valid)
+    th = theses(:publication_review_except_hold)
+    attach_files_to_records(tr, th)
+    patch thesis_process_update_path(theses(:publication_review_except_hold)),
+      params: {
+        thesis: {
+          "title": "My Almost-Ready Thesis",
+          "issues_found": "true",
+          "files_attachments_attributes": {
+            "0": {
+                "id": th.files.first.id,
+                "_destroy": 1
+              }
+          }
+        }
+      }
+    follow_redirect!
+    # The flash message has a link back to the transfer with the file.
+    assert_select 'div.alert ul li a', text: 'a_pdf.pdf', href: transfer_path(th), count: 1
+  end
 end

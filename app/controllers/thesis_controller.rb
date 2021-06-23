@@ -76,8 +76,16 @@ class ThesisController < ApplicationController
 
   def process_theses_update
     thesis = Thesis.find(params[:id])
+    removed = deleted_file_list
     if thesis.update(thesis_params)
-      flash[:success] = "Your changes to '#{thesis.title}' have been saved."
+      flash[:success] = "<p>Your changes to '#{thesis.title}' have been saved.</p>".html_safe
+      if removed.count > 0
+        flash[:success] += "<p>The following files were removed from this thesis. They can still be found attached to their original transfer, via the following links:</p><ul>".html_safe
+        removed.each do |r|
+          flash[:success] += ("<li><a href='/transfer/#{r["transfer_id"]}'>#{r["filename"]}</a></li>").html_safe
+        end
+        flash[:success] += "</ul>".html_safe
+      end
     else
       flash[:error] = "An error has occurred while saving your changes to '#{thesis.title}'."
     end
@@ -85,6 +93,19 @@ class ThesisController < ApplicationController
   end
 
   private
+
+  def deleted_file_list
+    list = []
+    return list if not thesis_params["files_attachments_attributes"]
+    thesis_params["files_attachments_attributes"].values.select { |item| item["_destroy"] == "1" }.each do |file|
+      needle = ActiveStorage::Attachment.find_by( id: file["id"] ).blob
+      list.append({
+        "filename" => needle.filename,
+        "transfer_id" => needle.attachments.select { |att| att.record_type == "Transfer" }.first.record_id
+      })
+    end
+    return list
+  end
 
   def require_user
     return if current_user
@@ -105,7 +126,7 @@ class ThesisController < ApplicationController
                                    :issues_found,
                                    advisors_attributes: [:id, :name, :_destroy],
                                    department_theses_attributes: [:id, :thesis_id, :department_id, :_destroy],
-                                   files_attachments_attributes: [:id, :purpose, :description],
+                                   files_attachments_attributes: [:id, :purpose, :description, :_destroy],
                                    users_attributes: [:id, :orcid, :preferred_name])
   end
 

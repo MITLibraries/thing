@@ -236,6 +236,7 @@
     <table class="table thesis-files">
       <thead>
         <tr>
+          <th scope="col">Remove</th>
           <th scope="col">File</th>
           <th scope="col">Received</th>
           <th scope="col">Purpose</th>
@@ -244,24 +245,7 @@
       </thead>
       <tbody>
         <%= f.simple_fields_for :files_attachments do |file| %>
-          <tr>
-            <td>
-              <%= link_to rails_blob_path(file.object, disposition: "inline"), target: :_blank do %>
-                <%= file.object.blob.filename %>
-              <% end %>
-            </td>
-            <td>
-              <%= file.object.blob.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y<br>%l:%M %p').html_safe %>
-            </td>
-            <td>
-              <%= file.input :purpose, as: :select,
-                                          collection: {"Thesis PDF" => :thesis_pdf, "Thesis source" => :thesis_source, "Supplementary file" => :thesis_supplementary_file, "Proquest form" => :proquest_form, "Signature page" => :signature_page},
-                                          label: 'Purpose' %>
-            </td>
-            <td>
-              <%= file.input :description, as: :text, label: 'Description' %>
-            </td>
-          </tr>
+          <%= render 'file_fields', :f => file %>
         <% end %>
       </tbody>
     </table>
