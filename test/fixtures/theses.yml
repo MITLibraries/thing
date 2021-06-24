@@ -18,6 +18,7 @@
 #  copyright_id       :integer
 #  license_id         :integer
 #  dspace_handle      :string
+#  issues_found       :boolean          default(FALSE), not null
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
@@ -101,6 +102,50 @@ multiple_holds:
   degrees: [one]
   status: 'active'
   processor_note: 'Multiple holds in various states'
+
+publication_review:
+  title: MyReadyThesis
+  abstract: "A thesis ready for review"
+  grad_date: 2021-06-01
+  departments: [one]
+  degrees: [one]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+  publication_status: 'Publication review'
+
+publication_review_except_hold:
+  title: MyAlmostReadyThesis
+  abstract: "A thesis almost ready for review"
+  grad_date: 2021-06-01
+  departments: [one]
+  degrees: [one]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+  publication_status: 'Not ready for publication'
+
+pending_publication:
+  title: MyPendingThesis
+  abstract: "A thesis that has been declared pending for publication"
+  grad_date: 2021-06-01
+  departments: [one]
+  degrees: [one]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+  publication_status: 'Pending publication'
+
+published:
+  title: MyPublishedThesis
+  abstract: "A thesis that has been published to DSpace@MIT"
+  grad_date: 2021-06-01
+  departments: [one]
+  degrees: [one]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+  publication_status: 'Published'
 
 june_2018:
   title: MyStringJune

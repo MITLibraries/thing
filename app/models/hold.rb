@@ -27,6 +27,8 @@ class Hold < ApplicationRecord
   validates :date_end, presence: true
   validates :status, presence: true
 
+  after_save :update_thesis_status
+
   def degrees
     self.thesis.degrees.map { |d| d.name_dw}.join("\n")
   end
@@ -68,5 +70,11 @@ class Hold < ApplicationRecord
     end
     dates_released = released_versions.map { |version| version.changeset["updated_at"][1] }
     dates_released.sort.last
+  end
+
+  # The thesis' publication_status is recalculated every time the record is
+  # saved, so in case this hold's status has changed, we force a recalculation.
+  def update_thesis_status
+    self.thesis.save
   end
 end

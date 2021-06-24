@@ -102,6 +102,7 @@ class ThesisController < ApplicationController
                                    :graduation_year, :copyright_id, :author_note,
                                    :license_id, :department_ids, :degree_ids,
                                    :processor_note, :files_complete, :metadata_complete,
+                                   :issues_found,
                                    advisors_attributes: [:id, :name, :_destroy],
                                    department_theses_attributes: [:id, :thesis_id, :department_id, :_destroy],
                                    files_attachments_attributes: [:id, :purpose, :description],
