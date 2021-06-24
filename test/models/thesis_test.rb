@@ -561,30 +561,24 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:one)
     assert thesis.valid?
     thesis.publication_status = nil
-    thesis.save
     assert_not thesis.valid?
   end
 
   test 'invalid without accepted publication status' do
     thesis = theses(:one)
     thesis.publication_status = 'Not ready for publication'
-    thesis.save
     assert thesis.valid?
 
     thesis.publication_status = 'Publication review'
-    thesis.save
     assert thesis.valid?
 
     thesis.publication_status = 'Pending publication'
-    thesis.save
     assert thesis.valid?
 
     thesis.publication_status = 'Published'
-    thesis.save
     assert thesis.valid?
 
     thesis.publication_status = 'Foo'
-    thesis.save
     assert_not thesis.valid?
   end
 
@@ -714,5 +708,31 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.save
     thesis.reload
     assert_equal 'Pending publication', thesis.publication_status
+  end
+
+  test 'Adding a new hold when a thesis is in "Published" will change nothing' do
+    thesis = theses(:published)
+    assert_equal 'Published', thesis.publication_status
+    hold = Hold.new({
+      "thesis" => thesis,
+      "date_requested" => "2021-01-03",
+      "date_start" => "2021-01-01",
+      "date_end" => "2021-04-01",
+      "hold_source" => HoldSource.first,
+      "status" => "active",
+    })
+    assert_equal true, hold.valid?
+    hold.save
+    thesis.reload
+    assert_equal 'Published', thesis.publication_status
+  end
+
+  test 'Flagging an issue when a thesis is in "Published" will change nothing' do
+    thesis = theses(:published)
+    assert_equal 'Published', thesis.publication_status
+    thesis.issues_found = true
+    thesis.save
+    thesis.reload
+    assert_equal 'Published', thesis.publication_status
   end
 end

@@ -136,6 +136,17 @@ pending_publication:
   issues_found: false
   publication_status: 'Pending publication'
 
+published:
+  title: MyPublishedThesis
+  abstract: "A thesis that has been published to DSpace@MIT"
+  grad_date: 2021-06-01
+  departments: [one]
+  degrees: [one]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+  publication_status: 'Published'
+
 june_2018:
   title: MyStringJune
   abstract: MyText

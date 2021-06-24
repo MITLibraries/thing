@@ -59,3 +59,8 @@ nine:
   user: basic
   thesis: pending_publication
   graduation_confirmed: true
+
+ten:
+  user: basic
+  thesis: published
+  graduation_confirmed: true
