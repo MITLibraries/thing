@@ -26,6 +26,10 @@
   <%= submit_tag('Apply filter', class: 'btn button-primary') %>
 <% end %>
 
+<div id="status-list" class="filter-row">
+  <button data-filter="*">Show all</button>
+</div>
+
 <table class="table" id="thesisQueue" title="Thesis processing queue">
   <thead>
     <tr>
@@ -46,6 +50,30 @@ $(document).ready( function () {
   if( document.getElementById('thesisQueue').getElementsByClassName('empty').length === 0 ) {
     var table = $('#thesisQueue').DataTable({
       "order": [[ 1, "asc" ]]
+    });
+
+    // Populate filter buttons with found values for publication status
+    var terms = [...new Set( table.columns(4).data()[0] )];
+    terms.forEach(element => {
+      document
+        .getElementById("status-list")
+        .insertAdjacentHTML("beforeend", `
+        <button data-filter="${element}">${element}</button>
+      `);
+    });
+
+    // Perform filtering when buttons are clicked
+    $(".filter-row button").click(function() {
+      var needle = $(this).data("filter");
+      $.fn.dataTable.ext.search.push(
+        function( settings, data, dataIndex ) {
+          return ( data[4] === needle || needle === "*" )
+            ? true
+            : false
+        }
+      );
+      table.draw();
+      $.fn.dataTable.ext.search.pop();
     });
   };
 });
