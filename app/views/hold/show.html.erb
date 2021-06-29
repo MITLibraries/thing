@@ -2,6 +2,12 @@
 
 <h3 class="hd-3"><%= "Full hold history: #{@hold.thesis.title}" %></h3>
 <p><%= link_to 'Return to hold record', admin_hold_path(@hold) %></p>
+<ul class="list-unbulleted">
+  <li>Author name(s): <%= @hold.author_names %></li>
+  <li>Dates thesis files received: <%= @hold.dates_thesis_files_received %></li>
+  <li>Degree(s): <%= @hold.degrees %></li>
+  <li>Degree date: <%= @hold.grad_date %></li>
+</ul>
 <% @hold.versions.reverse_each do |version| %>
   <div class="box-content">
     <h4 class="hd-4">Version <%= version.index + 1 %></h4>
