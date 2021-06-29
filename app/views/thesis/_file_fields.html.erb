@@ -1,0 +1,19 @@
+<tr class="file nested-fields">
+  <td><%= link_to_remove_association "Remove file from thesis", f %></td>
+  <td>
+    <%= link_to rails_blob_path(f.object, disposition: "inline"), target: :_blank do %>
+      <%= f.object.blob.filename %>
+    <% end %>
+  </td>
+  <td>
+    <%= f.object.blob.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y<br>%l:%M %p').html_safe %>
+  </td>
+  <td>
+    <%= f.input :purpose, as: :select,
+                                collection: {"Thesis PDF" => :thesis_pdf, "Thesis source" => :thesis_source, "Supplementary file" => :thesis_supplementary_file, "Proquest form" => :proquest_form, "Signature page" => :signature_page},
+                                label: 'Purpose' %>
+  </td>
+  <td>
+    <%= f.input :description, as: :text, label: 'Description' %>
+  </td>
+</tr>
