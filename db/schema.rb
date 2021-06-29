@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_21_143516) do
+ActiveRecord::Schema.define(version: 2021_06_29_202931) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(version: 2021_06_21_143516) do
     t.datetime "updated_at", null: false
     t.string "code_dw", default: "", null: false
     t.string "name_dspace"
+    t.string "authority_key_dspace"
     t.index ["code_dw"], name: "index_departments_on_code_dw", unique: true
     t.index ["name_dw"], name: "index_departments_on_name_dw"
   end

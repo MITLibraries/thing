@@ -44,6 +44,11 @@ en:
       degree:
         name_dw: Name (Data Warehouse)
         name_dspace: Name (Dspace)
+      department:
+        authority_key_dspace: Authority Key (DSpace)
+        code_dw: Code (Data Warehouse)
+        name_dspace: Name (DSpace)
+        name_dw: Name (Data Warehouse)
       hold:
         id: Audit trail
         grad_date: Degree date

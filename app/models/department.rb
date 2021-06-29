@@ -2,12 +2,13 @@
 #
 # Table name: departments
 #
-#  id          :integer          not null, primary key
-#  name_dw     :string           not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  code_dw     :string           default(""), not null
-#  name_dspace :string
+#  id                   :integer          not null, primary key
+#  name_dw              :string           not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  code_dw              :string           default(""), not null
+#  name_dspace          :string
+#  authority_key_dspace :string
 #
 
 class Department < ApplicationRecord
