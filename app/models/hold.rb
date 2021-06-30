@@ -42,24 +42,22 @@ class Hold < ApplicationRecord
   end
 
   def created_by
-    if self.versions.present? && self.versions.first.event == 'create'
-      creator_id = self.versions.first.whodunnit
-      if user = User.find_by(id: creator_id)
-        user.kerberos_id
-      else
-        "User ID #{creator_id} no longer active."
-      end
+    return unless self.versions.present? && self.versions.first.event == 'create'
+    creator_id = self.versions.first.whodunnit
+    if user = User.find_by(id: creator_id)
+      user.kerberos_id
+    else
+      "User ID #{creator_id} no longer active."
     end
   end
 
   # This may later list just the info for the file flagged 'primary', once 
   # we implement that feature.
   def dates_thesis_files_received
-    if self.thesis.present? && self.thesis.files.present?
-      self.thesis.files.map do |file| 
-        "#{file.created_at.strftime('%Y-%m-%d')} (#{file.blob.filename})"
-      end.join("; ")
-    end
+    return unless self.thesis.present? && self.thesis.files.present?
+    self.thesis.files.map do |file| 
+      "#{file.created_at.strftime('%Y-%m-%d')} (#{file.blob.filename})"
+    end.join("; ")
   end
 
   # In the unlikely scenario that the the status was changed to 'released' 
