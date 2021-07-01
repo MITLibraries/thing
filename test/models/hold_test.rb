@@ -120,4 +120,11 @@ class HoldTest < ActiveSupport::TestCase
     h = holds(:valid)
     assert_equal "Student, Second; Yobot, Yo", h.author_names
   end
+
+  test 'can access associated users' do
+    h = holds(:valid)
+    assert_equal 2, h.users.length
+    assert_equal 'Second Student', h.users.first.display_name
+    assert_equal 'Yo Yobot', h.users.second.display_name
+  end
 end
