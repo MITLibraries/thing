@@ -10,7 +10,7 @@ class TransferDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     user: Field::BelongsTo.with_options(
       searchable: true,
-      searchable_fields: ['kerberos_id', 'display_name']
+      searchable_fields: ['kerberos_id', 'uid', 'display_name']
     ),
     department: Field::BelongsTo.with_options(
       searchable: true,
