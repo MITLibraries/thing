@@ -19,6 +19,7 @@ class Hold < ApplicationRecord
 
   belongs_to :thesis
   belongs_to :hold_source
+  has_many :users, through: :thesis
 
   enum status: [ :active, :expired, :released ]
 

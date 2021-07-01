@@ -10,6 +10,10 @@ class HoldDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     thesis: Field::BelongsTo.with_options(searchable: true, 
                                           searchable_fields: ['title']),
+    users: Field::HasMany.with_options(
+      searchable: true,
+      searchable_fields: ['kerberos_id', 'uid', 'display_name']
+    ),
     author_names: Field::Text,
     degrees: Field::Text,
     grad_date: Field::DateTime.with_options(
