@@ -8,11 +8,18 @@ class TransferDashboard < Administrate::BaseDashboard
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
-    user: Field::BelongsTo,
-    department: Field::BelongsTo,
+    user: Field::BelongsTo.with_options(
+      searchable: true,
+      searchable_fields: ['kerberos_id', 'uid', 'display_name']
+    ),
+    department: Field::BelongsTo.with_options(
+      searchable: true,
+      searchable_fields: ['name_dw', 'code_dw']
+    ),
     files_attachments: AttachmentField,
     id: Field::Number,
     grad_date: Field::DateTime.with_options(
+      searchable: true,
       format: "%Y %B"
     ),
     graduation_month: Field::Number,
