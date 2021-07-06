@@ -37,6 +37,12 @@ class DepartmentTest < ActiveSupport::TestCase
     assert(department.valid?)
   end
 
+  test 'valid without authority key' do
+    department = departments(:one)
+    department.authority_key_dspace = nil
+    assert(department.valid?)
+  end
+
   test 'can have multiple theses' do
     department = departments(:one)
     department.theses = [theses(:one), theses(:two)]
