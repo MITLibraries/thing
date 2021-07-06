@@ -271,6 +271,71 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_select 'table#thesisQueue tbody tr', count: 1
   end
 
+  # ~~~~~~~~~~~~~~~ duplicate theses / multiple authors report ~~~~~~~~~~~~~~~~
+  test 'duplicate report exists' do
+    sign_in users(:admin)
+    get thesis_deduplicate_path
+    assert_response :success
+  end
+
+  test 'anonymous users are prompted to log in by duplicates report' do
+    # Note that nobody is signed in.
+    get thesis_deduplicate_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see duplicates report' do
+    sign_in users(:basic)
+    get thesis_deduplicate_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see duplicates report' do
+    sign_in users(:transfer_submitter)
+    get thesis_deduplicate_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see duplicates report' do
+    sign_in users(:processor)
+    get thesis_deduplicate_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see duplicates report' do
+    sign_in users(:thesis_admin)
+    get thesis_deduplicate_path
+    assert_response :success
+  end
+
+  test 'admins can see duplicates report' do
+    sign_in users(:admin)
+    get thesis_deduplicate_path
+    assert_response :success
+  end
+
+  test 'duplicates report shows duplicate records' do
+    sign_in users(:processor)
+    get thesis_deduplicate_path
+    assert_select 'td', text: 'MyString', count: 2
+  end
+
+  test 'duplicates report allows filtering by term' do
+    # Request the duplicates report and note N records, with three filter
+    # options (two specific terms, and the "all terms" option)
+    sign_in users(:processor)
+    get thesis_deduplicate_path
+    assert_select 'table#thesisQueue tbody tr', count: 3
+    assert_select 'select[name="graduation"] option', count: 3
+    # Now request the queue with a filter applied, and see only one record
+    get thesis_deduplicate_path, params: { graduation: '2018-09-01' }
+    assert_select 'table#thesisQueue tbody tr', count: 1
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~ thesis processing form ~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'thesis processing form exists' do
     sign_in users(:admin)

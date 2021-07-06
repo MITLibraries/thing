@@ -59,6 +59,7 @@ class Ability
 
     can %i[read update], Thesis
     can :annotate, Thesis
+    can :deduplicate, Thesis
     can :mark_downloaded, Thesis
     can :mark_withdrawn, Thesis
     can :process_theses, Thesis

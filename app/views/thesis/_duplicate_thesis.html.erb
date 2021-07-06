@@ -1,0 +1,15 @@
+<tr>
+  <td><%= link_to title_helper(duplicate_thesis), thesis_process_path(duplicate_thesis.id) %></td>
+  <td>
+    <% duplicate_thesis.users.each do |user| %>
+      <%= user.display_name %><br>
+    <% end %>
+  </td>
+  <td><%= duplicate_thesis.coauthors %></td>
+  <td>
+    <% duplicate_thesis.departments.each do |dept| %>
+      <%= dept.name_dw %><br>
+    <% end %>
+  </td>
+  <td><%= duplicate_thesis.graduation_month[...3] %> <%= duplicate_thesis.graduation_year %></td>
+</tr>
