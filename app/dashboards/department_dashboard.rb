@@ -13,6 +13,7 @@ class DepartmentDashboard < Administrate::BaseDashboard
     name_dw: Field::String,
     code_dw: Field::String,
     name_dspace: Field::String,
+    authority_key_dspace: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime
   }.freeze
@@ -38,6 +39,7 @@ class DepartmentDashboard < Administrate::BaseDashboard
     name_dw
     code_dw
     name_dspace
+    authority_key_dspace
     created_at
     updated_at
   ].freeze
@@ -50,6 +52,7 @@ class DepartmentDashboard < Administrate::BaseDashboard
     name_dw
     code_dw
     name_dspace
+    authority_key_dspace
   ].freeze
 
   # Overwrite this method to customize how departments are displayed

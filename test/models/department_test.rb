@@ -2,12 +2,13 @@
 #
 # Table name: departments
 #
-#  id          :integer          not null, primary key
-#  name_dw     :string           not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  code_dw     :string           default(""), not null
-#  name_dspace :string
+#  id                   :integer          not null, primary key
+#  name_dw              :string           not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  code_dw              :string           default(""), not null
+#  name_dspace          :string
+#  authority_key_dspace :string
 #
 
 require 'test_helper'
@@ -33,6 +34,12 @@ class DepartmentTest < ActiveSupport::TestCase
   test 'valid without DSpace name' do
     department = departments(:one)
     department.name_dspace = nil
+    assert(department.valid?)
+  end
+
+  test 'valid without authority key' do
+    department = departments(:one)
+    department.authority_key_dspace = nil
     assert(department.valid?)
   end
 
