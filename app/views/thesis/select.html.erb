@@ -37,6 +37,7 @@
       <th scope="col">Degree date</th>
       <th scope="col">Department(s)</th>
       <th scope="col">Author(s)</th>
+      <th scope="col">Issues found</th>
       <th scope="col">Status</th>
     </tr>
   </thead>
@@ -53,7 +54,7 @@ $(document).ready( function () {
     });
 
     // Populate filter buttons with found values for publication status
-    var terms = [...new Set( table.columns(4).data()[0] )];
+    var terms = [...new Set( table.columns(5).data()[0] )];
     terms.forEach(element => {
       document
         .getElementById("status-list")
@@ -67,7 +68,7 @@ $(document).ready( function () {
       var needle = $(this).data("filter");
       $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
-          return ( data[4] === needle || needle === "*" )
+          return ( data[5] === needle || needle === "*" )
             ? true
             : false
         }
