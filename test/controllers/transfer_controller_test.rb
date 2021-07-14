@@ -406,4 +406,51 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
       }
     assert_equal @transfer.unassigned_files, 0
   end
+
+  test 'only unassigned files are displayed by default' do
+    create_transfer_with_file
+    sign_in users(:processor)
+    @transfer = Transfer.last
+    assert_equal @transfer.unassigned_files, 1
+    get transfer_path(@transfer)
+
+    assert @response.body.include?(rails_blob_path(@transfer.files.first, disposition: 'inline'))
+
+    post transfer_files_path,
+      params: {
+        id: @transfer.id,
+        transfer: {
+          file_ids: [@transfer.files.first.id]
+        },
+        thesis: theses(:one).id
+      }
+    assert_equal @transfer.unassigned_files, 0
+    follow_redirect!
+    
+    refute @response.body.include?(rails_blob_path(@transfer.files.first, disposition: 'inline'))
+  end
+
+  test 'assigned files can be optionally displayed' do
+    create_transfer_with_file
+    sign_in users(:processor)
+    @transfer = Transfer.last
+    assert_equal @transfer.unassigned_files, 1
+    get transfer_path(@transfer)
+
+    assert @response.body.include?(rails_blob_path(@transfer.files.first, disposition: 'inline'))
+
+    post transfer_files_path,
+      params: {
+        id: @transfer.id,
+        transfer: {
+          file_ids: [@transfer.files.first.id]
+        },
+        thesis: theses(:one).id,
+        view_all: 'true'
+      }
+    assert_equal @transfer.unassigned_files, 0
+    follow_redirect!
+
+    assert @response.body.include?(rails_blob_path(@transfer.files.first, disposition: 'inline'))
+  end
 end
