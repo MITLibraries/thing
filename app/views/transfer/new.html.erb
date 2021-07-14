@@ -50,8 +50,12 @@
     </div>
   </div>
 
-  <div class="field-row">
-    <%= f.drag_and_drop_file_field :files, 'Drag and drop PDF files here' %>
+  <div class="field-row layout-1q3q layout-band">
+    <%= f.drag_and_drop_file_field :files, 'Files to upload' %>
+    <div class="col3q hint">
+      Drag and drop files here, or click to open a file dialog. Please do not upload a zip file.<br>
+      Click the "X" next to a file to remove it from an upload.
+    </div>
   </div>
 
   <%= f.input :note, as: :text,
