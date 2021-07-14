@@ -105,6 +105,28 @@
         } else {
           $("div.error").hide();
         }
+      },
+      rules: {
+        "transfer[files][]": {
+          required: function() {
+            // The ASDND gem creates a blank file input that is never populated
+            // (and hidden from the user). Instead the files to be uploaded are
+            // in an adjacent element. In order to "require" the file upload,
+            // we invert the required status of the file field:
+            // - If the file list is empty (unused), then we set the file field
+            // to be required.
+            // - if the file list is populated (used), then we set the file
+            // field to not be required.
+            if ( document.getElementById('asdndz-transfer_files__icon-container').children.length ) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+        }
+      },
+      messages: {
+        "transfer[files][]": '<%= Transfer::VALIDATION_MSGS[:files] %>'
       }
     });
   </script>
