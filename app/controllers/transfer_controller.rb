@@ -34,7 +34,6 @@ class TransferController < ApplicationController
 
       ReceiptMailer.virus_detected_email(@transfer).deliver_later
       redirect_to transfer_confirm_path
-
   end
 
   def files
@@ -47,7 +46,7 @@ class TransferController < ApplicationController
       thesis.files.attach(file.blob)
       flash[:success] += (file.filename.to_s + "<br>").html_safe
     end
-    redirect_to transfer_path(transfer.id)
+    redirect_to transfer_path(transfer.id, view_all: params[:view_all] || 'false')
   end
 
   def select

@@ -47,22 +47,36 @@
   <%= hidden_field_tag( 'id', @transfer.id ) %>
 
   <h4>Assign these files ...</h4>
+
+  <%= hidden_field_tag( 'view_all', params[:view_all] || 'false' ) %>
+
+  <% if params[:view_all] == 'true' %>
+    <%= link_to('View only unassigned', url_for(view_all: false), class: 'btn button-secondary') %>
+    <%= link_to('View all', url_for(view_all: true), class: 'btn button-secondary is-disabled') %>
+  <% else %>
+    <%= link_to('View only unassigned', url_for(view_all: false), class: 'btn button-secondary is-disabled') %>
+    <%= link_to('View all', url_for(view_all: true), class: 'btn button-secondary') %>
+  <% end %>
+
   <fieldset>
     <legend>Select the files to move</legend>
     <ul class="list-unbulleted list-files">
       <% @transfer.files.each do |file| %>
+        <% if file.blob.attachments.where('record_type = ?', "Thesis").count == 0 %>
         <li>
-          <% if file.blob.attachments.where('record_type = ?', "Thesis").count == 0 %>
           <label>
             <%= check_box_tag( "transfer[file_ids][]", file.id, false, data: { "msg" => "Required - please select at least one file to transfer." }, class: "required" ) %>
             <%= link_to rails_blob_path(file, disposition: 'inline'), target: :_blank do %>
               <%= file.filename.to_s %>
             <% end %>
           </label>
-          <% else %>
-            <span class="assigned"><%= link_to rails_blob_path(file, disposition: 'inline'), target: :_blank do %><%= file.filename.to_s %><% end %></span> attached to "<%= link_to( title_helper( file.blob.attachments.where('record_type = ?', "Thesis").first.record ), thesis_process_path( file.blob.attachments.where('record_type = ?', "Thesis").first.record ) ) %>"
-          <% end %>
         </li>
+        <% else %>
+          <% next unless params[:view_all] == 'true' %>
+          <li>
+            <span class="assigned"><%= link_to rails_blob_path(file, disposition: 'inline'), target: :_blank do %><%= file.filename.to_s %><% end %></span> attached to "<%= link_to( title_helper( file.blob.attachments.where('record_type = ?', "Thesis").first.record ), thesis_process_path( file.blob.attachments.where('record_type = ?', "Thesis").first.record ) ) %>"
+          </li>
+        <% end %>
       <% end %>
     </ul>
   </fieldset>
