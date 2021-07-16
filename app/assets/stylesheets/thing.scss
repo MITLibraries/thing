@@ -97,6 +97,50 @@ form.simple_form {
   }
   .field-row {
     margin-bottom: 2em;
+
+    // Drag and drop styles
+    label.asdndzone {
+      font-weight: bold;
+
+      div.asdndz__icon-container {
+        border: 1px solid gray;
+        display: block;
+        margin-left: 27%;
+        min-height: 10rem;
+        width: 73%;
+
+        >div {
+          font-weight: normal;
+          margin: 1rem;
+          padding: 0.5rem;
+
+          div.direct-upload {
+            display: inline-block;
+
+            &:hover,
+            &:focus {
+              opacity: 0.8;
+            }
+          }
+          a.direct-upload__remove {
+            text-decoration: none;
+
+            &:hover,
+            &:focus {
+              background: black;
+              color: white;
+            }
+          }
+        }
+      }
+
+      &:hover,
+      &:focus {
+        div.asdndz__icon-container {
+          background-color: $gray-l3;
+        }
+      }
+    }
   }
   .checkbox-input {
     height: 20px;
