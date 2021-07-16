@@ -63,8 +63,8 @@
         hint: 'Do not upload a zip file.',
         hint_html: { id: 'transfer_files_ids-hint', class: 'col3q' }  %>
 
-  <div class='field-wrap'>
-    <div id="files_to_upload"></div>
+  <div class='field-wrap layout-1q3q layout-band'>
+    <div id="files_to_upload" class="col3q"></div>
   </div>
 
   <%= f.input :note, as: :text,
@@ -97,14 +97,20 @@
 <% end # Ends simple_form_for %>
 
   <script>
-    $("input:file").change(function () {
-        var filenames = '';
-        var fileblurb = '<p>The following files will be uploaded when this form is submitted:</p>';
-        for (var i = 0; i < this.files.length; i++) {
-            filenames += '<li>' + this.files[i].name + '</li>';
-        }
-        $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
-    });
+    // Load file uploader based on querystring
+    var queryParams = new URLSearchParams(window.location.search);
+    if ( queryParams.has('upload') ) { // Any value for "upload" in querystring triggers the new uploader
+      $("input:file").change(listPendingFiles);
+    } else {
+      $("input:file").change(function () {
+          var filenames = '';
+          var fileblurb = '<p>The following files will be uploaded when this form is submitted:</p>';
+          for (var i = 0; i < this.files.length; i++) {
+              filenames += '<li>' + this.files[i].name + '</li>';
+          }
+          $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
+      });
+    }
 
     $("#new_transfer").validate({
       invalidHandler: function(event, validator) {
@@ -120,4 +126,48 @@
         }
       }
     });
+
+    function listPendingFiles() {
+      let field = document.getElementById('transfer_files');
+      let filenames = '';
+      let fileblurb = '<p>The following files will be uploaded when this form is submitted:</p>';
+      let fileadd = '<p><input type="file" id="add_files" onChange="mergeFiles(event)" multiple style="display: none;"><button onClick="addFiles(event)">Add more files to this transfer</button></p>';
+      for (var i = 0; i < field.files.length; i++) {
+          filenames += '<li>' + field.files[i].name + ' <a href="#" data-file="' + i + '" class="remove-file" onClick="removeFile(event)">(remove<span class="sr"> ' + field.files[i].name + '</span>)</a></li>';
+      }
+      $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>' + fileadd);
+    };
+
+    function removeFile(event) {
+      event.preventDefault();
+      let pendingFileArray = Array.from(document.getElementById('transfer_files').files);
+
+      pendingFileArray.splice(event.target.dataset['file'], 1);
+
+      rebuildFiles(pendingFileArray);
+    }
+
+    function addFiles(event) {
+      event.preventDefault();
+      document.getElementById("add_files").click();
+    }
+
+    function mergeFiles(event) {
+      let pendingFileArray = Array.from(document.getElementById('transfer_files').files);
+      let moreFilesArray = Array.from(document.getElementById('add_files').files);
+
+      newFilesArray = pendingFileArray.concat(moreFilesArray);
+
+      rebuildFiles(newFilesArray);
+    }
+
+    function rebuildFiles(newArray) {
+      let newTransfer = new DataTransfer();
+      newArray.forEach(function(item) {
+        let file = new File([item], item.name);
+        newTransfer.items.add(file);
+      });
+      document.getElementById('transfer_files').files = newTransfer.files;
+      listPendingFiles();
+    }
   </script>
