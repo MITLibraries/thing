@@ -30,6 +30,14 @@ class ThesisController < ApplicationController
     end
   end
 
+  def deduplicate
+    @thesis = Thesis.where.not("coauthors = ?", "")
+    if params[:graduation] && params[:graduation] != "all"
+      @thesis = @thesis.where('grad_date = ?', params[:graduation])
+    end
+    @terms = Thesis.where.not("coauthors = ?", "").select(:grad_date).map(&:grad_date).uniq.sort
+  end
+
   def edit
     @thesis = Thesis.find(params[:id])
     if @thesis.advisors.count == 0

@@ -15,6 +15,11 @@ one:
   thesis: one
   graduation_confirmed: false
 
+oneco:
+  user: basic
+  thesis: coauthor
+  graduation_confirmed: false
+
 two:
   user: yo
   thesis: two

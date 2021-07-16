@@ -65,6 +65,7 @@ active:
   grad_date: 2018-09-01
   departments: [one]
   degrees: [one]
+  coauthors: 'Coauthor, Student'
   status: 'active'  # The default, but specified for testing purposes.
 
 with_note:
@@ -187,3 +188,13 @@ multi_depts:
   abstract: MyText
   grad_date: 2019-02-01
   degrees: [one]
+
+coauthor:
+  title: MyString
+  abstract: MyText
+  grad_date: 2017-09-01
+  departments: [one]
+  degrees: [one]
+  coauthors: 'Yobot, Yo'
+  copyright: mit
+  license: nocc
