@@ -41,7 +41,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
              degree_ids: degrees(:one).id.to_s,
              graduation_year: (Time.current.year + 1).to_s,
              graduation_month: 'September',
-             files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+             files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
            }
          }
     assert_response :redirect
@@ -64,7 +64,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
              degree_ids: degrees(:one).id.to_s,
              graduation_year: (Time.current.year + 1).to_s,
              graduation_month: 'December',
-             files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+             files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
            }
          }
     # We expect a 200 OK for the http call, even though the form submission is
