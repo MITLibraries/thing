@@ -1,5 +1,5 @@
 <tr>
-  <td><%= link_to title_helper(duplicate_thesis), thesis_process_path(duplicate_thesis.id) %></td>
+  <td><%= link_to title_helper(duplicate_thesis), edit_admin_thesis_path(duplicate_thesis.id) %></td>
   <td>
     <% duplicate_thesis.users.each do |user| %>
       <%= user.display_name %><br>
