@@ -12,7 +12,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
           graduation_year: "2020",
           graduation_month: "February",
           user: User.find_by(uid: "thesis_admin_id"),
-          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
         }
       }
     sign_out users(:thesis_admin)
@@ -69,7 +69,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
           graduation_year: "2020",
           graduation_month: "February",
           user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
         }
       }
     assert_response :redirect
@@ -87,7 +87,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
           graduation_year: "2020",
           graduation_month: "February",
           user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
         }
       }
     assert_response :redirect
@@ -105,7 +105,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
           graduation_year: "2020",
           graduation_month: "February",
           user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
         }
       }
     assert_response :redirect
@@ -123,7 +123,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
           graduation_year: "2020",
           graduation_month: "February",
           user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
         }
       }
     assert_response :redirect
@@ -141,7 +141,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
           graduation_year: "2020",
           graduation_month: "February",
           user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('files/a_pdf.pdf', 'application/pdf')
+          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
         }
       }
     assert_response :redirect

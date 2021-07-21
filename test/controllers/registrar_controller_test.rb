@@ -37,7 +37,7 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
     post '/registrar',
       params: {
         registrar: {
-          graduation_list: fixture_file_upload('files/registrar.csv', 'text/csv')
+          graduation_list: fixture_file_upload('registrar.csv', 'text/csv')
         }
       }
     assert_response :redirect
