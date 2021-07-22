@@ -1,28 +1,31 @@
-Documentation:
-  Enabled: false
-
-Rails:
-  Enabled: true
-
 AllCops:
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.7
+  NewCops: enable
+  StyleGuideBaseURL: https://rubystyle.guide
   Exclude:
     - db/**/*
     - config/**/*
     - bin/delayed_job
 
-ClassLength:
+Metrics/BlockLength:
+  CountComments: false # count full line comments?
+  Max: 25
+  Exclude:
+    - "Rakefile"
+    - "**/*.rake"
+    - "test/**/*.rb"
+    - "test/test_helper.rb"
+
+Metrics/ClassLength:
   Exclude:
     - test/**/*
 
-Style/FrozenStringLiteralComment:
+Metrics/MethodLength:
+  Exclude:
+    - "test/**/*.rb"
+
+Style/Documentation:
   Enabled: false
 
-Metrics/BlockLength:
-  CountComments: false  # count full line comments?
-  Max: 25
-  Exclude:
-    - 'Rakefile'
-    - '**/*.rake'
-    - 'spec/**/*.rb'
-    - 'test/test_helper.rb'
+Style/FrozenStringLiteralComment:
+  Enabled: false
