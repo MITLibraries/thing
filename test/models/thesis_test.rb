@@ -56,7 +56,7 @@ class ThesisTest < ActiveSupport::TestCase
 
   test 'can have multiple advisors' do
     thesis = theses(:one)
-    thesis.advisors = [advisors(:first),advisors(:second)]
+    thesis.advisors = [advisors(:first), advisors(:second)]
     assert_equal 2, thesis.advisors.count
     assert thesis.valid?
   end
@@ -104,17 +104,17 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'combine grad_date from month and year for new theses' do
-    t = Thesis.new()
+    t = Thesis.new
     t.title = 'Sample'
     t.abstract = 'abstract'
     t.users.append(users(:yo))
     t.departments.append(departments(:one))
-    t.graduation_month = "February"
-    t.graduation_year = "2020"
+    t.graduation_month = 'February'
+    t.graduation_year = '2020'
     assert t.valid?
     t.save
 
-    assert_equal "2020-02-01", t.grad_date.to_s
+    assert_equal '2020-02-01', t.grad_date.to_s
   end
 
   test 'combine grad_date from month and year for thesis updates' do
@@ -140,13 +140,13 @@ class ThesisTest < ActiveSupport::TestCase
     t = theses(:one)
     t.authors.any?
     t.users.any?
-    assert_difference("Thesis.count", -1) { t.destroy }
+    assert_difference('Thesis.count', -1) { t.destroy }
   end
 
   test 'when a thesis is deleted, the associated author is also deleted' do
     t = theses(:one)
     t.authors.any?
-    assert_difference("Author.count", -1) { t.destroy }
+    assert_difference('Author.count', -1) { t.destroy }
   end
 
   test 'when a thesis is deleted, the associated user is not deleted' do
@@ -161,7 +161,7 @@ class ThesisTest < ActiveSupport::TestCase
     u = users(:yo)
     assert_includes t.users, u
     assert_equal 4, u.authors.count
-    assert_difference("u.authors.count", -1) { t.destroy }
+    assert_difference('u.authors.count', -1) { t.destroy }
   end
 
   test 'can have copyright or not' do
@@ -249,19 +249,19 @@ class ThesisTest < ActiveSupport::TestCase
     assert thesis.valid?
   end
 
-  test 'can have processor note' do 
+  test 'can have processor note' do
     thesis = theses(:one)
     thesis.processor_note = 'confirmed that author is rad'
     thesis.save
     assert thesis.valid?
   end
 
-    test 'can have dspace handle' do
-      thesis = theses(:one)
-      thesis.dspace_handle = 'https://example.com/12345.54321'
-      thesis.save
-      assert thesis.valid?
-    end
+  test 'can have dspace handle' do
+    thesis = theses(:one)
+    thesis.dspace_handle = 'https://example.com/12345.54321'
+    thesis.save
+    assert thesis.valid?
+  end
 
   test 'invalid without files complete' do
     thesis = theses(:one)
@@ -378,21 +378,21 @@ class ThesisTest < ActiveSupport::TestCase
   test 'thesis with holds cannot be deleted' do
     t = theses(:with_hold)
     t.destroy
-    assert t.errors[:base].include? "Cannot delete record because dependent holds exist"
+    assert t.errors[:base].include? 'Cannot delete record because dependent holds exist'
     assert t.present?
   end
 
   test 'thesis with no holds can be deleted' do
     t = theses(:one)
     assert_equal false, t.holds.any?
-    assert_difference("Thesis.count", -1) { t.destroy }
+    assert_difference('Thesis.count', -1) { t.destroy }
   end
 
   test 'thesis with hold can be deleted after its hold has been removed' do
     t = theses(:with_hold)
     t.holds.first.destroy
     assert_equal false, t.holds.any?
-    assert_difference("Thesis.count", -1) { t.destroy }
+    assert_difference('Thesis.count', -1) { t.destroy }
   end
 
   test 'thesis can be deleted after its hold has moved to another thesis' do
@@ -402,7 +402,7 @@ class ThesisTest < ActiveSupport::TestCase
     t2.holds = [h]
     assert t2.holds.count == 1
     assert t1.holds.count == 0
-    assert_difference("Thesis.count", -1) { t1.destroy }
+    assert_difference('Thesis.count', -1) { t1.destroy }
   end
 
   test 'finds existing thesis from csv' do
@@ -460,7 +460,7 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.update(
       coauthors: 'My co-author; My new co-author',
       degrees: [degrees(:two)],
-      departments:[departments(:two)]
+      departments: [departments(:two)]
     )
     assert_equal 'MyString', thesis.title
     user = users(:yo)
@@ -509,7 +509,7 @@ class ThesisTest < ActiveSupport::TestCase
   test 'active_holds? returns true with any active/expired hold' do
     thesis = theses(:multiple_holds)
     assert_equal 2, thesis.holds.count
-    assert_equal ["released", "expired"], thesis.holds.map(&:status)
+    assert_equal %w[released expired], thesis.holds.map(&:status)
     assert_equal true, thesis.active_holds?
   end
 
@@ -671,13 +671,13 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:publication_review)
     assert_equal 'Publication review', thesis.publication_status
     hold = Hold.new({
-      "thesis" => thesis,
-      "date_requested" => "2021-01-03",
-      "date_start" => "2021-01-01",
-      "date_end" => "2021-04-01",
-      "hold_source" => HoldSource.first,
-      "status" => "active",
-    })
+                      'thesis' => thesis,
+                      'date_requested' => '2021-01-03',
+                      'date_start' => '2021-01-01',
+                      'date_end' => '2021-04-01',
+                      'hold_source' => HoldSource.first,
+                      'status' => 'active'
+                    })
     assert_equal true, hold.valid?
     hold.save
     thesis.reload
@@ -688,13 +688,13 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:pending_publication)
     assert_equal 'Pending publication', thesis.publication_status
     hold = Hold.new({
-      "thesis" => thesis,
-      "date_requested" => "2021-01-03",
-      "date_start" => "2021-01-01",
-      "date_end" => "2021-04-01",
-      "hold_source" => HoldSource.first,
-      "status" => "active",
-    })
+                      'thesis' => thesis,
+                      'date_requested' => '2021-01-03',
+                      'date_start' => '2021-01-01',
+                      'date_end' => '2021-04-01',
+                      'hold_source' => HoldSource.first,
+                      'status' => 'active'
+                    })
     assert_equal true, hold.valid?
     hold.save
     thesis.reload
@@ -714,13 +714,13 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:published)
     assert_equal 'Published', thesis.publication_status
     hold = Hold.new({
-      "thesis" => thesis,
-      "date_requested" => "2021-01-03",
-      "date_start" => "2021-01-01",
-      "date_end" => "2021-04-01",
-      "hold_source" => HoldSource.first,
-      "status" => "active",
-    })
+                      'thesis' => thesis,
+                      'date_requested' => '2021-01-03',
+                      'date_start' => '2021-01-01',
+                      'date_end' => '2021-04-01',
+                      'hold_source' => HoldSource.first,
+                      'status' => 'active'
+                    })
     assert_equal true, hold.valid?
     hold.save
     thesis.reload

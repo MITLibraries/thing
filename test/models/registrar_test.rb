@@ -12,7 +12,7 @@ require 'test_helper'
 class RegistrarTest < ActiveSupport::TestCase
   setup do
     @registrar = registrar(:valid)
-    f = Rails.root.join('test','fixtures','files','registrar.csv')
+    f = Rails.root.join('test', 'fixtures', 'files', 'registrar.csv')
     @registrar.graduation_list.attach(io: File.open(f), filename: 'registrar.csv')
   end
 

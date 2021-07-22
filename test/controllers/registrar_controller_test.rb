@@ -31,37 +31,37 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
 
   test 'confirmation of successful submission' do
     @registrar = registrar(:valid)
-    f = Rails.root.join('test','fixtures','files','registrar.csv')
+    f = Rails.root.join('test', 'fixtures', 'files', 'registrar.csv')
     @registrar.graduation_list.attach(io: File.open(f), filename: 'registrar.csv')
     sign_in users(:thesis_admin)
     post '/registrar',
-      params: {
-        registrar: {
-          graduation_list: fixture_file_upload('registrar.csv', 'text/csv')
-        }
-      }
+         params: {
+           registrar: {
+             graduation_list: fixture_file_upload('registrar.csv', 'text/csv')
+           }
+         }
     assert_response :redirect
     follow_redirect!
     assert_equal path, harvest_path
-    assert_not @response.body.include? "Error"
-    assert @response.body.include? "Thank you for submitting this Registrar file."
+    assert_not @response.body.include? 'Error'
+    assert @response.body.include? 'Thank you for submitting this Registrar file.'
   end
 
   test 'flash message if invalid submission' do
     sign_in users(:thesis_admin)
     post '/registrar',
-      params: {
-        registrar: {
-          graduation_list: nil
-        }
-      }
+         params: {
+           registrar: {
+             graduation_list: nil
+           }
+         }
     assert_equal path, '/registrar'
-    assert @response.body.include? "Error saving Registrar file:"
+    assert @response.body.include? 'Error saving Registrar file:'
   end
 
   test 'basic user cannot submit or view a registrar' do
     sign_in users(:basic)
-    get "/registrar/new"
+    get '/registrar/new'
     assert_redirected_to '/'
     follow_redirect!
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -75,7 +75,7 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
 
   test 'processors cannot submit or view a registrar' do
     sign_in users(:processor)
-    get "/registrar/new"
+    get '/registrar/new'
     assert_redirected_to '/'
     follow_redirect!
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -89,7 +89,7 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
 
   test 'transfer_submitters cannot submit or view a registrar' do
     sign_in users(:transfer_submitter)
-    get "/registrar/new"
+    get '/registrar/new'
     assert_redirected_to '/'
     follow_redirect!
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -106,7 +106,7 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
     registrar = Registrar.last
     registrar.graduation_list.attach(io: File.open('test/fixtures/files/registrar.csv'), filename: 'registrar.csv')
     assert_enqueued_with(job: RegistrarImportJob) do
-      get "/harvest/" + registrar.id.to_s
+      get '/harvest/' + registrar.id.to_s
     end
   end
 end

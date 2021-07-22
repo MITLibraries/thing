@@ -42,7 +42,7 @@ class AdminHoldSourceDashboardTest < ActionDispatch::IntegrationTest
     hold_source = HoldSource.first
     assert_not_equal needle, hold_source.source
     patch admin_hold_source_path(hold_source),
-      params: { hold_source: { source: needle } }
+          params: { hold_source: { source: needle } }
     hold_source.reload
     assert_equal needle, hold_source.source
   end

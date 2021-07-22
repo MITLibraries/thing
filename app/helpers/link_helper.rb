@@ -12,6 +12,7 @@ module LinkHelper
   # Includes css `current` class if current page
   def link_class(url)
     return 'nav-item' unless current_page?(url)
+
     'nav-item current'
   end
 

@@ -64,15 +64,15 @@ class DepartmentTest < ActiveSupport::TestCase
     t1.user = User.first
     t1.graduation_month = 'May'
     t1.graduation_year = '2020'
-    t1.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t1.files.attach(io: File.open(Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')), filename: 'a_pdf.pdf')
     t1.save
     t2 = Transfer.new
     t2.department = d
     t2.user = User.first
     t2.graduation_month = 'May'
     t2.graduation_year = '2020'
-    t2.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
-    t2.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t2.files.attach(io: File.open(Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t2.files.attach(io: File.open(Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')), filename: 'a_pdf.pdf')
     t2.save
     assert(d.transfers.count == tcount + 2)
   end

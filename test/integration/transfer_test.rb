@@ -28,7 +28,7 @@ class TransferIntegrationTest < ActionDispatch::IntegrationTest
   test 'including a note still success' do
     mock_auth(users(:transfer_submitter))
     orig_count = Transfer.count
-    @transfer_params[:note] = "Let me pass you a note"
+    @transfer_params[:note] = 'Let me pass you a note'
     post transfer_index_path, params: { transfer: @transfer_params }
     assert_equal orig_count + 1, Transfer.count
   end

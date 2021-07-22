@@ -51,7 +51,7 @@ class NavTest < ActionDispatch::IntegrationTest
 
   test 'harvest page nav' do
     @registrar = registrar(:valid)
-    f = Rails.root.join('test','fixtures','files','registrar.csv')
+    f = Rails.root.join('test', 'fixtures', 'files', 'registrar.csv')
     @registrar.graduation_list.attach(io: File.open(f), filename: 'registrar.csv')
     mock_auth(users(:admin))
     get harvest_path
@@ -81,18 +81,18 @@ class NavTest < ActionDispatch::IntegrationTest
     mock_auth(users(:basic))
     get '/'
 
-    assert_select "nav" do
-      assert_select "a[href=?]", root_path
-      assert_select "a[href=?]", thesis_start_path
+    assert_select 'nav' do
+      assert_select 'a[href=?]', root_path
+      assert_select 'a[href=?]', thesis_start_path
 
       # Navigation should not include:
-      assert_select "a[href=?]", thesis_select_path, count: 0
-      assert_select "a[href=?]", thesis_deduplicate_path, count: 0
-      assert_select "a[href=?]", new_transfer_path, count: 0
-      assert_select "a[href=?]", transfer_select_path, count: 0
-      assert_select "a[href=?]", new_registrar_path, count: 0
-      assert_select "a[href=?]", harvest_path, count: 0
-      assert_select "a[href=?]", admin_root_path, count: 0
+      assert_select 'a[href=?]', thesis_select_path, count: 0
+      assert_select 'a[href=?]', thesis_deduplicate_path, count: 0
+      assert_select 'a[href=?]', new_transfer_path, count: 0
+      assert_select 'a[href=?]', transfer_select_path, count: 0
+      assert_select 'a[href=?]', new_registrar_path, count: 0
+      assert_select 'a[href=?]', harvest_path, count: 0
+      assert_select 'a[href=?]', admin_root_path, count: 0
     end
   end
 
@@ -101,18 +101,18 @@ class NavTest < ActionDispatch::IntegrationTest
     mock_auth(users(:transfer_submitter))
     get '/'
 
-    assert_select "nav" do
-      assert_select "a[href=?]", root_path
-      assert_select "a[href=?]", thesis_start_path
-      assert_select "a[href=?]", new_transfer_path
+    assert_select 'nav' do
+      assert_select 'a[href=?]', root_path
+      assert_select 'a[href=?]', thesis_start_path
+      assert_select 'a[href=?]', new_transfer_path
 
       # Navigation should not include:
-      assert_select "a[href=?]", thesis_select_path, count: 0
-      assert_select "a[href=?]", thesis_deduplicate_path, count: 0
-      assert_select "a[href=?]", transfer_select_path, count: 0
-      assert_select "a[href=?]", new_registrar_path, count: 0
-      assert_select "a[href=?]", harvest_path, count: 0
-      assert_select "a[href=?]", admin_root_path, count: 0
+      assert_select 'a[href=?]', thesis_select_path, count: 0
+      assert_select 'a[href=?]', thesis_deduplicate_path, count: 0
+      assert_select 'a[href=?]', transfer_select_path, count: 0
+      assert_select 'a[href=?]', new_registrar_path, count: 0
+      assert_select 'a[href=?]', harvest_path, count: 0
+      assert_select 'a[href=?]', admin_root_path, count: 0
     end
   end
 
@@ -121,15 +121,15 @@ class NavTest < ActionDispatch::IntegrationTest
     mock_auth(users(:processor))
     get '/'
 
-    assert_select "nav" do
-      assert_select "a[href=?]", root_path
-      assert_select "a[href=?]", thesis_start_path
-      assert_select "a[href=?]", thesis_select_path
-      assert_select "a[href=?]", thesis_deduplicate_path
+    assert_select 'nav' do
+      assert_select 'a[href=?]', root_path
+      assert_select 'a[href=?]', thesis_start_path
+      assert_select 'a[href=?]', thesis_select_path
+      assert_select 'a[href=?]', thesis_deduplicate_path
       # assert_select "a[href=?]", new_transfer_path
-      assert_select "a[href=?]", transfer_select_path
-      assert_select "a[href=?]", new_registrar_path, count: 0
-      assert_select "a[href=?]", harvest_path, count: 0
+      assert_select 'a[href=?]', transfer_select_path
+      assert_select 'a[href=?]', new_registrar_path, count: 0
+      assert_select 'a[href=?]', harvest_path, count: 0
       # assert_select "a[href=?]", admin_root_path
     end
   end
@@ -139,16 +139,16 @@ class NavTest < ActionDispatch::IntegrationTest
     mock_auth(users(:thesis_admin))
     get '/'
 
-    assert_select "nav" do
-      assert_select "a[href=?]", root_path
-      assert_select "a[href=?]", thesis_start_path
-      assert_select "a[href=?]", thesis_select_path
-      assert_select "a[href=?]", thesis_deduplicate_path
-      assert_select "a[href=?]", new_transfer_path
-      assert_select "a[href=?]", transfer_select_path
-      assert_select "a[href=?]", new_registrar_path
-      assert_select "a[href=?]", harvest_path
-      assert_select "a[href=?]", admin_root_path
+    assert_select 'nav' do
+      assert_select 'a[href=?]', root_path
+      assert_select 'a[href=?]', thesis_start_path
+      assert_select 'a[href=?]', thesis_select_path
+      assert_select 'a[href=?]', thesis_deduplicate_path
+      assert_select 'a[href=?]', new_transfer_path
+      assert_select 'a[href=?]', transfer_select_path
+      assert_select 'a[href=?]', new_registrar_path
+      assert_select 'a[href=?]', harvest_path
+      assert_select 'a[href=?]', admin_root_path
     end
   end
 
@@ -157,16 +157,16 @@ class NavTest < ActionDispatch::IntegrationTest
     mock_auth(users(:admin))
     get '/'
 
-    assert_select "nav" do
-      assert_select "a[href=?]", root_path
-      assert_select "a[href=?]", thesis_start_path
-      assert_select "a[href=?]", thesis_select_path
-      assert_select "a[href=?]", thesis_deduplicate_path
-      assert_select "a[href=?]", new_transfer_path
-      assert_select "a[href=?]", transfer_select_path
-      assert_select "a[href=?]", new_registrar_path
-      assert_select "a[href=?]", harvest_path
-      assert_select "a[href=?]", admin_root_path
+    assert_select 'nav' do
+      assert_select 'a[href=?]', root_path
+      assert_select 'a[href=?]', thesis_start_path
+      assert_select 'a[href=?]', thesis_select_path
+      assert_select 'a[href=?]', thesis_deduplicate_path
+      assert_select 'a[href=?]', new_transfer_path
+      assert_select 'a[href=?]', transfer_select_path
+      assert_select 'a[href=?]', new_registrar_path
+      assert_select 'a[href=?]', harvest_path
+      assert_select 'a[href=?]', admin_root_path
     end
   end
 end

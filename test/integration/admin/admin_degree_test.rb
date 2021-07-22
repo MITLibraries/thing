@@ -32,7 +32,7 @@ class AdminDegreeTest < ActionDispatch::IntegrationTest
     mock_auth(users(:thesis_admin))
     degree = Degree.first
     patch admin_degree_path(degree),
-      params: { degree: { name_dspace: 'Master of Fine Arts' } }
+          params: { degree: { name_dspace: 'Master of Fine Arts' } }
     degree.reload
     assert_equal 'Master of Fine Arts', degree.name_dspace
   end
@@ -42,7 +42,7 @@ class AdminDegreeTest < ActionDispatch::IntegrationTest
     degree = Degree.first
     degree_type = degree_types(:bachelor)
     patch admin_degree_path(degree),
-      params: { degree: { degree_type_id: degree_type.id } }
+          params: { degree: { degree_type_id: degree_type.id } }
     degree.reload
     assert_equal degree_type.id, degree.degree_type.id
 

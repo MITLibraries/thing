@@ -23,7 +23,7 @@ class ReceiptMailerTest < ActionMailer::TestCase
   test 'sends confirmation emails for transfer records' do
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       transfer = transfers(:valid)
-      f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+      f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
       transfer.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
       user = users(:transfer_submitter)
       email = ReceiptMailer.transfer_receipt_email(transfer, user)

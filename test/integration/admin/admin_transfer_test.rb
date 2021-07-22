@@ -9,43 +9,43 @@ class AdminTransferTest < ActionDispatch::IntegrationTest
     auth_teardown
   end
 
-  test 'thesis admins can access transfer panel' do 
+  test 'thesis admins can access transfer panel' do
     mock_auth(users(:thesis_admin))
-    get "/admin/transfers"
+    get '/admin/transfers'
     assert_response :success
   end
 
   test 'users with admin rights can access transfer panel' do
     mock_auth(users(:admin))
-    get "/admin/transfers"
+    get '/admin/transfers'
     assert_response :success
   end
 
   test 'non-admin users cannot access transfer dashboard' do
     mock_auth(users(:basic))
-    get "/admin/transfers"
+    get '/admin/transfers'
     assert_response :redirect
 
     mock_auth(users(:transfer_submitter))
-    get "/admin/transfers"
+    get '/admin/transfers'
     assert_response :redirect
   end
 
   test 'transfer dashboard renders for processors' do
     mock_auth(users(:processor))
-    get "/admin/transfers"
+    get '/admin/transfers'
     assert_response :success
   end
 
   test 'transfer dashboard renders for admin users' do
     mock_auth(users(:admin))
-    get "/admin/transfers"
+    get '/admin/transfers'
     assert_response :success
   end
 
   test 'transfer dashboard renders for thesis admins' do
     mock_auth(users(:thesis_admin))
-    get "/admin/transfers"
+    get '/admin/transfers'
     assert_response :success
   end
 
@@ -67,12 +67,12 @@ class AdminTransferTest < ActionDispatch::IntegrationTest
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       assert_emails 0 do
         patch admin_transfer_path(transfer),
-          params: {
-            transfer: {
-              user_ids: [ User.first.id ],
-              note: 'I hope we do not use this in the fixture'
-            }
-          }
+              params: {
+                transfer: {
+                  user_ids: [User.first.id],
+                  note: 'I hope we do not use this in the fixture'
+                }
+              }
       end
     end
   end

@@ -19,7 +19,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     title: Field::String,
     abstract: Field::Text,
     grad_date: Field::DateTime.with_options(
-      format: "%Y %B"
+      format: '%Y %B'
     ),
     graduation_month: Field::Text,
     graduation_year: Field::Number,
@@ -28,10 +28,10 @@ class ThesisDashboard < Administrate::BaseDashboard
     files: AttachmentField,
     files_complete: Field::Boolean,
     status: Field::Select.with_options(
-      collection: Thesis::STATUS_OPTIONS,
+      collection: Thesis::STATUS_OPTIONS
     ),
     publication_status: Field::Select.with_options(
-      collection: Thesis::PUBLICATION_STATUS_OPTIONS,
+      collection: Thesis::PUBLICATION_STATUS_OPTIONS
     ),
     author_note: Field::Text,
     processor_note: Field::Text,
@@ -41,7 +41,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     coauthors: Field::String,
     copyright: Field::BelongsTo,
     license: Field::BelongsTo,
-    dspace_handle: Field::String,
+    dspace_handle: Field::String
   }.freeze
 
   # COLLECTION_ATTRIBUTES

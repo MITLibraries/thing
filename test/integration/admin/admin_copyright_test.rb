@@ -40,7 +40,7 @@ class AdminCopyrightTest < ActionDispatch::IntegrationTest
     assert_not_equal record.holder, newvalue
 
     patch admin_copyright_path(record),
-      params: { copyright: { holder: newvalue } }
+          params: { copyright: { holder: newvalue } }
     record.reload
     assert_equal record.holder, newvalue
   end

@@ -76,23 +76,23 @@ class Thesis < ApplicationRecord
 
   validates :users, presence: true
 
-  STATUS_OPTIONS = ['active', 'withdrawn', 'downloaded']
-  validates_inclusion_of :status, :in => STATUS_OPTIONS
+  STATUS_OPTIONS = %w[active withdrawn downloaded]
+  validates_inclusion_of :status, in: STATUS_OPTIONS
 
-  PUBLICATION_STATUS_OPTIONS = ['Not ready for publication', 
-                                'Publication review', 
+  PUBLICATION_STATUS_OPTIONS = ['Not ready for publication',
+                                'Publication review',
                                 'Pending publication',
                                 'Published']
-  validates_inclusion_of :publication_status, :in => PUBLICATION_STATUS_OPTIONS
+  validates_inclusion_of :publication_status, in: PUBLICATION_STATUS_OPTIONS
 
-  VALID_MONTHS = ['February', 'May', 'June', 'September']
+  VALID_MONTHS = %w[February May June September]
 
   before_save :combine_graduation_date, :update_status
   after_find :split_graduation_date
 
-  #scope :name_asc, lambda {
+  # scope :name_asc, lambda {
   #  includes(:user).order('users.surname, users.given_name')
-  #}
+  # }
   scope :date_asc, -> { order('grad_date') }
   scope :valid_months_only, lambda {
     select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
@@ -103,14 +103,14 @@ class Thesis < ApplicationRecord
   # The UI will still rely on the issues_found field directly, as its
   # framing is more logical for the user.
   def no_issues_found?
-    return !issues_found
+    !issues_found
   end
 
   # Returns a true/false value (rendered as "yes" or "no") if there are any
   # holds with a status of either 'active' or 'expired'. A false/"No" is
   # only returned if all holds are 'released'.
   def active_holds?
-    return holds.map { |h| h.status.in? ['active','expired'] }.any?
+    holds.map { |h| h.status.in? %w[active expired] }.any?
   end
 
   # This just inverts the active_holds? method above, so that the checks
@@ -118,13 +118,13 @@ class Thesis < ApplicationRecord
   # The UI will rely on active_holds? because its framing is more logical
   # for the user.
   def no_active_holds?
-    return !active_holds?
+    !active_holds?
   end
 
   # Returns a true/false value (rendered as "yes" or "no") if all authors
   # have graduated. Any author having not graduated results in a false/"No".
   def authors_graduated?
-    return authors.map { |a| a.graduation_confirmed? }.reduce(:&)
+    authors.map { |a| a.graduation_confirmed? }.reduce(:&)
   end
 
   # This contains the logic for a thesis to have its status set to either
@@ -133,21 +133,21 @@ class Thesis < ApplicationRecord
   def update_status
     # If a thesis has been set to 'Pending publication' or 'Published', this
     # method cannot change it; other methods will set/revert that status.
-    return if ['Pending publication','Published'].include? self.publication_status
+    return if ['Pending publication', 'Published'].include? publication_status
+
     # Still here? Then we proceed...
     # By default, a thesis is set to 'Not ready for production'
     self.publication_status = 'Not ready for publication'
     # If the five qualifying conditions are met, then we set status to
     # 'publication review'. This will leave unchanged a thesis that was
     # already set to 'Pending publication' via another method.
-    if
-       [
-          self.files_complete,
-          self.metadata_complete,
-          self.no_issues_found?,
-          self.no_active_holds?,
-          self.authors_graduated?
-       ].all?
+    if [
+      files_complete,
+      metadata_complete,
+      no_issues_found?,
+      no_active_holds?,
+      authors_graduated?
+    ].all?
       self.publication_status = 'Publication review'
     end
     # Please note that the 'pending publiation' and 'published' statuses can
@@ -159,15 +159,17 @@ class Thesis < ApplicationRecord
   # We expect that graduation_year will be a String (in which case to_s is a
   # no-op), but if it's an Integer this will also work.
   def valid_year?
-    return if (/^\d{4}$/.match(graduation_year.to_s) &&
-               graduation_year.to_i >= 1861)
+    return if /^\d{4}$/.match(graduation_year.to_s) &&
+              graduation_year.to_i >= 1861
+
     errors.add(:graduation_year, 'Invalid graduation year')
   end
 
   def valid_month?
     return if VALID_MONTHS.include?(graduation_month)
+
     errors.add(:graduation_month,
-      'Invalid graduation month; must be May, June, September, or February')
+               'Invalid graduation month; must be May, June, September, or February')
   end
 
   # Combine the UI supplied month and year into a datetime object
@@ -190,7 +192,7 @@ class Thesis < ApplicationRecord
   # multiple theses are found for an author in a given degree period, as that
   # scenario needs to be handled manually by a Processor.
   def self.create_or_update_from_csv(author, degree, department, grad_date, row)
-    theses = Thesis.joins(:authors).where(authors: {user_id: author.id}).where(grad_date: grad_date)
+    theses = Thesis.joins(:authors).where(authors: { user_id: author.id }).where(grad_date: grad_date)
     if theses.empty?
       new_thesis = Thesis.create(
         coauthors: row['Thesis Coauthor'],
@@ -199,25 +201,25 @@ class Thesis < ApplicationRecord
         graduation_month: grad_date.strftime('%B'),
         graduation_year: grad_date.year,
         title: row['Thesis Title'],
-        users: [author],
+        users: [author]
       )
-      Rails.logger.info("New thesis created: " + author.name + ", " + grad_date.to_s)
-      return new_thesis
+      Rails.logger.info('New thesis created: ' + author.name + ', ' + grad_date.to_s)
+      new_thesis
     elsif theses.size == 1
       thesis = theses.first
       if thesis.coauthors.blank?
         thesis.coauthors = row['Thesis Coauthor']
       elsif thesis.coauthors.exclude? row['Thesis Coauthor'].to_s
-        thesis.coauthors += "; " + row['Thesis Coauthor']
+        thesis.coauthors += '; ' + row['Thesis Coauthor']
       end
       thesis.degrees << degree unless thesis.degrees.include?(degree)
       thesis.departments << department unless thesis.departments.include?(department)
       thesis.title = row['Thesis Title'] if thesis.title.blank?
       thesis.save
-      Rails.logger.info("Thesis updated: " + author.name + ", " + grad_date.to_s)
-      return thesis
+      Rails.logger.info('Thesis updated: ' + author.name + ', ' + grad_date.to_s)
+      thesis
     else
-      raise "Multiple theses found"
+      raise 'Multiple theses found'
     end
   end
 end

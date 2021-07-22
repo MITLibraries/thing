@@ -1,4 +1,4 @@
-require "administrate/base_dashboard"
+require 'administrate/base_dashboard'
 
 class CopyrightDashboard < Administrate::BaseDashboard
   # ATTRIBUTE_TYPES
@@ -16,7 +16,7 @@ class CopyrightDashboard < Administrate::BaseDashboard
     statement_dspace: Field::Text,
     url: Field::Text,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -25,34 +25,34 @@ class CopyrightDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-  holder
-  display_to_author
-  theses
-  id
+    holder
+    display_to_author
+    theses
+    id
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
-  holder
-  display_to_author
-  display_description
-  statement_dspace
-  url
-  id
-  created_at
-  updated_at
+    holder
+    display_to_author
+    display_description
+    statement_dspace
+    url
+    id
+    created_at
+    updated_at
   ].freeze
 
   # FORM_ATTRIBUTES
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
-  holder
-  display_to_author
-  display_description
-  statement_dspace
-  url
+    holder
+    display_to_author
+    display_description
+    statement_dspace
+    url
   ].freeze
 
   # COLLECTION_FILTERS

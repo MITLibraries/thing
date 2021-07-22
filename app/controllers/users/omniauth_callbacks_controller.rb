@@ -13,6 +13,7 @@ module Users
     # to make sure we're not on the production server.
     def developer
       raise 'Invalid Authentication' unless Rails.configuration.fake_auth_enabled
+
       @user = User.from_omniauth(request.env['omniauth.auth'])
       @user.admin = true
       @user.save

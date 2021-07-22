@@ -39,7 +39,7 @@ class AdminUserTest < ActionDispatch::IntegrationTest
     mock_auth(users(:admin))
     user = users(:processor)
     patch admin_user_path(user),
-      params: { user: { role: 'thesis_admin' } }
+          params: { user: { role: 'thesis_admin' } }
     user.reload
     assert_equal 'thesis_admin', user.role
   end

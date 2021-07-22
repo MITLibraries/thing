@@ -21,7 +21,7 @@ class Hold < ApplicationRecord
   belongs_to :hold_source
   has_many :users, through: :thesis
 
-  enum status: [ :active, :expired, :released ]
+  enum status: %i[active expired released]
 
   validates :date_requested, presence: true
   validates :date_start, presence: true
@@ -31,20 +31,21 @@ class Hold < ApplicationRecord
   after_save :update_thesis_status
 
   def degrees
-    self.thesis.degrees.map { |d| d.name_dw}.join("\n")
+    thesis.degrees.map { |d| d.name_dw }.join("\n")
   end
 
   def grad_date
-    self.thesis.grad_date
+    thesis.grad_date
   end
 
   def author_names
-    self.thesis.users.map { |u| u.name }.join("; ")
+    thesis.users.map { |u| u.name }.join('; ')
   end
 
   def created_by
-    return unless self.versions.present? && self.versions.first.event == 'create'
-    creator_id = self.versions.first.whodunnit
+    return unless versions.present? && versions.first.event == 'create'
+
+    creator_id = versions.first.whodunnit
     if user = User.find_by(id: creator_id)
       user.kerberos_id
     else
@@ -52,28 +53,29 @@ class Hold < ApplicationRecord
     end
   end
 
-  # This may later list just the info for the file flagged 'primary', once 
+  # This may later list just the info for the file flagged 'primary', once
   # we implement that feature.
   def dates_thesis_files_received
-    return unless self.thesis.present? && self.thesis.files.present?
-    self.thesis.files.map do |file| 
+    return unless thesis.present? && thesis.files.present?
+
+    thesis.files.map do |file|
       "#{file.created_at.strftime('%Y-%m-%d')} (#{file.blob.filename})"
-    end.join("; ")
+    end.join('; ')
   end
 
-  # In the unlikely scenario that the the status was changed to 'released' 
+  # In the unlikely scenario that the the status was changed to 'released'
   # multiple times, this assumes we want the most recent date released.
   def date_released
-    released_versions = self.versions.select do |version| 
-      version.changeset["status"][1] == 'released' if version.changeset["status"].present?
+    released_versions = versions.select do |version|
+      version.changeset['status'][1] == 'released' if version.changeset['status'].present?
     end
-    dates_released = released_versions.map { |version| version.changeset["updated_at"][1] }
-    dates_released.sort.last
+    dates_released = released_versions.map { |version| version.changeset['updated_at'][1] }
+    dates_released.max
   end
 
   # The thesis' publication_status is recalculated every time the record is
   # saved, so in case this hold's status has changed, we force a recalculation.
   def update_thesis_status
-    self.thesis.save
+    thesis.save
   end
 end

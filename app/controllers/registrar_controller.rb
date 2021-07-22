@@ -15,7 +15,7 @@ class RegistrarController < ApplicationController
     @registrar.graduation_list.attach(params[:registrar][:graduation_list])
     if @registrar.save
       flash.notice = 'Thank you for submitting this Registrar file.'
-      redirect_to harvest_path()
+      redirect_to harvest_path
     else
       flash[:error] = "Error saving Registrar file: #{@registrar.errors.full_messages}"
       render 'new'
@@ -38,7 +38,7 @@ class RegistrarController < ApplicationController
 
     RegistrarImportJob.perform_later(@registrar)
 
-    flash[:notice] = "Job started..."
+    flash[:notice] = 'Job started...'
     redirect_to '/harvest'
   end
 
@@ -46,6 +46,7 @@ class RegistrarController < ApplicationController
 
   def require_user
     return if current_user
+
     # Do NOT use ENV['FAKE_AUTH_ENABLED'] directly! Use the config. It performs
     # an additional check to make sure we are not on the production server.
     if Rails.configuration.fake_auth_enabled

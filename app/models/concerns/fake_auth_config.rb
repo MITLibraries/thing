@@ -3,6 +3,7 @@ module FakeAuthConfig
   # allowed to use fake authentication.
   def fake_auth_status
     return true if fake_auth_enabled? && app_name_pattern_match?
+
     false
   end
 
@@ -27,7 +28,8 @@ module FakeAuthConfig
   # pattern.
   def app_name_pattern_match?
     return true if Rails.env.development?
-    review_app_pattern = /^thesis-(submit|dropbox)-pr-[\d]+$/
+
+    review_app_pattern = /^thesis-(submit|dropbox)-pr-\d+$/
     review_app_pattern.match(ENV['HEROKU_APP_NAME']).present?
   end
 end

@@ -4,14 +4,15 @@ class HoldIntegrationTest < ActionDispatch::IntegrationTest
   def setup
     auth_setup
     @hold_params = {
-     thesis_id: theses(:two).id,
-     date_requested: "2021-03-15",
-     date_start: "2021-03-15",
-     date_end: "2021-03-15",
-     hold_source_id: hold_sources(:tlo).id,
-     case_number: "",
-     status: "active",
-     processing_notes: "", }
+      thesis_id: theses(:two).id,
+      date_requested: '2021-03-15',
+      date_start: '2021-03-15',
+      date_end: '2021-03-15',
+      hold_source_id: hold_sources(:tlo).id,
+      case_number: '',
+      status: 'active',
+      processing_notes: ''
+    }
   end
 
   def teardown
@@ -28,12 +29,12 @@ class HoldIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 1, hold.versions.length
 
     get hold_history_path(hold)
-    assert_select "li", "Modified by: thesis_admin"
-    assert_select "a[href='/admin/users/#{user.id}']", "thesis_admin"
+    assert_select 'li', 'Modified by: thesis_admin'
+    assert_select "a[href='/admin/users/#{user.id}']", 'thesis_admin'
   end
 
   test 'returns useful text if user who modified no longer exists' do
-    user = User.new(uid: 'expendable@mit.edu', email: 'expendable@mit.edu', 
+    user = User.new(uid: 'expendable@mit.edu', email: 'expendable@mit.edu',
                     kerberos_id: 'expendable', admin: true)
     user.save
     mock_auth user
@@ -49,10 +50,10 @@ class HoldIntegrationTest < ActionDispatch::IntegrationTest
 
     mock_auth users(:thesis_admin)
     get hold_history_path(hold)
-    assert_select "li", "Modified by: User ID #{user.id} no longer active."
+    assert_select 'li', "Modified by: User ID #{user.id} no longer active."
   end
 
-  test "nil fields are converted to n/a" do
+  test 'nil fields are converted to n/a' do
     mock_auth users(:thesis_admin)
     orig_hold_count = Hold.count
     post admin_holds_path, params: { hold: @hold_params }
@@ -61,8 +62,8 @@ class HoldIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 1, hold.versions.length
 
     get hold_history_path(hold)
-    assert_equal true, hold.versions.first.changeset { |k, v| v[0].nil? }.any?
-    assert_select "td", "n/a"
+    assert_equal true, hold.versions.first.changeset { |_k, v| v[0].nil? }.any?
+    assert_select 'td', 'n/a'
   end
 
   test 'thesis_id field is rendered as a link to the thesis' do

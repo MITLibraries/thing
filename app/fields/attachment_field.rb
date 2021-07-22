@@ -1,4 +1,4 @@
-require "administrate/field/base"
+require 'administrate/field/base'
 
 class AttachmentField < Administrate::Field::Base
   def attachments

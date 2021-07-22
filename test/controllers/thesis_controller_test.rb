@@ -5,8 +5,8 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # Ideally our fixtures would have already-attached files, but they do not
     # yet. So we attach two files to a transfer and thesis record, to prepare
     # for tests involving the thesis processing workflow.
-    f1 = Rails.root.join('test','fixtures','files','a_pdf.pdf')
-    f2 = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    f1 = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    f2 = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     tr.files.attach(io: File.open(f1), filename: 'a_pdf.pdf')
     tr.files.attach(io: File.open(f2), filename: 'a_pdf.pdf')
     tr.save
@@ -234,19 +234,19 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'processing queue shows nothing without work done' do
     sign_in users(:processor)
     get thesis_select_path
-    assert @response.body.include? "No theses found"
+    assert @response.body.include? 'No theses found'
   end
 
   test 'processing queue shows a record with file attached' do
     # Attach a file to the thesis
     t = theses(:with_hold)
-    f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     t.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
 
     # Make sure the url for each thesis processing form is included
     sign_in users(:processor)
     get thesis_select_path
-    expected_theses = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', "Published")
+    expected_theses = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')
     expected_theses.each do |et|
       assert @response.body.include? thesis_process_path(et.id).to_s
     end
@@ -256,7 +256,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # Attach files to two theses
     t1 = theses(:with_hold)
     t2 = theses(:active)
-    f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     t1.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
     t2.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
 
@@ -386,14 +386,14 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   # ~~~~~~~~~~~~~~~~~~~ submitting thesis processing form ~~~~~~~~~~~~~~~~~~~~~
   test 'anonymous users cannot submit thesis processing form' do
     patch thesis_process_update_path(theses(:one)),
-      params: { thesis: { title: 'Something nonsensical' } }
+          params: { thesis: { title: 'Something nonsensical' } }
     assert_response :redirect
   end
 
   test 'basic users cannot submit thesis processing form' do
     sign_in users(:basic)
     patch thesis_process_update_path(theses(:one)),
-      params: { thesis: { title: 'Any value' } }
+          params: { thesis: { title: 'Any value' } }
     assert_response :redirect
     follow_redirect!
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -402,7 +402,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'transfer_submitters cannot submit thesis processing form' do
     sign_in users(:transfer_submitter)
     patch thesis_process_update_path(theses(:one)),
-      params: { thesis: { title: 'Any value' } }
+          params: { thesis: { title: 'Any value' } }
     assert_response :redirect
     follow_redirect!
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -411,7 +411,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'thesis_processors can submit thesis processing form' do
     sign_in users(:processor)
     patch thesis_process_update_path(theses(:one)),
-      params: { thesis: { title: 'Any value' } }
+          params: { thesis: { title: 'Any value' } }
     follow_redirect!
     assert_equal path, thesis_process_path(theses(:one))
   end
@@ -419,7 +419,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'thesis_admins can submit thesis processing form' do
     sign_in users(:thesis_admin)
     patch thesis_process_update_path(theses(:one)),
-      params: { thesis: { title: 'Any value' } }
+          params: { thesis: { title: 'Any value' } }
     follow_redirect!
     assert_equal path, thesis_process_path(theses(:one))
   end
@@ -427,9 +427,9 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'admins can submit thesis processing form' do
     sign_in users(:admin)
     patch thesis_process_update_path(theses(:one)),
-      params: {
-        thesis: { title: 'Something nonsensical' }
-      }
+          params: {
+            thesis: { title: 'Something nonsensical' }
+          }
     follow_redirect!
     assert_equal path, thesis_process_path(theses(:one))
   end
@@ -444,18 +444,18 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     attachment_count = ActiveStorage::Attachment.count
     blob_count = ActiveStorage::Blob.count
     patch thesis_process_update_path(theses(:publication_review_except_hold)),
-      params: {
-        thesis: {
-          "title": "My Almost-Ready Thesis",
-          "issues_found": "true",
-          "files_attachments_attributes": {
-            "0": {
-                "id": th.files.first.id,
-                "description": "A phrase to describe the file"
+          params: {
+            thesis: {
+              title: 'My Almost-Ready Thesis',
+              issues_found: 'true',
+              files_attachments_attributes: {
+                '0': {
+                  id: th.files.first.id,
+                  description: 'A phrase to describe the file'
+                }
               }
+            }
           }
-        }
-      }
     follow_redirect!
     # Unlinking does not reduce the number of blobs, nor how many are attached to the transfer.
     # However, the number of files on the thesis does decrease (as does the total number of attachments).
@@ -477,18 +477,18 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     attachment_count = ActiveStorage::Attachment.count
     blob_count = ActiveStorage::Blob.count
     patch thesis_process_update_path(theses(:publication_review_except_hold)),
-      params: {
-        thesis: {
-          "title": "My Almost-Ready Thesis",
-          "issues_found": "true",
-          "files_attachments_attributes": {
-            "0": {
-                "id": th.files.first.id,
-                "_destroy": 1
+          params: {
+            thesis: {
+              title: 'My Almost-Ready Thesis',
+              issues_found: 'true',
+              files_attachments_attributes: {
+                '0': {
+                  id: th.files.first.id,
+                  _destroy: 1
+                }
               }
+            }
           }
-        }
-      }
     follow_redirect!
     # Unlinking does not reduce the number of blobs, nor how many are attached to the transfer.
     # However, the number of files on the thesis does decrease (as does the total number of attachments).
@@ -506,18 +506,18 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     th = theses(:publication_review_except_hold)
     attach_files_to_records(tr, th)
     patch thesis_process_update_path(theses(:publication_review_except_hold)),
-      params: {
-        thesis: {
-          "title": "My Almost-Ready Thesis",
-          "issues_found": "true",
-          "files_attachments_attributes": {
-            "0": {
-                "id": th.files.first.id,
-                "_destroy": 1
+          params: {
+            thesis: {
+              title: 'My Almost-Ready Thesis',
+              issues_found: 'true',
+              files_attachments_attributes: {
+                '0': {
+                  id: th.files.first.id,
+                  _destroy: 1
+                }
               }
+            }
           }
-        }
-      }
     follow_redirect!
     # The flash message has a link back to the transfer with the file.
     assert_select 'div.alert ul li a', text: 'a_pdf.pdf', href: transfer_path(th), count: 1

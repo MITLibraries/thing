@@ -13,10 +13,10 @@ class HoldSource < ApplicationRecord
   validates :source, presence: true
 
   def active_holds
-    return self.holds.count { |hold| hold.status == 'active' }
+    holds.count { |hold| hold.status == 'active' }
   end
 
   def expired_holds
-    return self.holds.count { |hold| hold.status == 'expired' }
+    holds.count { |hold| hold.status == 'expired' }
   end
 end

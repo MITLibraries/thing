@@ -217,10 +217,10 @@ class UserTest < ActiveSupport::TestCase
   test 'generates display_name from name method if not provided' do
     u1 = User.new(uid: 'coltrane@mit.edu', email: 'coltrane@mit.edu')
     u1.save
-    u2 = User.new(uid: 'parker@mit.edu', email: 'parker@mit.edu', 
+    u2 = User.new(uid: 'parker@mit.edu', email: 'parker@mit.edu',
                   preferred_name: 'Parker, Bird')
     u2.save
-    u3 = User.new(uid: 'evans@mit.edu',email: 'evans@mit.edu', 
+    u3 = User.new(uid: 'evans@mit.edu', email: 'evans@mit.edu',
                   given_name: 'Bill', surname: 'Evans')
     assert(u1.valid?)
     assert_equal(u1.display_name, 'coltrane@mit.edu')
@@ -231,8 +231,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'display_name includes middle initial if available' do
-    u = User.new(uid: 'jobim@mit.edu', email: 'jobim@mit.edu', 
-                  given_name: 'Antonio', middle_name: 'Carlos', surname: 'Jobim')
+    u = User.new(uid: 'jobim@mit.edu', email: 'jobim@mit.edu',
+                 given_name: 'Antonio', middle_name: 'Carlos', surname: 'Jobim')
     u.save
     assert_equal(u.display_name, 'Jobim, Antonio C.')
   end
@@ -250,7 +250,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'processing_queue_name adds email as needed' do
-    u = User.new(uid: 'mehldau@mit.edu', email: 'mehldau@mit.edu', 
+    u = User.new(uid: 'mehldau@mit.edu', email: 'mehldau@mit.edu',
                  preferred_name: 'Mehldau, Brad')
     u.save
     assert_equal 'Mehldau, Brad (mehldau@mit.edu)', u.processing_queue_name
@@ -272,7 +272,7 @@ class UserTest < ActiveSupport::TestCase
     t1.user = u
     t1.graduation_month = 'May'
     t1.graduation_year = '2020'
-    t1.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t1.files.attach(io: File.open(Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')), filename: 'a_pdf.pdf')
     t1.save
     assert(u.transfers.count == tcount + 1)
   end
@@ -326,14 +326,14 @@ class UserTest < ActiveSupport::TestCase
     u = users(:yo)
     assert u.theses.any?
     u.destroy
-    assert u.errors[:base].include? "Cannot delete record because dependent theses exist"
+    assert u.errors[:base].include? 'Cannot delete record because dependent theses exist'
     assert u.present?
   end
 
   test 'can destroy a user without an associated thesis' do
     u = users(:bad)
     assert_not u.theses.any?
-    assert_difference("User.count", -1) { u.destroy }
+    assert_difference('User.count', -1) { u.destroy }
   end
 
   test 'can destroy a user once associated thesis has been destroyed' do
@@ -341,7 +341,7 @@ class UserTest < ActiveSupport::TestCase
     assert u.theses.any?
     u.theses.destroy_all
     assert_not u.theses.any?
-    assert_difference("User.count", -1) do
+    assert_difference('User.count', -1) do
       u.destroy
     end
   end

@@ -6,15 +6,15 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     # yet. So we create a new Transfer here, with a file.
     sign_in users(:thesis_admin)
     post '/transfer',
-      params: {
-        transfer: {
-          department_id: User.find_by(uid: "thesis_admin_id").submittable_departments.first.id.to_s,
-          graduation_year: "2020",
-          graduation_month: "February",
-          user: User.find_by(uid: "thesis_admin_id"),
-          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
-        }
-      }
+         params: {
+           transfer: {
+             department_id: User.find_by(uid: 'thesis_admin_id').submittable_departments.first.id.to_s,
+             graduation_year: '2020',
+             graduation_month: 'February',
+             user: User.find_by(uid: 'thesis_admin_id'),
+             files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
+           }
+         }
     sign_out users(:thesis_admin)
   end
 
@@ -27,7 +27,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
 
   test 'basic user cannot access new transfer form' do
     sign_in users(:basic)
-    get "/transfer/new"
+    get '/transfer/new'
     assert_redirected_to '/'
     follow_redirect!
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -41,7 +41,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
 
   test 'thesis_processor cannot access new transfer form' do
     sign_in users(:processor)
-    get "/transfer/new"
+    get '/transfer/new'
     assert_redirected_to '/'
     follow_redirect!
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -63,15 +63,15 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
   test 'basic users cannot post the transfer form' do
     sign_in users(:basic)
     post '/transfer',
-      params: {
-        transfer: {
-          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
-          graduation_year: "2020",
-          graduation_month: "February",
-          user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
-        }
-      }
+         params: {
+           transfer: {
+             department_id: User.find_by(uid: 'transfer_submitter_id').submittable_departments.first.id.to_s,
+             graduation_year: '2020',
+             graduation_month: 'February',
+             user: User.find_by(uid: 'transfer_submitter_id'),
+             files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
+           }
+         }
     assert_response :redirect
     assert_redirected_to '/'
     follow_redirect!
@@ -81,15 +81,15 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
   test 'transfer_submitter can post the transfer form' do
     sign_in users(:transfer_submitter)
     post '/transfer',
-      params: {
-        transfer: {
-          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
-          graduation_year: "2020",
-          graduation_month: "February",
-          user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
-        }
-      }
+         params: {
+           transfer: {
+             department_id: User.find_by(uid: 'transfer_submitter_id').submittable_departments.first.id.to_s,
+             graduation_year: '2020',
+             graduation_month: 'February',
+             user: User.find_by(uid: 'transfer_submitter_id'),
+             files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
+           }
+         }
     assert_response :redirect
     assert_redirected_to transfer_confirm_path
     follow_redirect!
@@ -99,15 +99,15 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
   test 'thesis_processor cannot post the transfer form' do
     sign_in users(:processor)
     post '/transfer',
-      params: {
-        transfer: {
-          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
-          graduation_year: "2020",
-          graduation_month: "February",
-          user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
-        }
-      }
+         params: {
+           transfer: {
+             department_id: User.find_by(uid: 'transfer_submitter_id').submittable_departments.first.id.to_s,
+             graduation_year: '2020',
+             graduation_month: 'February',
+             user: User.find_by(uid: 'transfer_submitter_id'),
+             files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
+           }
+         }
     assert_response :redirect
     assert_redirected_to '/'
     follow_redirect!
@@ -117,15 +117,15 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
   test 'thesis admins can post the transfer form' do
     sign_in users(:thesis_admin)
     post '/transfer',
-      params: {
-        transfer: {
-          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
-          graduation_year: "2020",
-          graduation_month: "February",
-          user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
-        }
-      }
+         params: {
+           transfer: {
+             department_id: User.find_by(uid: 'transfer_submitter_id').submittable_departments.first.id.to_s,
+             graduation_year: '2020',
+             graduation_month: 'February',
+             user: User.find_by(uid: 'transfer_submitter_id'),
+             files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
+           }
+         }
     assert_response :redirect
     assert_redirected_to transfer_confirm_path
     follow_redirect!
@@ -135,15 +135,15 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
   test 'admins can post the transfer form' do
     sign_in users(:admin)
     post '/transfer',
-      params: {
-        transfer: {
-          department_id: User.find_by(uid: "transfer_submitter_id").submittable_departments.first.id.to_s,
-          graduation_year: "2020",
-          graduation_month: "February",
-          user: User.find_by(uid: "transfer_submitter_id"),
-          files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
-        }
-      }
+         params: {
+           transfer: {
+             department_id: User.find_by(uid: 'transfer_submitter_id').submittable_departments.first.id.to_s,
+             graduation_year: '2020',
+             graduation_month: 'February',
+             user: User.find_by(uid: 'transfer_submitter_id'),
+             files: fixture_file_upload('a_pdf.pdf', 'application/pdf')
+           }
+         }
     assert_response :redirect
     assert_redirected_to transfer_confirm_path
     follow_redirect!
@@ -154,14 +154,14 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     original_count = Transfer.count
     sign_in users(:transfer_submitter)
     post '/transfer',
-      params: {
-        transfer: {
-          user: User.find_by(uid: "transfer_submitter_id")
-        }
-      }
+         params: {
+           transfer: {
+             user: User.find_by(uid: 'transfer_submitter_id')
+           }
+         }
     assert_response :success
     assert_equal 'create', @controller.action_name
-    assert_match "Error saving transfer", response.body
+    assert_match 'Error saving transfer', response.body
     assert_equal original_count, Transfer.count
   end
 
@@ -287,13 +287,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     create_transfer_with_file
     sign_in users(:basic)
     post transfer_files_path,
-      params: {
-        id: Transfer.last.id,
-        transfer: {
-          file_ids: [Transfer.last.files.first.id]
-        },
-        thesis: Thesis.last.id
-      }
+         params: {
+           id: Transfer.last.id,
+           transfer: {
+             file_ids: [Transfer.last.files.first.id]
+           },
+           thesis: Thesis.last.id
+         }
     follow_redirect!
     assert_equal path, '/'
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -303,13 +303,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     create_transfer_with_file
     sign_in users(:transfer_submitter)
     post transfer_files_path,
-      params: {
-        id: Transfer.last.id,
-        transfer: {
-          file_ids: [Transfer.last.files.first.id]
-        },
-        thesis: theses(:one).id
-      }
+         params: {
+           id: Transfer.last.id,
+           transfer: {
+             file_ids: [Transfer.last.files.first.id]
+           },
+           thesis: theses(:one).id
+         }
     follow_redirect!
     assert_equal path, '/'
     assert_select 'div.alert', text: 'Not authorized.', count: 1
@@ -319,13 +319,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     create_transfer_with_file
     sign_in users(:processor)
     post transfer_files_path,
-      params: {
-        id: Transfer.last.id,
-        transfer: {
-          file_ids: [Transfer.last.files.first.id]
-        },
-        thesis: theses(:one).id
-      }
+         params: {
+           id: Transfer.last.id,
+           transfer: {
+             file_ids: [Transfer.last.files.first.id]
+           },
+           thesis: theses(:one).id
+         }
     follow_redirect!
     assert_equal path, transfer_path(Transfer.last)
     assert_select 'div.alert.success', count: 1
@@ -337,13 +337,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     create_transfer_with_file
     sign_in users(:thesis_admin)
     post transfer_files_path,
-      params: {
-        id: Transfer.last.id,
-        transfer: {
-          file_ids: [Transfer.last.files.first.id]
-        },
-        thesis: theses(:one).id
-      }
+         params: {
+           id: Transfer.last.id,
+           transfer: {
+             file_ids: [Transfer.last.files.first.id]
+           },
+           thesis: theses(:one).id
+         }
     follow_redirect!
     assert_equal path, transfer_path(Transfer.last)
     assert_select 'div.alert.success', count: 1
@@ -355,13 +355,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     create_transfer_with_file
     sign_in users(:admin)
     post transfer_files_path,
-      params: {
-        id: Transfer.last.id,
-        transfer: {
-          file_ids: [Transfer.last.files.first.id]
-        },
-        thesis: theses(:one).id
-      }
+         params: {
+           id: Transfer.last.id,
+           transfer: {
+             file_ids: [Transfer.last.files.first.id]
+           },
+           thesis: theses(:one).id
+         }
     follow_redirect!
     assert_equal path, transfer_path(Transfer.last)
     assert_select 'div.alert.success', count: 1
@@ -374,19 +374,19 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:processor)
     assert_raises(NoMethodError) do
       post transfer_files_path,
-        params: {
-          id: Transfer.last.id,
-          thesis: theses(:one).id
-        }
+           params: {
+             id: Transfer.last.id,
+             thesis: theses(:one).id
+           }
     end
     assert_raises(ActiveRecord::RecordNotFound) do
       post transfer_files_path,
-        params: {
-          id: Transfer.last.id,
-          transfer: {
-            file_ids: [Transfer.last.files.first.id]
-          }
-        }
+           params: {
+             id: Transfer.last.id,
+             transfer: {
+               file_ids: [Transfer.last.files.first.id]
+             }
+           }
     end
   end
 
@@ -397,13 +397,13 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     assert_equal @transfer.unassigned_files, 1
 
     post transfer_files_path,
-      params: {
-        id: @transfer.id,
-        transfer: {
-          file_ids: [@transfer.files.first.id]
-        },
-        thesis: theses(:one).id
-      }
+         params: {
+           id: @transfer.id,
+           transfer: {
+             file_ids: [@transfer.files.first.id]
+           },
+           thesis: theses(:one).id
+         }
     assert_equal @transfer.unassigned_files, 0
   end
 
@@ -417,16 +417,16 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     assert @response.body.include?(rails_blob_path(@transfer.files.first, disposition: 'inline'))
 
     post transfer_files_path,
-      params: {
-        id: @transfer.id,
-        transfer: {
-          file_ids: [@transfer.files.first.id]
-        },
-        thesis: theses(:one).id
-      }
+         params: {
+           id: @transfer.id,
+           transfer: {
+             file_ids: [@transfer.files.first.id]
+           },
+           thesis: theses(:one).id
+         }
     assert_equal @transfer.unassigned_files, 0
     follow_redirect!
-    
+
     refute @response.body.include?(rails_blob_path(@transfer.files.first, disposition: 'inline'))
   end
 
@@ -440,14 +440,14 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     assert @response.body.include?(rails_blob_path(@transfer.files.first, disposition: 'inline'))
 
     post transfer_files_path,
-      params: {
-        id: @transfer.id,
-        transfer: {
-          file_ids: [@transfer.files.first.id]
-        },
-        thesis: theses(:one).id,
-        view_all: 'true'
-      }
+         params: {
+           id: @transfer.id,
+           transfer: {
+             file_ids: [@transfer.files.first.id]
+           },
+           thesis: theses(:one).id,
+           view_all: 'true'
+         }
     assert_equal @transfer.unassigned_files, 0
     follow_redirect!
 

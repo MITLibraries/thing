@@ -63,7 +63,7 @@ class DegreeTest < ActiveSupport::TestCase
     assert degree.valid?
   end
 
-  test 'valid without degree type' do 
+  test 'valid without degree type' do
     degree = degrees(:one)
     degree.degree_type_id = nil
     assert degree.valid?

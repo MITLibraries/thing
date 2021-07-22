@@ -29,10 +29,10 @@ class Degree < ApplicationRecord
         name_dw: row['Degree Desc'],
         abbreviation: row['Degree Type']
       )
-      Rails.logger.warn("New degree created, requires Processor attention: " + new_degree.code_dw)
-      return new_degree
+      Rails.logger.warn('New degree created, requires Processor attention: ' + new_degree.code_dw)
+      new_degree
     else
-      return degree
+      degree
     end
   end
 end

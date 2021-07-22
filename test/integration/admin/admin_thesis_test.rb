@@ -54,11 +54,9 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     new_title = 'yoyos are cool'
     assert_not_equal thesis.title, new_title
 
-    patch admin_thesis_path(thesis), 
-      params: { thesis: { user_ids: [ User.first.id ], 
-                          title: new_title
-                        } 
-              }
+    patch admin_thesis_path(thesis),
+          params: { thesis: { user_ids: [User.first.id],
+                              title: new_title } }
 
     thesis.reload
     assert_response :redirect
@@ -76,16 +74,14 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     # model does some before-creation logic to combine the month and year into
     # the grad_date attribute on the model instance.
     post admin_theses_path,
-      params: { thesis: { user_ids: [ user.id ],
-                          department_ids: [ Department.first.id ],
-                          degree_ids: [ Degree.first.id ],
-                          advisor_ids: [ Advisor.first.id ],
-                          title: 'yoyos are cool',
-                          abstract: 'We discovered it with science',
-                          graduation_month: 'June',
-                          graduation_year: Date.today.year
-                        },
-              }
+         params: { thesis: { user_ids: [user.id],
+                             department_ids: [Department.first.id],
+                             degree_ids: [Degree.first.id],
+                             advisor_ids: [Advisor.first.id],
+                             title: 'yoyos are cool',
+                             abstract: 'We discovered it with science',
+                             graduation_month: 'June',
+                             graduation_year: Date.today.year } }
     assert_equal orig_count + 1, Thesis.count
     assert_equal 'yoyos are cool', Thesis.last.title
     assert_equal 'We discovered it with science', Thesis.last.abstract
@@ -143,7 +139,7 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     mock_auth(users(:admin))
     t = theses(:one)
     get "/admin/theses/#{t.id}"
-    assert_select "a[href=?]", "/admin/holds/new?thesis_id=#{t.id}"
+    assert_select 'a[href=?]', "/admin/holds/new?thesis_id=#{t.id}"
   end
 
   test 'can assign advisors to theses via thesis panel' do
@@ -153,8 +149,8 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     thesis = Thesis.first
     assert_equal thesis.advisors.count, 0
     patch admin_thesis_path(thesis),
-      params: { thesis: { user_ids: [user.id],
-                          advisor_ids: [needle.id] } }
+          params: { thesis: { user_ids: [user.id],
+                              advisor_ids: [needle.id] } }
     thesis.reload
     assert_equal thesis.advisors.count, 1
     assert_equal needle.name, thesis.advisors.first.name
@@ -168,8 +164,8 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     assert_not_equal needle.id, thesis.copyright_id
 
     patch admin_thesis_path(thesis),
-      params: { thesis: { user_ids: [user.id],
-                          copyright_id: needle.id } }
+          params: { thesis: { user_ids: [user.id],
+                              copyright_id: needle.id } }
     thesis.reload
     assert_equal needle.id, thesis.copyright_id
   end
@@ -182,8 +178,8 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     assert_not_equal needle.id, thesis.license_id
 
     patch admin_thesis_path(thesis),
-      params: { thesis: { user_ids: [user.id],
-                          license_id: needle.id } }
+          params: { thesis: { user_ids: [user.id],
+                              license_id: needle.id } }
     thesis.reload
     assert_equal needle.id, thesis.license_id
   end
@@ -196,11 +192,8 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       assert_emails 0 do
         patch admin_thesis_path(thesis),
-          params: { thesis: { user_ids: [ User.first.id ],
-                              title: 'new title'
-                            }
-                  }
-
+              params: { thesis: { user_ids: [User.first.id],
+                                  title: 'new title' } }
       end
     end
   end

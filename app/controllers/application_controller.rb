@@ -26,6 +26,7 @@ class ApplicationController < ActionController::Base
   def ensure_domain
     return unless ENV['PREFERRED_DOMAIN']
     return if request.host == ENV['PREFERRED_DOMAIN']
+
     Rails.logger.info("Handling Domain Redirect: #{request.host}")
     redirect_to "https://#{ENV['PREFERRED_DOMAIN']}", status: :moved_permanently
   end
