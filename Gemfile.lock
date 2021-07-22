@@ -209,6 +209,9 @@ GEM
       hashie (>= 3.4.6)
       rack (>= 1.6.2, < 3)
       rack-protection
+    omniauth-rails_csrf_protection (1.0.0)
+      actionpack (>= 4.2)
+      omniauth (~> 2.0)
     omniauth-saml (2.0.0)
       omniauth (~> 2.0)
       ruby-saml (~> 1.9)
@@ -363,6 +366,7 @@ DEPENDENCIES
   listen
   lograge
   mitlibraries-theme
+  omniauth-rails_csrf_protection
   omniauth-saml
   paper_trail
   pg

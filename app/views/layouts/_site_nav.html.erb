@@ -36,7 +36,7 @@
             <%= link_to("Sign out", destroy_user_session_path, method: :delete, id: "sign_in", class: 'action-auth')  %>
           <% else %>
             <% if Rails.configuration.fake_auth_enabled %>
-              <%= link_to("Sign in", user_developer_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
+              <%= link_to("Sign in", user_developer_omniauth_authorize_path, id: "sign_in", class: 'action-auth', method: :post) %>
             <% else %>
               <%= link_to("Sign in", user_saml_omniauth_authorize_path, id: "sign_in", class: 'action-auth') %>
             <% end %>
