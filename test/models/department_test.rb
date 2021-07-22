@@ -104,14 +104,14 @@ class DepartmentTest < ActiveSupport::TestCase
 
   test 'finds existing department from csv' do
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     department = Department.from_csv(row)
     assert_equal departments(:one), department
   end
 
   test 'creates department from csv with all expected attributes' do
     filepath = 'test/fixtures/files/registrar_data_thesis_new.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     assert_not(Department.find_by(code_dw: 'UBW'))
     department = Department.from_csv(row)
     assert_equal 'UBW', department.code_dw

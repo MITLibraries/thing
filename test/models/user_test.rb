@@ -162,14 +162,14 @@ class UserTest < ActiveSupport::TestCase
 
   test 'finds existing user from csv' do
     filepath = 'test/fixtures/files/registrar_data_user_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     user = User.create_or_update_from_csv(row)
     assert_equal users(:yo), user
   end
 
   test 'creates user from csv with all attributes' do
     filepath = 'test/fixtures/files/registrar_data_user_new.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     assert_not(User.find_by(kerberos_id: 'finleyjessica'))
     user = User.create_or_update_from_csv(row)
     assert_equal 'finleyjessica', user.kerberos_id
@@ -183,7 +183,7 @@ class UserTest < ActiveSupport::TestCase
 
   test 'updates user from csv' do
     filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     user = User.create_or_update_from_csv(row)
     user.reload
     assert_equal 'New', user.given_name
@@ -195,7 +195,7 @@ class UserTest < ActiveSupport::TestCase
 
   test 'only updates preferred_name from csv if blank' do
     filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     user = users(:yo)
     user.update(preferred_name: 'Old Preferred Name')
     User.create_or_update_from_csv(row)

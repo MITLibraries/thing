@@ -4,7 +4,7 @@ require 'open-uri'
 namespace :db do
   desc 'Seed the database with degrees from a Degree Seeds CSV file'
   task :seed_degrees, [:file_url] => :environment do |_t, args|
-    csv_data = URI.open(args[:file_url])
+    csv_data = URI.parse(args[:file_url]).open
     CSV.new(csv_data, encoding: 'bom|utf-8', headers: true).each.with_index(2) do |row, i|
       Rails.logger.info("Processing row #{i}")
       degree = Degree.from_csv(row)
@@ -22,7 +22,7 @@ namespace :db do
 
   desc 'Seed the database with departments from a Department Seeds CSV file'
   task :seed_departments, [:file_url] => :environment do |_t, args|
-    csv_data = URI.open(args[:file_url])
+    csv_data = URI.parse(args[:file_url]).open
     CSV.new(csv_data, encoding: 'bom|utf-8', headers: true).each.with_index(2) do |row, i|
       Rails.logger.info("Processing row #{i}")
       department = Department.from_csv(row)

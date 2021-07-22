@@ -407,7 +407,7 @@ class ThesisTest < ActiveSupport::TestCase
 
   test 'finds existing thesis from csv' do
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     user = users(:yo)
     user.update(theses: [theses(:one)])
     thesis = Thesis.create_or_update_from_csv(user, degrees(:one), departments(:one), Date.new(2017, 9, 1), row)
@@ -418,7 +418,7 @@ class ThesisTest < ActiveSupport::TestCase
 
   test 'creates thesis from csv with expected attributes' do
     filepath = 'test/fixtures/files/registrar_data_thesis_new.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     user = users(:yo)
     user.update(theses: [])
     thesis = Thesis.create_or_update_from_csv(user, degrees(:one), departments(:one), Date.new(2017, 9, 1), row)
@@ -435,7 +435,7 @@ class ThesisTest < ActiveSupport::TestCase
 
   test 'updates all expected attributes of existing thesis from csv' do
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     thesis = theses(:one)
     thesis.update(
       coauthors: '',
@@ -455,7 +455,7 @@ class ThesisTest < ActiveSupport::TestCase
 
   test 'only updates existing attributes from CSV if needed' do
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     thesis = theses(:one)
     thesis.update(
       coauthors: 'My co-author; My new co-author',
@@ -476,7 +476,7 @@ class ThesisTest < ActiveSupport::TestCase
   test 'raises error if multiple theses found from CSV' do
     assert_raise RuntimeError do
       filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
-      row = CSV.readlines(open(filepath), headers: true).first
+      row = CSV.readlines(File.open(filepath), headers: true).first
       Thesis.create_or_update_from_csv(users(:yo), degrees(:one), departments(:one), Date.new(2017, 9, 1), row)
     end
   end
