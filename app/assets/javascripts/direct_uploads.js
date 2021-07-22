@@ -1,12 +1,14 @@
 // direct_uploads.js
 /* original source:
-   http://edgeguides.rubyonrails.org/active_storage_overview.html#example */
+   http://edgeguides.rubyonrails.org/active_storage_overview.html#example
+   listener targets updated according to:
+   https://github.com/marinosoftware/active_storage_drag_and_drop#javascript-events */
 
 var storageErrorDetected = false;
 var completedInTransfer = 0;
 var filesInTransfer = 0;
 
-addEventListener("direct-uploads:start", event => {
+addEventListener("dnd-uploads:start", event => {
   location.hash = "direct-upload-panel"
   document.getElementById("direct-upload-panel").insertAdjacentHTML("afterbegin", `
     <div class="direct-upload__summary">
@@ -18,7 +20,7 @@ addEventListener("direct-uploads:start", event => {
   document.getElementById("direct-upload-status").innerHTML = `${completedInTransfer} of ${filesInTransfer} files have been transferred.`
 })
 
-addEventListener("direct-upload:initialize", event => {
+addEventListener("dnd-upload:initialize", event => {
   const { target, detail } = event
   const { id, file } = detail
   filesInTransfer++
@@ -33,20 +35,20 @@ addEventListener("direct-upload:initialize", event => {
   `)
 })
 
-addEventListener("direct-upload:start", event => {
+addEventListener("dnd-upload:start", event => {
   const { id } = event.detail
   const element = document.getElementById(`direct-upload-${id}`)
   element.classList.remove("direct-upload--pending")
 })
 
-addEventListener("direct-upload:progress", event => {
+addEventListener("dnd-upload:progress", event => {
   const { id, progress } = event.detail
   const progressElement = document.getElementById(`direct-upload-progress-${id}`)
   progressElement.style.width = `${progress}%`
   progressElement.style.background = "#008700"
 })
 
-addEventListener("direct-upload:error", event => {
+addEventListener("dnd-upload:error", event => {
   event.preventDefault()
   const { id, error } = event.detail
   const element = document.getElementById(`direct-upload-${id}`)
@@ -61,7 +63,7 @@ addEventListener("direct-upload:error", event => {
   `)
 })
 
-addEventListener("direct-upload:end", event => {
+addEventListener("dnd-upload:end", event => {
   const { id } = event.detail
   const element = document.getElementById(`direct-upload-${id}`)
   element.classList.add("direct-upload--complete")
@@ -72,7 +74,7 @@ addEventListener("direct-upload:end", event => {
   document.getElementById("direct-upload-status").innerHTML = `${completedInTransfer} of ${filesInTransfer} files have been transferred.`
 })
 
-addEventListener("direct-uploads:end", event => {
+addEventListener("dnd-uploads:end", event => {
   // Workaround for https://github.com/rails/rails/issues/31860
   // only do the submit hack if we didn't detect an error or the user won't see
   // our in-app messages and will instead see a throw exception.
