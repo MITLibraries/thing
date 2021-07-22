@@ -28,9 +28,9 @@ class DepartmentThesis < ApplicationRecord
     was_primary = thesis.department_theses.find_by(primary: true)
     if primary_value && was_primary
       was_primary.update!(primary: false)
-      Rails.logger.info('Old primary department unset: ' + was_primary.department.code_dw)
+      Rails.logger.info("Old primary department unset: #{was_primary.department.code_dw}")
     end
     update!(primary: primary_value)
-    Rails.logger.info('Primary department set to: ' + department.code_dw)
+    Rails.logger.info("Primary department set to: #{department.code_dw}")
   end
 end

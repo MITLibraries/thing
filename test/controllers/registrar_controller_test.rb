@@ -106,7 +106,7 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
     registrar = Registrar.last
     registrar.graduation_list.attach(io: File.open('test/fixtures/files/registrar.csv'), filename: 'registrar.csv')
     assert_enqueued_with(job: RegistrarImportJob) do
-      get '/harvest/' + registrar.id.to_s
+      get "/harvest/#{registrar.id}"
     end
   end
 end

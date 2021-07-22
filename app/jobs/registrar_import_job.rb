@@ -7,7 +7,7 @@ class RegistrarImportJob < ActiveJob::Base
     results = { read: 0, processed: 0, errors: [] }
 
     CSV.new(registrar.graduation_list.download, headers: true).each.with_index(1) do |row, i|
-      Rails.logger.info('Parsing row ' + i.to_s)
+      Rails.logger.info("Parsing row #{i}")
       results[:read] += 1
 
       # Check CSV for Kerberos ID, required to process data

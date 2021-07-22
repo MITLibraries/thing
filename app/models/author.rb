@@ -23,7 +23,7 @@ class Author < ApplicationRecord
     graduated = row['Degree Status'] == 'AW'
     unless graduation_confirmed == graduated
       update!(graduation_confirmed: graduated)
-      Rails.logger.info('Author ' + user.name + ' graduation status updated to ' + graduated.to_s)
+      Rails.logger.info("Author #{user.name} graduation status updated to #{graduated}")
     end
   end
 

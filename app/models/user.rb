@@ -24,7 +24,7 @@ class User < ApplicationRecord
   before_validation(on: :create) do
     self.kerberos_id = kerb unless kerberos_id
     self.display_name = name unless display_name
-    self.uid = kerberos_id + '@mit.edu' unless uid
+    self.uid = "#{kerberos_id}@mit.edu" unless uid
   end
 
   # Display name should be aligned with preferred name
@@ -56,7 +56,7 @@ class User < ApplicationRecord
   has_many :submitters
   has_many :departments, through: :submitters
 
-  ROLES = %w[basic processor thesis_admin]
+  ROLES = %w[basic processor thesis_admin].freeze
   validates_inclusion_of :role, in: ROLES
 
   # `uid` is a unique ID that comes back from OmniAuth (which gets it from
@@ -92,7 +92,7 @@ class User < ApplicationRecord
         middle_name: row['Middle Name'],
         preferred_name: row['Full Name']
       )
-      Rails.logger.info('New user created: ' + new_user.name)
+      Rails.logger.info("New user created: #{new_user.name}")
       new_user
     else
       user.email = row['Email Address'].downcase
@@ -101,7 +101,7 @@ class User < ApplicationRecord
       user.middle_name = row['Middle Name']
       user.preferred_name = row['Full Name'] if user.preferred_name.blank?
       user.save
-      Rails.logger.info('User updated: ' + user.name)
+      Rails.logger.info("User updated: #{user.name}")
       user
     end
   end
@@ -140,7 +140,7 @@ class User < ApplicationRecord
   # Certain ability checks may be easier when testing for a boolean, rather
   # than the length of the submittable_departments list.
   def submitter?
-    return true if submittable_departments.count > 0
+    return true if submittable_departments.count.positive?
   end
 
   # Users with the "thesis_admin" role, or the admin flag, can submit
@@ -158,6 +158,6 @@ class User < ApplicationRecord
 
   # For our purposes, kerberos_id is EPPN (uid) without '@mit.edu'
   def kerb
-    uid.delete_suffix('@mit.edu') if uid
+    uid&.delete_suffix('@mit.edu')
   end
 end

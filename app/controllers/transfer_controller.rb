@@ -39,12 +39,12 @@ class TransferController < ApplicationController
   def files
     transfer = Transfer.find(params[:id])
     thesis = Thesis.find(params[:thesis])
-    flash[:success] = ("The following files have been assigned to '" + thesis.title + "'<br><br>").html_safe
+    flash[:success] = "The following files have been assigned to '#{thesis.title}'<br><br>".html_safe
     filelist = params[:transfer][:file_ids]
     filelist.each do |file|
       file = transfer.files.find_by id: file
       thesis.files.attach(file.blob)
-      flash[:success] += (file.filename.to_s + '<br>').html_safe
+      flash[:success] += "#{file.filename}<br>".html_safe
     end
     redirect_to transfer_path(transfer.id, view_all: params[:view_all] || 'false')
   end

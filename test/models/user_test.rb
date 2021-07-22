@@ -290,7 +290,7 @@ class UserTest < ActiveSupport::TestCase
     bad = users(:bad)
     assert(transfer_submitter.departments.count == 2)
     assert(thesis_admin.departments.count == 1)
-    assert(bad.departments.count == 0)
+    assert(bad.departments.count.zero?)
   end
 
   test 'users have a submitter? helper method' do

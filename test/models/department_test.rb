@@ -90,7 +90,7 @@ class DepartmentTest < ActiveSupport::TestCase
     department_three = departments(:three)
     assert(department_one.users.count == 1)
     assert(department_two.users.count == 2)
-    assert(department_three.users.count == 0)
+    assert(department_three.users.count.zero?)
   end
 
   test 'can have zero or more submitters' do
@@ -99,7 +99,7 @@ class DepartmentTest < ActiveSupport::TestCase
     department_three = departments(:three)
     assert(department_one.submitters.count == 1)
     assert(department_two.submitters.count == 2)
-    assert(department_three.submitters.count == 0)
+    assert(department_three.submitters.count.zero?)
   end
 
   test 'finds existing department from csv' do

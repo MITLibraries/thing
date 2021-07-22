@@ -31,7 +31,7 @@ class Hold < ApplicationRecord
   after_save :update_thesis_status
 
   def degrees
-    thesis.degrees.map { |d| d.name_dw }.join("\n")
+    thesis.degrees.map(&:name_dw).join("\n")
   end
 
   def grad_date
@@ -39,7 +39,7 @@ class Hold < ApplicationRecord
   end
 
   def author_names
-    thesis.users.map { |u| u.name }.join('; ')
+    thesis.users.map(&:name).join('; ')
   end
 
   def created_by

@@ -43,9 +43,9 @@ class Thesis < ApplicationRecord
   has_many_attached :files
 
   accepts_nested_attributes_for :users
-  accepts_nested_attributes_for :advisors, allow_destroy: :true
-  accepts_nested_attributes_for :department_theses, allow_destroy: :true
-  accepts_nested_attributes_for :files_attachments, allow_destroy: :true
+  accepts_nested_attributes_for :advisors, allow_destroy: true
+  accepts_nested_attributes_for :department_theses, allow_destroy: true
+  accepts_nested_attributes_for :files_attachments, allow_destroy: true
 
   attr_accessor :graduation_year, :graduation_month
 
@@ -58,7 +58,7 @@ class Thesis < ApplicationRecord
     degrees: 'Required - Please select your primary degree.',
     preferred_name: 'Required - Please confirm your name.',
     title: 'Required - Please provide your thesis title.'
-  }
+  }.freeze
 
   validates :graduation_year, presence:
     { message: VALIDATION_MSGS[:graduation_year] }
@@ -76,16 +76,16 @@ class Thesis < ApplicationRecord
 
   validates :users, presence: true
 
-  STATUS_OPTIONS = %w[active withdrawn downloaded]
+  STATUS_OPTIONS = %w[active withdrawn downloaded].freeze
   validates_inclusion_of :status, in: STATUS_OPTIONS
 
   PUBLICATION_STATUS_OPTIONS = ['Not ready for publication',
                                 'Publication review',
                                 'Pending publication',
-                                'Published']
+                                'Published'].freeze
   validates_inclusion_of :publication_status, in: PUBLICATION_STATUS_OPTIONS
 
-  VALID_MONTHS = %w[February May June September]
+  VALID_MONTHS = %w[February May June September].freeze
 
   before_save :combine_graduation_date, :update_status
   after_find :split_graduation_date
@@ -124,7 +124,7 @@ class Thesis < ApplicationRecord
   # Returns a true/false value (rendered as "yes" or "no") if all authors
   # have graduated. Any author having not graduated results in a false/"No".
   def authors_graduated?
-    authors.map { |a| a.graduation_confirmed? }.reduce(:&)
+    authors.map(&:graduation_confirmed?).reduce(:&)
   end
 
   # This contains the logic for a thesis to have its status set to either
@@ -203,20 +203,20 @@ class Thesis < ApplicationRecord
         title: row['Thesis Title'],
         users: [author]
       )
-      Rails.logger.info('New thesis created: ' + author.name + ', ' + grad_date.to_s)
+      Rails.logger.info("New thesis created: #{author.name}, #{grad_date}")
       new_thesis
     elsif theses.size == 1
       thesis = theses.first
       if thesis.coauthors.blank?
         thesis.coauthors = row['Thesis Coauthor']
       elsif thesis.coauthors.exclude? row['Thesis Coauthor'].to_s
-        thesis.coauthors += '; ' + row['Thesis Coauthor']
+        thesis.coauthors += "; #{row['Thesis Coauthor']}"
       end
       thesis.degrees << degree unless thesis.degrees.include?(degree)
       thesis.departments << department unless thesis.departments.include?(department)
       thesis.title = row['Thesis Title'] if thesis.title.blank?
       thesis.save
-      Rails.logger.info('Thesis updated: ' + author.name + ', ' + grad_date.to_s)
+      Rails.logger.info("Thesis updated: #{author.name}, #{grad_date}")
       thesis
     else
       raise 'Multiple theses found'

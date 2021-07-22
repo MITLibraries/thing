@@ -38,7 +38,7 @@ class ThesisController < ApplicationController
 
   def edit
     @thesis = Thesis.find(params[:id])
-    @thesis.association(:advisors).add_to_target(Advisor.new) if @thesis.advisors.count == 0
+    @thesis.association(:advisors).add_to_target(Advisor.new) if @thesis.advisors.count.zero?
   end
 
   def select
@@ -55,9 +55,10 @@ class ThesisController < ApplicationController
 
   def start
     editable_theses = current_user.editable_theses
-    if 0 == editable_theses.count
+    case editable_theses.count
+    when 0
       redirect_to new_thesis_path
-    elsif 1 == editable_theses.count
+    when 1
       redirect_to edit_thesis_path(editable_theses.first.id)
     end
   end
@@ -82,7 +83,7 @@ class ThesisController < ApplicationController
     removed = deleted_file_list
     if thesis.update(thesis_params)
       flash[:success] = "<p>Your changes to '#{thesis.title}' have been saved.</p>".html_safe
-      if removed.count > 0
+      if removed.count.positive?
         flash[:success] += '<p>The following files were removed from this thesis. They can still be found attached to their original transfer, via the following links:</p><ul>'.html_safe
         removed.each do |r|
           flash[:success] += "<li><a href='/transfer/#{r['transfer_id']}'>#{r['filename']}</a></li>".html_safe

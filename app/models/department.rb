@@ -30,7 +30,7 @@ class Department < ApplicationRecord
         code_dw: row['Degree Department'],
         name_dw: row['Dept Name In Commencement Bk']
       )
-      Rails.logger.warn('New department created, requires Processor attention: ' + new_department.code_dw)
+      Rails.logger.warn("New department created, requires Processor attention: #{new_department.code_dw}")
       new_department
     else
       department

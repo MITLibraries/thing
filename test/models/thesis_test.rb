@@ -356,7 +356,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert thesis.holds.count == 1
 
     thesis = theses(:one)
-    assert thesis.holds.count == 0
+    assert thesis.holds.count.zero?
   end
 
   test 'thesis holds have readable attributes' do
@@ -401,7 +401,7 @@ class ThesisTest < ActiveSupport::TestCase
     h = t1.holds.first
     t2.holds = [h]
     assert t2.holds.count == 1
-    assert t1.holds.count == 0
+    assert t1.holds.count.zero?
     assert_difference('Thesis.count', -1) { t1.destroy }
   end
 

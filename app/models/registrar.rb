@@ -14,7 +14,7 @@ class Registrar < ApplicationRecord
 
   VALIDATION_MSGS = {
     graduation_list: 'Required - Attaching a CSV file is required.'
-  }
+  }.freeze
 
   validates :graduation_list, presence: true
 end

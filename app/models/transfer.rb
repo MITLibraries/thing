@@ -23,7 +23,7 @@ class Transfer < ApplicationRecord
     graduation_year: 'Required - Please select degree year.',
     graduation_month: 'Required - Please select degree month.',
     files: 'Required - Attaching at least one file is required.'
-  }
+  }.freeze
 
   validates :department, presence: { message: VALIDATION_MSGS[:department] }
   validates :graduation_year, presence:
@@ -34,7 +34,7 @@ class Transfer < ApplicationRecord
   validate :valid_month?
   validates :files, presence: true
 
-  VALID_MONTHS = %w[February May June September]
+  VALID_MONTHS = %w[February May June September].freeze
 
   before_create :combine_graduation_date
   after_find :split_graduation_date
