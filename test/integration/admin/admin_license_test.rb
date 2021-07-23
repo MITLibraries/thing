@@ -40,7 +40,7 @@ class AdminLicenseDashboardTest < ActionDispatch::IntegrationTest
     assert_not_equal record.display_description, newvalue
 
     patch admin_license_path(record),
-      params: { license: { display_description: newvalue } }
+          params: { license: { display_description: newvalue } }
     record.reload
     assert_equal record.display_description, newvalue
   end

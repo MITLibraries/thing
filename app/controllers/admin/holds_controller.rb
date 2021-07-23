@@ -47,7 +47,7 @@ module Admin
       authorize_resource(resource)
       resource.thesis_id = params[:thesis_id]
       render locals: {
-        page: Administrate::Page::Form.new(dashboard, resource),
+        page: Administrate::Page::Form.new(dashboard, resource)
       }
     end
   end

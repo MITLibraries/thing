@@ -12,15 +12,16 @@ module Admin
 
     def require_user
       return if current_user
+
       redirect_to root_path, alert: 'Please login to continue'
     end
 
     def authorized_or_redirect
       return if can?(action_name, resource_name)
-      
+
       redirect_to root_path, alert: 'Not authorized.'
     end
-   
+
     # Hide links to actions if the user is not allowed to do them.
     # This is an override of an Administrate method to work with CanCan
     def show_action?(action, resource)

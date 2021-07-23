@@ -16,15 +16,14 @@ class Transfer < ApplicationRecord
 
   has_many_attached :files
 
-  attr_accessor :transfer_certified
-  attr_accessor :graduation_year, :graduation_month
+  attr_accessor :transfer_certified, :graduation_year, :graduation_month
 
   VALIDATION_MSGS = {
     department: 'Required - Please specify the department submitting the transfer.',
     graduation_year: 'Required - Please select degree year.',
     graduation_month: 'Required - Please select degree month.',
-    files: 'Required - Attaching at least one file is required.',
-  }
+    files: 'Required - Attaching at least one file is required.'
+  }.freeze
 
   validates :department, presence: { message: VALIDATION_MSGS[:department] }
   validates :graduation_year, presence:
@@ -35,7 +34,7 @@ class Transfer < ApplicationRecord
   validate :valid_month?
   validates :files, presence: true
 
-  VALID_MONTHS = ['February', 'May', 'June', 'September']
+  VALID_MONTHS = %w[February May June September].freeze
 
   before_create :combine_graduation_date
   after_find :split_graduation_date
@@ -49,15 +48,17 @@ class Transfer < ApplicationRecord
   # We expect that graduation_year will be a String (in which case to_s is a
   # no-op), but if it's an Integer this will also work.
   def valid_year?
-    return if (/^\d{4}$/.match(graduation_year.to_s) &&
-               graduation_year.to_i >= 1861)
+    return if /^\d{4}$/.match(graduation_year.to_s) &&
+              graduation_year.to_i >= 1861
+
     errors.add(:graduation_year, 'Invalid graduation year')
   end
 
   def valid_month?
     return if VALID_MONTHS.include?(graduation_month)
+
     errors.add(:graduation_month,
-      'Invalid graduation month; must be May, June, September, or February')
+               'Invalid graduation month; must be May, June, September, or February')
   end
 
   # Combine the UI supplied month and year into a datetime object
@@ -73,7 +74,7 @@ class Transfer < ApplicationRecord
 
   def unassigned_files
     count = 0
-    self.files.blobs.all.each do |blob|
+    files.blobs.all.each do |blob|
       count += 1 if blob.attachment_ids.count == 1
     end
     count

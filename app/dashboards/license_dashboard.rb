@@ -1,4 +1,4 @@
-require "administrate/base_dashboard"
+require 'administrate/base_dashboard'
 
 class LicenseDashboard < Administrate::BaseDashboard
   # ATTRIBUTE_TYPES
@@ -14,7 +14,7 @@ class LicenseDashboard < Administrate::BaseDashboard
     license_type: Field::Text,
     url: Field::Text,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -23,31 +23,31 @@ class LicenseDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-  display_description
-  license_type
-  theses
-  id
+    display_description
+    license_type
+    theses
+    id
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
-  display_description
-  license_type
-  url
-  theses
-  id
-  created_at
-  updated_at
+    display_description
+    license_type
+    url
+    theses
+    id
+    created_at
+    updated_at
   ].freeze
 
   # FORM_ATTRIBUTES
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
-  display_description
-  license_type
-  url
+    display_description
+    license_type
+    url
   ].freeze
 
   # COLLECTION_FILTERS

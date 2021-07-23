@@ -57,14 +57,14 @@ class HoldTest < ActiveSupport::TestCase
 
   test 'only valid status values' do
     hold = holds(:valid)
-    hold.status = "active"
+    hold.status = 'active'
     assert(hold.valid?)
-    hold.status = "expired"
+    hold.status = 'expired'
     assert(hold.valid?)
-    hold.status = "released"
+    hold.status = 'released'
     assert(hold.valid?)
     assert_raises ArgumentError do
-      hold.status = "garbage"
+      hold.status = 'garbage'
     end
     hold.status = nil
     assert(hold.invalid?)
@@ -77,28 +77,28 @@ class HoldTest < ActiveSupport::TestCase
     hold.case_number = 2
     hold.save
     assert_equal hold.versions.count, 1
-    assert_equal hold.versions.last.event, "update"
+    assert_equal hold.versions.last.event, 'update'
   end
 
   test 'audit records include the changeset' do
     hold = holds(:valid)
     hold.save
-    hold.case_number = "2"
+    hold.case_number = '2'
     hold.save
     change = hold.versions.last
-    assert_equal change.changeset["case_number"], [nil, "2"]
+    assert_equal change.changeset['case_number'], [nil, '2']
   end
 
   test 'can list the create dates and names of the parent thesis files' do
     h = holds(:valid)
-    f = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     h.thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
     thesis_file = h.thesis.files.first
-    assert_equal "a_pdf.pdf", thesis_file.filename.to_s
+    assert_equal 'a_pdf.pdf', thesis_file.filename.to_s
     assert_includes h.dates_thesis_files_received, thesis_file.created_at.strftime('%Y-%m-%d')
-    assert_includes h.dates_thesis_files_received, "a_pdf.pdf"
+    assert_includes h.dates_thesis_files_received, 'a_pdf.pdf'
 
-    f2 = Rails.root.join('test','fixtures','files','registrar.csv')
+    f2 = Rails.root.join('test', 'fixtures', 'files', 'registrar.csv')
     h.thesis.files.attach(io: File.open(f2), filename: 'registrar.csv')
     create_dates = h.thesis.files.map { |file| file.created_at.strftime('%Y-%m-%d') }
     filenames = h.thesis.files.map { |file| file.filename.to_s }
@@ -113,12 +113,12 @@ class HoldTest < ActiveSupport::TestCase
 
   test 'can list associated grad date' do
     hold = holds(:valid)
-    assert_equal Date.parse("2017-09-01"), hold.grad_date
+    assert_equal Date.parse('2017-09-01'), hold.grad_date
   end
 
   test 'can list associated author names' do
     h = holds(:valid)
-    assert_equal "Student, Second; Yobot, Yo", h.author_names
+    assert_equal 'Student, Second; Yobot, Yo', h.author_names
   end
 
   test 'can access associated users' do

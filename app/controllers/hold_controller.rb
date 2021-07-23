@@ -12,6 +12,7 @@ class HoldController < ApplicationController
 
   def require_user
     return if current_user
+
     # Do NOT use ENV['FAKE_AUTH_ENABLED'] directly! Use the config. It performs
     # an additional check to make sure we are not on the production server.
     if Rails.configuration.fake_auth_enabled

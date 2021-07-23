@@ -34,7 +34,7 @@ class FilesIntegrationTest < ActionDispatch::IntegrationTest
     f1.purpose = 0
     f1.save
     refute_nil transfer.files.first.purpose
-    assert_equal transfer.files.first.purpose, "thesis_pdf"
+    assert_equal transfer.files.first.purpose, 'thesis_pdf'
   end
 
   test 'files can have a description' do
@@ -44,9 +44,9 @@ class FilesIntegrationTest < ActionDispatch::IntegrationTest
     transfer = Transfer.last
 
     f1 = transfer.files.first
-    f1.description = "Hallo!"
+    f1.description = 'Hallo!'
     f1.save
     refute_nil transfer.files.first.description
-    assert_equal transfer.files.first.description, "Hallo!"
+    assert_equal transfer.files.first.description, 'Hallo!'
   end
 end

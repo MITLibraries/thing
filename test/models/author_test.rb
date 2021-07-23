@@ -23,7 +23,7 @@ class AuthorTest < ActiveSupport::TestCase
 
   test 'sets graduation status to true if false in db and true in csv' do
     filepath = 'test/fixtures/files/registrar_data_user_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     author = authors(:one)
     refute author.graduation_confirmed
     author.set_graduated_from_csv(row)
@@ -33,7 +33,7 @@ class AuthorTest < ActiveSupport::TestCase
 
   test 'sets graduation status to false if true in db and false in csv' do
     filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     author = authors(:two)
     assert author.graduation_confirmed
     author.set_graduated_from_csv(row)
@@ -42,7 +42,7 @@ class AuthorTest < ActiveSupport::TestCase
 
   test 'leaves graduation status false if false in db and false in csv' do
     filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     author = authors(:one)
     refute author.graduation_confirmed
     author.set_graduated_from_csv(row)
@@ -52,7 +52,7 @@ class AuthorTest < ActiveSupport::TestCase
 
   test 'leaves graduation status true if true in db and true in csv' do
     filepath = 'test/fixtures/files/registrar_data_user_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     author = authors(:one)
     author.graduation_confirmed = true
     author.save

@@ -87,5 +87,4 @@ class DepartmentThesisTest < ActiveSupport::TestCase
     link.reload
     refute link.primary
   end
-
 end

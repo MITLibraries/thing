@@ -1,4 +1,4 @@
-require "administrate/base_dashboard"
+require 'administrate/base_dashboard'
 
 class HoldSourceDashboard < Administrate::BaseDashboard
   # ATTRIBUTE_TYPES
@@ -14,7 +14,7 @@ class HoldSourceDashboard < Administrate::BaseDashboard
     id: Field::Number,
     source: Field::Text,
     created_at: Field::Date,
-    updated_at: Field::Date,
+    updated_at: Field::Date
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -23,28 +23,28 @@ class HoldSourceDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-  id
-  source
-  active_holds
-  expired_holds
-  holds
-  created_at
+    id
+    source
+    active_holds
+    expired_holds
+    holds
+    created_at
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
-  holds
-  id
-  created_at
-  updated_at
+    holds
+    id
+    created_at
+    updated_at
   ].freeze
 
   # FORM_ATTRIBUTES
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
-  source
+    source
   ].freeze
 
   # COLLECTION_FILTERS
@@ -66,6 +66,6 @@ class HoldSourceDashboard < Administrate::BaseDashboard
   #   "HoldSource ##{hold_source.id}"
   # end
   def display_resource(hold_source)
-    "#{hold_source.source}"
+    hold_source.source.to_s
   end
 end

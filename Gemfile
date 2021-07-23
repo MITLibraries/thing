@@ -43,6 +43,7 @@ group :development do
   gem 'dotenv-rails'
   gem 'listen'
   gem 'rubocop'
+  gem 'rubocop-rails'
   gem 'web-console'
 end
 

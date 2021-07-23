@@ -63,7 +63,7 @@ class DegreeTest < ActiveSupport::TestCase
     assert degree.valid?
   end
 
-  test 'valid without degree type' do 
+  test 'valid without degree type' do
     degree = degrees(:one)
     degree.degree_type_id = nil
     assert degree.valid?
@@ -71,14 +71,14 @@ class DegreeTest < ActiveSupport::TestCase
 
   test 'finds existing degree from csv' do
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     degree = Degree.from_csv(row)
     assert_equal degrees(:one), degree
   end
 
   test 'creates degree from csv with all expected attributes' do
     filepath = 'test/fixtures/files/registrar_data_thesis_new.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     assert_not(Degree.find_by(code_dw: 'UBWXYZ'))
     degree = Degree.from_csv(row)
     assert_equal 'UBWXYZ', degree.code_dw

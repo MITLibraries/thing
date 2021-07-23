@@ -7,7 +7,7 @@ module ActiveStorageAttachmentExtension
   extend ActiveSupport::Concern
 
   included do
-    enum purpose: [:thesis_pdf, :thesis_source, :thesis_supplementary_file,
-                   :proquest_form, :signature_page]
+    enum purpose: %i[thesis_pdf thesis_source thesis_supplementary_file
+                     proquest_form signature_page]
   end
 end

@@ -1,4 +1,4 @@
-require "administrate/base_dashboard"
+require 'administrate/base_dashboard'
 
 class DepartmentThesisDashboard < Administrate::BaseDashboard
   # ATTRIBUTE_TYPES
@@ -14,7 +14,7 @@ class DepartmentThesisDashboard < Administrate::BaseDashboard
     ),
     department: Field::BelongsTo,
     id: Field::Number,
-    primary: Field::Boolean,
+    primary: Field::Boolean
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -23,28 +23,28 @@ class DepartmentThesisDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-  thesis
-  department
-  primary
-  id
+    thesis
+    department
+    primary
+    id
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
-  thesis
-  department
-  primary
-  id
+    thesis
+    department
+    primary
+    id
   ].freeze
 
   # FORM_ATTRIBUTES
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
-  thesis
-  department
-  primary
+    thesis
+    department
+    primary
   ].freeze
 
   # COLLECTION_FILTERS

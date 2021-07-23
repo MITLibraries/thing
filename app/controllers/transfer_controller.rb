@@ -13,11 +13,10 @@ class TransferController < ApplicationController
     @transfer = Transfer.new(transfer_params)
     @transfer.user = current_user
     @transfer.files.attach(params[:transfer][:files])
-    if params[:transfer][:department_id]
-      @transfer.department = Department.find(params[:transfer][:department_id])
-    end
+    @transfer.department = Department.find(params[:transfer][:department_id]) if params[:transfer][:department_id]
     if @transfer.save
-      flash[:success] = "<h3>Success!</h3><p>#{@transfer.files.count} files have been transferred. You will receive an email confirmation with a list of the files you transferred.</p>"
+      flash[:success] =
+        "<h3>Success!</h3><p>#{@transfer.files.count} files have been transferred. You will receive an email confirmation with a list of the files you transferred.</p>"
       ReceiptMailer.transfer_receipt_email(@transfer, current_user).deliver_later
       redirect_to transfer_confirm_path
     else
@@ -28,23 +27,24 @@ class TransferController < ApplicationController
     # A virus detected prior to the Transfer being saved throws this error but
     # our application and the files in s3 are in a state where it is safe to
     # continue and investigate which file was problematic asynchronously
-    rescue Aws::S3::Errors::AccessDenied
-      flash[:error] = "We detected a potential problem with a file in your upload. Library staff will contact you with details when we have more details."
-      ReceiptMailer.transfer_receipt_email(@transfer, current_user).deliver_later
+  rescue Aws::S3::Errors::AccessDenied
+    flash[:error] =
+      'We detected a potential problem with a file in your upload. Library staff will contact you with details when we have more details.'
+    ReceiptMailer.transfer_receipt_email(@transfer, current_user).deliver_later
 
-      ReceiptMailer.virus_detected_email(@transfer).deliver_later
-      redirect_to transfer_confirm_path
+    ReceiptMailer.virus_detected_email(@transfer).deliver_later
+    redirect_to transfer_confirm_path
   end
 
   def files
     transfer = Transfer.find(params[:id])
     thesis = Thesis.find(params[:thesis])
-    flash[:success] = ("The following files have been assigned to '" + thesis.title + "'<br><br>").html_safe
+    flash[:success] = "The following files have been assigned to '#{thesis.title}'<br><br>".html_safe
     filelist = params[:transfer][:file_ids]
     filelist.each do |file|
       file = transfer.files.find_by id: file
       thesis.files.attach(file.blob)
-      flash[:success] += (file.filename.to_s + "<br>").html_safe
+      flash[:success] += "#{file.filename}<br>".html_safe
     end
     redirect_to transfer_path(transfer.id, view_all: params[:view_all] || 'false')
   end
@@ -60,13 +60,15 @@ class TransferController < ApplicationController
     # Load the Thesis records for the period covered by this Transfer (the
     # graduation month/year, and the department)
     @theses = Thesis.where('grad_date = ?', @transfer.grad_date)
-    @theses = @theses.includes(:departments).where("departments.name_dw = ?", @transfer.department.name_dw).references(:departments)
+    @theses = @theses.includes(:departments).where('departments.name_dw = ?',
+                                                   @transfer.department.name_dw).references(:departments)
   end
 
   private
 
   def require_user
     return if current_user
+
     # Do NOT use ENV['FAKE_AUTH_ENABLED'] directly! Use the config. It performs
     # an additional check to make sure we are not on the production server.
     if Rails.configuration.fake_auth_enabled
@@ -77,7 +79,7 @@ class TransferController < ApplicationController
   end
 
   def transfer_params
-    params.require(:transfer).permit(:graduation_month, :graduation_year, 
+    params.require(:transfer).permit(:graduation_month, :graduation_year,
                                      :department_id, :note, :file_ids)
   end
 end

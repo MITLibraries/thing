@@ -9,16 +9,12 @@ class Ability
     if user.present?
       @user = user
       # Admin users can do everything for all models
-      if user.admin?
-        can :manage, :all
-      end
+      can :manage, :all if user.admin?
 
       # Assign thesis_submitter rights directly to appropriate users as the
       # process that follows will not pick them up as it is not an explicitly
       # assigned role
-      if user.submitter?
-        transfer_submitter
-      end
+      transfer_submitter if user.submitter?
 
       # This line matches users' roles with the functions defined below,
       # giving them privileges accordingly.
@@ -52,8 +48,8 @@ class Ability
   def processor
     basic
 
-    can "index", :all
-    can "show", :all
+    can 'index', :all
+    can 'show', :all
 
     can :manage, :submitter
 
@@ -65,7 +61,7 @@ class Ability
     can :process_theses, Thesis
     can :process_theses_update, Thesis
     can :select, Thesis
-    
+
     can :read, Transfer
     can :select, Transfer
     can :files, Transfer
@@ -78,12 +74,12 @@ class Ability
   def thesis_admin
     processor
 
-    can :manage, :all  
-    cannot "destroy", :copyright
-    cannot "destroy", :degree
-    cannot "destroy", :department
-    cannot "destroy", :hold_source
-    cannot "destroy", :license
-    cannot "destroy", :thesis
+    can :manage, :all
+    cannot 'destroy', :copyright
+    cannot 'destroy', :degree
+    cannot 'destroy', :department
+    cannot 'destroy', :hold_source
+    cannot 'destroy', :license
+    cannot 'destroy', :thesis
   end
 end

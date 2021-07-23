@@ -21,9 +21,9 @@ class Author < ApplicationRecord
   # confirmed attribute (if needed) to true or false based on CSV data
   def set_graduated_from_csv(row)
     graduated = row['Degree Status'] == 'AW'
-    if not self.graduation_confirmed == graduated
-      self.update!(graduation_confirmed: graduated)
-      Rails.logger.info("Author " + self.user.name + " graduation status updated to " + graduated.to_s)
+    unless graduation_confirmed == graduated
+      update!(graduation_confirmed: graduated)
+      Rails.logger.info("Author #{user.name} graduation status updated to #{graduated}")
     end
   end
 
@@ -31,6 +31,6 @@ class Author < ApplicationRecord
   # saved, so in case this author's graduation status has changed, we force a
   # recalculation.
   def update_thesis_status
-    self.thesis.save
+    thesis.save
   end
 end

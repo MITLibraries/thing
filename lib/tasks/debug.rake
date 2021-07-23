@@ -1,8 +1,8 @@
 require 'onelogin/ruby-saml'
 
 namespace :debug do
-  desc "Debug an encrypted saml response. Ensure SP cert and key are set in .env"
-  task :saml, :filepath do |t, args|
+  desc 'Debug an encrypted saml response. Ensure SP cert and key are set in .env'
+  task :saml, :filepath do |_t, args|
     # Assumptions: you have extracted the saml response from logs and placed ONLY
     # the response (not the XML!, not the quotes) into a file on a single line
     saml_response = File.open(args[:filepath]).first
@@ -15,8 +15,8 @@ namespace :debug do
 
     response = OneLogin::RubySaml::Response.new(saml_response, settings: settings)
     # This should output all attributes we got back.
-    pp "-- START SAML RESPONSE --"
+    pp '-- START SAML RESPONSE --'
     pp response.attributes
-    pp "-- END SAML RESPONSE --"
+    pp '-- END SAML RESPONSE --'
   end
 end

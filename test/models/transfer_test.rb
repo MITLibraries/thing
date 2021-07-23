@@ -15,7 +15,7 @@ require 'test_helper'
 class TransferTest < ActiveSupport::TestCase
   setup do
     @transfer = transfers(:valid)
-    file = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     @transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
   end
 
@@ -127,10 +127,10 @@ class TransferTest < ActiveSupport::TestCase
   end
 
   test 'can support multiple attached files' do
-    file2 = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    file2 = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     @transfer.files.attach(io: File.open(file2), filename: 'a_pdf.pdf')
     assert @transfer.valid?
-    file3 = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    file3 = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     @transfer.files.attach(io: File.open(file3), filename: 'a_pdf.pdf')
     assert @transfer.valid?
   end
@@ -138,7 +138,7 @@ class TransferTest < ActiveSupport::TestCase
   test 'at least one file must be attached' do
     @transfer.files.detach
     assert @transfer.invalid?
-    file2 = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    file2 = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     @transfer.files.attach(io: File.open(file2), filename: 'a_pdf.pdf')
     assert @transfer.valid?
   end
@@ -146,7 +146,7 @@ class TransferTest < ActiveSupport::TestCase
   test 'unassigned_files updates as needed' do
     assert_equal @transfer.unassigned_files, 1
 
-    @newfile = Rails.root.join('test','fixtures','files','a_pdf.pdf')
+    @newfile = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     @transfer.files.attach(io: File.open(@newfile), filename: 'a_pdf.pdf')
     assert_equal @transfer.unassigned_files, 2
 

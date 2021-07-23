@@ -64,15 +64,15 @@ class DepartmentTest < ActiveSupport::TestCase
     t1.user = User.first
     t1.graduation_month = 'May'
     t1.graduation_year = '2020'
-    t1.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t1.files.attach(io: File.open(Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')), filename: 'a_pdf.pdf')
     t1.save
     t2 = Transfer.new
     t2.department = d
     t2.user = User.first
     t2.graduation_month = 'May'
     t2.graduation_year = '2020'
-    t2.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
-    t2.files.attach(io: File.open(Rails.root.join('test','fixtures','files','a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t2.files.attach(io: File.open(Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')), filename: 'a_pdf.pdf')
+    t2.files.attach(io: File.open(Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')), filename: 'a_pdf.pdf')
     t2.save
     assert(d.transfers.count == tcount + 2)
   end
@@ -90,7 +90,7 @@ class DepartmentTest < ActiveSupport::TestCase
     department_three = departments(:three)
     assert(department_one.users.count == 1)
     assert(department_two.users.count == 2)
-    assert(department_three.users.count == 0)
+    assert(department_three.users.count.zero?)
   end
 
   test 'can have zero or more submitters' do
@@ -99,19 +99,19 @@ class DepartmentTest < ActiveSupport::TestCase
     department_three = departments(:three)
     assert(department_one.submitters.count == 1)
     assert(department_two.submitters.count == 2)
-    assert(department_three.submitters.count == 0)
+    assert(department_three.submitters.count.zero?)
   end
 
   test 'finds existing department from csv' do
     filepath = 'test/fixtures/files/registrar_data_thesis_existing.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     department = Department.from_csv(row)
     assert_equal departments(:one), department
   end
 
   test 'creates department from csv with all expected attributes' do
     filepath = 'test/fixtures/files/registrar_data_thesis_new.csv'
-    row = CSV.readlines(open(filepath), headers: true).first
+    row = CSV.readlines(File.open(filepath), headers: true).first
     assert_not(Department.find_by(code_dw: 'UBW'))
     department = Department.from_csv(row)
     assert_equal 'UBW', department.code_dw

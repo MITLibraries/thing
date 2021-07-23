@@ -77,7 +77,7 @@ class UserDashboard < Administrate::BaseDashboard
   #
   def display_resource(user)
     if user.preferred_name.present?
-      "#{user.preferred_name}"
+      user.preferred_name.to_s
     elsif user.given_name.present? && user.surname.present?
       "#{user.given_name} #{user.surname}"
     else

@@ -1,4 +1,4 @@
-require "administrate/base_dashboard"
+require 'administrate/base_dashboard'
 
 class SubmitterDashboard < Administrate::BaseDashboard
   # ATTRIBUTE_TYPES
@@ -10,15 +10,15 @@ class SubmitterDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     user: Field::BelongsTo.with_options(
       searchable: true,
-      searchable_fields: ['kerberos_id', 'uid', 'display_name']
+      searchable_fields: %w[kerberos_id uid display_name]
     ),
     department: Field::BelongsTo.with_options(
       searchable: true,
-      searchable_fields: ['name_dw', 'code_dw']
+      searchable_fields: %w[name_dw code_dw]
     ),
     id: Field::Number,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -27,27 +27,27 @@ class SubmitterDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-  user
-  department
-  created_at
+    user
+    department
+    created_at
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
-  user
-  department
-  id
-  created_at
-  updated_at
+    user
+    department
+    id
+    created_at
+    updated_at
   ].freeze
 
   # FORM_ATTRIBUTES
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
-  user
-  department
+    user
+    department
   ].freeze
 
   # COLLECTION_FILTERS

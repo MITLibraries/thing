@@ -30,7 +30,7 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
     post admin_advisors_path, params: { advisor: @advisor_params }
     follow_redirect!
     assert_equal '/', path
-    assert @response.body.include? "Not authorized."
+    assert @response.body.include? 'Not authorized.'
     assert_equal count, Advisor.count
   end
 
@@ -40,7 +40,7 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
     assert_not_equal needle, advisor.name
 
     patch admin_advisor_path(advisor),
-      params: { advisor: { name: needle } }
+          params: { advisor: { name: needle } }
     advisor.reload
     assert_equal needle, advisor.name
   end
@@ -51,10 +51,10 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
     assert_not_equal needle, advisor.name
 
     patch admin_advisor_path(advisor),
-      params: { advisor: { name: needle } }
+          params: { advisor: { name: needle } }
     follow_redirect!
     assert_equal '/', path
-    assert @response.body.include? "Not authorized."
+    assert @response.body.include? 'Not authorized.'
     advisor.reload
     assert_not_equal needle, advisor.name
   end
@@ -67,7 +67,7 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
     assert_not_equal needle.title, advisor.theses.first.title
 
     patch admin_advisor_path(advisor),
-      params: { advisor: { thesis_ids: [thesis_ids] } }
+          params: { advisor: { thesis_ids: [thesis_ids] } }
     advisor.reload
     assert_equal needle.title, advisor.theses.first.title
     assert_equal count + 1, advisor.theses.count
@@ -81,10 +81,10 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
     assert_not_equal needle.title, advisor.theses.first.title
 
     patch admin_advisor_path(advisor),
-      params: { advisor: { thesis_ids: [thesis_ids] } }
+          params: { advisor: { thesis_ids: [thesis_ids] } }
     follow_redirect!
     assert_equal '/', path
-    assert @response.body.include? "Not authorized."
+    assert @response.body.include? 'Not authorized.'
     advisor.reload
     assert_not_equal needle.title, advisor.theses.first.title
     assert_equal count, advisor.theses.count
@@ -109,7 +109,7 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
     delete admin_advisor_path(needle)
     follow_redirect!
     assert_equal '/', path
-    assert @response.body.include? "Not authorized."
+    assert @response.body.include? 'Not authorized.'
 
     assert_equal thesis_count, Thesis.count
     assert_equal advisor_count, Advisor.count
@@ -161,7 +161,7 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
   end
 
   test 'processors can create advisors via admin dashboard' do
-    skip("Processors currently can not _use_ the admin dashboard, so this fails.")
+    skip('Processors currently can not _use_ the admin dashboard, so this fails.')
     mock_auth(users(:processor))
     create_advisor
   end
@@ -188,7 +188,7 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
   end
 
   test 'processors can edit advisors through admin dashboard' do
-    skip("Processors currently can not _use_ the admin dashboard, so this fails.")
+    skip('Processors currently can not _use_ the admin dashboard, so this fails.')
     mock_auth(users(:processor))
     edit_advisor_name
   end
@@ -215,7 +215,7 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
   end
 
   test 'processors can assign theses to advisors via advisor form' do
-    skip("Processors currently can not _use_ the admin dashboard, so this fails.")
+    skip('Processors currently can not _use_ the admin dashboard, so this fails.')
     mock_auth(users(:processor))
     assign_advisor_to_thesis
   end
@@ -242,7 +242,7 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
   end
 
   test 'processors can delete an advisor' do
-    skip("Processors currently can not _use_ the admin dashboard, so this fails.")
+    skip('Processors currently can not _use_ the admin dashboard, so this fails.')
     mock_auth(users(:processor))
     delete_advisor
   end

@@ -14,7 +14,8 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
       graduation_month: 'June',
       graduation_year: Time.zone.today.year,
       files: fixture_file_upload('test/fixtures/files/a_pdf.pdf',
-                                 'application/pdf') }
+                                 'application/pdf')
+    }
   end
 
   def teardown
@@ -63,7 +64,7 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'invalid files message' do
-    skip("Unclear why this used to pass but now fails, but the data model never properly validated attached thesis so this failing is not surprising")
+    skip('Unclear why this used to pass but now fails, but the data model never properly validated attached thesis so this failing is not surprising')
     mock_auth(users(:basic))
     params = @thesis_params
     params[:files] = nil
@@ -114,16 +115,16 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     count = Advisor.count
     sample = users(:yo).theses.fourth
     sample_advisor = sample.advisors.first
-    assert_not_equal "Another Name", sample_advisor.name
+    assert_not_equal 'Another Name', sample_advisor.name
 
     updated = sample.serializable_hash
-    sample_advisor.name = "Another Name"
-    updated["advisors_attributes"] = sample_advisor.serializable_hash
+    sample_advisor.name = 'Another Name'
+    updated['advisors_attributes'] = sample_advisor.serializable_hash
     patch thesis_path(sample), params: { thesis: updated }
     follow_redirect!
     assert_equal thesis_confirm_path, path
     sample.reload
-    assert_equal "Another Name", sample.advisors.first.name
+    assert_equal 'Another Name', sample.advisors.first.name
 
     assert_equal count, Advisor.count
   end
@@ -227,7 +228,7 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
   test 'edit form indicates current user' do
     mock_auth(users(:basic))
     get edit_thesis_path(theses(:two))
-    msg = "You are logged in and submitting as"
+    msg = 'You are logged in and submitting as'
     assert @response.body.include? msg
   end
 
@@ -268,7 +269,7 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     get thesis_start_path
     assert_response 200
 
-    msg = "Select the thesis record you wish to review and edit"
+    msg = 'Select the thesis record you wish to review and edit'
     assert @response.body.include? msg
   end
 end
