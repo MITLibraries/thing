@@ -185,6 +185,19 @@ Example usage:
   lines so you'll need to be careful to reconstruct this
 - `rails debug:saml['tmp/your_saml_to_debug.txt']`
 
+## Alternate file upload feedback
+
+As a default behavior, the bulk file transfer form at `/transfer/new` uses the
+browser's built-in file input field, with slight javascript decoration to
+improve user feedback before and during file uploading.
+
+However, there is an alternate behavior available. This alternate, which has yet
+to be fully tested, can be accessed by appending any value for `upload` to the
+querystring (i.e. `/transfer/new?upload=alternate`). This alternative offers
+some additional capabilities via javascript decoration, such as appending to (or
+pruning from) a pending bulk file transfer. The file uploading itself is
+unaffected by this altenative.
+
 # Local deployment
 
 Use heroku local. We have also experimented with docker, and are retaining it in case we move toward dockerizing all the things in future.
