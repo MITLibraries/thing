@@ -22,6 +22,8 @@
 #
 
 class Thesis < ApplicationRecord
+  has_paper_trail
+  
   belongs_to :copyright, optional: true
   belongs_to :license, optional: true
 

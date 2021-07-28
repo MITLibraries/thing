@@ -735,4 +735,21 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.reload
     assert_equal 'Published', thesis.publication_status
   end
+
+  test 'editing thesis generates an audit trail' do
+    t = theses(:one)
+    assert_equal t.versions.count, 0
+    t.title = 'updated'
+    t.save
+    assert_equal t.versions.count, 1
+    assert_equal t.versions.last.event, 'update'
+  end
+
+  test 'audit records include the changeset' do
+    t = theses(:one)
+    t.title = 'updated'
+    t.save
+    change = t.versions.last
+    assert_equal change.changeset['title'], %w[MyString updated]
+  end
 end

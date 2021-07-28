@@ -19,6 +19,8 @@
 #
 
 class User < ApplicationRecord
+  has_paper_trail
+
   # We need to initialize  some fields before validation, or
   # the record won't save.
   before_validation(on: :create) do
