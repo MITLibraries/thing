@@ -365,4 +365,21 @@ class UserTest < ActiveSupport::TestCase
     u.reload
     assert_equal count - 1, u.editable_theses.count
   end
+
+  test 'editing user generates an audit trail' do
+    u = users(:yo)
+    assert_equal u.versions.count, 0
+    u.given_name = 'Hello'
+    u.save
+    assert_equal u.versions.count, 1
+    assert_equal u.versions.last.event, 'update'
+  end
+
+  test 'audit records include the changeset' do
+    u = users(:yo)
+    u.given_name = 'Hello'
+    u.save
+    change = u.versions.last
+    assert_equal change.changeset['given_name'], %w[Yo Hello]
+  end
 end
