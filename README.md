@@ -43,7 +43,7 @@ public post key to enable capturing javascript exceptions.
 `LOG_LEVEL` - we set sane defaults in development or production, but you can
 override easily with this ENV if you need to get more details.
 
-`PREFERRED_DOMAIN` - set this to the domain you would like to to use. Any other
+`PREFERRED_DOMAIN` - set this to the domain you would like to use. Any other
 requests that come to the app will redirect to the root of this domain. This is
 useful to prevent access to herokuapp.com domains as well as any legacy domains
 you'd like to handle.
