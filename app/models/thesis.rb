@@ -23,7 +23,7 @@
 
 class Thesis < ApplicationRecord
   has_paper_trail
-  
+
   belongs_to :copyright, optional: true
   belongs_to :license, optional: true
 
@@ -127,6 +127,13 @@ class Thesis < ApplicationRecord
   # have graduated. Any author having not graduated results in a false/"No".
   def authors_graduated?
     authors.map(&:graduation_confirmed?).reduce(:&)
+  end
+
+  # This checks whether a thesis record is new, based on the most recent transaction. Once the record is updated or
+  # saved, this will evaluate to false. Normally we would use ActiveModel::Dirty for this, but that module doesn't work
+  # well for models with nested attributes.
+  def new_thesis?
+    transaction_include_any_action?([:create])
   end
 
   # This contains the logic for a thesis to have its status set to either

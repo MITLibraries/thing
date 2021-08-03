@@ -1,0 +1,47 @@
+<p>Hello,</p>
+
+<p>Below is a report of the registrar data import job submitted on 
+  <%= @registrar.created_at.in_time_zone("America/New_York").strftime('%b %-d, %Y at %l:%M %p %Z') %>.</p>
+
+<p>Summary of processed theses:</p>
+
+<ul>
+  <li>Total theses in job: <%= @results[:read] %></li>
+  <li>Total theses successfully processed: <%= @results[:processed] %></li>
+  <li>Errors found: <%= @results[:errors].count %></li>
+  <li>New theses: <%= @results[:new_theses] %></li>
+  <li>Updated theses: <%= @results[:updated_theses] %></li>
+  <li>New authors: <%= @results[:new_users] %></li>
+  <li>New degrees: <%= @results[:new_degrees].count %></li>
+  <li>New DLCs: <%= @results[:new_depts].count %></li>
+</ul>
+
+<% if @results[:errors].any? %>
+  <p>The following errors require processor attention:</p>
+
+  <ul>
+    <% @results[:errors].each do |e| %>
+      <li><%= e %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @results[:new_degrees].any? %>
+  <p>The following degrees were newly added:</p>
+
+  <ul>
+    <% @results[:new_degrees].each do |degree| %>
+      <li><%= link_to degree.name_dw, admin_degree_url(degree) %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @results[:new_depts].any? %>
+  <p>The following DLCs were newly added:</p>
+
+  <ul>
+    <% @results[:new_depts].each do |dept| %>
+      <li><%= link_to dept.name_dw, admin_department_url(dept) %></li>
+    <% end %>
+  </ul>
+<% end %>

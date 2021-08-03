@@ -24,6 +24,22 @@ class RegistrarImportJobTest < ActiveJob::TestCase
     results = RegistrarImportJob.perform_now(registrar)
     assert_equal 434, results[:read]
     assert_equal 433, results[:processed]
+    assert_equal 430, results[:new_theses]
+    assert_equal 3, results[:updated_theses]
+    assert_equal 430, results[:new_users]
+    assert_equal 42, results[:new_degrees].length
+    assert_equal 30, results[:new_depts].length
+    assert_equal 1, results[:errors].length
+    assert_includes results[:errors][0], 'Row #418 missing a Kerberos ID'
+
+    results = RegistrarImportJob.perform_now(registrar)
+    assert_equal 434, results[:read]
+    assert_equal 433, results[:processed]
+    assert_equal 0, results[:new_theses]
+    assert_equal 433, results[:updated_theses]
+    assert_equal 0, results[:new_users]
+    assert_equal 0, results[:new_degrees].length
+    assert_equal 0, results[:new_depts].length
     assert_equal 1, results[:errors].length
     assert_includes results[:errors][0], 'Row #418 missing a Kerberos ID'
   end

@@ -4,7 +4,8 @@ class RegistrarImportJob < ActiveJob::Base
   queue_as :default
 
   def perform(registrar)
-    results = { read: 0, processed: 0, errors: [] }
+    results = { read: 0, processed: 0, new_users: 0, new_theses: 0, updated_theses: 0, new_degrees: [], new_depts: [],
+                errors: [] }
 
     CSV.new(registrar.graduation_list.download, headers: true).each.with_index(1) do |row, i|
       Rails.logger.info("Parsing row #{i}")
@@ -20,15 +21,19 @@ class RegistrarImportJob < ActiveJob::Base
       end
 
       user = User.create_or_update_from_csv(row)
+      results[:new_users] += 1 if user.id_previously_changed?
       logger.info("User is #{user.inspect}")
       degree = Degree.from_csv(row)
       logger.info("Degree is #{degree.inspect}")
+      results[:new_degrees] << degree if degree.id_previously_changed?
       department = Department.from_csv(row)
       logger.info("Department is #{department.inspect}")
+      results[:new_depts] << department if department.id_previously_changed?
       grad_date = reformat_grad_date(row['Degree Award Date'])
       logger.info("Grad date is #{grad_date.inspect}")
       begin
         thesis = Thesis.create_or_update_from_csv(user, degree, department, grad_date, row)
+        thesis.new_thesis? ? results[:new_theses] += 1 : results[:updated_theses] += 1
         logger.info("Thesis is #{thesis.inspect}")
       rescue RuntimeError
         e = "Multiple theses found for author #{user.name} for term #{grad_date}, requires Processor attention. CSV row ##{i}: #{row.inspect}"
@@ -45,6 +50,7 @@ class RegistrarImportJob < ActiveJob::Base
       results[:processed] += 1
     end
     Rails.logger.info(results.to_s)
+    ReportMailer.registrar_import_email(registrar, results).deliver_later
     results
   end
 
