@@ -752,4 +752,17 @@ class ThesisTest < ActiveSupport::TestCase
     change = t.versions.last
     assert_equal change.changeset['title'], %w[MyString updated]
   end
+
+  test 'evaluates whether a thesis is newly created' do
+    preexisting_thesis = theses(:one)
+    assert_equal false, preexisting_thesis.new_thesis?
+
+    new_thesis = Thesis.create(title: "wait till you see this new thesis you're not gonna believe it",
+                               graduation_month: 'February', graduation_year: '2020', users: [users(:yo)],
+                               degrees: [degrees(:one)], departments: [departments(:one)])
+    assert_equal true, new_thesis.new_thesis?
+
+    new_thesis.update(title: 'updated')
+    refute new_thesis.new_thesis?
+  end
 end

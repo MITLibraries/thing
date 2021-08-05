@@ -41,6 +41,7 @@ end
 group :development do
   gem 'annotate'
   gem 'dotenv-rails'
+  gem 'letter_opener'
   gem 'listen'
   gem 'rubocop'
   gem 'rubocop-rails'

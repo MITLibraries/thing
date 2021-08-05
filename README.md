@@ -58,7 +58,8 @@ this automatically. It is often nice in development as well.
 ### Development
 
 `MAINTAINER_EMAIL` - used for `to` field of virus detected emails.
-`THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails.
+`THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails. Also the email to which reports are sent.
+`MAINTAINER_EMAIL` - used for `cc` field of report emails.
 
 ### Production
 
@@ -99,8 +100,9 @@ Assigning roles and the `Admin` flag is done in the web UI.
 `SMTP_PASSWORD`
 `SMTP_PORT`
 `SMTP_USER`
-`THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails.
-`DISABLE_ALL_EMAIL` - emails won't be sent unless this is set to `false`
+`THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails. Also the email to which reports are sent.
+`MAINTAINER_EMAIL` - used for `cc` field of report emails.
+`DISABLE_ALL_EMAIL` - emails won't be sent unless this is set to `false`.
 
 In development, emails are written to a file in `tmp`. In testing, they are
 stored in memory. You still need the `THESIS_ADMIN_EMAIL` set for the tmp file
