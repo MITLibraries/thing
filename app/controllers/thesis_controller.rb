@@ -81,6 +81,7 @@ class ThesisController < ApplicationController
   def process_theses_update
     thesis = Thesis.find(params[:id])
     removed = deleted_file_list
+    params[:thesis][:files_complete] = false if removed.count.positive?
     if thesis.update(thesis_params)
       flash[:success] = "<p>Your changes to '#{thesis.title}' have been saved.</p>".html_safe
       if removed.count.positive?

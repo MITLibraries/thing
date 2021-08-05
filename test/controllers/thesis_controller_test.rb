@@ -522,4 +522,29 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # The flash message has a link back to the transfer with the file.
     assert_select 'div.alert ul li a', text: 'a_pdf.pdf', href: transfer_path(th), count: 1
   end
+
+  test 'removing a file from a thesis will reset files_complete flag' do
+    sign_in users(:processor)
+    tr = transfers(:valid)
+    th = theses(:publication_review_except_hold)
+    th.files_complete = true
+    th.save
+    assert(th.files_complete)
+    attach_files_to_records(tr, th)
+    patch thesis_process_update_path(theses(:publication_review_except_hold)),
+          params: {
+            thesis: {
+              title: 'My Almost-Ready Thesis',
+              issues_found: 'true',
+              files_attachments_attributes: {
+                '0': {
+                  id: th.files.first.id,
+                  _destroy: 1
+                }
+              }
+            }
+          }
+    th.reload
+    refute(th.files_complete)
+  end
 end
