@@ -72,6 +72,7 @@
                                      label: 'Issues found' %>
         </li>
       </ul>
+      <%= submit_tag 'Update', class: 'btn button-primary' %>
     </div>
   </div>
 
@@ -128,7 +129,7 @@
     </div>
 
     <div class="layout-1q3q layout-band">
-      <div class="col3q">Please note: Degree information should be edited via <%= link_to 'the administrative interface', admin_thesis_path(f.object.id) %>.</div>
+      <div class="col3q">Please note: Degree information should be edited via <%= link_to 'the administrative interface', admin_thesis_path(f.object.id), target: :_blank %>.</div>
     </div>
     <%
       f.object.degrees.find_all do |deg|
@@ -257,8 +258,6 @@
                                   },
                                  label: 'Processing note',
                                  label_html: { class: 'col1q' } %>
-
-    <%= submit_tag 'Update', class: 'btn button-primary' %>
   </div>
 <% end %>
 
