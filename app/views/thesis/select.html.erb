@@ -27,7 +27,7 @@
 <% end %>
 
 <div id="status-list" class="filter-row">
-  <button data-filter="*">Show all</button>
+  <button class="btn button-primary" data-filter="*">Show all</button>
 </div>
 
 <table class="table" id="thesisQueue" title="Thesis processing queue">
@@ -49,9 +49,22 @@
 <script type="text/javascript">
 $(document).ready( function () {
   if( document.getElementById('thesisQueue').getElementsByClassName('empty').length === 0 ) {
+    // Initialize DataTable, sorting by default on degree column (columns are zero-based)
     var table = $('#thesisQueue').DataTable({
       "order": [[ 1, "asc" ]]
     });
+
+    var _status = "*";
+
+    // Add filter for "Status" column to standard table behavior
+    // From: https://datatables.net/blog/2014-08-26#Complete-code
+    $.fn.dataTable.ext.search.push(
+      function( settings, data, dataIndex ) {
+        return ( data[5] === _status || _status === "*" )
+          ? true
+          : false
+      }
+    );
 
     // Populate filter buttons with found values for publication status
     var terms = [...new Set( table.columns(5).data()[0] )];
@@ -59,22 +72,17 @@ $(document).ready( function () {
       document
         .getElementById("status-list")
         .insertAdjacentHTML("beforeend", `
-        <button data-filter="${element}">${element}</button>
+        <button class="btn button-secondary" data-filter="${element}">${element}</button>
       `);
     });
 
-    // Perform filtering when buttons are clicked
-    $(".filter-row button").click(function() {
-      var needle = $(this).data("filter");
-      $.fn.dataTable.ext.search.push(
-        function( settings, data, dataIndex ) {
-          return ( data[5] === needle || needle === "*" )
-            ? true
-            : false
-        }
-      );
+    // Change highlighting and perform filtering when buttons are clicked
+    $("#status-list button").click(function() {
+      $("#status-list").find(".button-primary").removeClass("button-primary").addClass("button-secondary");
+      $(this).removeClass("button-secondary").addClass("button-primary");
+
+      _status = $(this).data("filter");
       table.draw();
-      $.fn.dataTable.ext.search.pop();
     });
   };
 });

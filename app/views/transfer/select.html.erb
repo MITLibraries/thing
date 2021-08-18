@@ -9,7 +9,7 @@
 <h3 class="title title-page">Transfer Processing Queue</h3>
 
 <div id="term-list" class="filter-row">
-  <button data-filter="*">Show<br>all</button>
+  <button class="btn button-primary" data-filter="*">Show<br>all</button>
 </div>
 
 <table class="table" id="transferQueue">
@@ -31,9 +31,22 @@
 <script type="text/javascript">
 $(document).ready( function () {
   if( document.getElementById('transferQueue').getElementsByClassName('empty').length === 0 ) {
+    // Initialize DataTable, sorting by default on the degree column (columns are zero-based)
     var table = $('#transferQueue').DataTable({
       "order": [[ 1, "asc" ]]
     });
+
+    var _degreeDate = "*";
+
+    // Add filter for "Degree date" column to standard table behavior
+    // From: https://datatables.net/blog/2014-08-26#Complete-code
+    $.fn.dataTable.ext.search.push(
+      function( settings, data, dataIndex ) {
+        return ( data[1] === _degreeDate || _degreeDate === "*" )
+          ? true
+          : false
+      }
+    );
 
     // Populate filter buttons with found values
     var terms = [...new Set( table.columns(1).data()[0] )];
@@ -41,22 +54,17 @@ $(document).ready( function () {
       document
         .getElementById("term-list")
         .insertAdjacentHTML("beforeend", `
-        <button data-filter="${element}">${element.replace(' ', '<br>')}</button>
+        <button class="btn button-secondary" data-filter="${element}">${element.replace(' ', '<br>')}</button>
       `);
     });
 
-    // Perform filtering when buttons are clicked
-    $(".filter-row button").click(function() {
-      var needle = $(this).data("filter");
-      $.fn.dataTable.ext.search.push(
-        function( settings, data, dataIndex ) {
-          return ( data[1] === needle || needle === "*" )
-            ? true
-            : false
-        }
-      );
+    // Change highlighting and perform filtering when buttons are clicked
+    $("#term-list button").click(function() {
+      $("#term-list").find(".button-primary").removeClass("button-primary").addClass("button-secondary");
+      $(this).removeClass("button-secondary").addClass("button-primary");
+
+      _degreeDate = $(this).data("filter");
       table.draw();
-      $.fn.dataTable.ext.search.pop();
     });
   }
 });
