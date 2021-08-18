@@ -65,7 +65,7 @@
         <% if file.blob.attachments.where('record_type = ?', "Thesis").count == 0 %>
         <li>
           <label>
-            <%= check_box_tag( "transfer[file_ids][]", file.id, false, data: { "msg" => "Required - please select at least one file to transfer." }, class: "required" ) %>
+            <%= check_box_tag( "transfer[file_ids][]", file.id, false, data: { "msg" => "Required - please select at least one file to transfer." }, class: "required checkbox-trigger-filter" ) %>
             <%= link_to rails_blob_path(file, disposition: 'inline'), target: :_blank do %>
               <%= file.filename.to_s %>
             <% end %>
@@ -107,11 +107,22 @@
 <script>
   $(document).ready( function() {
     if( document.getElementById('thesisTargets').getElementsByClassName('empty').length === 0) {
-      var table = $('#thesisTargets').DataTable({
-
-      });
+      var table = $('#thesisTargets').DataTable({});
     }
+    $(".checkbox-trigger-filter").change(function() {
+      if(this.checked) {
+        var filename = $(this).next().text();
+        if (filename.split('-').length > 1) {
+          var kerb = filename.split('-')[1]
+          if (document.getElementById('thesisTargets_filter').getElementsByTagName('input')[0].value=='') {
+            table.search(kerb).draw();
+          }
+        }
+      }
+    });
   });
+
+
   $("#process_transfer").validate({
     errorPlacement: function(error, element) {
       if (element.attr("name") == "transfer[file_ids][]") {
