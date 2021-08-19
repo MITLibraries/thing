@@ -52,7 +52,6 @@ class Thesis < ApplicationRecord
   attr_accessor :graduation_year, :graduation_month
 
   VALIDATION_MSGS = {
-    abstract: 'Required - Please provide an abstract.',
     copyright: 'Required - Please identify the copyright holder.',
     graduation_year: 'Required - Please input your year of graduation.',
     graduation_month: 'Required - Please select your month of graduation.',
