@@ -34,7 +34,7 @@ The information we have on record is listed below.</p>
 <strong>ORCID iD:</strong> <br>
 </p>
 
-<p style="margin-left: 40px;">
+<div style="margin-left: 40px;">
 <strong>Thesis title:</strong> MyString<br>
 <strong>Name as it appears on your thesis:</strong> Robot, Admin<br>
 <strong>Co-author:</strong> My co-author<br>
@@ -44,9 +44,10 @@ The information we have on record is listed below.</p>
 <strong>Copyright holder:</strong> MIT<br>
 <strong>License:</strong> No Creative Commons License<br>
 <strong>Thesis supervisors:</strong> Addy McAdvisor<br>
-<strong>Abstract:</strong> MyText<br>
+<strong>Abstract:</strong><br>
+<p>MyText</p>
 <strong>Notes:</strong> <br>
-</p>
+</div>
 
 <p>Let us know if you have any questions. And again, congratulations 
 on finishing (or almost finishing) your degree!</p>
