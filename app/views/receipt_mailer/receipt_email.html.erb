@@ -24,7 +24,7 @@ The information we have on record is listed below.</p>
 <strong>ORCID iD:</strong> <%= @user.orcid %><br>
 </p>
 
-<p style="margin-left: 40px;">
+<div style="margin-left: 40px;">
 <strong>Thesis title:</strong> <%= @thesis.title %><br>
 <strong>Name as it appears on your thesis:</strong> <%= @user.preferred_name %><br>
 <strong>Co-author:</strong> <%= @thesis.coauthors %><br>
@@ -34,9 +34,10 @@ The information we have on record is listed below.</p>
 <strong>Copyright holder:</strong> <%= @thesis.copyright.holder %><br>
 <strong>License:</strong> <%= @thesis.license_id? ? @thesis.license.display_description : "" %><br>
 <strong>Thesis supervisors:</strong> <%= @thesis.advisors.map { |a| a.name }.join('; ') %><br>
-<strong>Abstract:</strong> <%= @thesis.abstract %><br>
+<strong>Abstract:</strong><br>
+<%= simple_format(@thesis.abstract, {}, wrapper_tag: "p") %>
 <strong>Notes:</strong> <%= @thesis.author_note %><br>
-</p>
+</div>
 
 <p>Let us know if you have any questions. And again, congratulations 
 on finishing (or almost finishing) your degree!</p>
