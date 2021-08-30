@@ -19,6 +19,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     title: Field::String,
     abstract: Field::Text,
     grad_date: Field::DateTime.with_options(
+      searchable: true,
       format: '%Y %B'
     ),
     graduation_month: Field::Text,

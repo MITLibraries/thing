@@ -6,4 +6,10 @@ module ThesisHelper
 
     thesis.title
   end
+
+  def filter_theses_by_term(theses)
+    return theses.where('grad_date = ?', params[:graduation]) if params[:graduation] && params[:graduation] != 'all'
+
+    theses
+  end
 end

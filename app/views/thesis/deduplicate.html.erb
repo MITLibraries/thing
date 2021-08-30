@@ -6,40 +6,32 @@
 
 <link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
 
-<h3 class="title title-page">Theses with co-author(s)</h3>
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">Theses with co-author(s)</h3>
 
-<%= render 'shared/you_are' %>
+    <%= render 'shared/defined_terms_filter' %>
 
-<%= form_tag(thesis_deduplicate_path, method: "get") do %>
-  <label>
-    Show only theses from: 
-    <select name="graduation">
-      <option value="all">All terms</option>
-      <% @terms.each do |term| %>
-        <option value="<%= term %>"<%= ' selected="selected"'.html_safe if params[:graduation].to_s == term.to_s %>>
-          <%= term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') %>
-        </option>
-      <% end %>
-    </select>    
-  </label>
+    <table class="table" id="thesisQueue" title="Thesis processing queue">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Author(s)</th>
+          <th scope="col">Coauthor(s)</th>
+          <th scope="col">Department(s)</th>
+          <th scope="col">Degree date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'thesis/duplicate_thesis', collection: @thesis) || render('select_empty') %>
+      </tbody>
+    </table>
+  </div>
 
-  <%= submit_tag('Apply filter', class: 'btn button-primary') %>
-<% end %>
-
-<table class="table" id="thesisQueue" title="Thesis processing queue">
-  <thead>
-    <tr>
-      <th scope="col">Title</th>
-      <th scope="col">Author(s)</th>
-      <th scope="col">Coauthor(s)</th>
-      <th scope="col">Department(s)</th>
-      <th scope="col">Degree date</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render(partial: 'thesis/duplicate_thesis', collection: @thesis) || render('select_empty') %>
-  </tbody>
-</table>
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>
 
 <script type="text/javascript">
 $(document).ready( function () {

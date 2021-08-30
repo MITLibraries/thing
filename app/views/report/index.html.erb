@@ -1,0 +1,20 @@
+<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">Thesis reporting dashboard</h3>
+
+    <%= render 'shared/defined_terms_filter' %>
+
+    <%= render(partial: 'card', collection: @data) %>
+
+    <hr>
+
+    <%= render(partial: 'table', collection: @table) %>
+
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>

@@ -1,0 +1,9 @@
+<p class="box-content card-<%= card[0] %> inline-action">
+  <span class="message hero-text"><%= card[1]["value"] %> <%= card[1]["label"] %></span>
+  <% if card[1]["link"] %>
+    <span class="actions"><%= link_to( card[1]["link"]["text"], card[1]["link"]["url"] ) %></span>
+  <% end %>
+</p>
+<% if card[1]['note'] %>
+  <p><em><%= card[1]['note'] %></em></p>
+<% end %>

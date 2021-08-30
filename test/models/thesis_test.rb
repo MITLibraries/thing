@@ -552,6 +552,10 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal false, thesis.authors_graduated?
   end
 
+  test 'publication_statuses scope returns accepted status dictionary' do
+    assert_equal 4, Thesis.publication_statuses.length
+  end
+
   test 'publication status defaults to not ready for publication' do
     thesis = Thesis.new
     assert thesis.publication_status == 'Not ready for publication'

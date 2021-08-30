@@ -4,6 +4,8 @@ class ThesisController < ApplicationController
   load_and_authorize_resource except: :create
   protect_from_forgery with: :exception
 
+  include ThesisHelper
+
   def new
     @thesis = Thesis.new
     @thesis.association(:advisors).add_to_target(Advisor.new)
@@ -31,9 +33,10 @@ class ThesisController < ApplicationController
   end
 
   def deduplicate
-    @thesis = Thesis.where.not('coauthors = ?', '')
-    @thesis = @thesis.where('grad_date = ?', params[:graduation]) if params[:graduation] && params[:graduation] != 'all'
-    @terms = Thesis.where.not('coauthors = ?', '').select(:grad_date).map(&:grad_date).uniq.sort
+    # Get array of defined terms where theses have coauthors
+    @terms = defined_terms Thesis.where.not('coauthors = ?', '')
+    # Filter relevant theses by selected term from querystring
+    @thesis = filter_theses_by_term Thesis.where.not('coauthors = ?', '')
   end
 
   def edit
@@ -42,11 +45,11 @@ class ThesisController < ApplicationController
   end
 
   def select
-    @graduation = params[:graduation]
-    @thesis = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')
-    @thesis = @thesis.where('grad_date = ?', @graduation) if @graduation && @graduation != 'all'
-    @terms = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?',
-                                                               'Published').select(:grad_date).map(&:grad_date).uniq.sort
+    # Get array of defined terms where unpublished theses have files attached
+    @terms = defined_terms Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')
+    # Filter relevant theses by selected term from querystring
+    @thesis = filter_theses_by_term Thesis.joins(:files_attachments).group(:id).where('publication_status != ?',
+                                                                                      'Published')
   end
 
   def show
@@ -98,6 +101,13 @@ class ThesisController < ApplicationController
   end
 
   private
+
+  # Various methods need to build an array of academic terms which meet varying conditions, in order to support a UI
+  # with a filtering mechanism. How they assemble the relevant terms is up to them, but this method will extract term
+  # values and return a sorted array from those records.
+  def defined_terms(records)
+    records.pluck(:grad_date).uniq.sort
+  end
 
   def deleted_file_list
     list = []
