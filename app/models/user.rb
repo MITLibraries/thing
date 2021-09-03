@@ -108,12 +108,12 @@ class User < ApplicationRecord
     end
   end
 
-  # This convenience method returns the list of the user's theses for which
-  # the user can submit metadata. The logic regarding which theses qualify for
-  # this list may be subject to change; initially this is all theses for which
-  # the "metadata_complete" flag is not set.
+  # This convenience method returns the list of the user's theses for which the user can submit metadata. The current
+  # logic is to return only theses for which two conditions are true:
+  # 1. The metadata_complete flag is set to false
+  # 2. The issues_flag false is set to false
   def editable_theses
-    theses.where(metadata_complete: false)
+    theses.where(metadata_complete: false).where(issues_found: false)
   end
 
   # Definitely for sure wrong for some people. But staff want to be able to
