@@ -39,6 +39,7 @@ class CopyrightDashboard < Administrate::BaseDashboard
     display_description
     statement_dspace
     url
+    theses
     id
     created_at
     updated_at
