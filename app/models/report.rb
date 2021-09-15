@@ -5,7 +5,8 @@ class Report
     subset = collection.joins(:files_attachments)
     {
       'value' => subset.pluck(:id).uniq.count,
-      'label' => 'have files attached',
+      'verb' => 'has',
+      'label' => 'files attached',
       'note' => 'Only theses with a status of "Not ready for publication" and "Publication review" will be visible '\
                 'in the processing queue.',
       'link' => {
@@ -23,10 +24,34 @@ class Report
     }
   end
 
+  def card_multiple_authors(collection)
+    {
+      'value' => collection.joins(:authors).group('theses.id').having('COUNT(authors.id) > 1').length,
+      'verb' => 'has',
+      'label' => 'multiple authors'
+    }
+  end
+
+  def card_multiple_degrees(collection)
+    {
+      'value' => collection.joins(:degrees).group('theses.id').having('COUNT(degrees.id) > 1').length,
+      'verb' => 'has',
+      'label' => 'multiple degrees'
+    }
+  end
+
+  def card_multiple_departments(collection)
+    {
+      'value' => collection.joins(:departments).group('theses.id').having('COUNT(departments.id) > 1').length,
+      'verb' => 'has',
+      'label' => 'multiple departments'
+    }
+  end
+
   def card_overall(collection, term)
     {
       'value' => collection.count,
-      'label' => 'thesis records',
+      'verb' => 'thesis record',
       'link' => {
         'url' => url_helpers.admin_theses_path(search: term),
         'text' => 'See all in admin dashboard'
@@ -39,6 +64,9 @@ class Report
     result['overall'] = card_overall collection, term
     result['files'] = card_files collection, term
     result['issues'] = card_issues collection
+    result['multiple-authors'] = card_multiple_authors collection
+    result['multiple-degrees'] = card_multiple_degrees collection
+    result['multiple-departments'] = card_multiple_departments collection
     result
   end
 
