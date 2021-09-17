@@ -31,6 +31,7 @@ yo:
   given_name: 'Yo'
   surname: 'Yobot'
   display_name: 'Yo Yobot'
+  orcid: '0001'
 
 admin:
   uid: 'admin_id'
@@ -58,6 +59,7 @@ basic:
   given_name: 'Basic'
   surname: 'Robot'
   display_name: 'Basic Robot'
+  orcid: '0002'
 
 second:
   uid: 'second'
@@ -66,6 +68,7 @@ second:
   given_name: 'Second'
   surname: 'Student'
   display_name: 'Second Student'
+  preferred_name: 'Student, Second'
 
 third:
   uid: 'third'
@@ -74,6 +77,7 @@ third:
   given_name: 'Third'
   surname: 'Student'
   display_name: 'Third Student'
+  preferred_name: 'Student, Third'
 
 processor:
   uid: 'processor_id'
