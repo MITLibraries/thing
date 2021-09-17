@@ -27,9 +27,19 @@ class ReportController < ApplicationController
     report = Report.new
     theses = Thesis.all
     @terms = report.extract_terms theses
-    subset = filter_theses_by_term theses
+    subset = filter_theses_by_term theses, term
     @data = report.term_data subset, term
     @table = report.term_tables subset
+  end
+
+  def departments
+    term = params[:graduation] ? params[:graduation].to_s : 'all'
+    report = Report.new
+    transfers = Transfer.all
+    @terms = report.extract_terms transfers
+    subset = filter_theses_by_term transfers, term
+    @data = report.departments_data subset
+    @list = report.departments_lists subset
   end
 
   private

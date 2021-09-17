@@ -1,0 +1,9 @@
+<h4 class="title"><%= list[1]['title'] %></h4>
+<ol class="list-<%= list[0] %>">
+  <% list[1]['list'].each do |item| %>
+    <li><%= item %></li>
+  <% end %>
+</ol>
+<% if list[1]['note'] %>
+  <p><em><%= list[1]['note'] %></em></p>
+<% end %>

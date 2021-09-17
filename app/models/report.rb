@@ -1,6 +1,13 @@
 class Report
   delegate :url_helpers, to: 'Rails.application.routes'
 
+  def card_departments(collection)
+    {
+      'value' => collection.joins(:department).pluck(:name_dw).uniq.count,
+      'label' => 'department(s) have transferred files'
+    }
+  end
+
   def card_files(collection, term)
     subset = collection.joins(:files_attachments)
     {
@@ -227,6 +234,22 @@ class Report
     }
   end
 
+  def departments_data(collection)
+    result = {}
+    result['departments'] = card_departments collection
+    result
+  end
+
+  def departments_lists(collection)
+    result = {}
+    result['no-transfers'] = list_no_transfers collection
+    result
+  end
+
+  def extract_terms(collection)
+    collection.pluck(:grad_date).uniq.sort
+  end
+
   def index_data
     output = {}
     output['Summary'] = []
@@ -248,8 +271,13 @@ class Report
     output
   end
 
-  def extract_terms(collection)
-    collection.pluck(:grad_date).uniq.sort
+  def list_no_transfers(collection)
+    {
+      'title' => 'Departments with no transferred files',
+      'list' => Department.where.not(\
+        id: collection.joins(:department).pluck('departments.id').uniq\
+      ).pluck(:name_dw).uniq
+    }
   end
 
   def list_unattached_files(collection)

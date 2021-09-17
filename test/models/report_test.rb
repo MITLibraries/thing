@@ -1,6 +1,32 @@
 require 'test_helper'
 
 class ReportTest < ActiveSupport::TestCase
+  test 'extract_terms returns an array' do
+    subset = Thesis.all
+    report = Report.new
+    assert_equal report.extract_terms(subset).class, Array
+  end
+
+  test 'extract_terms for one term returns one item' do
+    subset = Thesis.all.where('grad_date = ?','2019-02-01')
+    report = Report.new
+    assert_equal report.extract_terms(subset).count, 1
+    assert_not_equal report.extract_terms(Thesis.all).count, report.extract_terms(subset).count
+  end
+
+  test 'extract_terms for one term returns less than all terms' do
+    all = Thesis.all
+    subset = all.where('grad_date = ?', '2019-02-01')
+    report = Report.new
+    assert_not_equal report.extract_terms(all).count, report.extract_terms(subset).count    
+  end    
+
+  test 'extract_terms on an empty set does not error' do
+    subset = Thesis.all.where('grad_date = ?', '1969-07-20')
+    report = Report.new
+    assert_equal report.extract_terms(subset).count, 0
+  end    
+
   test 'overall card uses search term if present' do
     r = Report.new
     result = r.card_overall Thesis.all, 'all'

@@ -33,10 +33,11 @@ class ThesisController < ApplicationController
   end
 
   def deduplicate
+    term = params[:graduation] ? params[:graduation].to_s : 'all'
     # Get array of defined terms where theses have coauthors
     @terms = defined_terms Thesis.where.not('coauthors = ?', '')
     # Filter relevant theses by selected term from querystring
-    @thesis = filter_theses_by_term Thesis.where.not('coauthors = ?', '')
+    @thesis = filter_theses_by_term Thesis.where.not('coauthors = ?', ''), term
   end
 
   def edit
@@ -45,11 +46,13 @@ class ThesisController < ApplicationController
   end
 
   def select
+    term = params[:graduation] ? params[:graduation].to_s : 'all'
     # Get array of defined terms where unpublished theses have files attached
     @terms = defined_terms Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')
     # Filter relevant theses by selected term from querystring
     @thesis = filter_theses_by_term Thesis.joins(:files_attachments).group(:id).where('publication_status != ?',
-                                                                                      'Published')
+                                                                                      'Published'),
+                                    term
   end
 
   def show

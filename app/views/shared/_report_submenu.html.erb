@@ -11,6 +11,9 @@
       <% if can?(:files, Report) %>
         <li><%= link_to("Files without purpose", report_files_path) %></li>
       <% end %>
+      <% if can?(:departments, Report) %>
+        <li><%= link_to("Departments", report_departments_path) %></li>
+      <% end %>
     </ul>
   </nav>
 </div>

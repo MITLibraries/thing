@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get 'report', to: 'report#index', as: 'report_index'
   get 'report/files', to: 'report#files', as: 'report_files'
   get 'report/term', to: 'report#term', as: 'report_term'
+  get 'report/departments', to: 'report#departments', as: 'report_departments'
   get 'thesis/confirm', to: 'thesis#confirm', as: 'thesis_confirm'
   get 'thesis/deduplicate', to: 'thesis#deduplicate', as: 'thesis_deduplicate'
   get 'thesis/:id/process', to: 'thesis#process_theses', as: 'thesis_process'

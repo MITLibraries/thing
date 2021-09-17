@@ -138,6 +138,76 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  # ~~~~~~~~~~~ Departments report ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'departments report exists' do
+    sign_in users(:admin)
+    get report_departments_path
+    assert_response :success
+  end
+
+  test 'anonymous users are prompted to log in by departments report' do
+    # Note that nobody is signed in.
+    get report_departments_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see departments report' do
+    sign_in users(:basic)
+    get report_departments_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see departments report' do
+    sign_in users(:transfer_submitter)
+    get report_departments_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see departments report' do
+    sign_in users(:processor)
+    get report_departments_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see departments report' do
+    sign_in users(:thesis_admin)
+    get report_departments_path
+    assert_response :success
+  end
+
+  test 'admins can see departments report' do
+    sign_in users(:admin)
+    get report_departments_path
+    assert_response :success
+  end
+
+  test 'departments report shows a card and a list' do
+    sign_in users(:processor)
+    get report_departments_path
+    assert_select '.card-departments span', text: '1 department(s) have transferred files', count: 1
+    assert_select '.list-no-transfers li', count: 2
+  end
+
+  test 'departments report includes instance variables' do
+    sign_in users(:processor)
+    get report_departments_path
+    assert_not_nil assigns(:terms)
+    assert_not_nil assigns(:data)
+    assert_not_nil assigns(:list)
+  end
+
+  test 'departments report allows filtering' do
+    sign_in users(:processor)
+    get report_departments_path, params: { graduation: '2018-09-01' }
+    assert_response :success
+    assert_select '.card-departments span', text: '0 department(s) have transferred files', count: 1
+    assert_select '.list-no-transfers li', count: 3
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~ Files without purpose report ~~~~~~~~~~~~~~~~~~~~~~~~
   test 'files report exists' do
     sign_in users(:admin)

@@ -20,19 +20,21 @@ class ThesisHelperTest < ActionView::TestCase
 
   test 'filter_theses_by_term returns a filtered set of theses' do
     @theses = Thesis.all
-    params[:graduation] = "2018-09-01"
+    term = "2018-09-01"
     assert_not_equal 2, @theses.count
-    assert_equal 2, filter_theses_by_term(@theses).count
+    assert_equal 2, filter_theses_by_term(@theses, term).count
   end
 
-  test 'filter_theses_by_term does nothing when no graduation param is set' do
+  test 'filter_theses_by_term returns empty set when term is not valid' do
     @theses = Thesis.all
-    assert_equal @theses.count, filter_theses_by_term(@theses).count
+    term = "nonsense"
+    assert_not_equal 0, @theses.count
+    assert_equal 0, filter_theses_by_term(@theses, term).count
   end
 
   test 'filter_theses_by_term does nothing when graduation param is "all"' do
     @theses = Thesis.all
-    params[:graduation] = "all"
-    assert_equal @theses.count, filter_theses_by_term(@theses).count
+    term = "all"
+    assert_equal @theses.count, filter_theses_by_term(@theses, term).count
   end
 end
