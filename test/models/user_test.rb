@@ -351,6 +351,55 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 3, u.editable_theses.count
   end
 
+  test 'editable_theses returns a thesis with neither metadata nor issues flags set' do
+    u = users(:yo)
+    t = theses(:one)
+    assert_equal false, t.metadata_complete
+    assert_equal false, t.issues_found
+    assert u.editable_theses.include?(t)
+  end
+
+  test 'setting thesis.metadata_complete to true removes it from editable_theses' do
+    u = users(:yo)
+    t = theses(:one)
+    assert u.editable_theses.include?(t)
+    baseline = u.editable_theses.count
+    assert_equal false, t.metadata_complete
+    t.metadata_complete = true
+    t.save
+    u.reload
+    assert_equal baseline - 1, u.editable_theses.count
+    assert_not u.editable_theses.include?(t)
+  end
+
+  test 'setting thesis.issues_found to true removes it from editable_theses' do
+    u = users(:yo)
+    t = theses(:one)
+    assert u.editable_theses.include?(t)
+    baseline = u.editable_theses.count
+    assert_equal false, t.issues_found
+    t.issues_found = true
+    t.save
+    u.reload
+    assert_equal baseline - 1, u.editable_theses.count
+    assert_not u.editable_theses.include?(t)
+  end
+
+  test 'editable_theses returns no thesis with both metadata and issues flags set' do
+    u = users(:yo)
+    t = theses(:one)
+    assert u.editable_theses.include?(t)
+    baseline = u.editable_theses.count
+    assert_equal false, t.issues_found
+    assert_equal false, t.metadata_complete
+    t.issues_found = true
+    t.metadata_complete = true
+    t.save
+    u.reload
+    assert_equal baseline - 1, u.editable_theses.count
+    assert_not u.editable_theses.include?(t)
+  end
+
   test 'users with no theses have no editable_theses' do
     u = users(:admin)
     assert_equal 0, u.editable_theses.count
