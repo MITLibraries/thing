@@ -1,11 +1,8 @@
 require 'test_helper'
 
 class DspaceMetadataTest < ActiveSupport::TestCase
-  # Adding some properties that are not included in our fixtures
+  # Attaching thesis file so tests will pass
   def dss_friendly_thesis(thesis)
-    degree = thesis.degrees.first
-    degree.degree_type_id = degree_types(:bachelor).id
-    degree.save
     file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     thesis.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
     thesis.files.first.description = 'My thesis'

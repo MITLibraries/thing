@@ -769,4 +769,28 @@ class ThesisTest < ActiveSupport::TestCase
     new_thesis.update(title: 'updated')
     refute new_thesis.new_thesis?
   end
+
+  test 'supports one DSpace metadata attachment per thesis' do
+    thesis = theses(:one)
+
+    # Add metadata required for DspaceMetadata class
+    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    thesis.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    thesis.files.first.description = 'My thesis'
+    thesis.files.first.purpose = 'thesis_pdf'
+    thesis.save
+
+    metadata_json = DspaceMetadata.new(thesis).serialize_dss_metadata
+    thesis.dspace_metadata.attach(io: StringIO.new(metadata_json),
+                                  filename: 'some_file.json')
+    assert_equal 1, thesis.dspace_metadata.attachments.length
+    assert thesis.valid?
+
+    # Attaching more DspaceMetadata replaces the existing one instead of adding multiples
+    more_metadata_json = DspaceMetadata.new(thesis).serialize_dss_metadata
+    thesis.dspace_metadata.attach(io: StringIO.new(more_metadata_json),
+                                  filename: 'some_other_file.json')
+    assert_equal 1, thesis.dspace_metadata.attachments.length
+    assert thesis.valid?
+  end
 end
