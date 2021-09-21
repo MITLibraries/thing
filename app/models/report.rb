@@ -49,11 +49,12 @@ class Report
   end
 
   def card_overall(collection, term)
+    searchterm = term if term != 'all'
     {
       'value' => collection.count,
       'verb' => 'thesis record',
       'link' => {
-        'url' => url_helpers.admin_theses_path(search: term),
+        'url' => url_helpers.admin_theses_path(search: searchterm),
         'text' => 'See all in admin dashboard'
       }
     }
