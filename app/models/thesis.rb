@@ -98,6 +98,7 @@ class Thesis < ApplicationRecord
   scope :valid_months_only, lambda {
     select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
   }
+  scope :publication_statuses, -> { PUBLICATION_STATUS_OPTIONS }
 
   # This inverts the issues_found field, so that the checks inside the
   # update_status method below are all written the same way.

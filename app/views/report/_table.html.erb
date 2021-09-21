@@ -1,0 +1,25 @@
+<h4 class="title"><%= table[1]['title'] %></h4>
+<table class='table table-simplified table-<%= table[0] %>' <% if table[1]['summary'] %>summary="<%= table[1]['summary'] %>"<% end %>>
+  <% if table[1]['caption'] %>
+    <caption>
+      <%= table[1]['caption'] %>
+    </caption>
+  <% end %>
+  <thead>
+    <tr>
+      <th scope="col">Count</th>
+      <th scope="col"><%= table[1]['column'] %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% table[1]['data'].each do |row| %>
+      <tr>
+        <td><%= row[1] %></td>
+        <td><%= row[0] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% if table[1]['note'] %>
+  <p><em><%= table[1]['note'] %></em></p>
+<% end %>

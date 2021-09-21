@@ -33,14 +33,6 @@ class NavTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'thesis deduplicate page nav' do
-    mock_auth(users(:admin))
-    get thesis_deduplicate_path
-    assert_select('.current') do |value|
-      assert(value.text.include?('Duplicate report'))
-    end
-  end
-
   test 'registrar page nav' do
     mock_auth(users(:admin))
     get new_registrar_path
@@ -76,6 +68,14 @@ class NavTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'report page nav' do
+    mock_auth(users(:admin))
+    get report_index_path
+    assert_select('.current') do |value|
+      assert(value.text.include?('Report'))
+    end
+  end
+
   # Basic user navigation
   test 'basic navigation' do
     mock_auth(users(:basic))
@@ -87,11 +87,11 @@ class NavTest < ActionDispatch::IntegrationTest
 
       # Navigation should not include:
       assert_select 'a[href=?]', thesis_select_path, count: 0
-      assert_select 'a[href=?]', thesis_deduplicate_path, count: 0
       assert_select 'a[href=?]', new_transfer_path, count: 0
       assert_select 'a[href=?]', transfer_select_path, count: 0
       assert_select 'a[href=?]', new_registrar_path, count: 0
       assert_select 'a[href=?]', harvest_path, count: 0
+      assert_select 'a[href=?]', report_index_path, count: 0
       assert_select 'a[href=?]', admin_root_path, count: 0
     end
   end
@@ -108,10 +108,10 @@ class NavTest < ActionDispatch::IntegrationTest
 
       # Navigation should not include:
       assert_select 'a[href=?]', thesis_select_path, count: 0
-      assert_select 'a[href=?]', thesis_deduplicate_path, count: 0
       assert_select 'a[href=?]', transfer_select_path, count: 0
       assert_select 'a[href=?]', new_registrar_path, count: 0
       assert_select 'a[href=?]', harvest_path, count: 0
+      assert_select 'a[href=?]', report_index_path, count: 0
       assert_select 'a[href=?]', admin_root_path, count: 0
     end
   end
@@ -125,11 +125,11 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select 'a[href=?]', root_path
       assert_select 'a[href=?]', thesis_start_path
       assert_select 'a[href=?]', thesis_select_path
-      assert_select 'a[href=?]', thesis_deduplicate_path
       # assert_select "a[href=?]", new_transfer_path
       assert_select 'a[href=?]', transfer_select_path
       assert_select 'a[href=?]', new_registrar_path, count: 0
       assert_select 'a[href=?]', harvest_path, count: 0
+      assert_select 'a[href=?]', report_index_path
       # assert_select "a[href=?]", admin_root_path
     end
   end
@@ -143,11 +143,11 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select 'a[href=?]', root_path
       assert_select 'a[href=?]', thesis_start_path
       assert_select 'a[href=?]', thesis_select_path
-      assert_select 'a[href=?]', thesis_deduplicate_path
       assert_select 'a[href=?]', new_transfer_path
       assert_select 'a[href=?]', transfer_select_path
       assert_select 'a[href=?]', new_registrar_path
       assert_select 'a[href=?]', harvest_path
+      assert_select 'a[href=?]', report_index_path
       assert_select 'a[href=?]', admin_root_path
     end
   end
@@ -161,11 +161,11 @@ class NavTest < ActionDispatch::IntegrationTest
       assert_select 'a[href=?]', root_path
       assert_select 'a[href=?]', thesis_start_path
       assert_select 'a[href=?]', thesis_select_path
-      assert_select 'a[href=?]', thesis_deduplicate_path
       assert_select 'a[href=?]', new_transfer_path
       assert_select 'a[href=?]', transfer_select_path
       assert_select 'a[href=?]', new_registrar_path
       assert_select 'a[href=?]', harvest_path
+      assert_select 'a[href=?]', report_index_path
       assert_select 'a[href=?]', admin_root_path
     end
   end

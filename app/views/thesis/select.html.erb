@@ -10,21 +10,7 @@
 
 <%= render 'shared/you_are' %>
 
-<%= form_tag(thesis_select_path, method: "get") do %>
-  <label>
-    Show only theses from: 
-    <select name="graduation">
-      <option value="all">All terms</option>
-      <% @terms.each do |term| %>
-        <option value="<%= term %>"<%= ' selected="selected"'.html_safe if @graduation.to_s == term.to_s %>>
-          <%= term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') %>
-        </option>
-      <% end %>
-    </select>    
-  </label>
-
-  <%= submit_tag('Apply filter', class: 'btn button-primary') %>
-<% end %>
+<%= render 'shared/defined_terms_filter' %>
 
 <div id="status-list" class="filter-row">
   <button class="btn button-primary" data-filter="*">Show all</button>

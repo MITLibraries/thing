@@ -53,6 +53,8 @@ class Ability
 
     can :manage, :submitter
 
+    can :index, Report
+
     can %i[read update], Thesis
     can :annotate, Thesis
     can :deduplicate, Thesis

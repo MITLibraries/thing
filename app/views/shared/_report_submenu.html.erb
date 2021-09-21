@@ -1,0 +1,13 @@
+<div class="bit">
+  <h4 class="title">Available reports</h3>
+  <nav aria-label="Available reports submenu">
+    <ul>
+      <% if can?(:index, Report) %>
+        <li><%= link_to("Thesis dashboard", report_index_path) %></li>
+      <% end %>
+      <% if can?(:select, Thesis) %>
+        <li><%= link_to("Theses with co-authors", thesis_deduplicate_path) %></li>
+      <% end %>
+    </ul>
+  </nav>
+</div>

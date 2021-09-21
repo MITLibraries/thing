@@ -12,7 +12,6 @@
           <% if user_signed_in? %>
             <% if can? :select, Thesis %>
               <%= nav_link_to("Process theses", thesis_select_path) %>
-              <%= nav_link_to("Duplicate report", thesis_deduplicate_path) %>
             <% end %>
             <% if can? :create, Transfer %>
               <%= nav_link_to("Transfer theses", new_transfer_path) %>
@@ -25,6 +24,9 @@
             <% end %>
             <% if can? :list_registrar, Registrar %>
               <%= nav_link_to("Harvest CSV", harvest_path) %>
+            <% end %>
+            <% if can? :index, Report %>
+              <%= nav_link_to("Report", report_index_path) %>
             <% end %>
             <% if current_user.admin? || can?(:administrate, Admin) %>
               <%= link_to("Admin", admin_root_path, class: 'nav-item') %>
