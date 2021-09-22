@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   end
 
   get 'report', to: 'report#index', as: 'report_index'
+  get 'report/term', to: 'report#term', as: 'report_term'
   get 'thesis/confirm', to: 'thesis#confirm', as: 'thesis_confirm'
   get 'thesis/deduplicate', to: 'thesis#deduplicate', as: 'thesis_deduplicate'
   get 'thesis/:id/process', to: 'thesis#process_theses', as: 'thesis_process'

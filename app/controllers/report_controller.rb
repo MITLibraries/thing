@@ -7,13 +7,21 @@ class ReportController < ApplicationController
   include ThesisHelper
 
   def index
+    report = Report.new
+    @terms = Thesis.pluck(:grad_date).uniq.sort
+    @data = report.index_data
+  end
+
+  def term
     term = params[:graduation] ? params[:graduation].to_s : 'all'
+    @this_term = 'all terms'
+    @this_term = term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') if term != 'all'
     report = Report.new
     theses = Thesis.all
     @terms = report.extract_terms theses
     subset = filter_theses_by_term theses
-    @data = report.dashboard_data subset, term
-    @table = report.dashboard_tables subset
+    @data = report.term_data subset, term
+    @table = report.term_tables subset
   end
 
   private
