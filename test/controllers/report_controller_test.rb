@@ -52,7 +52,10 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     get report_index_path
     assert_select '.card-overall .message', text: '20 thesis records', count: 1
     assert_select '.card-files .message', text: '0 have files attached', count: 1
-    assert_select '.card-issues .message', text: '0 flagged with issues', count: 1
+    assert_select '.card-issues span', text: '0 flagged with issues', count: 1
+    assert_select '.card-multiple-authors span', text: '2 have multiple authors', count: 1
+    assert_select '.card-multiple-degrees span', text: '1 has multiple degrees', count: 1
+    assert_select '.card-multiple-departments span', text: '1 has multiple departments', count: 1
     assert_response :success
   end
 
