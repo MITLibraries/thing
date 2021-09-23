@@ -19,10 +19,10 @@ one:
   code_dw: MFA123
   abbreviation: MFA
   name_dspace: Master of Fine Arts
-  degree_type_id: 
+  degree_type: bachelor
 
 two:
   name_dw: Juris Doctor
   code_dw: JD123
   abbreviation: JD
-  name_dspace: Master of Fine Arts
+  name_dspace: Master of Fine Arts 
