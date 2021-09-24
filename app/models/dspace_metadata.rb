@@ -1,3 +1,7 @@
+# Generates Dublin Core metadata require to publish a Thesis object to DSpace@MIT via the DSpace Submission System
+# DSS. This class assumes that the input Thesis is ready for publication and has all the requisite metadata and file
+# attachments. Validation of those requirements will occur in the Thesis model.
+
 class DspaceMetadata
   def initialize(thesis)
     @dc = {}
