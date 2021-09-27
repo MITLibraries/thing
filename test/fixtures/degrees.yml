@@ -26,3 +26,11 @@ two:
   code_dw: JD123
   abbreviation: JD
   name_dspace: Master of Fine Arts 
+  degree_type: doctoral
+
+three:
+  name_dw: Master of Puppets
+  code_dw: MP123
+  abbreviation: MP
+  name_dspace: MP
+  degree_type: master

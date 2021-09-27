@@ -11,6 +11,7 @@ Rails.application.configure do
   ENV['SP_PRIVATE_KEY'] = ''
   ENV['SP_CERTIFICATE'] = ''
   ENV['THESIS_ADMIN_EMAIL'] = 'test@example.com'
+  ENV['OUTPUT_QUEUE_NAME'] = 'test_queue'
 
   config.cache_classes = true
 
