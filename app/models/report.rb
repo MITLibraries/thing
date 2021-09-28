@@ -252,6 +252,16 @@ class Report
     collection.pluck(:grad_date).uniq.sort
   end
 
+  def list_unattached_files(collection)
+    result = []
+    collection.joins(:files_attachments).order(:grad_date).uniq.each do |record|
+      record.files.where(purpose: nil).each do |file|
+        result.push(file)
+      end
+    end
+    result
+  end
+
   def table_copyright(collection)
     result = {}
     collection.group(:copyright).count.each do |record|
