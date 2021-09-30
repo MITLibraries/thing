@@ -104,6 +104,17 @@ multiple_holds:
   status: 'active'
   processor_note: 'Multiple holds in various states'
 
+issues_found:
+  title: MyThesisHasIssues
+  abstract: "A thesis with an issue somewhere"
+  grad_date: 2021-02-01
+  departments: [one]
+  degrees: [one]
+  files_complete: false
+  metadata_complete: false
+  issues_found: true
+  publication_status: 'Not ready for publication'
+
 publication_review:
   title: MyReadyThesis
   abstract: "A thesis ready for review"

@@ -103,9 +103,9 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'term report shows a few fields' do
     sign_in users(:processor)
     get report_term_path
-    assert_select '.card-overall .message', text: '20 thesis records', count: 1
+    assert_select '.card-overall .message', text: '21 thesis records', count: 1
     assert_select '.card-files .message', text: '0 have files attached', count: 1
-    assert_select '.card-issues span', text: '0 flagged with issues', count: 1
+    assert_select '.card-issues span', text: '1 flagged with issues', count: 1
     assert_select '.card-multiple-authors span', text: '2 have multiple authors', count: 1
     assert_select '.card-multiple-degrees span', text: '1 has multiple degrees', count: 1
     assert_select '.card-multiple-departments span', text: '1 has multiple departments', count: 1
@@ -115,7 +115,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'term report allows filtering' do
     sign_in users(:processor)
     get report_term_path
-    assert_select '.card-overall .message', text: '20 thesis records', count: 1
+    assert_select '.card-overall .message', text: '21 thesis records', count: 1
     get report_term_path, params: { graduation: '2018-09-01' }
     assert_select '.card-overall .message', text: '2 thesis records', count: 1
     assert_response :success

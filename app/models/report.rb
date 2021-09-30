@@ -62,14 +62,14 @@ class Report
 
   def data_category_copyright_holder
     category = []
-    rows = pad_category(Copyright.pluck(:holder))
+    rows = populate_category(Copyright.pluck(:holder))
     Thesis.all.joins(:copyright).group(:holder).group(:grad_date).count.each do |item|
       rows[item[0][0]][item[0][1]] = item[1]
     end
     rows.each do |row|
       category.push({
                       label: row[0],
-                      data: pad_row(row[1])
+                      data: pad_terms(row[1])
                     })
     end
     category
@@ -77,14 +77,14 @@ class Report
 
   def data_category_department
     category = []
-    rows = pad_category(Department.pluck(:name_dw))
+    rows = populate_category(Department.pluck(:name_dw))
     Thesis.all.joins(:departments).group(:name_dw).group(:grad_date).count.each do |item|
       rows[item[0][0]][item[0][1]] = item[1]
     end
     rows.each do |row|
       category.push({
                       label: row[0],
-                      data: pad_row(row[1])
+                      data: pad_terms(row[1])
                     })
     end
     category
@@ -92,14 +92,14 @@ class Report
 
   def data_category_license
     category = []
-    rows = pad_category(License.pluck(:display_description))
+    rows = populate_category(License.pluck(:display_description))
     Thesis.all.joins(:license).group(:display_description).group(:grad_date).count.each do |item|
       rows[item[0][0]][item[0][1]] = item[1]
     end
     rows.each do |row|
       category.push({
                       label: row[0],
-                      data: pad_row(row[1])
+                      data: pad_terms(row[1])
                     })
     end
     category
@@ -107,14 +107,14 @@ class Report
 
   def data_category_publication_status
     category = []
-    rows = pad_category(Thesis.publication_statuses)
+    rows = populate_category(Thesis.publication_statuses)
     Thesis.all.group(:publication_status).group(:grad_date).count.each do |item|
       rows[item[0][0]][item[0][1]] = item[1]
     end
     rows.each do |row|
       category.push({
                       label: row[0],
-                      data: pad_row(row[1])
+                      data: pad_terms(row[1])
                     })
     end
     category
@@ -123,99 +123,107 @@ class Report
   def data_files_attached_to_theses
     {
       label: 'Files attached to theses',
-      data: pad_row(Thesis.all.joins(:files_attachments).group(:grad_date).count)
+      data: pad_terms(Thesis.all.joins(:files_attachments).group(:grad_date).count)
     }
   end
 
   def data_issues
     {
       label: 'Flagged with issues',
-      data: pad_row(Thesis.all.group(:grad_date).where('issues_found = ?', true).count)
+      data: pad_terms(Thesis.all.group(:grad_date).where('issues_found = ?', true).count)
     }
   end
 
   def data_multiple_authors
     row_data = {}
-    sql = 'SELECT t.grad_date, count(t.id) as pop '\
-          'FROM ( '\
-          '  SELECT theses.id, theses.grad_date, count(theses.id) as authors '\
-          '  FROM theses '\
-          '  INNER JOIN authors a on theses.id = a.thesis_id '\
-          '  GROUP BY theses.id '\
-          '  HAVING count(a.id) > 1 '\
-          ') AS t '\
-          'GROUP BY t.grad_date;'
-    ActiveRecord::Base.connection.exec_query(sql).each do |item|
+    query = <<~SQL
+      SELECT t.grad_date, count(t.id) as pop
+      FROM (
+        SELECT theses.id, theses.grad_date, count(theses.id) as authors
+        FROM theses
+        INNER JOIN authors a on theses.id = a.thesis_id
+        GROUP BY theses.id
+        HAVING count(a.id) > 1
+      ) AS t
+      GROUP BY t.grad_date;
+    SQL
+    ActiveRecord::Base.connection.exec_query(query).each do |item|
       row_data[Date.parse(item['grad_date'])] = item['pop']
     end
     {
       label: 'Multiple authors',
-      data: pad_row(row_data)
+      data: pad_terms(row_data)
     }
   end
 
   def data_multiple_degrees
     row_data = {}
-    sql = 'SELECT t.grad_date, count(t.id) as pop '\
-          'FROM ( '\
-          '  SELECT theses.id, theses.grad_date, count(theses.id) as authors '\
-          '  FROM theses '\
-          '  INNER JOIN degree_theses link ON theses.id = link.thesis_id'\
-          '  INNER JOIN degrees d on link.degree_id = d.id '\
-          '  GROUP BY theses.id '\
-          '  HAVING count(d.id) > 1 '\
-          ') AS t '\
-          'GROUP BY t.grad_date;'
-    ActiveRecord::Base.connection.exec_query(sql).each do |item|
+    query = <<~SQL
+      SELECT t.grad_date, count(t.id) as pop
+      FROM (
+        SELECT theses.id, theses.grad_date, count(theses.id) as authors
+        FROM theses
+        INNER JOIN degree_theses link ON theses.id = link.thesis_id
+        INNER JOIN degrees d on link.degree_id = d.id
+        GROUP BY theses.id
+        HAVING count(d.id) > 1
+      ) AS t
+      GROUP BY t.grad_date;
+    SQL
+    ActiveRecord::Base.connection.exec_query(query).each do |item|
       row_data[Date.parse(item['grad_date'])] = item['pop']
     end
     {
       label: 'Multiple degrees',
-      data: pad_row(row_data)
+      data: pad_terms(row_data)
     }
   end
 
   def data_multiple_departments
     row_data = {}
-    sql = 'SELECT t.grad_date, count(t.id) as pop '\
-          'FROM ( '\
-          '  SELECT theses.id, theses.grad_date, count(theses.id) as authors '\
-          '  FROM theses '\
-          '  INNER JOIN department_theses link ON theses.id = link.thesis_id'\
-          '  INNER JOIN departments d on link.department_id = d.id '\
-          '  GROUP BY theses.id '\
-          '  HAVING count(d.id) > 1 '\
-          ') AS t '\
-          'GROUP BY t.grad_date;'
-    ActiveRecord::Base.connection.exec_query(sql).each do |item|
+    query = <<~SQL
+      SELECT t.grad_date, count(t.id) as pop
+      FROM (
+        SELECT theses.id, theses.grad_date, count(theses.id) as authors
+        FROM theses
+        INNER JOIN department_theses link ON theses.id = link.thesis_id
+        INNER JOIN departments d on link.department_id = d.id
+        GROUP BY theses.id
+        HAVING count(d.id) > 1
+      ) AS t
+      GROUP BY t.grad_date;
+    SQL
+    ActiveRecord::Base.connection.exec_query(query).each do |item|
       row_data[Date.parse(item['grad_date'])] = item['pop']
     end
     {
       label: 'Multiple departments',
-      data: pad_row(row_data)
+      data: pad_terms(row_data)
     }
   end
 
   def data_thesis_records
     {
       label: 'Thesis records',
-      data: pad_row(Thesis.all.group(:grad_date).count)
+      data: pad_terms(Thesis.all.group(:grad_date).count)
     }
   end
 
   def data_theses_with_files
     row_data = {}
-    sql = 'SELECT t.grad_date, count(distinct t.id) AS pop '\
-          'FROM theses t '\
-          'INNER JOIN active_storage_attachments a ON t.id = a.record_id '\
-          "WHERE a.record_type = 'Thesis' "\
-          'GROUP BY t.grad_date;'
-    ActiveRecord::Base.connection.exec_query(sql).each do |item|
+    query = <<~SQL
+      SELECT t.grad_date, count(distinct t.id) AS pop
+      FROM theses t
+      INNER JOIN active_storage_attachments a ON t.id = a.record_id
+      WHERE a.record_type = 'Thesis'
+      GROUP BY t.grad_date;
+    SQL
+    ActiveRecord::Base.connection.exec_query(query).each do |item|
       row_data[Date.parse(item['grad_date'])] = item['pop']
     end
     {
       label: 'Theses with files',
-      data: pad_row(row_data)
+      data: pad_terms(row_data)
     }
   end
 
@@ -351,21 +359,39 @@ class Report
 
   private
 
-  def pad_category(array)
-    # This builds out the initial set of a category of rows, based on a provided array (like
-    # Thesis.publication_statuses).
-    output = {}
-    array.each do |item|
-      output[item] = {}
-    end
-    output
-  end
-
-  def pad_row(data)
+  def pad_terms(data)
+    # Given a hash of data for a single row of the reporting table, this will compare the data to the set of all
+    # terms, adding zero values where needed to the simple iterator in the view will place them accurately.
+    # Sample input (missing some terms)
+    # {Mon, 01 Feb 2021=>1,
+    #  Sat, 01 May 2021=>4,
+    #  Tue, 01 Jun 2021=>2,
+    #  Thu, 01 Sep 2022=>2}
+    # Sample output (now with a value for every term)
+    # {Fri, 01 Feb 1861=>0,
+    #  Mon, 01 Feb 2021=>1,
+    #  Sat, 01 May 2021=>4,
+    #  Tue, 01 Jun 2021=>2,
+    #  Sun, 01 May 2022=>0,
+    #  Thu, 01 Sep 2022=>2}
     output = {}
     Thesis.pluck(:grad_date).uniq.sort.each do |term|
       output[term] = 0
       output[term] = data[term] if data.include? term
+    end
+    output
+  end
+
+  def populate_category(array)
+    # This builds out the initial set of a category of rows, based on a provided array (like
+    # Thesis.publication_statuses).
+    # Sample input (array of publication statuses)
+    # ["Not ready for publication", "Publication review", "Pending publication", "Published"]
+    # Sample output (hash ready for population)
+    # {"Not ready for publication"=>{}, "Publication review"=>{}, "Pending publication"=>{}, "Published"=>{}}
+    output = {}
+    array.each do |item|
+      output[item] = {}
     end
     output
   end
