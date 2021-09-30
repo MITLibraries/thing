@@ -185,19 +185,19 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'departments report includes instance variables' do
+    sign_in users(:processor)
+    get report_departments_path
+    assert_not_nil(controller.instance_variable_get(:@terms))
+    assert_not_nil(controller.instance_variable_get(:@data))
+    assert_not_nil(controller.instance_variable_get(:@list))
+  end
+
   test 'departments report shows a card and a list' do
     sign_in users(:processor)
     get report_departments_path
     assert_select '.card-departments span', text: '1 department(s) have transferred files', count: 1
     assert_select '.list-no-transfers li', count: 2
-  end
-
-  test 'departments report includes instance variables' do
-    sign_in users(:processor)
-    get report_departments_path
-    assert_not_nil assigns(:terms)
-    assert_not_nil assigns(:data)
-    assert_not_nil assigns(:list)
   end
 
   test 'departments report allows filtering' do
