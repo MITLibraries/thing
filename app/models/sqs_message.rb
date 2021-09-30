@@ -11,9 +11,9 @@ class SqsMessage
 
   def message_attributes
     attributes = {}
-    attributes['PackageID'] = { 'DataType' => 'String', 'StringValue' => @package_id }
-    attributes['SubmissionSource'] = { 'DataType' => 'String', 'StringValue' => 'ETD' }
-    attributes['OutputQueue'] = { 'DataType' => 'String', 'StringValue' => ENV['OUTPUT_QUEUE_NAME'].to_s }
+    attributes['PackageID'] = { data_type: 'String', string_value: @package_id }
+    attributes['SubmissionSource'] = { data_type: 'String', string_value: 'ETD' }
+    attributes['OutputQueue'] = { data_type: 'String', string_value: ENV['SQS_OUTPUT_QUEUE_NAME'].to_s }
     attributes
   end
 
@@ -42,11 +42,11 @@ class SqsMessage
   # theses. Here we're trying to get the most specific handle possible.
   def collection_handle
     if @thesis.degrees.any? { |d| d.degree_type.name == 'Doctoral' }
-      '1721.1/131022'
+      ENV.fetch('DSPACE_DOCTORAL_HANDLE')
     elsif @thesis.degrees.any? { |d| d.degree_type.name == 'Master' }
-      '1721.1/131023'
+      ENV.fetch('DSPACE_GRADUATE_HANDLE')
     else
-      '1721.1/131024'
+      ENV.fetch('DSPACE_UNDERGRADUATE_HANDLE')
     end
   end
 
