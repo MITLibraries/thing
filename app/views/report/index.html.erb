@@ -1,17 +1,40 @@
-<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+<%= content_for(:title, "Reporting Dashboard | MIT Libraries") %>
 
 <div class="layout-3q1q layout-band">
   <div class="col3q">
-    <h3 class="title title-page">Thesis reporting dashboard</h3>
+    <h3 class="title title-page">Thesis dashboard</h3>
 
-    <%= render 'shared/defined_terms_filter' %>
+    <div class="well">
+      <p>The tables below summarize information about the thesis records which have been supplied to this application across academic terms.</p>
+      <p>Click on a column heading to see more detailed information about the theses from that term.</p>
+    </div>
 
-    <%= render(partial: 'card', collection: @data) %>
-
-    <hr>
-
-    <%= render(partial: 'table', collection: @table) %>
-
+    <% @data.each do |table| %>
+      <table class="table table-simplified" style="margin-top: 4em;">
+        <caption class="hd-4"><%= table[0] %></caption>
+        <thead>
+          <tr>
+            <td>&nbsp;</td>
+            <% @terms.each do |term| %>
+              <th scope="col"><%= link_to( term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y'), report_term_path(:graduation => term) )%></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% table[1].each do |row| %>
+            <tr>
+              <th scope="row"><%= row[:label] %></th>
+              <% if row[:data] %>
+                <% row[:data].each do |cell| %>
+                  <td><%= cell[1] %></td>
+                <% end %>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+ 
   </div>
 
   <aside class="content-sup col1q-r">
