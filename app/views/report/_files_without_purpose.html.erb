@@ -1,0 +1,14 @@
+<tr>
+  <td><%= link_to(files_without_purpose.blob[:filename],thesis_process_path(files_without_purpose[:record_id])) %></td>
+  <td>
+    <% files_without_purpose.record.authors.each do |author| %>
+      <%= author.user.display_name %><br>
+    <% end %>
+  </td>
+  <td>
+    <% files_without_purpose.record.departments.each do |dept| %>
+      <%= dept.name_dw %><br>
+    <% end %>
+  </td>
+  <td><%= files_without_purpose[:description] %></td>
+</tr>

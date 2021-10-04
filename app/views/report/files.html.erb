@@ -1,0 +1,30 @@
+<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">Files without a defined purpose</h3>
+
+    <%= render 'shared/defined_terms_filter' %>
+
+    <table class="table" summary="This table presents a list of files which are attached to theses but which have no purpose defined.
+        Clicking the link in the left column will take you to the processing form for that thesis, where a purpose can
+        be declared." title="Files without a defined purpose">
+      <thead>
+        <tr>
+          <th scope="col">File</th>
+          <th scope="col">Authors</th>
+          <th scope="col">Departments</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'report/files_without_purpose', collection: @list) || render('files_empty') %>
+      </tbody>
+    </table>
+
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>
