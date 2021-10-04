@@ -64,10 +64,81 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  # ~~~~ Dashboard features
+
   test 'summary report has links to term-specific pages for all terms' do
     sign_in users(:processor)
     get report_index_path
     assert_select 'table:first-of-type thead a', count: Thesis.pluck(:grad_date).uniq.count
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~~ Report empty theses ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'empty theses report exists' do
+    sign_in users(:admin)
+    get report_empty_theses_path
+    assert_response :success
+  end
+
+  test 'anonymous users are prompted to log in by empty theses report' do
+    # Note that nobody is signed in.
+    get report_empty_theses_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see empty theses report' do
+    sign_in users(:basic)
+    get report_empty_theses_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see empty theses report' do
+    sign_in users(:transfer_submitter)
+    get report_empty_theses_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see empty theses report' do
+    sign_in users(:processor)
+    get report_empty_theses_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see empty theses report' do
+    sign_in users(:thesis_admin)
+    get report_empty_theses_path
+    assert_response :success
+  end
+
+  test 'admins can see empty theses report' do
+    sign_in users(:admin)
+    get report_empty_theses_path
+    assert_response :success
+  end
+
+  # ~~~~ Empty thesis features
+
+  test 'empty theses report shows a card' do
+    sign_in users(:processor)
+    get report_empty_theses_path
+    assert_select '.card-empty-theses span', text: '21 have no attached files', count: 1
+  end
+
+  test 'empty theses report has links to processing pages' do
+    sign_in users(:processor)
+    get report_empty_theses_path
+    assert_select 'table tbody a', count: Thesis.all.without_files.count
+  end
+
+  test 'empty theses report allows filtering by term' do
+    sign_in users(:processor)
+    get report_empty_theses_path
+    assert_select '.card-empty-theses span', text: '21 have no attached files', count: 1
+    get report_empty_theses_path, params: { graduation: '2018-09-01' }
+    assert_select '.card-empty-theses span', text: '2 have no attached files', count: 1
   end
 
   # ~~~~~~~~~~~~~~~~~~~~ Report term detail ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -116,6 +187,8 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     get report_term_path
     assert_response :success
   end
+
+  # ~~~~ Term features
 
   test 'term report shows a few fields' do
     sign_in users(:processor)
@@ -184,6 +257,8 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     get report_files_path
     assert_response :success
   end
+
+  # ~~~~ Files without purpose features
 
   test 'default files report is empty' do
     sign_in users(:processor)

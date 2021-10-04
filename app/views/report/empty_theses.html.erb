@@ -1,0 +1,20 @@
+<%= content_for(:title, "Thesis Term Summary | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <p><%= link_to('Return to thesis dashboard', report_index_path) %></p>
+
+    <h3 class="title title-page">Theses without files in <%= @this_term %></h3>
+
+    <%= render 'shared/defined_terms_filter' %>
+
+    <%= render(partial: 'card', collection: @data) %>
+
+    <%= render(partial: 'record', collection: @record) %>
+
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>

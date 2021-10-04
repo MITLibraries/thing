@@ -1,0 +1,14 @@
+<h4 class="title"><%= record[1][:title] %></h4>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Author(s)</th>
+      <th scope="col">Graduated?</th>
+      <th scope="col">Department(s)</th>
+      <th scope="col">Processor note</th>
+    </tr>    
+  </thead>
+  <tbody>
+    <%= render(partial: 'record_single', collection: record[1][:data]) || render('record_empty') %>
+  </tbody>
+</table>
