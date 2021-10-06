@@ -96,9 +96,7 @@ class Thesis < ApplicationRecord
   #  includes(:user).order('users.surname, users.given_name')
   # }
   scope :date_asc, -> { order('grad_date') }
-  scope :without_files, lambda {
-    select { |t| t.files.count.zero? }
-  }
+  scope :without_files, -> { where.missing(:files_attachments) }
   scope :valid_months_only, lambda {
     select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
   }

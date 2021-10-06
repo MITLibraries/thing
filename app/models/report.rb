@@ -275,7 +275,7 @@ class Report
   def record_empty_theses(collection)
     {
       title: 'Theses without files',
-      data: collection.without_files
+      data: collection.without_files.includes(authors: :user)
     }
   end
 
