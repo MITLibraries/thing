@@ -3,7 +3,7 @@ class Report
 
   def card_empty_theses(collection)
     {
-      'value' => collection.without_files.count,
+      'value' => collection.count,
       'verb' => 'has',
       'label' => 'no attached files'
     }
@@ -275,7 +275,7 @@ class Report
   def record_empty_theses(collection)
     {
       title: 'Theses without files',
-      data: collection.without_files.includes(authors: :user)
+      data: collection
     }
   end
 

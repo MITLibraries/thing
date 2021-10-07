@@ -11,7 +11,7 @@ class ReportController < ApplicationController
     @this_term = 'all terms'
     @this_term = term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') if term != 'all'
     report = Report.new
-    theses = Thesis.includes(:authors).includes(:departments).all
+    theses = Thesis.without_files.includes(:authors).includes(authors: :user).includes(:departments).all
     @terms = report.extract_terms theses
     subset = filter_theses_by_term theses
     @data = report.empty_theses_data subset
