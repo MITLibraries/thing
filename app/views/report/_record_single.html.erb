@@ -1,0 +1,11 @@
+<tr>
+  <td>
+    <%= link_to record_single.authors.map { |author| author.user.display_name }.join('<br>').html_safe, 
+                thesis_process_path(record_single[:id]) %>
+  </td>
+  <td><%= record_single.authors_graduated? ? 'Yes' : 'No' %></td>
+  <td>
+    <%= record_single.departments.map { |dept| dept.name_dw }.join('<br>').html_safe %>
+  </td>
+  <td><%= record_single.processor_note %></td>
+</tr>

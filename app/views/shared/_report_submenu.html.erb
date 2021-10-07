@@ -8,6 +8,9 @@
       <% if can?(:select, Thesis) %>
         <li><%= link_to("Theses with co-authors", thesis_deduplicate_path) %></li>
       <% end %>
+      <% if can?(:empty_theses, Report) %>
+        <li><%= link_to("Theses without files", report_empty_theses_path) %></li>
+      <% end %>
       <% if can?(:files, Report) %>
         <li><%= link_to("Files without purpose", report_files_path) %></li>
       <% end %>

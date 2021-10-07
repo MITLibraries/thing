@@ -1,6 +1,14 @@
 class Report
   delegate :url_helpers, to: 'Rails.application.routes'
 
+  def card_empty_theses(collection)
+    {
+      'value' => collection.count,
+      'verb' => 'has',
+      'label' => 'no attached files'
+    }
+  end
+
   def card_files(collection, term)
     subset = collection.joins(:files_attachments)
     {
@@ -248,8 +256,27 @@ class Report
     output
   end
 
+  def empty_theses_data(collection)
+    result = {}
+    result['empty-theses'] = card_empty_theses collection
+    result
+  end
+
+  def empty_theses_record(collection)
+    result = {}
+    result['empty-theses'] = record_empty_theses collection
+    result
+  end
+
   def extract_terms(collection)
     collection.pluck(:grad_date).uniq.sort
+  end
+
+  def record_empty_theses(collection)
+    {
+      title: 'Theses without files',
+      data: collection
+    }
   end
 
   def list_unattached_files(collection)

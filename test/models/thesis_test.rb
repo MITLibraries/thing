@@ -552,6 +552,18 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal false, thesis.authors_graduated?
   end
 
+  test 'without_files scope returns list of records with no attached files' do
+    thesis = theses(:one)
+    all_theses = Thesis.count
+    assert_equal all_theses, Thesis.without_files.count
+    assert_includes Thesis.without_files, thesis
+    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    thesis.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    thesis.save
+    assert_equal all_theses-1, Thesis.without_files.count
+    assert_not_includes Thesis.without_files, thesis
+  end
+
   test 'publication_statuses scope returns accepted status dictionary' do
     assert_equal 4, Thesis.publication_statuses.length
   end
