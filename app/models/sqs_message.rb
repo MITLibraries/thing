@@ -6,7 +6,7 @@ class SqsMessage
   def initialize(thesis)
     @thesis = thesis
     @package_id = "etd_#{@thesis.id}"
-    @metadata_uri = thesis.dspace_metadata.blob.url
+    @metadata_uri = thesis.dspace_metadata.blob.url(expires_in: 604800)
   end
 
   def message_attributes
@@ -32,7 +32,7 @@ class SqsMessage
     @thesis.files.map do |f|
       {
         'BitstreamName' => f.blob.filename.to_s,
-        'FileLocation' => f.blob.url,
+        'FileLocation' => f.blob.url(expires_in: 604800),
         'BitstreamDescription' => bitstream_description(f)
       }
     end
