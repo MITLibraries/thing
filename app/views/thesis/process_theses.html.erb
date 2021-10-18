@@ -34,44 +34,83 @@
       <p class="box-content">
         <%= @thesis.publication_status %>
       </p>
-
-      <h4>Status of all the things</h4>
-      <ul class="list-unbulleted">
-        <li>
-          <%= f.input :authors_graduated?, as: :string,
-                                readonly: true,
-                                label_html: { style: 'width: 50%' },
-                                input_html: { class: 'disabled', style: 'width: 40%', value: f.object.authors_graduated?? 'Yes' : 'No' },
-                                label: 'Authors graduated' %>
-        </li>
-        <li>
-          <%= f.input :active_holds?, as: :string,
-                                      readonly: true,
-                                      label_html: { style: 'width: 50%' },
-                                      input_html: { class: 'disabled', style: 'width: 40%', value: f.object.active_holds?? 'Yes' : 'No' },
-                                      hint_html: { style: 'display: block' },
-                                      hint: link_to('See details in admin interface', admin_thesis_path(f.object), target: :_blank) %>
-          
-        </li>
-        <li>
-          <%= f.input :files_complete, as: :radio_buttons,
-                                       label_html: { style: 'width: 50%' },
-                                       item_wrapper_class: 'field-radio fields-inline',
-                                       label: 'Files ok' %>
-        </li>
-        <li>
-          <%= f.input :metadata_complete, as: :radio_buttons,
-                                          label_html: { style: 'width: 50%' },
-                                          item_wrapper_class: 'field-radio fields-inline',
-                                          label: 'Metadata ok' %>
-        </li>
-        <li>
-          <%= f.input :issues_found, as: :radio_buttons,
+      <h4>Thesis metadata</h4>
+      <div class="box-content" style="margin-bottom: 1em">
+        <ul class="list-unbulleted">
+          <li>
+            <%= f.input :required_fields?, as: :string,
+                                 readonly: true,
+                                 label_html: { style: 'width: 50%' },
+                                 input_html: { class: 'disabled', style: 'width: 40%', value: f.object.required_fields?? 'Yes' : 'No' },
+                                 label: 'Sufficient metadata?' %>
+          </li>
+          <li>
+            <%= f.input :authors_graduated?, as: :string,
+                                  readonly: true,
+                                  label_html: { style: 'width: 50%' },
+                                  input_html: { class: 'disabled', style: 'width: 40%', value: f.object.authors_graduated?? 'Yes' : 'No' },
+                                  label: 'Authors graduated' %>
+          </li>
+          <li>
+            <%= f.input :active_holds?, as: :string,
+                                        readonly: true,
+                                        label_html: { style: 'width: 50%' },
+                                        input_html: { class: 'disabled', style: 'width: 40%', value: f.object.active_holds?? 'Yes' : 'No' },
+                                        hint_html: { style: 'display: block' },
+                                        hint: link_to('See details in admin interface', admin_thesis_path(f.object), target: :_blank) %>
+          </li>
+          <li>
+            <fieldset>
+              <legend>Issues found</legend>
+              <%= f.input :issues_found, as: :radio_buttons,
+                                         item_wrapper_class: 'field-radio fields-inline',
+                                         label: false %>
+            </fieldset>
+          </li>
+          <li>
+            <fieldset>
+              <legend>Metadata ok</legend>
+              <%= f.input :metadata_complete, as: :radio_buttons,
+                                              item_wrapper_class: 'field-radio fields-inline',
+                                              label: false %>
+            </fieldset>
+          </li>
+        </ul>
+      </div>
+      <h4>Thesis files</h4>
+      <div class="box-content" style="margin-bottom: 1em">
+        <ul class="list-unbulleted">
+          <li>
+            <%= f.input :files?, as: :string,
+                                     readonly: true,
                                      label_html: { style: 'width: 50%' },
-                                     item_wrapper_class: 'field-radio fields-inline',
-                                     label: 'Issues found' %>
-        </li>
-      </ul>
+                                     input_html: { class: 'disabled', style: 'width: 40%', value: f.object.files?? 'Yes' : 'No' },
+                                     label: 'Files attached' %>
+          </li>
+          <li>
+            <%= f.input :files_have_purpose?, as: :string,
+                                              readonly: true,
+                                              label_html: { style: 'width: 50%' },
+                                              input_html: { class: 'disabled', style: 'width: 40%', value: f.object.files_have_purpose?? 'Yes' : 'No' },
+                                              label: 'All files have a purpose' %>
+          </li>
+          <li>
+            <%= f.input :one_thesis_pdf?, as: :string,
+                                          readonly: true,
+                                              label_html: { style: 'width: 50%' },
+                                              input_html: { class: 'disabled', style: 'width: 40%', value: f.object.one_thesis_pdf?? 'Yes' : 'No' },
+                                              label: 'One "Thesis PDF"' %>
+          </li>
+          <li>
+            <fieldset>
+              <legend>Files ok</legend>
+              <%= f.input :files_complete, as: :radio_buttons,
+                                           item_wrapper_class: 'field-radio fields-inline',
+                                           label: false %>
+            </fieldset>
+          </li>
+        </ul>
+      </div>
       <%= submit_tag 'Update', class: 'btn button-primary' %>
     </div>
   </div>

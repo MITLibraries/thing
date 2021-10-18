@@ -119,8 +119,10 @@ publication_review:
   title: MyReadyThesis
   abstract: "A thesis ready for review"
   grad_date: 2021-06-01
+  copyright: mit
   departments: [one]
   degrees: [one]
+  advisors: [first]
   files_complete: true
   metadata_complete: true
   issues_found: false
@@ -130,8 +132,10 @@ publication_review_except_hold:
   title: MyAlmostReadyThesis
   abstract: "A thesis almost ready for review"
   grad_date: 2021-06-01
+  copyright: govt
   departments: [one]
   degrees: [one]
+  advisors: [first]
   files_complete: true
   metadata_complete: true
   issues_found: false
@@ -209,3 +213,39 @@ coauthor:
   coauthors: 'Yobot, Yo'
   copyright: mit
   license: nocc
+
+bachelor:
+  title: MyUndergradThesis
+  abstract: MyText
+  grad_date: 2018-06-01
+  copyright: mit
+  departments: [one]
+  degrees: [one]
+  advisors: [first]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+
+master:
+  title: MyMasterThesis
+  abstract: MyText
+  grad_date: 2018-06-01
+  copyright: govt
+  departments: [one]
+  degrees: [three]
+  advisors: [first]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+
+doctor:
+  title: MyDoctoralThesis
+  abstract: MyText
+  grad_date: 2018-06-01
+  copyright: public
+  departments: [one]
+  degrees: [two]
+  advisors: [first]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false

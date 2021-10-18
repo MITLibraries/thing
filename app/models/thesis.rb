@@ -102,19 +102,61 @@ class Thesis < ApplicationRecord
   }
   scope :publication_statuses, -> { PUBLICATION_STATUS_OPTIONS }
 
-  # This inverts the issues_found field, so that the checks inside the
-  # update_status method below are all written the same way.
-  # The UI will still rely on the issues_found field directly, as its
-  # framing is more logical for the user.
-  def no_issues_found?
-    !issues_found
-  end
-
   # Returns a true/false value (rendered as "yes" or "no") if there are any
   # holds with a status of either 'active' or 'expired'. A false/"No" is
   # only returned if all holds are 'released'.
   def active_holds?
     holds.map { |h| h.status.in? %w[active expired] }.any?
+  end
+
+  # Returns a true/false value if there are any associated advisors.
+  def advisors?
+    !advisors.count.zero?
+  end
+
+  # Returns a true/false value (rendered as "yes" or "no") if all authors
+  # have graduated. Any author having not graduated results in a false/"No".
+  def authors_graduated?
+    authors.map(&:graduation_confirmed?).reduce(:&)
+  end
+
+  # Returns a true/false value if there are any affiliated degrees.
+  def degrees?
+    !degrees.count.zero?
+  end
+
+  # This is the summation of all status checks, which must all return a boolean TRUE in order for a thesis record to be
+  # placed into the "publication review" status. Some of these checks may in turn have sub-checks (required_fields? is
+  # one such calculation).
+  def evaluate_status
+    [
+      files?,
+      files_have_purpose?,
+      one_thesis_pdf?,
+      files_complete?,
+      required_fields?,
+      metadata_complete?,
+      no_issues_found?,
+      no_active_holds?,
+      authors_graduated?
+    ].all?
+  end
+
+  # Returns a true/false value if there are any attached files.
+  def files?
+    !files.count.zero?
+  end
+
+  # Returns a true/false value if all files have a defined purpose.
+  def files_have_purpose?
+    !nil.in? files.map(&:purpose)
+  end
+
+  # This checks whether a thesis record is new, based on the most recent transaction. Once the record is updated or
+  # saved, this will evaluate to false. Normally we would use ActiveModel::Dirty for this, but that module doesn't work
+  # well for models with nested attributes.
+  def new_thesis?
+    transaction_include_any_action?([:create])
   end
 
   # This just inverts the active_holds? method above, so that the checks
@@ -125,17 +167,57 @@ class Thesis < ApplicationRecord
     !active_holds?
   end
 
-  # Returns a true/false value (rendered as "yes" or "no") if all authors
-  # have graduated. Any author having not graduated results in a false/"No".
-  def authors_graduated?
-    authors.map(&:graduation_confirmed?).reduce(:&)
+  # This inverts the issues_found field, so that the checks inside the
+  # update_status method below are all written the same way.
+  # The UI will still rely on the issues_found field directly, as its
+  # framing is more logical for the user.
+  def no_issues_found?
+    !issues_found
   end
 
-  # This checks whether a thesis record is new, based on the most recent transaction. Once the record is updated or
-  # saved, this will evaluate to false. Normally we would use ActiveModel::Dirty for this, but that module doesn't work
-  # well for models with nested attributes.
-  def new_thesis?
-    transaction_include_any_action?([:create])
+  # This determines whether there is one-and-only-one attached file with a purpose of "Thesis PDF"
+  def one_thesis_pdf?
+    files.map { |f| f.purpose.in? %w[thesis_pdf] }.one?
+  end
+
+  # Abstracts are required unless all degrees are Bachelor level.
+  def required_abstract?
+    return true if abstract?
+    return true if degrees.map { |d| d.degree_type&.name }.uniq == ['Bachelor']
+
+    false
+  end
+
+  # This returns false if the license field is not specified, when the record indicates that one is required.
+  # Licenses are only required when the author holds copyright.
+  def required_license?
+    return true if copyright&.holder != 'Author'
+    return true if license&.display_description
+
+    false
+  end
+
+  # Returns true if all the various record fields are appropriately populated. This includes fields that are only
+  # required in certain conditions (i.e. abstracts are required for master and doctoral theses, but not for bachelor
+  # theses). These checks are summarized on the thesis processing form using the "Sufficient metadata?" field in the
+  # status panel.
+  #
+  # Please note, further, that the valid? call in this method will run all defined data validations. A number of fields
+  # in the data model (i.e. graduation_month and graduation_year) are only covered by this approach.
+  def required_fields?
+    if [
+      valid?,
+      required_abstract?,
+      advisors?,
+      copyright_id?,
+      degrees?,
+      required_license?,
+      title?
+    ].all?
+      return true
+    end
+
+    false
   end
 
   # This contains the logic for a thesis to have its status set to either
@@ -149,18 +231,10 @@ class Thesis < ApplicationRecord
     # Still here? Then we proceed...
     # By default, a thesis is set to 'Not ready for production'
     self.publication_status = 'Not ready for publication'
-    # If the five qualifying conditions are met, then we set status to
+    # If all qualifying conditions are met, then we set status to
     # 'publication review'. This will leave unchanged a thesis that was
     # already set to 'Pending publication' via another method.
-    if [
-      files_complete,
-      metadata_complete,
-      no_issues_found?,
-      no_active_holds?,
-      authors_graduated?
-    ].all?
-      self.publication_status = 'Publication review'
-    end
+    self.publication_status = 'Publication review' if evaluate_status
     # Please note that the 'pending publiation' and 'published' statuses can
     # not be set via this method - they get assigned elsewhere.
   end

@@ -1,0 +1,49 @@
+digraph publication_status {
+  subgraph cluster0 {
+    node [style=filled,color=white];
+    style=filled;
+    color=lightgrey;
+    files -> files_have_purpose;
+    files_have_purpose -> one_thesis_pdf;
+    one_thesis_pdf -> files_complete;
+    metadata_complete -> no_issues_found;
+    no_issues_found -> no_active_holds;
+    no_active_holds -> authors_graduated;
+    label="evaluate_status\nline 257";
+  }
+  subgraph cluster1 {
+    node [style=filled,color=white];
+    style=filled;
+    color=lightgrey;
+    files_complete -> valid
+    valid -> required_abstract;
+    required_abstract -> advisors;
+    advisors -> copyright_id;
+    copyright_id -> degrees;
+    degrees -> required_license;
+    required_license -> title;
+    title -> metadata_complete;
+    label="required_fields?\nline 190";
+  }
+  start -> files
+  authors_graduated -> end
+
+  advisors [label="advisors?\nline 113" shape=box]
+  authors_graduated [label="authors_graduated?\nline 119" shape=box]
+  copyright_id [label="copyright_id?\nfield"]
+  degrees [label="degrees?\nline 124" shape=box]
+  files [label="files?\nline 129\ntest 630" shape=box]
+  files_complete [label="files_complete?\nfield\ntest 668"]
+  files_have_purpose [label="files_have_purpose?\nline 134\ntest 639" shape=box]
+  metadata_complete [label="metadata_complete?\nfield\ntest 676"]
+  no_active_holds [label="no_active_holds?\nline 149" shape=box]
+  no_issues_found [label="no_issues_found?\nline 157" shape=box]
+  one_thesis_pdf [label="one_thesis_pdf?\nline 162\ntest 651, 659" shape=box]
+  required_abstract [label="required_abstract?\nline 167" shape=box]
+  required_license [label="required_license?\nline 176" shape=box]
+  title [label="title?\nfield"]
+  valid [label="valid?\nbuilt-in"]
+
+  start [shape=Mdiamond]
+  end [shape=Mdiamond]
+}
