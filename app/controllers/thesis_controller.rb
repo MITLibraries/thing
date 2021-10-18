@@ -44,6 +44,23 @@ class ThesisController < ApplicationController
     @thesis.association(:advisors).add_to_target(Advisor.new) if @thesis.advisors.count.zero?
   end
 
+  def publish_to_dspace
+    # This will be where the publication job gets invoked.
+    # subset = filter_theses_by_term Thesis.in_review
+    # result = subset.map(&:some_async_method)
+    # if result.map { |val| val == true }.reduce(:&)
+    #   flash[:success] = 'This would have published theses to DSpace@MIT.'
+    # else
+    #   flash[:warning] = 'Not all selected theses are ready for publication.<br>'.html_safe + ready.to_s
+    # end
+    if params[:graduation] == 'all' || params[:graduation].nil?
+      flash[:warning] = 'Please select a term before attempting to publish theses to DSpace@MIT.'
+    else
+      flash[:success] = 'If publishing to DSpace@MIT worked, this would be a meaningful update message.'
+    end
+    redirect_to thesis_select_path
+  end
+
   def select
     # Get array of defined terms where unpublished theses have files attached
     @terms = defined_terms Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')

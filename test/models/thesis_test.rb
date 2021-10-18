@@ -552,6 +552,12 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal false, thesis.authors_graduated?
   end
 
+  test 'in_review scope returns theses in that publication status' do
+    assert_equal 'Publication review', Thesis.in_review.first.publication_status
+    assert_includes Thesis.in_review, theses(:publication_review)
+    assert_not_includes Thesis.in_review, theses(:issues_found)
+  end
+
   test 'without_files scope returns list of records with no attached files' do
     thesis = theses(:one)
     all_theses = Thesis.count
