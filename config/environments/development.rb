@@ -32,6 +32,12 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
+  # We need to set ActiveStorage::Current.host so ActiveStorage blobs have URLs. This is not currently possible without
+  # monkey-patching, so you will need to set current_host whenever you start your console if working with a class that
+  # needs blobs to have URLs (e.g., DspaceMetadata). 
+  # There is an open PR to fix this: https://github.com/rails/rails/pull/42847. Once that's merged into the Rails
+  # codebase, the config line below should fix the problem.
+  # routes.default_url_options[:host] = 'https://example.com'
 
   # Use letter_opener to preview emails.
   config.action_mailer.delivery_method = :letter_opener

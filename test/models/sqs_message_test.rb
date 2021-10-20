@@ -2,7 +2,6 @@ require 'test_helper'
 
 class SqsMessageTest < ActiveSupport::TestCase
   def setup
-    ActiveStorage::Current.host = 'https://example.com'
     @thesis = theses(:one)
     dss_friendly_thesis(@thesis)
   end
@@ -61,24 +60,24 @@ class SqsMessageTest < ActiveSupport::TestCase
 
   test 'returns correct collection handle' do
     assert_equal 'Bachelor', @thesis.degrees.first.degree_type.name
-    assert_equal '1721.1/131024', SqsMessage.new(@thesis).collection_handle
+    assert_equal '1721.1/777777', SqsMessage.new(@thesis).collection_handle
 
     masters_degree = degrees(:three)
     @thesis.degrees << masters_degree
     assert_equal 'Master', @thesis.degrees.second.degree_type.name
-    assert_equal '1721.1/131023', SqsMessage.new(@thesis).collection_handle
+    assert_equal '1721.1/888888', SqsMessage.new(@thesis).collection_handle
 
     doctoral_degree = degrees(:two)
     @thesis.degrees << doctoral_degree
     assert_equal 'Doctoral', @thesis.degrees.third.degree_type.name
-    assert_equal '1721.1/131022', SqsMessage.new(@thesis).collection_handle
+    assert_equal '1721.1/999999', SqsMessage.new(@thesis).collection_handle
   end
 
   test 'message_attributes is valid' do
     attributes = SqsMessage.new(@thesis).message_attributes
-    package_id = { 'DataType' => 'String', 'StringValue' => "etd_#{@thesis.id}" }
-    output_queue = { 'DataType' => 'String', 'StringValue' => 'test_queue' }
-    submission_source = { 'DataType' => 'String', 'StringValue' => 'ETD' }
+    package_id = { data_type: 'String', string_value: "etd_#{@thesis.id}" }
+    output_queue = { data_type: 'String', string_value: 'test2' }
+    submission_source = { data_type: 'String', string_value: 'ETD' }
     assert_equal %w[PackageID SubmissionSource OutputQueue], attributes.keys
     assert_equal package_id, attributes['PackageID']
     assert_equal submission_source, attributes['SubmissionSource']
@@ -96,7 +95,7 @@ class SqsMessageTest < ActiveSupport::TestCase
     # Checking for the presence of the Files key, but not checking the value here as we have a separate test for that.
     assert_equal %w[SubmissionSystem CollectionHandle MetadataLocation Files], body_json.keys
     assert_equal 'DSpace@MIT', body_json['SubmissionSystem']
-    assert_equal '1721.1/131024', body_json['CollectionHandle']
+    assert_equal '1721.1/777777', body_json['CollectionHandle']
 
     # Not checking the full URI here because ActiveStorage::SetCurrent doesn't generate URIs consistently.
     assert body_json['MetadataLocation'].ends_with?('some_file.json')

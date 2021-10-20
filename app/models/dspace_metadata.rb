@@ -4,7 +4,7 @@
 
 class DspaceMetadata
   def initialize(thesis)
-    @dc = {}
+    @dc = {}.compare_by_identity
     @dc['dc.publisher'] = 'Massachusetts Institute of Technology'
     @dc['dc.type'] = 'Thesis'
     title(thesis)
@@ -27,9 +27,13 @@ class DspaceMetadata
   end
 
   def contributors(thesis_users, thesis_advisors)
-    @dc['dc.contributor.author'] = thesis_users.map(&:preferred_name)
-    @dc['dc.identifier.orcid'] = parse_orcids(thesis_users) if parse_orcids(thesis_users)
-    @dc['dc.contributor.advisor'] = thesis_advisors.map(&:name)
+    thesis_users.each do |a|
+      @dc['dc.contributor.author'] = a.preferred_name
+    end
+    parse_orcids(thesis_users)
+    thesis_advisors.each do |adv|
+      @dc['dc.contributor.advisor'] = adv.name
+    end
   end
 
   # We don't care about the order of the ORCIDs because DSpace can't assign them to a specific user.
@@ -39,34 +43,45 @@ class DspaceMetadata
     orcids = thesis_users.map(&:orcid).compact
     return unless orcids.present?
 
-    orcids
+    orcids.each do |orchid|
+      @dc['dc.identifier.orcid'] = orchid
+    end
   end
 
   def departments(thesis_depts)
-    @dc['dc.contributor.department'] = thesis_depts.map(&:name_dspace)
+    thesis_depts.each do |d|
+      @dc['dc.contributor.department'] = d.name_dspace
+    end
   end
 
   def degrees(thesis_degrees)
-    @dc['dc.description.degree'] = thesis_degrees.map(&:abbreviation)
-    @dc['thesis.degree.name'] = thesis_degrees.map(&:name_dspace)
+    thesis_degrees.each do |degree|
+      @dc['dc.description.degree'] = degree.abbreviation
+      @dc['thesis.degree.name'] = degree.name_dspace
+    end
 
     # Degree types should not be repeated if they are the same type.
     types = thesis_degrees.map { |degree| degree.degree_type.name }.uniq
-    @dc['mit.thesis.degree'] = types
+    types.each do |t|
+      @dc['mit.thesis.degree'] = t
+    end
   end
 
   def copyright(thesis_copyright, thesis_license)
     if thesis_copyright.holder != 'Author' # copyright holder is anyone but author
-      @dc['dc.rights'] = [thesis_copyright.statement_dspace, "U+00A9 #{thesis_copyright.holder}"]
+      @dc['dc.rights'] = thesis_copyright.statement_dspace
+      @dc['dc.rights'] = "U+00A9 #{thesis_copyright.holder}"
       @dc['dc.rights.uri'] = thesis_copyright.url if thesis_copyright.url
     elsif thesis_license # author holds copyright and provides a license
-      @dc['dc.rights'] = [thesis_license.license_type, 'Copyright retained by author(s)']
+      @dc['dc.rights'] = thesis_license.license_type
+      @dc['dc.rights'] = 'Copyright retained by author(s)'
 
       # Theoretically both license and copyright URLs are required for publication, but there are no constraints on
       # the models, and we want to future-proof this.
       @dc['dc.rights.uri'] = thesis_license.url if thesis_license.url
     else # author holds copyright and no license provided
-      @dc['dc.rights'] = [thesis_copyright.statement_dspace, 'Copyright retained by author(s)']
+      @dc['dc.rights'] = thesis_copyright.statement_dspace
+      @dc['dc.rights'] = 'Copyright retained by author(s)'
       @dc['dc.rights.uri'] = thesis_copyright.url if thesis_copyright.url
     end
   end

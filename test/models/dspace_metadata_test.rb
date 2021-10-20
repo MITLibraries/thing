@@ -10,43 +10,56 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     thesis.save
   end
 
-  test 'parses thesis data as DSpace DC' do
+  test 'metadata file contains thesis data' do
     t = theses(:one)
     dss_friendly_thesis(t)
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal 'MyString', dc['dc.title']
-    assert_equal '2017-09', dc['dc.date.issued']
-    assert_equal 'MyText', dc['dc.description.abstract']
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.title', 'value' => 'MyString' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.date.issued', 'value' => '2017-09' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.description.abstract', 'value' => 'MyText' })
 
     # No abstract (optional for undergraduate theses)
     t.abstract = nil
     t.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_nil dc['dc.description.abstract']
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+    refute unserialized['metadata'].include?({ 'key' => 'dc.description.abstract', 'value' => '' })
   end
 
-  test 'parses author data as DSpace DC' do
+  test 'metadata file contains author data' do
     # One author
     t = Thesis.create(title: 'Who cares', graduation_year: '2021', graduation_month: 'February',
                       advisors: [advisors(:first)], users: [users(:second)], degrees: [degrees(:one)],
                       departments: [departments(:one)], copyright: copyrights(:mit))
     dss_friendly_thesis(t)
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['Student, Second'], dc['dc.contributor.author']
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.contributor.author', 'value' => 'Student, Second' })
 
     # More than one author
     t.users = [users(:second), users(:third)]
     t.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['Student, Second', 'Student, Third'], dc['dc.contributor.author']
+
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.contributor.author', 'value' => 'Student, Second' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.contributor.author', 'value' => 'Student, Third' })
   end
 
-  test 'parses ORCIDs' do
+  test 'metadata file contains ORCIDs' do
+    t = theses(:one)
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
     # One author and one ORCID
-    t1 = theses(:one)
-    dss_friendly_thesis(t1)
-    dc = DspaceMetadata.new(t1).instance_variable_get(:@dc)
-    assert_equal ['0001'], dc['dc.identifier.orcid']
+    assert unserialized['metadata'].include?({ 'key' => 'dc.identifier.orcid', 'value' => '0001' })
 
     # Multiple authors and multiple ORCIDs
     t2 = theses(:two)
@@ -56,99 +69,194 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     # removed once we update the Thesis validations to reflect publication requirements.
     t2.advisors = [advisors(:first)]
     t2.save
-    dc = DspaceMetadata.new(t2).instance_variable_get(:@dc)
-    assert_equal %w[0002 0001], dc['dc.identifier.orcid']
+    serialized = DspaceMetadata.new(t2).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.identifier.orcid', 'value' => '0001' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.identifier.orcid', 'value' => '0002' })
 
     # Multiple authors and only one ORCID
-    t2.users.second.orcid = nil
-    t2.users.second.save
-    dc = DspaceMetadata.new(t2).instance_variable_get(:@dc)
-    assert_equal ['0002'], dc['dc.identifier.orcid']
+    u = User.find_by_orcid('0002')
+    u.orcid = nil
+    u.save
+    t2.reload
+    serialized = DspaceMetadata.new(t2).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
 
-    # One author and no ORCID
-    t1.users.first.orcid = nil
-    t1.users.first.save
-    dc = DspaceMetadata.new(t1).instance_variable_get(:@dc)
-    assert_nil dc['dc.identifier.orcid']
+    assert unserialized['metadata'].include?({ 'key' => 'dc.identifier.orcid', 'value' => '0001' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.identifier.orcid', 'value' => '0002' })
+
+    # Multiple authors and no ORCID
+    u = User.find_by_orcid('0001')
+    u.orcid = nil
+    u.save
+    t2.reload
+
+    serialized = DspaceMetadata.new(t2).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    refute unserialized['metadata'].include?({ 'key' => 'dc.identifier.orcid', 'value' => '0001' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.identifier.orcid', 'value' => '0002' })
   end
 
-  test 'parses advisor data as DSpace DC' do
+  test 'metadata file contains advisor data' do
     t = theses(:one)
     dss_friendly_thesis(t)
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
 
     # One advisor
-    assert_equal ['Addy McAdvisor'], dc['dc.contributor.advisor']
+    assert unserialized['metadata'].include?({ 'key' => 'dc.contributor.advisor', 'value' => 'Addy McAdvisor' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.contributor.advisor', 'value' => 'Viola McAdvisor' })
 
     # More than one advisor
     t.advisors = [advisors(:first), advisors(:second)]
     t.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['Addy McAdvisor', 'Viola McAdvisor'], dc['dc.contributor.advisor']
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.contributor.advisor', 'value' => 'Addy McAdvisor' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.contributor.advisor', 'value' => 'Viola McAdvisor' })
   end
 
-  test 'parses copyright data as DSpace DC' do
+  test 'metadata file contains copyright data' do
     # Author holds copyright and license is present
-    t = theses(:downloaded)
+    t = theses(:one)
     t.copyright = copyrights(:author)
     t.license = licenses(:ccby)
     t.users = [users(:yo)]
     t.advisors = [advisors(:first)]
     t.save
     dss_friendly_thesis(t)
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['Attribution 4.0 International (CC BY 4.0)', 'Copyright retained by author(s)'],
-                 dc['dc.rights']
-    assert_equal 'https://creativecommons.org/licenses/by/4.0/', dc['dc.rights.uri']
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'No Creative Commons License' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'Attribution 4.0 International (CC BY 4.0)' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'Copyright retained by author(s)' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://creativecommons.org/licenses/by/4.0/' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://rightsstatements.org/page/InC/1.0/' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'In Copyright - Educational Use Permitted' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'http://rightsstatements.org/page/InC-EDU/1.0/' })
 
     # No URI
     t.license = licenses(:nocc)
     t.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_nil dc['dc.rights.uri']
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'No Creative Commons License' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'Attribution 4.0 International (CC BY 4.0)' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'Copyright retained by author(s)' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://creativecommons.org/licenses/by/4.0/' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://rightsstatements.org/page/InC/1.0/' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'In Copyright - Educational Use Permitted' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'http://rightsstatements.org/page/InC-EDU/1.0/' })
 
     # Author holds copyright and no license
     t.license = nil
     t.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['In Copyright', 'Copyright retained by author(s)'], dc['dc.rights']
-    assert_equal 'https://rightsstatements.org/page/InC/1.0/', dc['dc.rights.uri']
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'No Creative Commons License' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'Attribution 4.0 International (CC BY 4.0)' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'Copyright retained by author(s)' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://creativecommons.org/licenses/by/4.0/' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://rightsstatements.org/page/InC/1.0/' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'In Copyright - Educational Use Permitted' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'http://rightsstatements.org/page/InC-EDU/1.0/' })
 
     # Any other copyright holder
     t.copyright = copyrights(:mit)
     t.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['In Copyright - Educational Use Permitted', 'U+00A9 MIT'], dc['dc.rights']
-    assert_equal 'http://rightsstatements.org/page/InC-EDU/1.0/', dc['dc.rights.uri']
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'No Creative Commons License' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'Attribution 4.0 International (CC BY 4.0)' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'Copyright retained by author(s)' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://creativecommons.org/licenses/by/4.0/' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://rightsstatements.org/page/InC/1.0/' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'In Copyright - Educational Use Permitted' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'http://rightsstatements.org/page/InC-EDU/1.0/' })
   end
 
-  test 'parses department data as DSpace DC' do
+  test 'metadata file contains department data' do
     # One department
     t = theses(:one)
     dss_friendly_thesis(t)
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['Massachusetts Institute of Technology. Department of Aeronautics and Astronautics'],
-                 dc['dc.contributor.department']
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?(
+      { 'key' => 'dc.contributor.department',
+        'value' => 'Massachusetts Institute of Technology. Department of Aeronautics and Astronautics' }
+    )
+    refute unserialized['metadata'].include?({ 'key' => 'dc.contributor.department',
+                                               'value' => 'MIT Anthropology Program' })
 
     # Multiple departments
     t.departments = [departments(:one), departments(:two)]
     t.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['Massachusetts Institute of Technology. Department of Aeronautics and Astronautics',
-                  'MIT Anthropology Program'], dc['dc.contributor.department']
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?(
+      { 'key' => 'dc.contributor.department',
+        'value' => 'Massachusetts Institute of Technology. Department of Aeronautics and Astronautics' }
+    )
+    assert unserialized['metadata'].include?({ 'key' => 'dc.contributor.department',
+                                               'value' => 'MIT Anthropology Program' })
   end
 
-  test 'parses degree data as DSpace DC' do
+  test 'metadata file contains degree data' do
     # One degree
     t = theses(:one)
-    dss_friendly_thesis(t)
     d1 = degrees(:one)
     d1.degree_type_id = degree_types(:bachelor).id
     d1.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['MFA'], dc['dc.description.degree']
-    assert_equal ['Master of Fine Arts'], dc['thesis.degree.name']
-    assert_equal ['Bachelor'], dc['mit.thesis.degree']
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.description.degree', 'value' => 'MFA' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.description.degree', 'value' => 'JD' })
+    assert unserialized['metadata'].include?({ 'key' => 'thesis.degree.name', 'value' => 'Master of Fine Arts' })
+    assert unserialized['metadata'].include?({ 'key' => 'mit.thesis.degree', 'value' => 'Bachelor' })
+    refute unserialized['metadata'].include?({ 'key' => 'mit.thesis.degree', 'value' => 'Master' })
 
     # Multiple degrees
     d2 = degrees(:two)
@@ -156,38 +264,56 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     d2.save
     t.degrees = [d1, d2]
     t.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal %w[MFA JD], dc['dc.description.degree']
-    assert_equal ['Master of Fine Arts', 'Master of Fine Arts'], dc['thesis.degree.name']
-    assert_equal %w[Bachelor Master], dc['mit.thesis.degree']
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.description.degree', 'value' => 'MFA' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.description.degree', 'value' => 'JD' })
+    # TODO: are we supposed to be including the same degree name twice if they are the same?
+    assert unserialized['metadata'].include?({ 'key' => 'thesis.degree.name', 'value' => 'Master of Fine Arts' })
+    assert_equal 2, unserialized['metadata'].count({ 'key' => 'thesis.degree.name', 'value' => 'Master of Fine Arts' })
+
+    assert unserialized['metadata'].include?({ 'key' => 'mit.thesis.degree', 'value' => 'Bachelor' })
+    assert unserialized['metadata'].include?({ 'key' => 'mit.thesis.degree', 'value' => 'Master' })
 
     # Does not repeat degree types
     d2.degree_type_id = degree_types(:bachelor).id
     d2.save
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal ['Bachelor'], dc['mit.thesis.degree']
+    t.reload
+
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert unserialized['metadata'].include?({ 'key' => 'dc.description.degree', 'value' => 'MFA' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.description.degree', 'value' => 'JD' })
+    assert unserialized['metadata'].include?({ 'key' => 'thesis.degree.name', 'value' => 'Master of Fine Arts' })
+    assert unserialized['metadata'].include?({ 'key' => 'thesis.degree.name', 'value' => 'Master of Fine Arts' })
+    assert unserialized['metadata'].include?({ 'key' => 'mit.thesis.degree', 'value' => 'Bachelor' })
+    refute unserialized['metadata'].include?({ 'key' => 'mit.thesis.degree', 'value' => 'Master' })
+    assert_equal 1, unserialized['metadata'].count({ 'key' => 'mit.thesis.degree', 'value' => 'Bachelor' })
   end
 
-  test 'parses file data as DSpace DC' do
+  test 'metadata file contains file data' do
     t = theses(:one)
     dss_friendly_thesis(t)
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    blob = t.files.first.blob
-    assert_equal blob.created_at, dc['dc.date.submitted']
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    created_at = t.files.select { |file| file.purpose == 'thesis_pdf' }.first.blob.created_at.iso8601(3)
+    assert unserialized['metadata'].include?({ 'key' => 'dc.date.submitted', 'value' => created_at })
   end
 
-  test 'compiles constituent DC metadata on instantiation' do
+  test 'metadata file contains constituent DC metadata on instantiation' do
     t = theses(:one)
     dss_friendly_thesis(t)
-    dc = DspaceMetadata.new(t).instance_variable_get(:@dc)
-    assert_equal 'Massachusetts Institute of Technology', dc['dc.publisher']
-    assert_equal 'Thesis', dc['dc.type']
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
 
-    # Checking for presence of keys instead of exact values, as we verify values in other tests.
-    assert_equal ['dc.publisher', 'dc.type', 'dc.title', 'dc.description.abstract', 'dc.date.issued',
-                  'dc.contributor.author', 'dc.identifier.orcid', 'dc.contributor.advisor', 'dc.contributor.department',
-                  'dc.description.degree', 'thesis.degree.name', 'mit.thesis.degree', 'dc.rights', 'dc.rights.uri',
-                  'dc.date.submitted'], dc.keys
+    assert unserialized['metadata'].include?({ 'key' => 'dc.publisher',
+                                               'value' => 'Massachusetts Institute of Technology' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.type', 'value' => 'Thesis' })
   end
 
   test 'metadata file is structured as expected for DSS' do

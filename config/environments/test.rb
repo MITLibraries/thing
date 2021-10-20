@@ -11,7 +11,12 @@ Rails.application.configure do
   ENV['SP_PRIVATE_KEY'] = ''
   ENV['SP_CERTIFICATE'] = ''
   ENV['THESIS_ADMIN_EMAIL'] = 'test@example.com'
-  ENV['OUTPUT_QUEUE_NAME'] = 'test_queue'
+  ENV['SQS_INPUT_QUEUE_URL'] = 'http://localhost:5000/123456789012/test1'
+  ENV['SQS_OUTPUT_QUEUE_NAME'] = 'test2'
+  ENV['AWS_REGION'] = 'us-east-1'
+  ENV['DSPACE_DOCTORAL_HANDLE'] = '1721.1/999999'
+  ENV['DSPACE_GRADUATE_HANDLE'] = '1721.1/888888'
+  ENV['DSPACE_UNDERGRADUATE_HANDLE'] = '1721.1/777777'
 
   config.cache_classes = true
 

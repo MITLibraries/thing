@@ -15,6 +15,10 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alpha order.
     fixtures :all
 
+    setup do
+      ActiveStorage::Current.host = "https://example.com"
+    end
+
     def mock_auth(user)
       OmniAuth.config.mock_auth[:saml] =
         OmniAuth::AuthHash.new(provider: 'saml',
