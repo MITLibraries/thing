@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   get 'thesis/deduplicate', to: 'thesis#deduplicate', as: 'thesis_deduplicate'
   get 'thesis/:id/process', to: 'thesis#process_theses', as: 'thesis_process'
   patch 'thesis/:id/process', to: 'thesis#process_theses_update', as: 'thesis_process_update'
+  get 'thesis/publish', to: 'thesis#publish_to_dspace', as: 'thesis_publish_to_dspace'
   get 'thesis/select', to: 'thesis#select', as: 'thesis_select'
   get 'thesis/start', to: 'thesis#start', as: 'thesis_start'
   resources :registrar, only: [:new, :create, :show]
