@@ -21,4 +21,23 @@ class ReportMailerTest < ActionMailer::TestCase
       assert_match 'New theses: 1', email.body.to_s
     end
   end
+
+  test 'sends reports for DSpace publication results' do
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      results = { total: 2, processed: 1, errors: ["Couldn't find Thesis with 'id'=9999999999999"] }
+      email = ReportMailer.publication_results_email(results)
+
+      assert_emails 1 do
+        email.deliver_now
+      end
+
+      assert_equal ['test@example.com'], email.from
+      assert_equal ['test@example.com'], email.to
+      assert_equal 'DSpace publication results summary', email.subject.to_s
+      assert_match 'Total theses in output queue: 2', email.body.to_s
+      assert_match 'Total theses updated: 1', email.body.to_s
+      assert_match 'Errors found: 1', email.body.to_s
+      assert_match 'Couldn&#39;t find Thesis with &#39;id&#39;=9999999999999', email.body.to_s
+    end
+  end
 end

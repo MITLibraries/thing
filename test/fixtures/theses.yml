@@ -76,6 +76,8 @@ with_note:
   degrees: [one]
   status: 'active'  # The default, but specified for testing purposes.
   processor_note: 'Absolutely for sure rocket science'
+  copyright: mit
+  license: nocc
 
 with_hold:
   title: MySensitiveThesis

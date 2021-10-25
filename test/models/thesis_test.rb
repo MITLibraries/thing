@@ -565,7 +565,7 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'publication_statuses scope returns accepted status dictionary' do
-    assert_equal 4, Thesis.publication_statuses.length
+    assert_equal 5, Thesis.publication_statuses.length
   end
 
   test 'publication status defaults to not ready for publication' do
@@ -592,6 +592,9 @@ class ThesisTest < ActiveSupport::TestCase
     assert thesis.valid?
 
     thesis.publication_status = 'Published'
+    assert thesis.valid?
+
+    thesis.publication_status = 'Publication error'
     assert thesis.valid?
 
     thesis.publication_status = 'Foo'

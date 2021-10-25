@@ -85,6 +85,13 @@ We use AWS SQS queues to publish theses to DSpace and read data about published 
 `SQS_INPUT_QUEUE_URL` - The URL of the SQS input queue used for publication to DSpace.
 `SQS_OUTPUT_QUEUE_NAME` - The name of the SQS output queue. This is used to build the SQS message attributes.
 
+`SQS_RESULT_MAX_MESSAGES`: Configures the :max_number_of_messages arg of the AWS poll method, which specifies how
+many messages to receive with each polling attempt. Defaults to 10 if unset.
+`SQS_RESULT_WAIT_TIME_SECONDS`: Configures the :wait_time_seconds arg of the AWS poll method, which enables long
+polling by specifying a longer queue wait time. Defaults to 10 if unset.
+`SQS_RESULT_IDLE_TIMEOUT`: Configures the :idle_timeout arg of the AWS poll method, which specifies the maximum time
+in seconds to wait for a new message before the polling loop exists. Defaults to 0 if unset.
+
 ## User Roles
 
 There are a few user roles that provide different levels of permissions. The

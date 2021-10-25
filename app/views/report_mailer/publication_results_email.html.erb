@@ -1,0 +1,21 @@
+<p>Hello,</p>
+
+<p>Below is a report of the DSpace publication results job.</p>
+
+<p>Summary of results:</p>
+
+<ul>
+  <li>Total theses in output queue: <%= @results[:total] %></li>
+  <li>Total theses updated: <%= @results[:processed] %></li>
+  <li>Errors found: <%= @results[:errors].count %></li>
+</ul>
+
+<% if @results[:errors].any? %>
+  <p>The following errors require processor attention:</p>
+
+  <ul>
+    <% @results[:errors].each do |e| %>
+      <li><%= e %></li>
+    <% end %>
+  </ul>
+<% end %>

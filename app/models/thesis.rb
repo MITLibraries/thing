@@ -84,7 +84,8 @@ class Thesis < ApplicationRecord
   PUBLICATION_STATUS_OPTIONS = ['Not ready for publication',
                                 'Publication review',
                                 'Pending publication',
-                                'Published'].freeze
+                                'Published',
+                                'Publication error'].freeze
   validates_inclusion_of :publication_status, in: PUBLICATION_STATUS_OPTIONS
 
   VALID_MONTHS = %w[February May June September].freeze
@@ -144,7 +145,7 @@ class Thesis < ApplicationRecord
   def update_status
     # If a thesis has been set to 'Pending publication' or 'Published', this
     # method cannot change it; other methods will set/revert that status.
-    return if ['Pending publication', 'Published'].include? publication_status
+    return if ['Pending publication', 'Published', 'Publication error'].include? publication_status
 
     # Still here? Then we proceed...
     # By default, a thesis is set to 'Not ready for production'
