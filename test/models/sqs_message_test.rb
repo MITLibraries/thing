@@ -62,7 +62,13 @@ class SqsMessageTest < ActiveSupport::TestCase
     assert_equal 'Bachelor', @thesis.degrees.first.degree_type.name
     assert_equal '1721.1/777777', SqsMessage.new(@thesis).collection_handle
 
+    engineer_degree = degrees(:four)
+    @thesis.degrees << engineer_degree
+    assert_equal 'Engineer', @thesis.degrees.second.degree_type.name
+    assert_equal '1721.1/888888', SqsMessage.new(@thesis).collection_handle
+
     masters_degree = degrees(:three)
+    @thesis.degrees.delete(engineer_degree)
     @thesis.degrees << masters_degree
     assert_equal 'Master', @thesis.degrees.second.degree_type.name
     assert_equal '1721.1/888888', SqsMessage.new(@thesis).collection_handle

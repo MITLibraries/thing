@@ -34,3 +34,10 @@ three:
   abbreviation: MP
   name_dspace: MP
   degree_type: master
+
+four:
+  name_dw: Theoretical Engineer
+  code_dw: TE123
+  abbreviation: TE
+  name_dspace: TE
+  degree_type: engineer  
