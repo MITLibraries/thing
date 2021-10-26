@@ -43,7 +43,7 @@ class SqsMessage
   def collection_handle
     if @thesis.degrees.any? { |d| d.degree_type.name == 'Doctoral' }
       ENV.fetch('DSPACE_DOCTORAL_HANDLE')
-    elsif @thesis.degrees.any? { |d| d.degree_type.name == 'Master' }
+    elsif @thesis.degrees.any? { |d| d.degree_type.name == 'Master' || d.degree_type.name == 'Engineer' }
       ENV.fetch('DSPACE_GRADUATE_HANDLE')
     else
       ENV.fetch('DSPACE_UNDERGRADUATE_HANDLE')
