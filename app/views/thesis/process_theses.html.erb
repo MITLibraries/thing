@@ -7,33 +7,21 @@
 <%= simple_form_for(@thesis, url: thesis_process_update_path,
                              html: { class: 'thesisProcessing' },
                              validate: true ) do |f| %>
-  <div class="layout-2t1t layout-band">
-    <div class="col2t">
-      <h3 class="title title-page">Thesis Processing Form</h3>
+  <div class="layout-band">
+    <h3 class="title title-page">Thesis Processing Form</h3>
+    <%= render 'shared/you_are' %>
+    <%= f.error_notification %>
+    <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+  </div>
 
-      <%= render 'shared/you_are' %>
-
-      <%= f.error_notification %>
-      <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
-
-      <div class="well">
-        <% @thesis.authors.each do |author| %>
-          <p>
-            <strong>Display name: <%= author.user.display_name %></strong><br>
-            Preferred name: <%= author.user.preferred_name %><br>
-            Kerberos: <%= author.user.kerberos_id %><br>
-            Graduated: <%= author.graduation_confirmed %>
-          </p>
-        <% end %>
-        <p>Degree date: <%= @thesis.graduation_month.to_s %> <%= @thesis.graduation_year.to_s %></p>
-      </div>
-    </div>
-
-    <div class="col1t-r">
+  <div class="gridband layout-2c">
+    <div class="grid-item">
       <h4>Publication status</h4>
       <p class="box-content">
         <%= @thesis.publication_status %>
       </p>
+    </div>
+    <div class="grid-item">
       <h4>Thesis metadata</h4>
       <div class="box-content" style="margin-bottom: 1em">
         <ul class="list-unbulleted">
@@ -77,6 +65,8 @@
           </li>
         </ul>
       </div>
+    </div>
+    <div class="grid-item">
       <h4>Thesis files</h4>
       <div class="box-content" style="margin-bottom: 1em">
         <ul class="list-unbulleted">
@@ -111,12 +101,25 @@
           </li>
         </ul>
       </div>
+    </div>
+    <div class="grid-item">
       <%= submit_tag 'Update', class: 'btn button-primary' %>
     </div>
   </div>
 
   <div class="layout-band">
     <h4>Thesis metadata</h4>
+    <div class="well">
+      <% @thesis.authors.each do |author| %>
+        <p>
+          <strong>Display name: <%= author.user.display_name %></strong><br>
+          Preferred name: <%= author.user.preferred_name %><br>
+          Kerberos: <%= author.user.kerberos_id %><br>
+          Graduated: <%= author.graduation_confirmed %>
+        </p>
+      <% end %>
+      <p>Degree date: <%= @thesis.graduation_month.to_s %> <%= @thesis.graduation_year.to_s %></p>
+    </div>
     <div class="field-row layout-band layout-1q3q">
       <div class="col1q"><strong>Authors</strong></div>
       <%= f.simple_fields_for :users do |u| %>
