@@ -214,18 +214,18 @@ each is required - and where that check is performed.
 
 | Field                 | Required?    | Verified by           |
 |--------------------   |-----------   |--------------------   |
-| ID                    | yes          | Built into Rails      |
-| Created_at            | yes          | Built into Rails      |
-| Updated_at            | yes          | Built into Rails      |
+| ID                    | yes          | valid?                |
+| Created_at            | yes          | valid?                |
+| Updated_at            | yes          | valid?                |
 | Title                 | yes          | required_fields?      |
 | Abstract              | sometimes    | required_abstract?    |
-| Grad_date             | yes          | validations           |
-| Status                | yes          | validations           |
+| Grad_date             | yes          | valid?                |
+| Status                | yes          | valid?                |
 | Processor_note        | no           |                       |
 | Author_note           | no           |                       |
 | Files_complete        | yes          | evaluate_status       |
 | Metadata_complete     | yes          | evaluate_status       |
-| Publication_status    | yes          | validations           |
+| Publication_status    | yes          | valid?                |
 | Coauthors             | no           |                       |
 | Copyright_id          | yes          | required_fields?      |
 | License_id            | sometimes    | required_license?     |
