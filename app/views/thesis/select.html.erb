@@ -1,10 +1,10 @@
 <%= content_for(:title, "Thesis Processing | MIT Libraries") %>
 
 <% content_for :additional_js do %>
-  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <% end %>
 
-<link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
 
 <h3 class="title title-page">Thesis Processing Queue</h3>
 
@@ -53,17 +53,43 @@
 </div>
 
 <script type="text/javascript">
+function applyFilter(table, _status) {
+  // Update UI
+  $("#status-list").find(".button-primary").removeClass("button-primary").addClass("button-secondary");
+  $('#status-list button[data-filter="' + _status + '"]').removeClass("button-secondary").addClass("button-primary");
+
+  // Filter the data table
+  table.draw();
+
+  // Reveal the "Publish to DSpace@MIT panel if warranted"
+  if( 'Publication review' === _status ) {
+    $("#publish-to-dspace").attr('style', '');
+  } else {
+    $("#publish-to-dspace").attr('style', 'display: none;');
+  }
+}
+
 $(document).ready( function () {
   if( document.getElementById('thesisQueue').getElementsByClassName('empty').length === 0 ) {
+    // _status is the variable which the custom filter behavior looks for.
+    var _status = "*";
+
     // Initialize DataTable, sorting by default on degree column (columns are zero-based)
     var table = $('#thesisQueue').DataTable({
-      "order": [[ 1, "asc" ]]
+      stateSave: true,
+      stateSaveParams: function( settings, data ) {
+        data.filter = _status;
+      },
+      stateLoadParams: function( settings, data ) {
+        if ( data.filter ) {
+          _status = data.filter;
+        }
+      }
     });
-
-    var _status = "*";
 
     // Add filter for "Status" column to standard table behavior
     // From: https://datatables.net/blog/2014-08-26#Complete-code
+    // Note that this new behavior is invoked on calling table.draw()
     $.fn.dataTable.ext.search.push(
       function( settings, data, dataIndex ) {
         return ( data[5] === _status || _status === "*" )
@@ -82,19 +108,13 @@ $(document).ready( function () {
       `);
     });
 
+    // Apply initial filter
+    applyFilter(table, _status);
+
     // Change highlighting and perform filtering when buttons are clicked
     $("#status-list button").click(function() {
-      $("#status-list").find(".button-primary").removeClass("button-primary").addClass("button-secondary");
-      $(this).removeClass("button-secondary").addClass("button-primary");
-
       _status = $(this).data("filter");
-      table.draw();
-
-      if( 'Publication review' === _status ) {
-        $("#publish-to-dspace").attr('style', '');
-      } else {
-        $("#publish-to-dspace").attr('style', 'display: none;');
-      }
+      applyFilter(table, _status);
     });
   };
 });

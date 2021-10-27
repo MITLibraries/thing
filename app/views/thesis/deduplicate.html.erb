@@ -1,10 +1,10 @@
 <%= content_for(:title, "Duplicate Theses Report | MIT Libraries") %>
 
 <% content_for :additional_js do %>
-  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <% end %>
 
-<link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
 
 <div class="layout-3q1q layout-band">
   <div class="col3q">
@@ -37,7 +37,7 @@
 $(document).ready( function () {
   if( document.getElementById('thesisQueue').getElementsByClassName('empty').length === 0 ) {
     var table = $('#thesisQueue').DataTable({
-      "order": [[ 1, "asc" ]]
+      stateSave: true
     });
   };
 });

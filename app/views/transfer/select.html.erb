@@ -1,10 +1,10 @@
 <%= content_for(:title, "Transfer Processing | MIT Libraries") %>
 
 <% content_for :additional_js do %>
-  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <% end %>
 
-<link href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
 
 <h3 class="title title-page">Transfer Processing Queue</h3>
 
@@ -29,17 +29,36 @@
 </table>
 
 <script type="text/javascript">
+function applyFilter(table, _degreeDate) {
+  // Update UI
+  $("#term-list").find(".button-primary").removeClass("button-primary").addClass("button-secondary");
+  $('#term-list button[data-filter="' + _degreeDate + '"]').removeClass("button-secondary").addClass("button-primary");
+
+  // Filter the data table
+  table.draw();
+}
+
 $(document).ready( function () {
   if( document.getElementById('transferQueue').getElementsByClassName('empty').length === 0 ) {
+    // _degreeDate is the variable which the custom filter behavior looks for.
+    var _degreeDate = '*';
+
     // Initialize DataTable, sorting by default on the degree column (columns are zero-based)
     var table = $('#transferQueue').DataTable({
-      "order": [[ 1, "asc" ]]
+      stateSave: true,
+      stateSaveParams: function( settings, data ) {
+        data.filter = _degreeDate;
+      },
+      stateLoadParams: function( settings, data ) {
+        if ( data.filter ) {
+          _degreeDate = data.filter;
+        }
+      }
     });
-
-    var _degreeDate = "*";
 
     // Add filter for "Degree date" column to standard table behavior
     // From: https://datatables.net/blog/2014-08-26#Complete-code
+    // Note that this new behavior is invoked on calling table.draw()
     $.fn.dataTable.ext.search.push(
       function( settings, data, dataIndex ) {
         return ( data[1] === _degreeDate || _degreeDate === "*" )
@@ -58,13 +77,16 @@ $(document).ready( function () {
       `);
     });
 
-    // Change highlighting and perform filtering when buttons are clicked
-    $("#term-list button").click(function() {
-      $("#term-list").find(".button-primary").removeClass("button-primary").addClass("button-secondary");
-      $(this).removeClass("button-secondary").addClass("button-primary");
+    // Apply initial filter
+    applyFilter(table, _degreeDate);
 
+    // Assign event listeners to filter buttons which call applyFilter
+    // Yes, we are taking "this" and looking up its data attribute, only to look the button up again by its data
+    // attribute again inside applyFilter. It is less efficient, but we do this to match the behavior on page load, when
+    // the table state is read from storage and we only have a string, not a "this", and need to find the button.
+    $("#term-list button").click(function() {
       _degreeDate = $(this).data("filter");
-      table.draw();
+      applyFilter(table, _degreeDate);
     });
   }
 });
