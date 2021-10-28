@@ -69,3 +69,18 @@ ten:
   user: basic
   thesis: published
   graduation_confirmed: true
+
+eleven:
+  user: basic
+  thesis: bachelor
+  graduation_confirmed: true
+
+twelve:
+  user: basic
+  thesis: master
+  graduation_confirmed: true
+
+thirteen:
+  user: basic
+  thesis: doctor
+  graduation_confirmed: true

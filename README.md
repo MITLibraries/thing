@@ -199,6 +199,52 @@ Example usage:
   lines so you'll need to be careful to reconstruct this
 - `rails debug:saml['tmp/your_saml_to_debug.txt']`
 
+## Validation of thesis record
+
+Prior to theses being published to external systems (such as the repository, or
+a preservation system), a number of checks are performed to ensure that all
+necessary information is present. These checks go beyond the built-in data
+validations which are run by the `.valid?` method; more information can be found
+by looking at the `evaluate_status` method on the Thesis model.
+
+### Thesis fields
+
+The following table lists the components of a Thesis record, including whether
+each is required - and where that check is performed.
+
+| Field                 | Required?    | Verified by           |
+|--------------------   |-----------   |--------------------   |
+| ID                    | yes          | valid?                |
+| Created_at            | yes          | valid?                |
+| Updated_at            | yes          | valid?                |
+| Title                 | yes          | required_fields?      |
+| Abstract              | sometimes    | required_abstract?    |
+| Grad_date             | yes          | valid?                |
+| Status                | yes          | valid?                |
+| Processor_note        | no           |                       |
+| Author_note           | no           |                       |
+| Files_complete        | yes          | evaluate_status       |
+| Metadata_complete     | yes          | evaluate_status       |
+| Publication_status    | yes          | valid?                |
+| Coauthors             | no           |                       |
+| Copyright_id          | yes          | required_fields?      |
+| License_id            | sometimes    | required_license?     |
+| Dspace_handle         | no           |                       |
+| Issues_found          | yes          | no_issues_found?      |
+
+### Related records
+
+| Record                | Required?    | Verified by                                                                                                                                                                                                                    |
+|--------------------   |-----------   |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------   |
+| Advisor               | yes          | advisors?                                                                                                                                                                                                                      |
+| Author                | yes          | Two checks<br>- validations<br>- authors_graduated checks the graduated flag on each author record                                                                                                                             |
+| Copyright             | yes          | copyright_id?                                                                                                                                                                                                                  |
+| Degree                | yes          | degrees?                                                                                                                                                                                                                       |
+| Department            | yes          | validations                                                                                                                                                                                                                    |
+| File                  | yes          | Three checks<br>- files? confirms that at least one file is attached<br>- file_have_purpose? confirms that each file has an assigned purpose<br>- one_thesis_pdf? confirms one-and-only-one file has a "thesis_pdf" purpose    |
+| Hold                  | yes          | no_active_holds? confirms that no attached hold has an "active" or "expired" status<br>("released" holds are okay)                                                                                                             |
+| License               | sometimes    | required_license? checks who holds copyright and requires a license if that is the author                                                                                                                                      |
+
 ## Alternate file upload feedback
 
 As a default behavior, the bulk file transfer form at `/transfer/new` uses the

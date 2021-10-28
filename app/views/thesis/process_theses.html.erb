@@ -7,77 +7,119 @@
 <%= simple_form_for(@thesis, url: thesis_process_update_path,
                              html: { class: 'thesisProcessing' },
                              validate: true ) do |f| %>
-  <div class="layout-2t1t layout-band">
-    <div class="col2t">
-      <h3 class="title title-page">Thesis Processing Form</h3>
+  <div class="layout-band">
+    <h3 class="title title-page">Thesis Processing Form</h3>
+    <%= render 'shared/you_are' %>
+    <%= f.error_notification %>
+    <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
+  </div>
 
-      <%= render 'shared/you_are' %>
-
-      <%= f.error_notification %>
-      <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
-
-      <div class="well">
-        <% @thesis.authors.each do |author| %>
-          <p>
-            <strong>Display name: <%= author.user.display_name %></strong><br>
-            Preferred name: <%= author.user.preferred_name %><br>
-            Kerberos: <%= author.user.kerberos_id %><br>
-            Graduated: <%= author.graduation_confirmed %>
-          </p>
-        <% end %>
-        <p>Degree date: <%= @thesis.graduation_month.to_s %> <%= @thesis.graduation_year.to_s %></p>
-      </div>
-    </div>
-
-    <div class="col1t-r">
+  <div class="gridband layout-2c">
+    <div class="grid-item">
       <h4>Publication status</h4>
       <p class="box-content">
         <%= @thesis.publication_status %>
       </p>
-
-      <h4>Status of all the things</h4>
-      <ul class="list-unbulleted">
-        <li>
-          <%= f.input :authors_graduated?, as: :string,
-                                readonly: true,
-                                label_html: { style: 'width: 50%' },
-                                input_html: { class: 'disabled', style: 'width: 40%', value: f.object.authors_graduated?? 'Yes' : 'No' },
-                                label: 'Authors graduated' %>
-        </li>
-        <li>
-          <%= f.input :active_holds?, as: :string,
-                                      readonly: true,
-                                      label_html: { style: 'width: 50%' },
-                                      input_html: { class: 'disabled', style: 'width: 40%', value: f.object.active_holds?? 'Yes' : 'No' },
-                                      hint_html: { style: 'display: block' },
-                                      hint: link_to('See details in admin interface', admin_thesis_path(f.object), target: :_blank) %>
-          
-        </li>
-        <li>
-          <%= f.input :files_complete, as: :radio_buttons,
-                                       label_html: { style: 'width: 50%' },
-                                       item_wrapper_class: 'field-radio fields-inline',
-                                       label: 'Files ok' %>
-        </li>
-        <li>
-          <%= f.input :metadata_complete, as: :radio_buttons,
-                                          label_html: { style: 'width: 50%' },
-                                          item_wrapper_class: 'field-radio fields-inline',
-                                          label: 'Metadata ok' %>
-        </li>
-        <li>
-          <%= f.input :issues_found, as: :radio_buttons,
+    </div>
+    <div class="grid-item">
+      <h4>Thesis metadata</h4>
+      <div class="box-content" style="margin-bottom: 1em">
+        <ul class="list-unbulleted">
+          <li>
+            <%= f.input :required_fields?, as: :string,
+                                 readonly: true,
+                                 label_html: { style: 'width: 50%' },
+                                 input_html: { class: 'disabled', style: 'width: 40%', value: f.object.required_fields?? 'Yes' : 'No' },
+                                 label: 'Sufficient metadata?' %>
+          </li>
+          <li>
+            <%= f.input :authors_graduated?, as: :string,
+                                  readonly: true,
+                                  label_html: { style: 'width: 50%' },
+                                  input_html: { class: 'disabled', style: 'width: 40%', value: f.object.authors_graduated?? 'Yes' : 'No' },
+                                  label: 'Authors graduated' %>
+          </li>
+          <li>
+            <%= f.input :active_holds?, as: :string,
+                                        readonly: true,
+                                        label_html: { style: 'width: 50%' },
+                                        input_html: { class: 'disabled', style: 'width: 40%', value: f.object.active_holds?? 'Yes' : 'No' },
+                                        hint_html: { style: 'display: block' },
+                                        hint: link_to('See details in admin interface', admin_thesis_path(f.object), target: :_blank) %>
+          </li>
+          <li>
+            <fieldset>
+              <legend>Issues found</legend>
+              <%= f.input :issues_found, as: :radio_buttons,
+                                         item_wrapper_class: 'field-radio fields-inline',
+                                         label: false %>
+            </fieldset>
+          </li>
+          <li>
+            <fieldset>
+              <legend>Metadata ok</legend>
+              <%= f.input :metadata_complete, as: :radio_buttons,
+                                              item_wrapper_class: 'field-radio fields-inline',
+                                              label: false %>
+            </fieldset>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid-item">
+      <h4>Thesis files</h4>
+      <div class="box-content" style="margin-bottom: 1em">
+        <ul class="list-unbulleted">
+          <li>
+            <%= f.input :files?, as: :string,
+                                     readonly: true,
                                      label_html: { style: 'width: 50%' },
-                                     item_wrapper_class: 'field-radio fields-inline',
-                                     label: 'Issues found' %>
-        </li>
-      </ul>
+                                     input_html: { class: 'disabled', style: 'width: 40%', value: f.object.files?? 'Yes' : 'No' },
+                                     label: 'Files attached' %>
+          </li>
+          <li>
+            <%= f.input :files_have_purpose?, as: :string,
+                                              readonly: true,
+                                              label_html: { style: 'width: 50%' },
+                                              input_html: { class: 'disabled', style: 'width: 40%', value: f.object.files_have_purpose?? 'Yes' : 'No' },
+                                              label: 'All files have a purpose' %>
+          </li>
+          <li>
+            <%= f.input :one_thesis_pdf?, as: :string,
+                                          readonly: true,
+                                              label_html: { style: 'width: 50%' },
+                                              input_html: { class: 'disabled', style: 'width: 40%', value: f.object.one_thesis_pdf?? 'Yes' : 'No' },
+                                              label: 'One "Thesis PDF"' %>
+          </li>
+          <li>
+            <fieldset>
+              <legend>Files ok</legend>
+              <%= f.input :files_complete, as: :radio_buttons,
+                                           item_wrapper_class: 'field-radio fields-inline',
+                                           label: false %>
+            </fieldset>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid-item">
       <%= submit_tag 'Update', class: 'btn button-primary' %>
     </div>
   </div>
 
   <div class="layout-band">
     <h4>Thesis metadata</h4>
+    <div class="well">
+      <% @thesis.authors.each do |author| %>
+        <p>
+          <strong>Display name: <%= author.user.display_name %></strong><br>
+          Preferred name: <%= author.user.preferred_name %><br>
+          Kerberos: <%= author.user.kerberos_id %><br>
+          Graduated: <%= author.graduation_confirmed %>
+        </p>
+      <% end %>
+      <p>Degree date: <%= @thesis.graduation_month.to_s %> <%= @thesis.graduation_year.to_s %></p>
+    </div>
     <div class="field-row layout-band layout-1q3q">
       <div class="col1q"><strong>Authors</strong></div>
       <%= f.simple_fields_for :users do |u| %>
