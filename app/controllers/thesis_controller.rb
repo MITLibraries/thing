@@ -45,18 +45,14 @@ class ThesisController < ApplicationController
   end
 
   def publish_to_dspace
-    # This will be where the publication job gets invoked.
-    # subset = filter_theses_by_term Thesis.in_review
-    # result = subset.map(&:some_async_method)
-    # if result.map { |val| val == true }.reduce(:&)
-    #   flash[:success] = 'This would have published theses to DSpace@MIT.'
-    # else
-    #   flash[:warning] = 'Not all selected theses are ready for publication.<br>'.html_safe + ready.to_s
-    # end
     if params[:graduation] == 'all' || params[:graduation].nil?
       flash[:warning] = 'Please select a term before attempting to publish theses to DSpace@MIT.'
     else
-      flash[:success] = 'If publishing to DSpace@MIT worked, this would be a meaningful update message.'
+      theses = filter_theses_by_term(Thesis.in_review).to_a
+      DspacePublicationPrepJob.perform_later(theses)
+
+      flash[:success] = 'The theses you selected have been added to the publication queue. ' \
+                        'Status updates are not immediate.'
     end
     redirect_to thesis_select_path
   end
