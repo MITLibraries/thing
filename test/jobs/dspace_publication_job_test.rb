@@ -25,7 +25,9 @@ class DspacePublicationJobTest < ActiveJob::TestCase
     job = DspacePublicationJob.new
     sqs_client = Aws::SQS::Client.new(region: ENV.fetch('AWS_REGION'), stub_responses: true)
     sqs_client.stub_responses(:send_message)
-    resp = job.send_sqs_message(@thesis, @input_queue_url, sqs_client)
+    job.instance_variable_set(:@sqs_client, sqs_client)
+    job.instance_variable_set(:@queue_url, @input_queue_url)
+    resp = job.send_sqs_message(@thesis)
     assert resp.successful?
   end
 

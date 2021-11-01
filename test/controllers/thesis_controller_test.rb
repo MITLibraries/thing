@@ -620,6 +620,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     get thesis_publish_to_dspace_path, params: { graduation: '2018-09-01' }
     assert_redirected_to thesis_select_path
     follow_redirect!
-    assert_select '.alert-banner.success', text: 'If publishing to DSpace@MIT worked, this would be a meaningful update message.', count: 1
+    assert_select '.alert-banner.success', text: 'The theses you selected have been added to the publication queue. Status updates are not immediate.', count: 1
   end
 end
