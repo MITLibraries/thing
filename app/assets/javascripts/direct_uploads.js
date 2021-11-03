@@ -50,7 +50,7 @@ addEventListener("direct-upload:error", event => {
   event.preventDefault()
   const { id, error } = event.detail
   const element = document.getElementById(`direct-upload-${id}`)
-  Raven.captureException('ActiveStorage Direct Upload Failed.')
+  Sentry.captureException('ActiveStorage Direct Upload Failed.')
   storageErrorDetected = true
   element.classList.add("direct-upload--error")
   element.setAttribute("title", error)
