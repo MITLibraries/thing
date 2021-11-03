@@ -82,7 +82,7 @@ class SqsMessageTest < ActiveSupport::TestCase
   test 'message_attributes is valid' do
     attributes = SqsMessage.new(@thesis).message_attributes
     package_id = { data_type: 'String', string_value: "etd_#{@thesis.id}" }
-    output_queue = { data_type: 'String', string_value: 'test2' }
+    output_queue = { data_type: 'String', string_value: 'etd-test-output' }
     submission_source = { data_type: 'String', string_value: 'ETD' }
     assert_equal %w[PackageID SubmissionSource OutputQueue], attributes.keys
     assert_equal package_id, attributes['PackageID']
