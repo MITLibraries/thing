@@ -122,6 +122,11 @@ class Thesis < ApplicationRecord
     authors.map(&:graduation_confirmed?).reduce(:&)
   end
 
+  # Returns an array of user IDs from whodunnit who have saved a version of the thesis.
+  def contributors
+    versions.pluck(:whodunnit).uniq.map(&:to_i)
+  end
+
   # Returns a true/false value if there are any affiliated degrees.
   def degrees?
     !degrees.count.zero?
@@ -236,6 +241,11 @@ class Thesis < ApplicationRecord
     end
 
     false
+  end
+
+  # This method returns true if any of its versions have been contributed by someone with a student status.
+  def student_contributed?
+    User.where(id: contributors).map(&:student?).any?
   end
 
   # This contains the logic for a thesis to have its status set to either

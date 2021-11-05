@@ -227,6 +227,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_select '.card-overall .message', text: '24 thesis records', count: 1
     assert_select '.card-files .message', text: '7 have files attached', count: 1
     assert_select '.card-issues span', text: '1 flagged with issues', count: 1
+    assert_select '.card-students-contributing span', text: '0 have had metadata contributed by students', count: 1
     assert_select '.card-multiple-authors span', text: '2 have multiple authors', count: 1
     assert_select '.card-multiple-degrees span', text: '1 has multiple degrees', count: 1
     assert_select '.card-multiple-departments span', text: '1 has multiple departments', count: 1

@@ -561,6 +561,13 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal false, thesis.authors_graduated?
   end
 
+  test 'contributors method does not error without whodunnit values' do
+    thesis = theses(:one)
+    assert_equal Array, thesis.contributors.class
+    assert_equal [], thesis.contributors # Fixtures don't trigger whodunnit
+    # Not sure whether more tests are possible at the model level - see thesis controller tests for more
+  end
+
   test 'in_review scope returns theses in that publication status' do
     assert_equal 'Publication review', Thesis.in_review.first.publication_status
     assert_includes Thesis.in_review, theses(:publication_review)
