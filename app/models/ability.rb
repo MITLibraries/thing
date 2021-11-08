@@ -54,6 +54,7 @@ class Ability
     can :manage, :submitter
 
     can :files, Report
+    can :proquest_files, Report
     can :index, Report
     can :term, Report
     can :empty_theses, Report

@@ -17,6 +17,17 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     th.reload
   end
 
+  def attach_proquest_form(tr, th)
+    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    tr.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    tr.save
+    tr.reload
+    th.files.attach(tr.files.first.blob)
+    th.files.first.purpose = 'proquest_form'
+    th.save
+    th.reload
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~ Report dashboard ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'summary report exists' do
     sign_in users(:admin)
@@ -298,5 +309,88 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     file.save
     get report_files_path
     assert_select 'table tbody td', text: 'a_pdf.pdf', count: 1
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~~ ProQuest forms report ~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'proquest files report exists' do
+    sign_in users(:admin)
+    get report_proquest_files_path
+    assert_response :success
+  end
+
+  test 'anonymous users are prompted to log in by proquest files report' do
+    # Note that nobody is signed in.
+    get report_proquest_files_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see proquest files report' do
+    sign_in users(:basic)
+    get report_proquest_files_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see proquest files report' do
+    sign_in users(:transfer_submitter)
+    get report_proquest_files_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see proquest files report' do
+    sign_in users(:processor)
+    get report_proquest_files_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see proquest files report' do
+    sign_in users(:thesis_admin)
+    get report_proquest_files_path
+    assert_response :success
+  end
+
+  test 'admins can see proquest files report' do
+    sign_in users(:admin)
+    get report_proquest_files_path
+    assert_response :success
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~~ ProQuest forms features ~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'default proquest files report is empty' do
+    sign_in users(:processor)
+    get report_proquest_files_path
+    assert_select 'table tbody td', text: 'There are no ProQuest forms within the selected term.', count: 1
+  end
+
+  test 'files with proquest_form purpose appear on proquest files report' do
+    sign_in users(:processor)
+    xfer = transfers(:valid)
+    thesis = theses(:one)
+    attach_proquest_form(xfer, thesis)
+    get report_proquest_files_path
+    assert_select 'table tbody td', text: 'a_pdf.pdf', count: 1
+  end
+
+  test 'files without proquest_form purpose do not appear on proquest files report' do
+    sign_in users(:processor)
+    xfer = transfers(:valid)
+    thesis = theses(:one)
+    attach_files(xfer, thesis)
+    get report_proquest_files_path
+    assert_select 'table tbody td', text: 'a_pdf.pdf', count: 0
+  end
+
+  test 'proquest files report can be filtered by term' do
+    sign_in users(:processor)
+    xfer = transfers(:valid)
+    thesis = theses(:one)
+    attach_proquest_form(xfer, thesis)
+    get report_proquest_files_path
+    assert_select 'table tbody td', text: 'a_pdf.pdf', count: 1
+    get report_proquest_files_path, params: { graduation: '2018-09-01' }
+    assert_select 'table tbody td', text: 'There are no ProQuest forms within the selected term.', count: 1
   end
 end

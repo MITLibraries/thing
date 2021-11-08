@@ -26,6 +26,14 @@ class ReportController < ApplicationController
     @list = report.list_unattached_files subset
   end
 
+  def proquest_files
+    report = Report.new
+    theses = Thesis.all
+    @terms = report.extract_terms theses
+    subset = filter_theses_by_term theses
+    @list = report.list_proquest_files subset
+  end
+
   def index
     report = Report.new
     @terms = Thesis.pluck(:grad_date).uniq.sort
