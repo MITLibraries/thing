@@ -1,5 +1,5 @@
 <h4 class="title"><%= table[1]['title'] %></h4>
-<table class='table table-simplified table-<%= table[0] %>' <% if table[1]['summary'] %>summary="<%= table[1]['summary'] %>"<% end %>>
+<table class='table table-simplified table-<%= table[0].gsub(" ", "-").downcase %>' <% if table[1]['summary'] %>summary="<%= table[1]['summary'] %>"<% end %>>
   <% if table[1]['caption'] %>
     <caption>
       <%= table[1]['caption'] %>

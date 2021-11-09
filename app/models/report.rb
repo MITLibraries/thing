@@ -86,7 +86,8 @@ class Report
   def data_category_department
     category = []
     rows = populate_category(Department.pluck(:name_dw))
-    Thesis.all.joins(:departments).group(:name_dw).group(:grad_date).count.each do |item|
+    Thesis.all.joins(:files_attachments).joins(:departments).group(:name_dw).group(:grad_date).distinct.count
+          .each do |item|
       rows[item[0][0]][item[0][1]] = item[1]
     end
     rows.each do |row|
@@ -237,22 +238,22 @@ class Report
 
   def index_data
     output = {}
-    output['Summary'] = []
-    output['Summary'].push data_thesis_records
-    output['Summary'].push data_theses_with_files
-    output['Summary'].push data_files_attached_to_theses
-    output['Summary'].push data_issues
-    output['Summary'].push data_multiple_authors
-    output['Summary'].push data_multiple_degrees
-    output['Summary'].push data_multiple_departments
-    output['Publication status'] = []
-    output['Publication status'].push(*data_category_publication_status)
-    output['Copyright'] = []
-    output['Copyright'].push(*data_category_copyright_holder)
-    output['License'] = []
-    output['License'].push(*data_category_license)
-    output['Departments'] = []
-    output['Departments'].push(*data_category_department)
+    output['summary'] = []
+    output['summary'].push data_thesis_records
+    output['summary'].push data_theses_with_files
+    output['summary'].push data_files_attached_to_theses
+    output['summary'].push data_issues
+    output['summary'].push data_multiple_authors
+    output['summary'].push data_multiple_degrees
+    output['summary'].push data_multiple_departments
+    output['publication-status'] = []
+    output['publication-status'].push(*data_category_publication_status)
+    output['copyright'] = []
+    output['copyright'].push(*data_category_copyright_holder)
+    output['license'] = []
+    output['license'].push(*data_category_license)
+    output['departments'] = []
+    output['departments'].push(*data_category_department)
     output
   end
 
@@ -309,7 +310,7 @@ class Report
   end
 
   def table_department(collection)
-    result = collection.joins(:departments).group(:name_dw).count
+    result = collection.joins(:files_attachments).joins(:departments).group(:name_dw).distinct.count
     table_populate_defaults result, Department.pluck(:name_dw)
     {
       'title' => 'Thesis counts by department',
@@ -357,7 +358,7 @@ class Report
 
   def table_populate_defaults(data, values)
     values.each do |value|
-      data[value] = '0' unless data[value]
+      data[value] = 0 unless data[value]
     end
   end
 
@@ -389,7 +390,7 @@ class Report
     result['status'] = table_status collection
     result['copyright'] = table_copyright collection
     result['license'] = table_license collection
-    result['department'] = table_department collection
+    result['departments'] = table_department collection
     result['hold'] = table_hold collection
     result
   end
