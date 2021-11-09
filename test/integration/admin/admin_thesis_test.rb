@@ -87,7 +87,7 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     assert_equal 'We discovered it with science', Thesis.last.abstract
   end
 
-  test 'thesis admins cannot destroy theses through admin panel' do
+  test 'thesis admins can destroy theses through admin panel' do
     mock_auth(users(:thesis_admin))
 
     thesis = Thesis.first
@@ -97,7 +97,7 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
     assert Thesis.exists?(thesis_id)
 
     delete admin_thesis_path(thesis)
-    assert Thesis.exists?(thesis_id)
+    assert_not Thesis.exists?(thesis_id)
   end
 
   test 'admins can destroy theses through admin panel' do
