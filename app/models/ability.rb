@@ -87,6 +87,5 @@ class Ability
     cannot 'destroy', :department
     cannot 'destroy', :hold_source
     cannot 'destroy', :license
-    cannot 'destroy', :thesis
   end
 end
