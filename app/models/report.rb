@@ -290,6 +290,16 @@ class Report
     result
   end
 
+  def list_proquest_files(collection)
+    result = []
+    collection.joins(:files_attachments).order(:grad_date).uniq.each do |record|
+      record.files.where(purpose: 'proquest_form').each do |file|
+        result.push(file)
+      end
+    end
+    result
+  end
+
   def table_copyright(collection)
     result = {}
     collection.group(:copyright).count.each do |record|

@@ -1,0 +1,14 @@
+<tr>
+  <td><%= link_to(files_proquest_form.blob[:filename], files_proquest_form.blob) %></td>
+  <td>
+    <% files_proquest_form.record.authors.each do |author| %>
+      <%= author.user.display_name %><br>
+    <% end %>
+  </td>
+  <td>
+    <% files_proquest_form.record.departments.each do |dept| %>
+      <%= dept.name_dw %><br>
+    <% end %>
+  </td>
+  <td><%= files_proquest_form[:description] %></td>
+</tr>

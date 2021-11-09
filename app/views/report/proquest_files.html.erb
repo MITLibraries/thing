@@ -1,0 +1,29 @@
+<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">ProQuest forms</h3>
+
+    <%= render 'shared/defined_terms_filter' %>
+
+    <table class="table" summary="This table presents a list of files that are tagged as ProQuest forms.
+        Clicking the link in the left column will download the form." title="ProQuest forms">
+      <thead>
+        <tr>
+          <th scope="col">File</th>
+          <th scope="col">Authors</th>
+          <th scope="col">Departments</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'files_proquest_form', collection: @list) || render('files_empty_proquest') %>
+      </tbody>
+    </table>
+
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>
