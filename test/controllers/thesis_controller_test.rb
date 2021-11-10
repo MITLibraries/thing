@@ -538,6 +538,61 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     refute(th.files_complete)
   end
 
+  # ~~~~~~~~~~~~~~~~~~~ publication preview ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'anonymous users get redirected if they load the publication preview list' do
+    get thesis_publish_preview_path
+    assert_response :redirect
+  end
+
+  test 'basic users get redirected if they load the publication preview list' do
+    sign_in users(:basic)
+    get thesis_publish_preview_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters get redirected if they load the publication preview list' do
+    sign_in users(:transfer_submitter)
+    get thesis_publish_preview_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can load the publication preview list' do
+    sign_in users(:processor)
+    get thesis_publish_preview_path
+    assert_response :success
+  end
+
+  test 'thesis admins can load the publication preview list' do
+    sign_in users(:thesis_admin)
+    get thesis_publish_preview_path
+    assert_response :success
+  end
+
+  test 'admins can load the publication preview list' do
+    sign_in users(:admin)
+    get thesis_publish_preview_path
+    assert_response :success
+  end
+
+  test 'publication preview, without a term specified, does not link to the publish step' do
+    sign_in users(:processor)
+    get thesis_publish_preview_path
+    assert_select 'div#publish-to-dspace', count: 1
+    assert_select 'div#publish-to-dspace a[href=?]', thesis_publish_to_dspace_path, text: 'Publish theses to DSpace@MIT', count: 0
+  end
+
+  test 'publication preview, with a term specified, includes a button to actually publish that includes the term parameter' do
+    sign_in users(:processor)
+    needle = '2018-09-01'
+    get thesis_publish_preview_path, params: { graduation: needle }
+    assert_select 'div#publish-to-dspace', count: 1
+    assert_select 'div#publish-to-dspace a[href=?]', thesis_publish_to_dspace_path(graduation: needle)
+  end
+
   # ~~~~~~~~~~~~~~~~~~~ publishing theses to dspace ~~~~~~~~~~~~~~~~~~~~~
   test 'anonymous users get redirected if they request publication to dspace' do
     get thesis_publish_to_dspace_path
@@ -578,21 +633,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to thesis_select_path
   end
 
-  test 'processing queue, with no term specified, does not link to the publish step' do
-    sign_in users(:processor)
-    get thesis_select_path
-    assert_select 'div#publish-to-dspace', count: 1
-    assert_select 'div#publish-to-dspace a[href=?]', thesis_publish_to_dspace_path, text: 'Publish theses to DSpace@MIT', count: 0
-  end
-
-  test 'processing queue, with a term specified, passes the filtered grad_date when publishing to dspace' do
-    sign_in users(:processor)
-    needle = '2018-09-01'
-    get thesis_select_path, params: { graduation: needle }
-    assert_select 'div#publish-to-dspace', count: 1
-    assert_select 'div#publish-to-dspace a[href=?]', thesis_publish_to_dspace_path(graduation: needle)
-  end
-
   test 'publishing to dspace without a term specified will generate a flash warning' do
     sign_in users(:processor)
     get thesis_publish_to_dspace_path
@@ -600,7 +640,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select '.alert-banner.warning', text: 'Please select a term before attempting to publish theses to DSpace@MIT.', count: 1
     get thesis_publish_to_dspace_path, params: { graduation: 'all' }
-    assert_redirected_to thesis_select_path
+    assert_redirected_to thesis_select_path( params: { graduation: 'all' })
     follow_redirect!
     assert_select '.alert-banner.warning', text: 'Please select a term before attempting to publish theses to DSpace@MIT.', count: 1
   end
@@ -608,7 +648,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'publishing a specific term to dspace ends back at the processing queue with a flash success' do
     sign_in users(:processor)
     get thesis_publish_to_dspace_path, params: { graduation: '2018-09-01' }
-    assert_redirected_to thesis_select_path
+    assert_redirected_to thesis_select_path( params: { graduation: '2018-09-01' })
     follow_redirect!
     assert_select '.alert-banner.success', text: 'The theses you selected have been added to the publication queue. Status updates are not immediate.', count: 1
   end

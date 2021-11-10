@@ -1,0 +1,43 @@
+<%= content_for(:title, "Thesis Processing | MIT Libraries") %>
+
+<h3 class="title title-page">Thesis Publication Preview</h3>
+
+<%= render 'shared/you_are' %>
+
+<%= render 'shared/defined_terms_filter' %>
+
+<table class="table" id="thesisQueue" title="Thesis processing queue">
+  <thead>
+    <tr>
+      <th scope="col">File transfer date</th>
+      <th scope="col">Degree date</th>
+      <th scope="col">Department(s)</th>
+      <th scope="col">Author(s)</th>
+      <th scope="col">Issues found</th>
+      <th scope="col">Status</th>
+      <th scope="col">Processor note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render(partial: 'thesis/select_thesis', collection: @thesis) || render('select_empty') %>
+  </tbody>
+</table>
+
+<div id="publish-to-dspace" class="gridband" aria-live="polite" role="region">
+  <div class="inline-action well">
+    <% if params[:graduation] == 'all' || params[:graduation].nil? %>
+      <div class="message">
+        <h4 class="title">Select a term to publish to DSpace@MIT</h4>
+        <p>Batches of theses can be sent to DSpace@MIT only when a term is specified.</p>
+      </div>
+    <% else %>
+      <div class="message">
+        <h4 class="title">Ready to publish <%= @thesis.count %> theses?</h4>
+        <p>When this set of thesis records looks correct, click the button at right to publish them. Use the <%= link_to "Thesis Processing Queue", thesis_select_path(:graduation => params[:graduation]) %> to continue processing.</p>
+      </div>
+      <div class="actions">
+        <%= link_to "Publish theses to DSpace@MIT", thesis_publish_to_dspace_path(:graduation => params[:graduation]), class: 'button button-primary' %>
+      </div>
+    <% end %>
+  </div>
+</div>
