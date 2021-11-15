@@ -58,6 +58,7 @@ class Ability
     can :index, Report
     can :term, Report
     can :empty_theses, Report
+    can :student_submitted_theses, Report
 
     can %i[read update], Thesis
     can :annotate, Thesis

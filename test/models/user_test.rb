@@ -431,4 +431,19 @@ class UserTest < ActiveSupport::TestCase
     change = u.versions.last
     assert_equal change.changeset['given_name'], %w[Yo Hello]
   end
+
+  test 'evaluates whether a user is a student' do
+    # For our purposes, we assume users with the basic role that aren't admins are students
+    student = users(:basic)
+    processor = users(:processor)
+    thesis_admin = users(:thesis_admin)
+    transfer_submitter = users(:transfer_submitter)
+    admin = users(:admin)
+
+    assert student.student?
+    assert_not processor.student?
+    assert_not thesis_admin.student?
+    assert_not transfer_submitter.student?
+    assert_not admin.student?
+  end
 end

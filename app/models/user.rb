@@ -156,6 +156,13 @@ class User < ApplicationRecord
     end
   end
 
+  # The student-submitted metadata report looks for theses that are created by students, based on whether the first
+  # version of the thesis has a whodunnit. Since thesis processors may create a thesis for a student, this method helps
+  # us determine whether a thesis creator is a student based on their role in the ability model.
+  def student?
+    role == 'basic' && !admin?
+  end
+
   private
 
   # For our purposes, kerberos_id is EPPN (uid) without '@mit.edu'

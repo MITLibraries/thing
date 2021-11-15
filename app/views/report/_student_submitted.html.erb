@@ -1,0 +1,15 @@
+<tr>
+  <td><%= link_to_user(student_submitted[1]) %></td>
+  <td><%= link_to title_helper(student_submitted[0]), edit_admin_thesis_path(student_submitted[0].id) %></td>
+  <td>
+    <% student_submitted[0].authors.each do |author| %>
+      <%= author.user.display_name %><br>
+    <% end %>
+  </td>
+  <td>
+    <% student_submitted[0].departments.each do |dept| %>
+      <%= dept.name_dw %><br>
+    <% end %>
+  </td>
+  <td><%= student_submitted[0].graduation_month[...3] %> <%= student_submitted[0].graduation_year%></td>
+</tr>

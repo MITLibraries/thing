@@ -1,0 +1,35 @@
+<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">Theses submitted by students</h3>
+
+    <div class="alert alert-banner">
+      <p><i class="fa fa-info-circle fa-lg"></i> Note: this report may not be accurate for theses submitted before the
+      February 2022 degree period.</p>
+    </div>
+
+    <%= render 'shared/defined_terms_filter' %>
+
+    <table class="table" summary="This table presents a list of theses with metadata submitted by the student."
+     title="Student submitted metadata">
+      <thead>
+        <tr>
+          <th scope="col">Creator</th>
+          <th scope="col">Title</th>
+          <th scope="col">Author(s)</th>
+          <th scope="col">Department(s)</th>
+          <th scope="col">Degree date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'student_submitted', collection: @list) || render('student_submitted_empty') %>
+      </tbody>
+    </table>
+
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>

@@ -20,6 +20,8 @@ class RegistrarImportJob < ActiveJob::Base
         next
       end
 
+      # Set whodunnit for user transaction
+      PaperTrail.request.whodunnit = 'registrar'
       user = User.create_or_update_from_csv(row)
       results[:new_users] += 1 if user.id_previously_changed?
       logger.info("User is #{user.inspect}")
@@ -32,6 +34,8 @@ class RegistrarImportJob < ActiveJob::Base
       grad_date = reformat_grad_date(row['Degree Award Date'])
       logger.info("Grad date is #{grad_date.inspect}")
       begin
+        # Set whodunnit for thesis transaction
+        PaperTrail.request.whodunnit = 'registrar'
         thesis = Thesis.create_or_update_from_csv(user, degree, department, grad_date, row)
         thesis.new_thesis? ? results[:new_theses] += 1 : results[:updated_theses] += 1
         logger.info("Thesis is #{thesis.inspect}")

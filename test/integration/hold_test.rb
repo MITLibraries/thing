@@ -30,7 +30,7 @@ class HoldIntegrationTest < ActionDispatch::IntegrationTest
 
     get hold_history_path(hold)
     assert_select 'li', 'Modified by: thesis_admin'
-    assert_select "a[href='/admin/users/#{user.id}']", 'thesis_admin'
+    assert_select "a[href='/admin/users/#{user.id}/edit']", 'thesis_admin'
   end
 
   test 'returns useful text if user who modified no longer exists' do
@@ -50,7 +50,7 @@ class HoldIntegrationTest < ActionDispatch::IntegrationTest
 
     mock_auth users(:thesis_admin)
     get hold_history_path(hold)
-    assert_select 'li', "Modified by: User ID #{user.id} no longer active."
+    assert_select 'li', "Modified by: ID #{user.id} is not an active user."
   end
 
   test 'nil fields are converted to n/a' do
