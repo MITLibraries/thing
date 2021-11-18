@@ -15,12 +15,6 @@ require 'test_helper'
 class TransferTest < ActiveSupport::TestCase
   setup do
     @transfer = transfers(:valid)
-    # file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
-    # @transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
-  end
-
-  teardown do
-    # @transfer.files.purge
   end
 
   test 'valid transfer' do

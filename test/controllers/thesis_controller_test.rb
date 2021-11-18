@@ -231,6 +231,13 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'processing queue shows nothing without files attached' do
+    sign_in users(:processor)
+    Thesis.all.map { |t| t.files.delete_all }
+    get thesis_select_path
+    assert @response.body.include? 'No theses found'
+  end
+
   test 'processing queue shows records with files attached' do
     sign_in users(:processor)
     get thesis_select_path
