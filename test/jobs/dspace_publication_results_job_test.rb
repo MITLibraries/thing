@@ -104,6 +104,30 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
     end
   end
 
+  # This is a regression test to cover a bug where the job sends no emails if there are only errors
+  test 'sends emails if there are no successes' do
+    Aws.config[:sqs] = {
+      stub_responses: {
+        receive_message: [
+          {
+            messages: [
+              # 500 error
+              { message_id: 'id2', receipt_handle: 'handle2', body: '{"ResultType": "error", "ErrorTimestamp": "Thu Sep 09 17: 56: 39 UTC 2021", "ErrorInfo": "Stuff broke", "ExceptionMessage": "500 Server Error: Internal Server Error", "ExceptionTraceback": "Full unformatted stack trace of the Exception"}',
+                message_attributes: { 'PackageID' => { string_value: "etd_#{@bad_thesis.id}", data_type: 'String' },
+                                      'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } }
+            ]
+          },
+          { messages: [] }
+        ]
+      }
+    }
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      assert_difference('ActionMailer::Base.deliveries.size', 1) do
+        DspacePublicationResultsJob.perform_now
+      end
+    end
+  end
+
   test 'logs bad errors as expected' do
     results = DspacePublicationResultsJob.perform_now
 

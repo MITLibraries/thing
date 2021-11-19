@@ -39,37 +39,30 @@ class DspacePublicationJobTest < ActiveJob::TestCase
     assert_equal 'Pending publication', @thesis.publication_status
   end
 
-  test 'TimeoutError does not set to pending publication' do
+  test 'TimeoutError sets status to publication error' do
     sqs_client = Aws::SQS::Client.new(region: ENV.fetch('AWS_REGION'), stub_responses: true)
     sqs_client.stub_responses(:send_message, Timeout::Error)
-    
+
     DspacePublicationJob.perform_now(@thesis, sqs_client)
-    assert_equal 'Not ready for publication', @thesis.publication_status
-    # Note: we probably want an error state for publication but that isn't in app yet
+    assert_equal 'Publication error', @thesis.publication_status
   end
 
   # https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/Errors/ChecksumError.html
-  test 'Aws::Errors::ChecksumError does not set to pending publication' do
+  test 'Aws::Errors::ChecksumError sets status to publication error' do
     sqs_client = Aws::SQS::Client.new(region: ENV.fetch('AWS_REGION'), stub_responses: true)
     sqs_client.stub_responses(:send_message, Aws::Errors::ChecksumError)
-    
+
     DspacePublicationJob.perform_now(@thesis, sqs_client)
-    assert_equal 'Not ready for publication', @thesis.publication_status
-    # Note: we probably want an error state for publication but that isn't in app yet
+    assert_equal 'Publication error', @thesis.publication_status
   end
 
   # All 400 and 500 errors use this error type
   # https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/Errors/ServiceError.html
-  test 'Aws::Errors::ServiceError does not set to pending publication' do
+  test 'Aws::Errors::ServiceError sets status to publication error' do
     sqs_client = Aws::SQS::Client.new(region: ENV.fetch('AWS_REGION'), stub_responses: true)
     sqs_client.stub_responses(:send_message, Aws::Errors::ServiceError)
-    
+
     DspacePublicationJob.perform_now(@thesis, sqs_client)
-    assert_equal 'Not ready for publication', @thesis.publication_status
-    # Note: we probably want an error state for publication but that isn't in app yet
+    assert_equal 'Publication error', @thesis.publication_status
   end
-  
-  # TODO: test rescuing of error states. StandardError, Aws:Errors::ChecksumError, Aws::SQS::Errors::Http500Error are
-  # good places to start. Currently the rescue block doesn't output anything other than a log message, but this may
-  # become easier to test once we update the pub status to errored.
 end
