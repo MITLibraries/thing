@@ -17,7 +17,8 @@ class DspacePublicationResultsJob < ActiveJob::Base
       results[:errors] << "Error reading from SQS queue: #{e}"
     end
 
-    ReportMailer.publication_results_email(results).deliver_now if results[:processed].positive?
+    ReportMailer.publication_results_email(results).deliver_now if results[:total].positive? ||
+                                                                   results[:errors].any?
     results
   end
 

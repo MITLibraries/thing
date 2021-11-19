@@ -31,7 +31,8 @@ class DspacePublicationJob < ActiveJob::Base
     rescue StandardError, Aws::Errors, Aws::SQS::Errors => e
       Rails.logger.error("Message not sent: #{e}")
       Sentry.capture_exception(e)
-      # Update thesis record with error status once ETD-399 merges
+      thesis.publication_status = 'Publication error'
+      thesis.save
     end
   end
 
