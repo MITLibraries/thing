@@ -567,15 +567,12 @@ class ThesisTest < ActiveSupport::TestCase
     assert_not_includes Thesis.in_review, theses(:issues_found)
   end
 
-  test 'without_files scope returns list of records with no attached files' do
+  test 'files are removed from without_files scope when they receive a file' do
     thesis = theses(:one)
-    all_theses = Thesis.count
-    assert_equal all_theses, Thesis.without_files.count
+    old_value = Thesis.without_files.count
     assert_includes Thesis.without_files, thesis
-    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
-    thesis.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
-    thesis.save
-    assert_equal all_theses-1, Thesis.without_files.count
+    thesis = attach_file_with_purpose_to(thesis)
+    assert_equal old_value-1, Thesis.without_files.count
     assert_not_includes Thesis.without_files, thesis
   end
 
@@ -617,7 +614,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'publication status gets set to "Publication review" when conditions are met' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     # Fixture meets all conditions
     assert_equal true, thesis.valid?
     assert_equal true, thesis.files?
@@ -636,8 +635,17 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal 'Publication review', thesis.publication_status
   end
 
+  test 'theses can have attached files (in the fixture)' do
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
+    assert_equal 1, thesis.files.count
+  end
+
   test 'Without files, publication_status is set to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis.files.detach
     thesis.save
@@ -646,7 +654,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Without a defined purpose, publication_status is set to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     file = thesis.files.first
     file.purpose = ''
@@ -658,7 +668,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'There can be only one "thesis pdf" purpose' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review), 'thesis_pdf')
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis = attach_file_with_purpose_to(thesis, 'thesis_pdf')
     assert_equal 'Not ready for publication', thesis.publication_status
@@ -670,13 +682,19 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:publication_review)
     thesis.save
     thesis.reload
+    assert_equal 'Publication review', thesis.publication_status
+    thesis.files.detach
+    thesis.save
+    thesis.reload
     assert_equal 'Not ready for publication', thesis.publication_status
     assert_equal 0, thesis.files.count
     assert_equal false, thesis.one_thesis_pdf?
   end
 
   test 'Unsetting files_complete sets status to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis.files_complete = false
     thesis.update(thesis.as_json)
@@ -684,7 +702,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Unsetting metadata_complete sets status to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis.metadata_complete = false
     thesis.update(thesis.as_json)
@@ -692,7 +712,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Doctoral theses cannot be in publication review without an abstract' do
-    thesis = attach_file_with_purpose_to(theses(:doctor))
+    thesis = theses(:doctor)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis.abstract = nil
     thesis.save
@@ -702,7 +724,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Master theses cannot be in publication review without an abstract' do
-    thesis = attach_file_with_purpose_to(theses(:master))
+    thesis = theses(:master)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis.abstract = nil
     thesis.save
@@ -712,7 +736,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Bachelor theses can be put in publication review without an abstract' do
-    thesis = attach_file_with_purpose_to(theses(:bachelor))
+    thesis = theses(:bachelor)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis.abstract = nil
     thesis.save
@@ -722,7 +748,7 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Thesis with no degrees cannot be set to publication review' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
     thesis.degrees = []
     thesis.save
     thesis.reload
@@ -734,17 +760,22 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Thesis with multiple degrees can still be in publication review' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 1, thesis.degrees.count
     assert_equal 'Publication review', thesis.publication_status
     thesis.degrees = [degrees(:one), degrees(:two)]
     thesis.save
     thesis.reload
+    assert_equal 2, thesis.degrees.count
     assert_equal 'Publication review', thesis.publication_status
   end
 
   test 'Thesis without advisor cannot be set to publication_review' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis.advisors = []
     thesis.save
@@ -753,7 +784,7 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Thesis with no copyright cannot be set to publication review' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
     thesis.copyright = nil
     thesis.save
     thesis.reload
@@ -765,14 +796,18 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Thesis with copyright not held by the author does not require a license' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_not_equal 'Author', thesis.copyright.holder
     assert_nil thesis.license
     assert_equal 'Publication review', thesis.publication_status
   end
 
   test 'Thesis with author-held copyright cannot be set to publiation review without a license selected' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_not_equal 'Author', thesis.copyright.holder
     assert_equal 'Publication review', thesis.publication_status
     thesis.copyright = copyrights(:author)
@@ -784,7 +819,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Thesis with author-held copyright can be set to publiation review after license selected' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_not_equal 'Author', thesis.copyright.holder
     assert_equal 'Publication review', thesis.publication_status
 
@@ -802,7 +839,7 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Publication review cannot be set with a blank abstract if any degree is non-bachelor' do
-    thesis = attach_file_with_purpose_to(theses(:bachelor))
+    thesis = theses(:bachelor)
     thesis.abstract = nil
     thesis.save
     thesis.reload
@@ -812,11 +849,14 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.save
     thesis.reload
     assert_equal 'Not ready for publication', thesis.publication_status
+    assert_equal ['Bachelor', 'Doctoral'], thesis.degrees.map(&:degree_type).pluck(:name)
     assert_equal false, thesis.required_fields?
   end
 
   test 'Thesis must have a title to be placed in publication review' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_not_nil thesis.title
     assert_equal 'Publication review', thesis.publication_status
     thesis.title = nil
@@ -826,7 +866,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Setting issues_found sets status to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     thesis.issues_found = true
     thesis.update(thesis.as_json)
@@ -834,7 +876,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Unsetting author graduation_confirmed sets status to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     author = thesis.authors.first
     author.graduation_confirmed = false
@@ -845,7 +889,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Adding an active hold sets status to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     assert_equal 1, thesis.holds.count
     assert_equal false, thesis.active_holds?
@@ -860,7 +906,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Setting an existing hold to "expired" will set the thesis status back to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     assert_equal 1, thesis.holds.count
     hold = thesis.holds.first
@@ -872,7 +920,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Setting an existing hold to "released" can put the thesis into "Publication review" status' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review_except_hold))
+    thesis = theses(:publication_review_except_hold)
+    thesis.save
+    thesis.reload
     assert_equal 'Not ready for publication', thesis.publication_status
     assert_equal 1, thesis.holds.count
     hold = thesis.holds.first
@@ -883,7 +933,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Adding a new hold will set the thesis status back to "Not ready for publication"' do
-    thesis = attach_file_with_purpose_to(theses(:publication_review))
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
     assert_equal 'Publication review', thesis.publication_status
     hold = Hold.new({
                       'thesis' => thesis,
@@ -900,7 +952,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Adding a new hold when a thesis is in "Pending publication" will change nothing' do
-    thesis = attach_file_with_purpose_to(theses(:pending_publication))
+    thesis = theses(:pending_publication)
+    thesis.save
+    thesis.reload
     assert_equal 'Pending publication', thesis.publication_status
     hold = Hold.new({
                       'thesis' => thesis,
@@ -917,7 +971,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Flagging an issue when a thesis is in "Pending publication" will change nothing' do
-    thesis = attach_file_with_purpose_to(theses(:pending_publication))
+    thesis = theses(:pending_publication)
+    thesis.save
+    thesis.reload
     assert_equal 'Pending publication', thesis.publication_status
     thesis.issues_found = true
     thesis.save
@@ -926,7 +982,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Adding a new hold when a thesis is in "Published" will change nothing' do
-    thesis = attach_file_with_purpose_to(theses(:published))
+    thesis = theses(:published)
+    thesis.save
+    thesis.reload
     assert_equal 'Published', thesis.publication_status
     hold = Hold.new({
                       'thesis' => thesis,
@@ -943,7 +1001,9 @@ class ThesisTest < ActiveSupport::TestCase
   end
 
   test 'Flagging an issue when a thesis is in "Published" will change nothing' do
-    thesis = attach_file_with_purpose_to(theses(:published))
+    thesis = theses(:published)
+    thesis.save
+    thesis.reload
     assert_equal 'Published', thesis.publication_status
     thesis.issues_found = true
     thesis.save

@@ -1,0 +1,47 @@
+valid_files_attachment:
+  name: files
+  record: valid (Transfer)
+  blob: publication_review_except_hold_files_blob
+
+publication_review_files_attachment:
+  name: files
+  record: publication_review (Thesis)
+  purpose: thesis_pdf
+  description: "This is a description of the attachment."
+  blob: publication_review_files_blob
+
+publication_review_except_hold_files_attachment:
+  name: files
+  record: publication_review_except_hold (Thesis)
+  purpose: thesis_pdf
+  blob: publication_review_except_hold_files_blob
+
+pending_publication_files_attachment:
+  name: files
+  record: pending_publication (Thesis)
+  purpose: thesis_pdf
+  blob: pending_publication_files_blob
+
+published_files_attachment:
+  name: files
+  record: published (Thesis)
+  purpose: thesis_pdf
+  blob: published_files_blob
+
+bachelor_files_attachment:
+  name: files
+  record: bachelor (Thesis)
+  purpose: thesis_pdf
+  blob: bachelor_files_blob
+
+master_files_attachment:
+  name: files
+  record: master (Thesis)
+  purpose: thesis_pdf
+  blob: master_files_blob
+
+doctor_files_attachment:
+  name: files
+  record: doctor (Thesis)
+  purpose: thesis_pdf
+  blob: doctor_files_blob

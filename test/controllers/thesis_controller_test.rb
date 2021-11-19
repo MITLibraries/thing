@@ -231,19 +231,14 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'processing queue shows nothing without work done' do
+  test 'processing queue shows nothing without files attached' do
     sign_in users(:processor)
+    Thesis.all.map { |t| t.files.delete_all }
     get thesis_select_path
     assert @response.body.include? 'No theses found'
   end
 
-  test 'processing queue shows a record with file attached' do
-    # Attach a file to the thesis
-    t = theses(:with_hold)
-    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
-    t.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
-
-    # Make sure the url for each thesis processing form is included
+  test 'processing queue shows records with files attached' do
     sign_in users(:processor)
     get thesis_select_path
     expected_theses = Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')
@@ -253,22 +248,18 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'processing queue allows filtering by term' do
-    # Attach files to two theses
-    t1 = theses(:with_hold)
-    t2 = theses(:active)
-    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
-    t1.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
-    t2.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
-
-    # Request the processing queue and note two records, with three filter
+    # Request the processing queue and note six records, with three filter
     # options (two specific terms, and the "all terms" option)
     sign_in users(:processor)
     get thesis_select_path
-    assert_select 'table#thesisQueue tbody tr', count: 2
+    assert_select 'table#thesisQueue tbody tr', count: 6
     assert_select 'select[name="graduation"] option', count: 3
-    # Now request the queue with a filter applied, and see only one record
+    # Now request the queue with a term filter applied, and see three records
+    get thesis_select_path, params: { graduation: '2018-06-01' }
+    assert_select 'table#thesisQueue tbody tr', count: 3
+    # Now request the queue with an invalid filter applied, and see the no records message
     get thesis_select_path, params: { graduation: '2018-09-01' }
-    assert_select 'table#thesisQueue tbody tr', count: 1
+    assert @response.body.include? 'No theses found'
   end
 
   # ~~~~~~~~~~~~~~~ duplicate theses / multiple authors report ~~~~~~~~~~~~~~~~
@@ -471,7 +462,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:processor)
     tr = transfers(:valid)
     th = theses(:publication_review_except_hold)
-    attach_files_to_records(tr, th)
     transfer_file_count = tr.files.count
     thesis_file_count = th.files.count
     attachment_count = ActiveStorage::Attachment.count

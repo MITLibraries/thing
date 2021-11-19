@@ -1,0 +1,62 @@
+publication_review_files_blob:
+  key: <%= ActiveStorage::Blob.generate_unique_secure_token %>
+  filename: a_pdf.pdf
+  content_type: application/pdf
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 19333
+  checksum: 2800ec8c99c60f5b15520beac9939a46
+  service_name: test
+
+publication_review_except_hold_files_blob:
+  key: <%= ActiveStorage::Blob.generate_unique_secure_token %>
+  filename: a_pdf.pdf
+  content_type: application/pdf
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 19333
+  checksum: 2800ec8c99c60f5b15520beac9939a46
+  service_name: test
+
+pending_publication_files_blob:
+  key: <%= ActiveStorage::Blob.generate_unique_secure_token %>
+  filename: a_pdf.pdf
+  content_type: application/pdf
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 19333
+  checksum: 2800ec8c99c60f5b15520beac9939a46
+  service_name: test
+
+published_files_blob:
+  key: <%= ActiveStorage::Blob.generate_unique_secure_token %>
+  filename: a_pdf.pdf
+  content_type: application/pdf
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 19333
+  checksum: 2800ec8c99c60f5b15520beac9939a46
+  service_name: test
+
+bachelor_files_blob:
+  key: <%= ActiveStorage::Blob.generate_unique_secure_token %>
+  filename: a_pdf.pdf
+  content_type: application/pdf
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 19333
+  checksum: 2800ec8c99c60f5b15520beac9939a46
+  service_name: test
+
+master_files_blob:
+  key: <%= ActiveStorage::Blob.generate_unique_secure_token %>
+  filename: a_pdf.pdf
+  content_type: application/pdf
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 19333
+  checksum: 2800ec8c99c60f5b15520beac9939a46
+  service_name: test
+
+doctor_files_blob:
+  key: <%= ActiveStorage::Blob.generate_unique_secure_token %>
+  filename: a_pdf.pdf
+  content_type: application/pdf
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 19333
+  checksum: 2800ec8c99c60f5b15520beac9939a46
+  service_name: test
