@@ -37,6 +37,25 @@ class SqsMessageTest < ActiveSupport::TestCase
     assert_equal 'Thesis PDF My thesis', files.first['BitstreamDescription']
   end
 
+  test 'only thesis_pdf and supplementary files are published' do
+    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.last.purpose = 'proquest_form'
+    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.last.purpose = 'signature_page'
+    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.last.purpose = 'thesis_source'
+    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.last.purpose = 'thesis_supplementary_file'
+    @thesis.save
+    @thesis.reload
+    assert_equal 5, @thesis.files.length
+    assert_equal ['thesis_pdf', 'proquest_form', 'signature_page', 'thesis_source', 'thesis_supplementary_file'], @thesis.files.map{|f| f.purpose}
+    files = SqsMessage.new(@thesis).map_files
+    assert_equal 2, files.length
+    assert_equal ['Thesis PDF My thesis', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
+  end
+
   test 'returns correct bitstream description' do
     # File without description.
     @thesis.files.first.description = nil

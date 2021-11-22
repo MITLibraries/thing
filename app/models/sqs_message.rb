@@ -29,7 +29,7 @@ class SqsMessage
   end
 
   def map_files
-    @thesis.files.map do |f|
+    @thesis.files.select { |f| %w[thesis_pdf thesis_supplementary_file].include? f.purpose }.map do |f|
       {
         'BitstreamName' => f.blob.filename.to_s,
         'FileLocation' => f.blob.url(expires_in: 604800),
