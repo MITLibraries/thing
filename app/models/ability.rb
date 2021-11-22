@@ -66,6 +66,7 @@ class Ability
     can :mark_withdrawn, Thesis
     can :process_theses, Thesis
     can :process_theses_update, Thesis
+    can :publish_preview, Thesis
     can :publish_to_dspace, Thesis
     can :select, Thesis
 

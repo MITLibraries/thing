@@ -43,10 +43,10 @@
     <% else %>
       <div class="message">
         <h4 class="title">Ready to publish to DSpace@MIT?</h4>
-        <p>When this set of thesis records looks correct, click the button at right to publish them.</p>
+        <p>Click the button at right to review the official set of theses which will be published.</p>
       </div>
       <div class="actions">
-        <%= link_to "Publish theses to DSpace@MIT", thesis_publish_to_dspace_path(:graduation => params[:graduation]), class: 'button button-primary' %>
+        <%= link_to "Final preview of theses", thesis_publish_preview_path(:graduation => params[:graduation]), class: 'button button-primary' %>
       </div>
     <% end %>
   </div>

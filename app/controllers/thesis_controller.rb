@@ -44,17 +44,23 @@ class ThesisController < ApplicationController
     @thesis.association(:advisors).add_to_target(Advisor.new) if @thesis.advisors.count.zero?
   end
 
+  def publish_preview
+    # Get array of defined terms where theses have coauthors
+    @terms = defined_terms Thesis.in_review
+    @thesis = publication_candidates
+  end
+
   def publish_to_dspace
     if params[:graduation] == 'all' || params[:graduation].nil?
       flash[:warning] = 'Please select a term before attempting to publish theses to DSpace@MIT.'
     else
-      theses = filter_theses_by_term(Thesis.in_review).to_a
+      theses = publication_candidates
       DspacePublicationPrepJob.perform_later(theses)
 
       flash[:success] = 'The theses you selected have been added to the publication queue. ' \
                         'Status updates are not immediate.'
     end
-    redirect_to thesis_select_path
+    redirect_to thesis_select_path(params: { graduation: params[:graduation] })
   end
 
   def select
@@ -134,6 +140,10 @@ class ThesisController < ApplicationController
                   })
     end
     list
+  end
+
+  def publication_candidates
+    filter_theses_by_term(Thesis.in_review).to_a
   end
 
   def require_user
