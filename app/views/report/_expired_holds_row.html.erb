@@ -1,0 +1,17 @@
+<tr>
+  <td>
+    <% expired_holds_row.thesis.authors.each do |author| %>
+      <%= author.user.display_name %><br>
+    <% end %>
+  </td>
+  <td>
+    <% expired_holds_row.thesis.departments.each do |dept| %>
+      <%= dept.name_dw %><br>
+    <% end %>
+  </td>
+  <td>
+    <%= expired_holds_row.thesis.graduation_month[...3] %> <%= expired_holds_row.thesis.graduation_year %>
+  </td>
+  <td><%= expired_holds_row[:status].capitalize %></td>
+  <td><%= link_to( expired_holds_row[:date_end].in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y'), admin_hold_url(expired_holds_row[:id]) ) %></td>
+</tr>

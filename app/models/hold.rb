@@ -30,6 +30,9 @@ class Hold < ApplicationRecord
 
   after_save :update_thesis_status
 
+  scope :active_or_expired, -> { Hold.active.or(Hold.expired) }
+  scope :ends_today_or_before, -> { where('date_end <= ?', Date.current) }
+
   def degrees
     thesis.degrees.map(&:name_dw).join("\n")
   end

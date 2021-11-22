@@ -70,6 +70,33 @@ class HoldTest < ActiveSupport::TestCase
     assert(hold.invalid?)
   end
 
+  test 'active_or_expired scope shows expected records' do
+    assert_equal ["active", "expired"], Hold.active_or_expired.map(&:status).uniq.sort
+    hold = holds(:valid)
+    hold.status = :active
+    hold.save
+    assert Hold.active_or_expired.pluck(:id).include?(hold.id)
+    hold.status = :expired
+    hold.save
+    assert Hold.active_or_expired.pluck(:id).include?(hold.id)
+    hold.status = :released
+    hold.save
+    assert_not Hold.active_or_expired.pluck(:id).include?(hold.id)
+  end
+
+  test 'ends_today_or_before scope shows expected records' do
+    hold = holds(:valid)
+    hold.date_end = Date.today
+    hold.save
+    assert Hold.ends_today_or_before.pluck(:id).include?(hold.id)
+    hold.date_end = Date.today - 1
+    hold.save
+    assert Hold.ends_today_or_before.pluck(:id).include?(hold.id)
+    hold.date_end = Date.today + 1
+    hold.save
+    assert_not Hold.ends_today_or_before.pluck(:id).include?(hold.id)
+  end
+
   test 'editing hold generates an audit trail' do
     hold = holds(:valid)
     hold.save
