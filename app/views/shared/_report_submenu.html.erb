@@ -11,6 +11,9 @@
       <% if can?(:empty_theses, Report) %>
         <li><%= link_to("Theses without files", report_empty_theses_path) %></li>
       <% end %>
+      <% if can?(:student_submitted_thesis, Report) %>
+        <li><%= link_to("Theses submitted by students", report_student_submitted_theses_path) %></li>
+      <% end %>
       <% if can?(:files, Report) %>
         <li><%= link_to("Files without purpose", report_files_path) %></li>
       <% end %>

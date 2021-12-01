@@ -13,7 +13,7 @@
     <h4 class="hd-4">Version <%= version.index + 1 %></h4>
     <ul class="list-unbulleted">
       <li>Event type: <%= version.event %></li>
-      <li>Modified by: <%= modified_by(version) %></li>
+      <li>Modified by: <%= link_to_user(version.whodunnit) %></li>
       <li>
         <table class="table table-simplified table-cozy">
           <tbody>

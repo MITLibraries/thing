@@ -300,6 +300,16 @@ class Report
     result
   end
 
+  def list_student_submitted_metadata(collection)
+    result = []
+    collection.order(:grad_date).uniq.each do |record|
+      next unless student_initiated_record?(record)
+
+      result.push([record, record.versions.first.whodunnit])
+    end
+    result
+  end
+
   def table_copyright(collection)
     result = {}
     collection.group(:copyright).count.each do |record|
@@ -442,5 +452,10 @@ class Report
       output[item] = {}
     end
     output
+  end
+
+  def student_initiated_record?(record)
+    record.versions.present? && record.versions.first.whodunnit && record.versions.first.whodunnit != 'registrar' &&
+      User.find_by(id: record.versions.first.whodunnit).student?
   end
 end

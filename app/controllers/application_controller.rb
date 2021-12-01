@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :ensure_domain
+  before_action :set_paper_trail_whodunnit
 
   rescue_from CanCan::AccessDenied do
     redirect_to root_path, alert: 'Not authorized.'

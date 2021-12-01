@@ -1,12 +1,4 @@
 module HoldHelper
-  def modified_by(version)
-    if user = User.find_by(id: version.whodunnit)
-      link_to user.kerberos_id, admin_user_path(user.id)
-    else
-      "User ID #{version.whodunnit} no longer active."
-    end
-  end
-
   def render_hold_history_field(field_name, field_value)
     # Set nil values to something that will display onscreen
     field_value = 'n/a' if field_value.nil?
