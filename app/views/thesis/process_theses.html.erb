@@ -160,7 +160,7 @@
 
     <div class="layout-band layout-1q3q field-row">
       <div class="col1q">
-        <strong>Department(s)*</strong>
+        <strong>Department(s) *</strong>
       </div>
       <%= f.simple_fields_for :department_theses do |dept| %>
         <%= render 'department_thesis_fields', :f => dept %>
@@ -173,20 +173,14 @@
     <div class="layout-1q3q layout-band">
       <div class="col3q">Please note: Degree information should be edited via <%= link_to 'the administrative interface', admin_thesis_path(f.object.id), target: :_blank %>.</div>
     </div>
-    <%
-      f.object.degrees.find_all do |deg|
-        if f.object.degrees.count == 1
-          field_id = "degree"
-          field_label = "Degree"
-        else
-          number = (f.object.degrees.find_index(deg).to_i+1).to_s
-          field_id = "degree-" + number
-          field_label = "Degree " + number
-        end
-    %>
+    <% if f.object.degrees.any? %>
+      <% f.object.degrees.find_all do |deg| %>
+        <%= render 'degree_fields', f: f, deg: deg %>
+      <% end %>
+    <% else %>
       <div class="field-row layout-1q3q layout-band">
-        <label class="col1q field-label" for="<%= field_id %>"><%= field_label %></label>
-        <input id="<%= field_id %>" type="text" name="degree[]" readonly="readonly" value="<%= deg.name_dw %>" class="field field-text col3q disabled">
+        <label class="col1q field-label" for="degree">Degree</label>
+        <input id="degree" type="text" name="degree[]" readonly="readonly" value="There are no degrees associated with this thesis." class="field field-text col3q disabled">
       </div>
     <% end %>
 
@@ -211,7 +205,6 @@
         </div>
       </div>
     </div>
-
 
     <%= f.association :copyright, as: :select,
                                   required: true,
@@ -240,11 +233,18 @@
 
     <div class="field-row layout-band layout-1q3q">
       <div class="col1q">
-        <strong>Thesis supervisor(s)*</strong>
+        <strong>Thesis supervisor(s) *</strong>
         <p class="hint">(just supervisors, not entire committee)</p>
       </div>
-      <%= f.simple_fields_for :advisors do |advisor| %>
-        <%= render 'advisor_fields', :f => advisor %>
+      <% if f.object.advisors.any? %>
+        <%= f.simple_fields_for :advisors do |advisor| %>
+          <%= render 'advisor_fields', :f => advisor %>
+        <% end %>
+      <% else %>
+        <div class="nested-fields col3q no-advisors">
+          <label class="field-label" for="advisors">Supervisor name *</label>
+          <input class="field field-text wide input-readonly" readonly type="text" value="There are no advisors associated with this thesis." name="advisors" id="advisors">
+        </div>
       <% end %>
       <p class="links col3q">
         <%= link_to_add_association 'Add another supervisor', f, :advisors %>
@@ -320,6 +320,7 @@
   });
   $("form.thesisProcessing").on('cocoon:after-insert', function(e, insertedItem) {
     hideOnlyLink('advisor');
+    $('div.no-advisors').remove();
     hideOnlyLink('department');
     ts = "hint-" + Date.now();
     $(insertedItem).find("span.hint").attr("id", ts);

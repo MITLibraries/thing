@@ -1,0 +1,13 @@
+<% if f.object.degrees.count == 1
+      field_id = "degree"
+      field_label = "Degree"
+   else
+     number = (f.object.degrees.find_index(deg).to_i+1).to_s
+     field_id = "degree-" + number
+     field_label = "Degree " + number
+   end
+%>
+<div class="field-row layout-1q3q layout-band">
+  <label class="col1q field-label" for="<%= field_id %>"><%= field_label %></label>
+  <input id="<%= field_id %>" type="text" name="degree[]" readonly="readonly" value="<%= deg.name_dw %>" class="field field-text col3q disabled">
+</div>
