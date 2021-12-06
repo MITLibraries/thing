@@ -19,7 +19,20 @@ label.error {
   color: $error;
 }
 
-
+.well {
+  &.error {
+    background-color: rgba($error, 0.1);
+    box-shadow: inset 0 0 5px rgba($error, 0.5);
+  }
+  &.success {
+    background-color: rgba($success, 0.1);
+    box-shadow: inset 0 0 5px rgba($success, 0.5);
+  }
+  &.warning {
+    background-color: rgba($warning, 0.1);
+    box-shadow: inset 0 0 5px rgba($warning, 0.5);
+  }
+}
 // admin processing
 .downloaded, .withdrawn {
   @extend .field-wrap;
