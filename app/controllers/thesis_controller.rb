@@ -39,6 +39,14 @@ class ThesisController < ApplicationController
     @thesis = filter_theses_by_term Thesis.where.not('coauthors = ?', '')
   end
 
+  def publication_statuses
+    @terms = defined_terms Thesis.all
+    @publication_statuses = Thesis.all.pluck(:publication_status).uniq.sort
+    # Filter relevant theses by selected term from querystring
+    term_filtered = filter_theses_by_term Thesis.all
+    @thesis = filter_theses_by_publication_status term_filtered
+  end
+
   def edit
     @thesis = Thesis.find(params[:id])
     @thesis.association(:advisors).add_to_target(Advisor.new) if @thesis.advisors.count.zero?

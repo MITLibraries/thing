@@ -12,4 +12,10 @@ module ThesisHelper
 
     theses
   end
+
+  def filter_theses_by_publication_status(theses)
+    return theses.where('publication_status = ?', params[:status]) if params[:status] && params[:status] != 'all'
+
+    theses
+  end
 end

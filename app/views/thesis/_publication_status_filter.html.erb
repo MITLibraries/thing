@@ -1,0 +1,31 @@
+<%= form_tag(nil, method: "get") do %>
+  <div class="multi-form-tag">
+    <label>
+      Include only theses from:
+      <select name="graduation">
+        <option value="all">All terms</option>
+        <% @terms.each do |term| %>
+          <option value="<%= term %>"<%= ' selected="selected"'.html_safe if params[:graduation].to_s == term.to_s %>>
+            <%= term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') %>
+          </option>
+        <% end %>
+      </select>
+    </label>
+  </div>
+
+  <div class="multi-form-tag">
+    <label>
+      Filter by publication status:
+      <select name="status">
+        <option value="all">All statuses</option>
+        <% @publication_statuses.each do |status| %>
+          <option value="<%= status %>"<%= ' selected="selected"'.html_safe if params[:status].to_s == status.to_s %>>
+            <%= status %>
+          </option>
+        <% end %>
+      </select>
+    </label>
+  </div>
+
+  <%= submit_tag('Apply filters', class: 'btn button-primary') %>
+<% end %>

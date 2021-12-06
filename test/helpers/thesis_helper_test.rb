@@ -35,4 +35,21 @@ class ThesisHelperTest < ActionView::TestCase
     params[:graduation] = "all"
     assert_equal @theses.count, filter_theses_by_term(@theses).count
   end
+
+  test 'filter_theses_by_publication_status returns a filtered set of theses' do
+    status_count = Thesis.where(publication_status: 'Not ready for publication').count
+    assert_not_equal status_count, Thesis.count
+
+    params[:status] = 'Not ready for publication'
+    assert_equal status_count, filter_theses_by_publication_status(Thesis.all).count
+  end
+
+  test 'filter_theses_by_publication_status does nothing when no status param is set' do
+    assert_equal Thesis.all.count, filter_theses_by_publication_status(Thesis.all).count
+  end
+
+  test 'filter_theses_by_publication_status does nothing when status param is "all"' do
+    params[:status] = 'all'
+    assert_equal Thesis.all.count, filter_theses_by_publication_status(Thesis.all).count
+  end
 end
