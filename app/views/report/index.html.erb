@@ -9,10 +9,7 @@
       <p>Click on a column heading to see more detailed information about the theses from that term.</p>
     </div>
 
-    <div class="alert alert-banner">
-      <p><i class="fa fa-info-circle fa-lg"></i> Note: Counts of students contributing may not be accurate prior to the
-      February 2022 degree period.</p>
-    </div>
+    <%= render 'shared/whodunnit_accuracy_statement' %>
 
     <% @data.each do |table| %>
       <table class="table table-simplified table-<%= table[0].gsub(" ", "-").downcase %>" style="margin-top: 4em;">
