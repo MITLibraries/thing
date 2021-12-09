@@ -45,11 +45,12 @@ class DspacePublicationResultsJob < ActiveJob::Base
     when 'success'
       update_handle(thesis, body, results)
     when 'error'
-      error = body['ExceptionMessage']
+      error = body['DSpaceResponse']
       thesis.publication_status = 'Publication error'
       thesis.save
       Rails.logger.info("Thesis #{thesis.id} updated to status #{thesis.publication_status}. Error from DSS: #{error}")
-      results[:errors] << "#{error} (thesis #{thesis.id})"
+      results[:errors] << "Status updated to #{thesis.publication_status}. Error from DSS: #{error} \
+                           (thesis #{thesis.id})"
     else
       thesis.publication_status = 'Publication error'
       thesis.save
