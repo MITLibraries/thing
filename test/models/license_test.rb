@@ -52,4 +52,17 @@ class LicenseTest < ActiveSupport::TestCase
     assert_equal license_count - 1, License.count
     assert_equal thesis_count, Thesis.count
   end
+
+  test 'license types are mapped correctly' do
+    # Maps license text for no Creative Commons licenses
+    nocc = licenses(:nocc)
+    assert_equal 'In Copyright - Educational Use Permitted', nocc.map_license_type
+
+    # Does not map license text otherwise
+    ccby = licenses(:ccby)
+    assert_equal 'Attribution 4.0 International (CC BY 4.0)', ccby.map_license_type
+
+    ccbysa = licenses(:ccbysa)
+    assert_equal 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)', ccbysa.map_license_type
+  end
 end

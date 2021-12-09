@@ -1,4 +1,4 @@
-# Generates Dublin Core metadata require to publish a Thesis object to DSpace@MIT via the DSpace Submission System
+# Generates Dublin Core metadata required to publish a Thesis object to DSpace@MIT via the DSpace Submission System
 # DSS. This class assumes that the input Thesis is ready for publication and has all the requisite metadata and file
 # attachments. Validation of those requirements will occur in the Thesis model.
 
@@ -73,7 +73,7 @@ class DspaceMetadata
       @dc['dc.rights'] = "© #{thesis_copyright.holder}"
       @dc['dc.rights.uri'] = thesis_copyright.url if thesis_copyright.url
     elsif thesis_license # author holds copyright and provides a license
-      @dc['dc.rights'] = thesis_license.license_type
+      @dc['dc.rights'] = thesis_license.map_license_type
       @dc['dc.rights'] = 'Copyright retained by author(s)'
 
       # Theoretically both license and copyright URLs are required for publication, but there are no constraints on

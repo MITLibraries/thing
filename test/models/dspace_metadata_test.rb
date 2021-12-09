@@ -132,7 +132,6 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     serialized = DspaceMetadata.new(t).serialize_dss_metadata
     unserialized = JSON.parse(serialized)
 
-    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'No Creative Commons License' })
     assert unserialized['metadata'].include?({ 'key' => 'dc.rights',
                                                'value' => 'Attribution 4.0 International (CC BY 4.0)' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
@@ -154,7 +153,6 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     serialized = DspaceMetadata.new(t).serialize_dss_metadata
     unserialized = JSON.parse(serialized)
 
-    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'No Creative Commons License' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
                                                'value' => 'Attribution 4.0 International (CC BY 4.0)' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
@@ -163,7 +161,7 @@ class DspaceMetadataTest < ActiveSupport::TestCase
                                                'value' => 'https://creativecommons.org/licenses/by/4.0/' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
                                                'value' => 'https://rightsstatements.org/page/InC/1.0/' })
-    refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights',
                                                'value' => 'In Copyright - Educational Use Permitted' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
@@ -176,7 +174,6 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     serialized = DspaceMetadata.new(t).serialize_dss_metadata
     unserialized = JSON.parse(serialized)
 
-    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'No Creative Commons License' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
                                                'value' => 'Attribution 4.0 International (CC BY 4.0)' })
     assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
@@ -198,7 +195,6 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     serialized = DspaceMetadata.new(t).serialize_dss_metadata
     unserialized = JSON.parse(serialized)
 
-    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'No Creative Commons License' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
                                                'value' => 'Attribution 4.0 International (CC BY 4.0)' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
