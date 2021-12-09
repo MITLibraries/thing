@@ -1,0 +1,46 @@
+<%= content_for(:title, "Publication Status Report | MIT Libraries") %>
+
+<% content_for :additional_js do %>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<% end %>
+
+<link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">Theses by publication status</h3>
+
+    <%= render 'publication_status_filter' %>
+
+    <table class="table" id="thesisQueue" title="Thesis processing queue">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Author(s)</th>
+          <th scope="col">Coauthor(s)</th>
+          <th scope="col">Department(s)</th>
+          <th scope="col">Degree type(s)</th>
+          <th scope="col">Degree date</th>
+          <th scope="col">Publication status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'thesis_publication_status', collection: @thesis) || render('select_empty') %>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>
+
+<script type="text/javascript">
+$(document).ready( function () {
+  if( document.getElementById('thesisQueue').getElementsByClassName('empty').length === 0 ) {
+    var table = $('#thesisQueue').DataTable({
+      stateSave: true
+    });
+  };
+});
+</script>

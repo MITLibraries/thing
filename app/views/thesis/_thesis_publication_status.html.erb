@@ -1,0 +1,21 @@
+<tr>
+  <td><%= link_to title_helper(thesis_publication_status), edit_admin_thesis_path(thesis_publication_status.id) %></td>
+  <td>
+    <% thesis_publication_status.users.each do |user| %>
+      <%= user.display_name %><br>
+    <% end %>
+  </td>
+  <td><%= thesis_publication_status.coauthors %></td>
+  <td>
+    <% thesis_publication_status.departments.each do |dept| %>
+      <%= dept.name_dw %><br>
+    <% end %>
+  </td>
+  <td>
+    <% thesis_publication_status&.degrees.each do |degree| %>
+      <%= degree.degree_type&.name %>
+    <% end %>
+  </td>
+  <td><%= thesis_publication_status.graduation_month[...3] %> <%= thesis_publication_status.graduation_year %></td>
+  <td><%= thesis_publication_status.publication_status %></td>
+</tr>

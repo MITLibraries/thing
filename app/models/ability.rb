@@ -70,6 +70,7 @@ class Ability
     can :publish_preview, Thesis
     can :publish_to_dspace, Thesis
     can :select, Thesis
+    can :publication_statuses, Thesis
 
     can :read, Transfer
     can :select, Transfer

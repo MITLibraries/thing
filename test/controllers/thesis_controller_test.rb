@@ -327,6 +327,115 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_select 'table#thesisQueue tbody tr', count: 1
   end
 
+  # ~~~~~~~~~~~~~~~ publication status report ~~~~~~~~~~~~~~~~
+  test 'anonymous users cannot see publication status report' do
+    # Note that nobody is signed in.
+    get thesis_publication_statuses_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see publication status report' do
+    sign_in users(:basic)
+    get thesis_publication_statuses_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see publication status report' do
+    sign_in users(:transfer_submitter)
+    get thesis_publication_statuses_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see publication status report' do
+    sign_in users(:processor)
+    get thesis_publication_statuses_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see publication status report' do
+    sign_in users(:thesis_admin)
+    get thesis_publication_statuses_path
+    assert_response :success
+  end
+
+  test 'admins can see publication status report' do
+    sign_in users(:admin)
+    get thesis_publication_statuses_path
+    assert_response :success
+  end
+
+  test 'publication status report shows theses with any status by default' do
+    # Calculate counts based on current test db, since these numbers will change as the fixtures do
+    thesis_count = Thesis.all.count
+
+    sign_in users(:processor)
+    get thesis_publication_statuses_path
+    assert_select 'table#thesisQueue tbody tr', count: thesis_count
+  end
+
+  test 'publication status report allows filtering by term' do
+    # Calculate counts based on current test db, since these numbers will change as the fixtures do
+    thesis_count = Thesis.all.count
+    term_count = Thesis.where(grad_date: '2018-09-01').count
+
+    # Make sure term_count is not equal to thesis_count, or else this test is meaningless
+    assert_not_equal thesis_count, term_count
+
+    # Add 1 to the select counts for the 'All terms'/'All statuses' options
+    term_select_count = Thesis.pluck(:grad_date).uniq.count + 1
+
+    sign_in users(:processor)
+    get thesis_publication_statuses_path
+    assert_select 'table#thesisQueue tbody tr', count: thesis_count
+    assert_select 'select[name="graduation"] option', count: term_select_count
+
+    # Now request the queue with a filter applied, and see the correct record count
+    get thesis_publication_statuses_path, params: { graduation: '2018-09-01' }
+    assert_select 'table#thesisQueue tbody tr', count: term_count
+  end
+
+  test 'publication status report allows filtering by publication status' do
+    # Calculate counts based on current test db, since these numbers will change as the fixtures do
+    thesis_count = Thesis.all.count
+    status_count = Thesis.where(publication_status: 'Not ready for publication').count
+
+    # Add 1 to the select counts for the 'All terms'/'All statuses' options
+    status_select_count = Thesis.pluck(:publication_status).uniq.count + 1
+
+    sign_in users(:processor)
+    get thesis_publication_statuses_path
+    assert_select 'table#thesisQueue tbody tr', count: thesis_count
+    assert_select 'select[name="status"] option', count: status_select_count
+
+    # Now request the queue with a filter applied, and the correct record count
+    get thesis_publication_statuses_path, params: { status: 'Not ready for publication' }
+    assert_select 'table#thesisQueue tbody tr', count: status_count
+  end
+
+  test 'publication status report allows filtering by both term and publication status' do
+    # Calculate counts based on current test db, since these numbers will change as the fixtures do
+    thesis_count = Thesis.all.count
+    status_count = Thesis.where(publication_status: 'Not ready for publication', grad_date: '2021-06-01').count
+
+    # Add 1 to the select counts for the 'All terms'/'All statuses' options
+    term_select_count = Thesis.pluck(:grad_date).uniq.count + 1
+    status_select_count = Thesis.pluck(:publication_status).uniq.count + 1
+
+    sign_in users(:processor)
+    get thesis_publication_statuses_path
+    assert_select 'table#thesisQueue tbody tr', count: thesis_count
+    assert_select 'select[name="graduation"] option', count: term_select_count
+    assert_select 'select[name="status"] option', count: status_select_count
+
+    # Now request the queue with both filters applied, and see the correct record count
+    get thesis_publication_statuses_path, params: { graduation: '2021-06-01', status: 'Not ready for publication' }
+    assert_select 'table#thesisQueue tbody tr', count: status_count
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~ thesis processing form ~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'thesis processing form exists' do
     sign_in users(:admin)
