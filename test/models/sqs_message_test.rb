@@ -56,6 +56,22 @@ class SqsMessageTest < ActiveSupport::TestCase
     assert_equal ['Thesis PDF My thesis', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
   end
 
+  test 'thesis_pdf are attached before supplementary files' do
+    f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    @thesis.files.detach
+    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.last.purpose = 'thesis_supplementary_file'
+    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.last.purpose = 'thesis_pdf'
+    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.last.purpose = 'thesis_supplementary_file'
+    @thesis.save
+    @thesis.reload
+    assert_equal ['thesis_supplementary_file', 'thesis_pdf', 'thesis_supplementary_file'], @thesis.files.map{|f| f.purpose}
+    files = SqsMessage.new(@thesis).map_files
+    assert_equal ['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
+  end
+
   test 'returns correct bitstream description' do
     # File without description.
     @thesis.files.first.description = nil
