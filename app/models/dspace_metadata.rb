@@ -43,8 +43,8 @@ class DspaceMetadata
     orcids = thesis_users.map(&:orcid).compact
     return unless orcids.present?
 
-    orcids.each do |orchid|
-      @dc['dc.identifier.orcid'] = orchid
+    orcids.each do |orcid|
+      @dc['dc.identifier.orcid'] = orcid
     end
   end
 
@@ -70,7 +70,7 @@ class DspaceMetadata
   def copyright(thesis_copyright, thesis_license)
     if thesis_copyright.holder != 'Author' # copyright holder is anyone but author
       @dc['dc.rights'] = thesis_copyright.statement_dspace
-      @dc['dc.rights'] = "U+00A9 #{thesis_copyright.holder}"
+      @dc['dc.rights'] = "© #{thesis_copyright.holder}"
       @dc['dc.rights.uri'] = thesis_copyright.url if thesis_copyright.url
     elsif thesis_license # author holds copyright and provides a license
       @dc['dc.rights'] = thesis_license.license_type

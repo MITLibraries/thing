@@ -209,7 +209,7 @@ class DspaceMetadataTest < ActiveSupport::TestCase
                                                'value' => 'https://rightsstatements.org/page/InC/1.0/' })
     assert unserialized['metadata'].include?({ 'key' => 'dc.rights',
                                                'value' => 'In Copyright - Educational Use Permitted' })
-    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => '© MIT' })
     assert unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
                                                'value' => 'http://rightsstatements.org/page/InC-EDU/1.0/' })
   end
