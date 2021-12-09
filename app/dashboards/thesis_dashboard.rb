@@ -102,6 +102,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     abstract
     status
     publication_status
+    dspace_handle
     graduation_year
     graduation_month
     author_note

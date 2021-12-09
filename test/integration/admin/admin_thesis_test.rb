@@ -197,4 +197,15 @@ class AdminThesisTest < ActionDispatch::IntegrationTest
       end
     end
   end
+
+  test 'can assign dspace_handle to theses via thesis panel' do
+    handle = '1234/5678'
+    mock_auth(users(:thesis_admin))
+    thesis = theses(:one)
+    assert_not_equal thesis.dspace_handle, handle
+
+    patch admin_thesis_path(thesis), params: { thesis: { dspace_handle: handle } }
+    thesis.reload
+    assert_equal thesis.dspace_handle, handle
+  end
 end
