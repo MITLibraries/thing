@@ -628,6 +628,8 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal true, thesis.authors_graduated?
     assert_equal false, thesis.active_holds?
     assert_equal true, thesis.no_active_holds?
+    assert_equal true, thesis.departments_have_dspace_name?
+    assert_equal true, thesis.degrees_have_types?
     assert_equal 'Publication review', thesis.publication_status
     # Attempting to set a different status will be overwritten by the update_status method
     thesis.publication_status = 'Not ready for publication'
@@ -947,6 +949,60 @@ class ThesisTest < ActiveSupport::TestCase
                     })
     assert_equal true, hold.valid?
     hold.save
+    thesis.reload
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'One department without a dspace name will prevent "Publication review"' do
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
+    assert_equal 'Publication review', thesis.publication_status
+    dept = thesis.departments.first
+    dept.name_dspace = nil
+    dept.save
+    thesis.save
+    thesis.reload
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Multiple departments with one without a dspace name will prevent "Publication review"' do
+    thesis = theses(:publication_review)
+    thesis.departments << departments(:two)
+    thesis.save
+    thesis.reload
+    assert_equal 'Publication review', thesis.publication_status
+    dept = thesis.departments.first
+    dept.name_dspace = nil
+    dept.save
+    thesis.save
+    thesis.reload
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'One degree without a type name will prevent "Publication review"' do
+    thesis = theses(:publication_review)
+    thesis.save
+    thesis.reload
+    assert_equal 'Publication review', thesis.publication_status
+    degree = thesis.degrees.first
+    degree.degree_type_id = nil
+    degree.save
+    thesis.save
+    thesis.reload
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'Multiple degrees with one without a type name will prevent "Publication review"' do
+    thesis = theses(:publication_review)
+    thesis.degrees << degrees(:two)
+    thesis.save
+    thesis.reload
+    assert_equal 'Publication review', thesis.publication_status
+    degree = thesis.degrees.first
+    degree.degree_type_id = nil
+    degree.save
+    thesis.save
     thesis.reload
     assert_equal 'Not ready for publication', thesis.publication_status
   end

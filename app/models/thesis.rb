@@ -140,7 +140,9 @@ class Thesis < ApplicationRecord
       metadata_complete?,
       no_issues_found?,
       no_active_holds?,
-      authors_graduated?
+      authors_graduated?,
+      departments_have_dspace_name?,
+      degrees_have_types?
     ].all?
   end
 
@@ -195,6 +197,20 @@ class Thesis < ApplicationRecord
   def required_license?
     return true if copyright&.holder != 'Author'
     return true if license&.display_description
+
+    false
+  end
+
+  # This returns false if any associated departments are missing dspace names which is a requirment for publishing
+  def departments_have_dspace_name?
+    return true if departments.select { |d| d.name_dspace == '' || d.name_dspace.nil? }.count.zero?
+
+    false
+  end
+
+  # This returns false if any associated degrees are missing types which is a requirement for publishing
+  def degrees_have_types?
+    return true if degrees.select { |d| d.degree_type_id.nil? }.count.zero?
 
     false
   end

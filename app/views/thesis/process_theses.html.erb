@@ -168,6 +168,9 @@
       <p class="links col3q">
         <%= link_to_add_association 'Add another department', f, :department_theses %>
       </p>
+      <% unless f.object.departments_have_dspace_name? %>
+        <span class="alert error col3q"><strong>A Department does not have a DSpace name. This thesis cannot be published until all associated Departments have DSpace names.</strong></span>
+      <% end %>
     </div>
 
     <div class="layout-1q3q layout-band">
