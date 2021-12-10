@@ -59,17 +59,29 @@ class SqsMessageTest < ActiveSupport::TestCase
   test 'thesis_pdf are attached before supplementary files' do
     f = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     @thesis.files.detach
-    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.attach(io: File.open(f), filename: 'supplemental_file.pdf')
     @thesis.files.last.purpose = 'thesis_supplementary_file'
-    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.attach(io: File.open(f), filename: 'thesis_pdf.pdf')
     @thesis.files.last.purpose = 'thesis_pdf'
-    @thesis.files.attach(io: File.open(f), filename: 'a_pdf.pdf')
+    @thesis.files.attach(io: File.open(f), filename: 'flexible_pdf.pdf')
     @thesis.files.last.purpose = 'thesis_supplementary_file'
     @thesis.save
     @thesis.reload
     assert_equal ['thesis_supplementary_file', 'thesis_pdf', 'thesis_supplementary_file'], @thesis.files.map{|f| f.purpose}
     files = SqsMessage.new(@thesis).map_files
     assert_equal ['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
+    assert_equal ['thesis_pdf.pdf', 'supplemental_file.pdf', 'flexible_pdf.pdf'], files.map{ |f| f['BitstreamName'] }
+    # Swapping file purposes will result in the same set of files being sorted into a different order. This is meant to
+    # demonstrate confidence that alphabetical order is not part of the logic being used - the thesis pdf comes first,
+    # followed by supplemental files in the order they were attached.
+    #
+    # On a console you can apply the filter-and-sort logic found in the map_files method, reversing the array order
+    # but that cannot AFAICT be done in a unit test easily.
+    @thesis.files.last.purpose = 'thesis_pdf' # last-attached "flexible_pdf" should now be sorted first
+    @thesis.files.second.purpose = 'thesis_supplementary_file' # second-attached "thesis_pdf" should now be sorted last
+    files = SqsMessage.new(@thesis).map_files
+    assert_equal ['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
+    assert_equal ['flexible_pdf.pdf', 'supplemental_file.pdf', 'thesis_pdf.pdf'], files.map{ |f| f['BitstreamName'] }
   end
 
   test 'returns correct bitstream description' do
