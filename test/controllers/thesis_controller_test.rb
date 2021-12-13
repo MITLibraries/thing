@@ -184,54 +184,6 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_no_match note_text, response.body
   end
 
-  test 'contributors returns array of contributors' do
-    yo = users(:yo)
-    admin = users(:admin)
-
-    sign_in yo
-    thesis = yo.theses.first
-    assert_equal [], thesis.contributors
-    assert_equal 0, thesis.versions.count
-
-    patch thesis_path(thesis),
-         params: { thesis: { title: 'A student-contributed update' } }
-    assert_equal [yo.id], thesis.contributors
-    assert_equal 1, thesis.versions.count
-    sign_out yo
-
-    sign_in admin
-    patch thesis_path(thesis),
-         params: { thesis: { title: 'An admin-contributed update' } }
-    assert_equal [yo.id, admin.id], thesis.contributors
-    assert_equal 2, thesis.versions.count
-
-    # Make sure contributors returns unique values, not all values
-    patch thesis_path(thesis),
-         params: { thesis: { title: 'Another admin-contributed update' } }
-    assert_equal [yo.id, admin.id], thesis.contributors
-    assert_equal 3, thesis.versions.count
-  end
-
-  test 'students_contributed? returns true when students have contributed' do
-    yo = users(:yo)
-    thesis_admin = users(:thesis_admin)
-
-    sign_in thesis_admin
-    thesis = yo.theses.first
-    assert_not thesis.student_contributed?
-
-    sign_in thesis_admin
-    patch thesis_path(thesis),
-         params: { thesis: { title: 'An admin-contributed update' } }
-    assert_not thesis.student_contributed?
-    sign_out thesis_admin
-
-    sign_in yo
-    patch thesis_path(thesis),
-         params: { thesis: { title: 'A student-contributed update' } }
-    assert thesis.student_contributed?
-  end
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~ thesis processing queue ~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'thesis processing queue exists' do
     sign_in users(:admin)
