@@ -8,6 +8,10 @@
 
     <%= render 'shared/defined_terms_filter' %>
 
+    <% if @this_term == "all terms" || Date.parse(@this_term).year < 2022 %>
+      <%= render 'shared/whodunnit_accuracy_statement' %>
+    <% end %>
+
     <%= render(partial: 'card', collection: @data) %>
 
     <hr>

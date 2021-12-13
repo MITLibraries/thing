@@ -2,12 +2,11 @@
 
 <div class="layout-3q1q layout-band">
   <div class="col3q">
-    <h3 class="title title-page">Theses submitted by students</h3>
+    <h3 class="title title-page">Theses submitted by students for <%= @this_term %></h3>
 
-    <div class="alert alert-banner">
-      <p><i class="fa fa-info-circle fa-lg"></i> Note: this report may not be accurate for theses submitted before the
-      February 2022 degree period.</p>
-    </div>
+    <% if @this_term == "all terms" || Date.parse(@this_term).year < 2022 %>
+      <%= render 'shared/whodunnit_accuracy_statement' %>
+    <% end %>
 
     <%= render 'shared/defined_terms_filter' %>
 

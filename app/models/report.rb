@@ -68,6 +68,14 @@ class Report
     }
   end
 
+  def card_student_contributions(collection)
+    {
+      'value' => collection.map(&:student_contributed?).count(true),
+      'verb' => 'has',
+      'label' => 'had metadata contributed by students'
+    }
+  end
+
   def data_category_copyright_holder
     category = []
     rows = populate_category(Copyright.pluck(:holder))
@@ -211,6 +219,18 @@ class Report
     }
   end
 
+  def data_student_contributions
+    row_data = {}
+    terms = Thesis.all.pluck(:grad_date).uniq.sort
+    terms.each do |term|
+      row_data[term] = Thesis.where('grad_date = ?', term).map(&:student_contributed?).count(true)
+    end
+    {
+      label: 'Students contributing',
+      data: pad_terms(row_data)
+    }
+  end
+
   def data_thesis_records
     {
       label: 'Thesis records',
@@ -243,6 +263,7 @@ class Report
     output['summary'].push data_theses_with_files
     output['summary'].push data_files_attached_to_theses
     output['summary'].push data_issues
+    output['summary'].push data_student_contributions
     output['summary'].push data_multiple_authors
     output['summary'].push data_multiple_degrees
     output['summary'].push data_multiple_departments
@@ -399,6 +420,7 @@ class Report
     result['overall'] = card_overall collection, term
     result['files'] = card_files collection, term
     result['issues'] = card_issues collection
+    result['students-contributing'] = card_student_contributions collection
     result['multiple-authors'] = card_multiple_authors collection
     result['multiple-degrees'] = card_multiple_degrees collection
     result['multiple-departments'] = card_multiple_departments collection
