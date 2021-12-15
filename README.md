@@ -206,6 +206,17 @@ Example usage:
   lines so you'll need to be careful to reconstruct this
 - `rails debug:saml['tmp/your_saml_to_debug.txt']`
 
+## Publishing workflow
+
+- stakeholders process theses until they are valid and accurate
+- stakeholders choose theses to publish (Process theses - Select term - Select Publication Review - Publish)
+- ETD will now automatically send data to DSS via the SQS queue
+- DSS runs (as of this writing that is a manual process documented in the
+  [DSS repo](https://github.com/MITLibraries/dspace-submission-service#run-stage))
+- ETD processes output queue to update records and send email to stakeholders with summary data and list
+  of any error records (as of now this is a manual process, but can be triggered via rake task using the
+  Heroku run command such as `heroku run rails dss:process_output_queue --app TARGET-HEROKU-APP`)
+
 ## Validation of thesis record
 
 Prior to theses being published to external systems (such as the repository, or
@@ -219,38 +230,38 @@ by looking at the `evaluate_status` method on the Thesis model.
 The following table lists the components of a Thesis record, including whether
 each is required - and where that check is performed.
 
-| Field                 | Required?    | Verified by           |
-|--------------------   |-----------   |--------------------   |
-| ID                    | yes          | valid?                |
-| Created_at            | yes          | valid?                |
-| Updated_at            | yes          | valid?                |
-| Title                 | yes          | required_fields?      |
-| Abstract              | sometimes    | required_abstract?    |
-| Grad_date             | yes          | valid?                |
-| Status                | yes          | valid?                |
-| Processor_note        | no           |                       |
-| Author_note           | no           |                       |
-| Files_complete        | yes          | evaluate_status       |
-| Metadata_complete     | yes          | evaluate_status       |
-| Publication_status    | yes          | valid?                |
-| Coauthors             | no           |                       |
-| Copyright_id          | yes          | required_fields?      |
-| License_id            | sometimes    | required_license?     |
-| Dspace_handle         | no           |                       |
-| Issues_found          | yes          | no_issues_found?      |
+| Field              | Required? | Verified by        |
+| ------------------ | --------- | ------------------ |
+| ID                 | yes       | valid?             |
+| Created_at         | yes       | valid?             |
+| Updated_at         | yes       | valid?             |
+| Title              | yes       | required_fields?   |
+| Abstract           | sometimes | required_abstract? |
+| Grad_date          | yes       | valid?             |
+| Status             | yes       | valid?             |
+| Processor_note     | no        |                    |
+| Author_note        | no        |                    |
+| Files_complete     | yes       | evaluate_status    |
+| Metadata_complete  | yes       | evaluate_status    |
+| Publication_status | yes       | valid?             |
+| Coauthors          | no        |                    |
+| Copyright_id       | yes       | required_fields?   |
+| License_id         | sometimes | required_license?  |
+| Dspace_handle      | no        |                    |
+| Issues_found       | yes       | no_issues_found?   |
 
 ### Related records
 
-| Record                | Required?    | Verified by                                                                                                                                                                                                                    |
-|--------------------   |-----------   |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------   |
-| Advisor               | yes          | advisors?                                                                                                                                                                                                                      |
-| Author                | yes          | Two checks<br>- validations<br>- authors_graduated checks the graduated flag on each author record                                                                                                                             |
-| Copyright             | yes          | copyright_id?                                                                                                                                                                                                                  |
-| Degree                | yes          | degrees?                                                                                                                                                                                                                       |
-| Department            | yes          | validations                                                                                                                                                                                                                    |
-| File                  | yes          | Three checks<br>- files? confirms that at least one file is attached<br>- file_have_purpose? confirms that each file has an assigned purpose<br>- one_thesis_pdf? confirms one-and-only-one file has a "thesis_pdf" purpose    |
-| Hold                  | yes          | no_active_holds? confirms that no attached hold has an "active" or "expired" status<br>("released" holds are okay)                                                                                                             |
-| License               | sometimes    | required_license? checks who holds copyright and requires a license if that is the author                                                                                                                                      |
+| Record     | Required? | Verified by                                                                                                                                                                                                                 |
+| ---------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Advisor    | yes       | advisors?                                                                                                                                                                                                                   |
+| Author     | yes       | Two checks<br>- validations<br>- authors_graduated checks the graduated flag on each author record                                                                                                                          |
+| Copyright  | yes       | copyright_id?                                                                                                                                                                                                               |
+| Degree     | yes       | degrees?                                                                                                                                                                                                                    |
+| Department | yes       | validations                                                                                                                                                                                                                 |
+| File       | yes       | Three checks<br>- files? confirms that at least one file is attached<br>- file_have_purpose? confirms that each file has an assigned purpose<br>- one_thesis_pdf? confirms one-and-only-one file has a "thesis_pdf" purpose |
+| Hold       | yes       | no_active_holds? confirms that no attached hold has an "active" or "expired" status<br>("released" holds are okay)                                                                                                          |
+| License    | sometimes | required_license? checks who holds copyright and requires a license if that is the author                                                                                                                                   |
 
 ## Alternate file upload feedback
 
