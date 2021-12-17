@@ -70,28 +70,47 @@ class HoldTest < ActiveSupport::TestCase
     assert(hold.invalid?)
   end
 
-  test 'active_or_expired scope shows expected records' do
+  test 'active_or_expired scope returns both statuses together' do
     assert_equal ["active", "expired"], Hold.active_or_expired.map(&:status).uniq.sort
+  end
+
+  test 'active_or_expired scope returns an active hold' do
     hold = holds(:valid)
     hold.status = :active
     hold.save
     assert Hold.active_or_expired.pluck(:id).include?(hold.id)
+  end
+
+  test 'active_or_expired scope returns an expired hold' do
+    hold = holds(:valid)
     hold.status = :expired
     hold.save
     assert Hold.active_or_expired.pluck(:id).include?(hold.id)
+  end
+
+  test 'active_or_expired scope does not return a released hold' do
+    hold = holds(:valid)
     hold.status = :released
     hold.save
     assert_not Hold.active_or_expired.pluck(:id).include?(hold.id)
   end
 
-  test 'ends_today_or_before scope shows expected records' do
+  test 'ends_today_or_before scope returns a hold which ends today' do
     hold = holds(:valid)
     hold.date_end = Date.today
     hold.save
     assert Hold.ends_today_or_before.pluck(:id).include?(hold.id)
+  end
+
+  test 'ends_today_or_before scope returns a hold which ends in the past' do
+    hold = holds(:valid)
     hold.date_end = Date.today - 1
     hold.save
     assert Hold.ends_today_or_before.pluck(:id).include?(hold.id)
+  end
+
+  test 'ends_today_or_before scope does not return a hold which ends in the future' do
+    hold = holds(:valid)
     hold.date_end = Date.today + 1
     hold.save
     assert_not Hold.ends_today_or_before.pluck(:id).include?(hold.id)

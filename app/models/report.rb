@@ -301,10 +301,6 @@ class Report
     }
   end
 
-  def list_expired_holds(collection)
-    collection.active_or_expired.ends_today_or_before.order(:date_end)
-  end
-
   def list_unattached_files(collection)
     result = []
     collection.joins(:files_attachments).order(:grad_date).uniq.each do |record|

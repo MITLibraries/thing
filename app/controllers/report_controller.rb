@@ -19,9 +19,7 @@ class ReportController < ApplicationController
   end
 
   def expired_holds
-    report = Report.new
-    holds = Hold.all
-    @list = report.list_expired_holds holds
+    @list = Hold.active_or_expired.ends_today_or_before.order(:date_end)
   end
 
   def files
