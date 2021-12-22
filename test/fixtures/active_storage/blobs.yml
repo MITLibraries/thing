@@ -4,7 +4,7 @@ publication_review_files_blob:
   content_type: application/pdf
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: 19333
-  checksum: 2800ec8c99c60f5b15520beac9939a46
+  checksum: KADsjJnGD1sVUgvqyZOaRg==
   service_name: test
 
 publication_review_except_hold_files_blob:
@@ -13,7 +13,7 @@ publication_review_except_hold_files_blob:
   content_type: application/pdf
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: 19333
-  checksum: 2800ec8c99c60f5b15520beac9939a46
+  checksum: KADsjJnGD1sVUgvqyZOaRg==
   service_name: test
 
 pending_publication_files_blob:
@@ -22,7 +22,7 @@ pending_publication_files_blob:
   content_type: application/pdf
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: 19333
-  checksum: 2800ec8c99c60f5b15520beac9939a46
+  checksum: KADsjJnGD1sVUgvqyZOaRg==
   service_name: test
 
 published_files_blob:
@@ -31,7 +31,7 @@ published_files_blob:
   content_type: application/pdf
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: 19333
-  checksum: 2800ec8c99c60f5b15520beac9939a46
+  checksum: KADsjJnGD1sVUgvqyZOaRg==
   service_name: test
 
 bachelor_files_blob:
@@ -40,7 +40,7 @@ bachelor_files_blob:
   content_type: application/pdf
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: 19333
-  checksum: 2800ec8c99c60f5b15520beac9939a46
+  checksum: KADsjJnGD1sVUgvqyZOaRg==
   service_name: test
 
 master_files_blob:
@@ -49,7 +49,7 @@ master_files_blob:
   content_type: application/pdf
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: 19333
-  checksum: 2800ec8c99c60f5b15520beac9939a46
+  checksum: KADsjJnGD1sVUgvqyZOaRg==
   service_name: test
 
 doctor_files_blob:
@@ -58,5 +58,5 @@ doctor_files_blob:
   content_type: application/pdf
   metadata: '{"identified":true,"analyzed":true}'
   byte_size: 19333
-  checksum: 2800ec8c99c60f5b15520beac9939a46
+  checksum: KADsjJnGD1sVUgvqyZOaRg==
   service_name: test

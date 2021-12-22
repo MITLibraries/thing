@@ -30,7 +30,8 @@ class DspacePublicationResultsJob < ActiveJob::Base
       thesis.dspace_handle = handle
       thesis.publication_status = 'Published'
       thesis.save
-      Rails.logger.info("Thesis #{thesis.id} updated to status #{thesis.publication_status} with handle #{thesis.dspace_handle}")
+      Rails.logger.info("Thesis #{thesis.id} updated to status #{thesis.publication_status} with handle"\
+                        " #{thesis.dspace_handle}")
       results[:processed] += 1
     else
       thesis.publication_status = 'Publication error'
@@ -38,6 +39,79 @@ class DspacePublicationResultsJob < ActiveJob::Base
       Rails.logger.info("Handle not provided #{body}; Cannot continue")
       results[:errors] << "Handle not provided; cannot continue (thesis #{thesis.id})"
     end
+  end
+
+  # Validating checksums is essential to ensure the files we published submitted successfully. Rails stores a different
+  # version of the checksum than DSpace, so we convert our stored versions to what DSpace uses and then compare them.
+  # However, we don't publish all files to DSpace, so the approach taken is to ensure that each returned checksum is
+  # included in one of our locally stored checksums but not that each locally stored checksum is returned.
+  # The business logic needs to allow for humans to react to this problem. Ideally, DSS would do this check and delete
+  # the published thesis immediately if the checksums failed, but at this time DSS is not doing that validation. This
+  # application first does our normal processing to store the published handle, and then validates the checksums. If
+  # any returned checksums are not expected, we re-update the Thesis record to an error state and provide information to
+  # stakeholders via email so they can take appropriate steps to either fix manually republish the problem file(s) or
+  # delete the thesis from DSpace manually and republish it from this app.
+  def validate_checksums(thesis, body, results)
+    expected_checksums = convert_checksums(thesis)
+    actual_checksums = collect_checksums(body)
+
+    Rails.logger.info("Validating Checksums for #{thesis.id}")
+
+    # confirm etd record has files to validate. This should never be an issue, but will be super confusing to figure
+    # out what happened if we don't check and it is an issue.
+    return unless thesis_has_files?(thesis, results)
+
+    if actual_checksums.map { |c| c.in?(expected_checksums) }.all?(true)
+      Rails.logger.info("All DSpace checksums for thesis #{thesis.id} are valid")
+    else
+      update_status_and_log_bad_checksums(thesis, results, actual_checksums, expected_checksums)
+    end
+  end
+
+  def update_status_and_log_bad_checksums(thesis, results, actual_checksums, expected_checksums)
+    thesis.publication_status = 'Publication error'
+    thesis.save
+
+    Rails.logger.info("Thesis #{thesis.id} updated to status #{thesis.publication_status} due to invalid checksum.")
+    Rails.logger.info("Thesis #{thesis.id} valid checksums #{expected_checksums}. dspace returned"\
+                      " checksums #{actual_checksums}.")
+    results[:errors] << "Thesis #{thesis.id} with handle #{thesis.dspace_handle} was published with non matching"\
+                        " checksums. ETD checksums #{expected_checksums} dspace checksums #{actual_checksums}. This"\
+                        ' requires immediate attention to either manually replace the problem file in DSpace or'\
+                        ' delete the entire thesis from DSpace to ensure that nobody is able to download the broken'\
+                        ' file.'
+  end
+
+  def thesis_has_files?(thesis, results)
+    if thesis.files.count.zero?
+      update_status_and_log_bad_files(thesis, results)
+      false
+    else
+      true
+    end
+  end
+
+  def update_status_and_log_bad_files(thesis, results)
+    thesis.publication_status = 'Publication error'
+    thesis.save
+
+    Rails.logger.info("Thesis #{thesis.id} updated to status #{thesis.publication_status} due to inability to"\
+                      ' validate checksums as no local files were attached to the ETD record to validate.')
+    results[:errors] << "Thesis #{thesis.id} updated to status #{thesis.publication_status} due to inability to"\
+                        ' validate checksums as no local files were attached to the record. This requires staff to'\
+                        ' manually check the ETD record and DSpace record and take appropriate action.'
+  end
+
+  def collect_checksums(body)
+    body['Bitstreams'].map { |b| b['BitstreamChecksum']['value'] }
+  end
+
+  def convert_checksums(thesis)
+    thesis.files.map { |f| base64_to_hex(f.checksum) }
+  end
+
+  def base64_to_hex(base64_string)
+    Base64.decode64(base64_string).each_byte.map { |b| format('%02x', b.to_i) }.join
   end
 
   def update_publication_status(thesis, body, results, status)
@@ -89,6 +163,7 @@ class DspacePublicationResultsJob < ActiveJob::Base
         Rails.logger.info('Determine status')
         status = body['ResultType']
         update_publication_status(thesis, body, results, status)
+        validate_checksums(thesis, body, results) if thesis.publication_status == 'Published'
       end
     end
     Rails.logger.info("No messages returned from queue #{queue_url}")
