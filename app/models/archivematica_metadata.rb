@@ -27,10 +27,48 @@ class ArchivematicaMetadata
     dc_identifier_orcid
     dc_contributor_advisor
     degree_fields
-    # dc.contributor.department
-    # dc.rights
-    # dc.rights
-    # dc.rights.uri
+    dc_contributor_department
+    rights_fields
+  end
+
+  def rights_fields
+    @csv_hash[:headers] << 'dc.rights'
+    @csv_hash[:headers] << 'dc.rights'
+    @csv_hash[:headers] << 'dc.rights.uri'
+    @thesis.files.each_with_index do |file, i|
+      if file.purpose == 'thesis_pdf'
+        if @thesis.copyright.holder != 'Author' # copyright holder is anyone but author
+          @csv_hash["f#{i}".to_sym] << @thesis.copyright.statement_dspace
+          @csv_hash["f#{i}".to_sym] << "Copyright #{@thesis.copyright.holder}"
+          @csv_hash["f#{i}".to_sym] << @thesis.copyright.url if @thesis.copyright.url
+        elsif @thesis.license # author holds copyright and provides a license
+          @csv_hash["f#{i}".to_sym] << @thesis.license.map_license_type
+          @csv_hash["f#{i}".to_sym] << 'Copyright retained by author(s)'
+          @csv_hash["f#{i}".to_sym] << @thesis.license.url if @thesis.license.url
+        else
+          @csv_hash["f#{i}".to_sym] << @thesis.copyright.statement_dspace
+          @csv_hash["f#{i}".to_sym] << 'Copyright retained by author(s)'
+          @csv_hash["f#{i}".to_sym] << @thesis.copyright.url if @thesis.copyright.url
+        end
+      else
+        @csv_hash["f#{i}".to_sym] << ''
+        @csv_hash["f#{i}".to_sym] << ''
+        @csv_hash["f#{i}".to_sym] << ''
+      end
+    end
+  end
+
+  def dc_contributor_department
+    @thesis.departments.each do |dept|
+      @csv_hash[:headers] << 'dc.contributor.department'
+      @thesis.files.each_with_index do |file, i|
+        @csv_hash["f#{i}".to_sym] << if file.purpose == 'thesis_pdf'
+                                       dept.name_dspace
+                                     else
+                                       ''
+                                     end
+      end
+    end
   end
 
   def degree_fields
@@ -46,15 +84,15 @@ class ArchivematicaMetadata
                                        ''
                                      end
         @csv_hash["f#{i}".to_sym] << if file.purpose == 'thesis_pdf'
-                                      degree.name_dspace
-                                    else
-                                      ''
-                                    end
+                                       degree.name_dspace
+                                     else
+                                       ''
+                                     end
         @csv_hash["f#{i}".to_sym] << if file.purpose == 'thesis_pdf'
-                                      degree.degree_type&.name.to_s
-                                    else
-                                      ''
-                                    end
+                                       degree.degree_type&.name.to_s
+                                     else
+                                       ''
+                                     end
       end
     end
   end
