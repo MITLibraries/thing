@@ -26,32 +26,56 @@ class ArchivematicaMetadata
     dc_contributor_author
     dc_identifier_orcid
     dc_contributor_advisor
-    # dc.description.degree
-    # thesis.degree.name
-    # mit.thesis.degree
-    # dc.publisher
+    degree_fields
     # dc.contributor.department
-    # dc.type
-    # dc.date.submitted
     # dc.rights
     # dc.rights
     # dc.rights.uri
   end
 
+  def degree_fields
+    @thesis.degrees.each do |degree|
+      @csv_hash[:headers] << 'dc.description.degree'
+      @csv_hash[:headers] << 'thesis.degree.name'
+      @csv_hash[:headers] << 'mit.thesis.degree'
+
+      @thesis.files.each_with_index do |file, i|
+        @csv_hash["f#{i}".to_sym] << if file.purpose == 'thesis_pdf'
+                                       degree.abbreviation
+                                     else
+                                       ''
+                                     end
+        @csv_hash["f#{i}".to_sym] << if file.purpose == 'thesis_pdf'
+                                      degree.name_dspace
+                                    else
+                                      ''
+                                    end
+        @csv_hash["f#{i}".to_sym] << if file.purpose == 'thesis_pdf'
+                                      degree.degree_type&.name.to_s
+                                    else
+                                      ''
+                                    end
+      end
+    end
+  end
+
   def non_repeating
-    @csv_hash[:headers] << ['filename', 'Level_of_DPCommitment', 'dc.title', 'dc.date.issued',
-                            'dc.description.abstract', 'dc.identifier.uri', 'BitstreamDescription',
-                            'BitstreamChecksumValue', 'BitstreamChecksumAlgorithm']
+    @csv_hash[:headers] << ['filename', 'Level_of_DPCommitment', 'dc.title', 'dc.date.issued', 'dc.date.submitted',
+                            'dc.type', 'dc.description.abstract', 'dc.identifier.uri', 'BitstreamDescription',
+                            'BitstreamChecksumValue', 'BitstreamChecksumAlgorithm', 'dc.publisher']
     @thesis.files.each_with_index do |f, i|
       @csv_hash["f#{i}".to_sym] << "data/#{f.blob.filename}"
       @csv_hash["f#{i}".to_sym] << level_of_commitment(f)
       @csv_hash["f#{i}".to_sym] << dc_title(f)
       @csv_hash["f#{i}".to_sym] << dc_date_issued(f)
+      @csv_hash["f#{i}".to_sym] << dc_date_submitted(f)
+      @csv_hash["f#{i}".to_sym] << dc_type(f)
       @csv_hash["f#{i}".to_sym] << dc_description_abstract(f)
       @csv_hash["f#{i}".to_sym] << dc_identifier_uri(f)
       @csv_hash["f#{i}".to_sym] << bitstream_description(f)
       @csv_hash["f#{i}".to_sym] << bitstream_checksum_value(f)
       @csv_hash["f#{i}".to_sym] << 'MD5'
+      @csv_hash["f#{i}".to_sym] << dc_publisher(f)
     end
   end
 
@@ -68,6 +92,12 @@ class ArchivematicaMetadata
   end
 
   def dc_date_issued(file)
+    return '' unless file.purpose == 'thesis_pdf'
+
+    @thesis.grad_date.strftime('%Y-%m')
+  end
+
+  def dc_date_submitted(file)
     return '' unless file.purpose == 'thesis_pdf'
 
     file.blob.created_at
@@ -102,6 +132,8 @@ class ArchivematicaMetadata
   end
 
   # repeatable, take care to increment all file rows but only include details in thesis_pdf
+  # There is more logic to implement for this. We only preface dept code with "Course_" if it is a numeric code
+  # and we pad to two digits if it is a numeric code.
   def dc_terms_is_part_of
     @thesis.departments.each do |dept|
       @csv_hash[:headers] << 'dc.terms.isPartOf'
@@ -160,6 +192,18 @@ class ArchivematicaMetadata
     end
   end
 
+  def dc_publisher(file)
+    return '' unless file.purpose == 'thesis_pdf'
+
+    'Massachusetts Institute of Technology'
+  end
+
+  def dc_type(file)
+    return '' unless file.purpose == 'thesis_pdf'
+
+    'Thesis'
+  end
+
   def to_csv
     CSV.generate do |csv|
       @csv_hash.each do |row|
@@ -168,10 +212,10 @@ class ArchivematicaMetadata
     end
 
     # uncomment to debug by writing to a file
-    # CSV.open('tmp/file.csv', 'wb') do |csv|
-    #   @csv_hash.each do |row|
-    #     csv << row[1].flatten
-    #   end
-    # end
+    CSV.open('tmp/file.csv', 'wb') do |csv|
+      @csv_hash.each do |row|
+        csv << row[1].flatten
+      end
+    end
   end
 end
