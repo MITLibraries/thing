@@ -20,6 +20,9 @@
       <% if can?(:files, Report) %>
         <li><%= link_to("Files without purpose", report_files_path) %></li>
       <% end %>
+      <% if can?(:expired_holds, Report) %>
+        <li><%= link_to("Unreleased holds which have ended", report_expired_holds_path) %></li>
+      <% end %>
       <% if can?(:proquest_files, Report) %>
         <li><%= link_to("ProQuest forms", report_proquest_files_path) %></li>
       <% end %>

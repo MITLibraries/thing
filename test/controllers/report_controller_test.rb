@@ -243,6 +243,53 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  # ~~~~~~~~~~~~~~~~~~~~ Expired holds report ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  test 'expired holds report exists' do
+    sign_in users(:admin)
+    get report_expired_holds_path
+    assert_response :success
+  end
+
+  test 'anonymous users are prompted to log in by expired holds report' do
+    # Note that nobody is signed in.
+    get report_expired_holds_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see expired holds report' do
+    sign_in users(:basic)
+    get report_expired_holds_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see expired holds report' do
+    sign_in users(:transfer_submitter)
+    get report_expired_holds_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see expired holds report' do
+    sign_in users(:processor)
+    get report_expired_holds_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see expired holds report' do
+    sign_in users(:thesis_admin)
+    get report_expired_holds_path
+    assert_response :success
+  end
+
+  test 'admins can see expired holds report' do
+    sign_in users(:admin)
+    get report_expired_holds_path
+    assert_response :success
+  end
+
   # ~~~~~~~~~~~~~~~~~~~~ Files without purpose report ~~~~~~~~~~~~~~~~~~~~~~~~
   test 'files report exists' do
     sign_in users(:admin)

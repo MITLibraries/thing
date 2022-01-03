@@ -18,6 +18,10 @@ class ReportController < ApplicationController
     @record = report.empty_theses_record subset
   end
 
+  def expired_holds
+    @list = Hold.active_or_expired.ends_today_or_before.order(:date_end)
+  end
+
   def files
     report = Report.new
     theses = Thesis.all

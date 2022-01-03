@@ -1,0 +1,36 @@
+<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">Unreleased holds which end today or in the past</h3>
+
+    <div class="well">
+      <p>This list displays holds which meet all of the following criteria:</p>
+      <ul>
+        <li>The hold status is either "active" or "expired".</li>
+        <li>The hold either ends today or ended in the past.</li>
+      </ul>
+      <p>Update these holds in the administrative interface by clicking the link in the "Expired on" column.</p>
+    </div>
+
+    <table class="table" summary="This table presents a list of holds which have an end date of today, or an end date which has already passed, which have a status of either 'active' or 'expired'. Clicking on the link in the right column will open the administrative form for this hold." title="Unreleased holds with an end date of today or in the past">
+      <thead>
+        <tr>
+          <th scope="col">Thesis authors</th>
+          <th scope="col">Thesis departments</th>
+          <th scope="col">Thesis term</th>
+          <th scope="col">Status</th>
+          <th scope="col">Expired on</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'report/expired_holds_row', collection: @list) || render('expired_holds_empty') %>
+      </tbody>
+    </table>
+
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>
