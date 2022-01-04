@@ -1,6 +1,6 @@
 # Preservation Package Specification
 
-All theses submitted to the ETD system will be sent to preservation submission storage after they have been published to DSpace. From preservation submission storage they will be ingested into ArchivesSpace via Archivematica by digital preservation/archives staff. Archivematica ingest requires a specific [submission structure](https://www.archivematica.org/en/docs/archivematica-1.13/user-manual/transfer/bags/#bags) and [metadata format](https://www.archivematica.org/en/docs/archivematica-1.13/user-manual/transfer/import-metadata/#metadata-bags) outlined below. Every thesis submitted to preservation must be packaged according to this specification.
+All theses submitted to the ETD system will be sent to preservation submission storage after they have been published to DSpace. From preservation submission storage they will be ingested into preservation (AIP) storage via Archivematica with additional metadata sent into ArchivesSpace by digital preservation/archives staff. Archivematica ingest requires a specific [submission structure](https://www.archivematica.org/en/docs/archivematica-1.13/user-manual/transfer/bags/#bags) and [metadata format](https://www.archivematica.org/en/docs/archivematica-1.13/user-manual/transfer/import-metadata/#metadata-bags) outlined below. Every thesis submitted to preservation must be packaged according to this specification.
 
 ## Package structure
 
@@ -16,19 +16,19 @@ Each thesis must be submitted as a single zipped bag according to the [bagit spe
   - bag-info.txt Per the bagit specfication, the bag must contain a bag-info.txt file with the required contents
   - bagit.txt Per the bagit specfication, the bag must contain a bagit.txt file with the required contents
   - manifest-_algorithm_.txt Per the bagit specfication, the bag must contain at least one manifest-_algorithm_.txt file containing the checksum and file path of each file in the data folder, where _algorithm_ in the file name should be the cryptographic hash algorithm use to create the checksums, e.g. "sha256"
-  - tagmanifest-_algorithm_.txt Per the bagit specfication, the bag must contain at least one tagmanifest-_algorithm_.txt file containing the checksum and file path of each file in the top-level bag folder, where _algorithm_ in the file name should be the cryptographic hash algorithm use to create the checksums, e.g. "sha256"
+  - tagmanifest-_algorithm_.txt Per the bagit specfication, the bag must contain at least one tagmanifest-_algorithm_.txt file containing the checksum and file path of each bagit-related file in the top-level bag folder (except for this file itself, which cannot contain its own checksum), where _algorithm_ in the file name should be the cryptographic hash algorithm use to create the checksums, e.g. "sha256"
 
 ## Metadata File
 
 See file [1721.1_123456-thesis.zip/data/metadata/metadata.csv](1721.1_123456-thesis.zip/data/metadata/metadata.csv) in this project's docs folder for an metadata file structured according to these requirements.
 
-All metadata about the thesis must be in a single CSV file with a column for each metadata field and a row for each file associated with the thesis.
+All metadata about the thesis must be in a single CSV file with a column for each metadata field and a row for each file associated with the thesis. All characters in this file must be utf-8 encoded, otherwise Archivematica will be unhappy.
 
 Thesis-level metadata  (title, abstract, author, etc.) should be in the row for the thesis PDF file. Repeated fields must have a column for each instance of the field in the metadata. Note: If a rights field includes the copyright character, it must be UTF-8 encoded in the CSV file for Archivematica to parse it correctly.
 
 Other files included in the CSV should have blank values for any fields not directly related to the file -- fields associated with the thesis such as title, abstract, author should be blank, but fields specific to the file such as BitstreamChecksumValue should have the value present in the row for that file.
 
-In addition to the metadata submitted to DSpace, some additional fields are required for presentation and should each have their own column in the CSV file. These are:
+In addition to the metadata submitted to DSpace, some additional fields are required for preservation and should each have their own column in the CSV file. These are:
 - filename: path to file in this bag, e.g. "data/duck-daffy88-SM-RED-2021-signature.pdf"
 - Level_of_DPCommitment: string value "Level 3" (only include for the thesis PDF)
-- dcterms.isPartOf: string value "AIC#Course_department-code_theses" where _department-code_ is the Data Warehouse department code for the department, e.g. "21". For departments where the code is a single-digit number, the number must be zero-padded to two decimal places, e.g. "01".
+- dcterms.isPartOf: string value "AIC#Course_department-code_theses" where _department-code_ is the Data Warehouse department code for the department, e.g. "21". For departments where the code is a single-digit number, the number must be zero-padded to two decimal places, e.g. "01". "Course" is included in this field for numeric departments only, so for example a department such as SDM would be "AIC#SDM_theses" and NOT "AIC#Course_SDM_theses".
