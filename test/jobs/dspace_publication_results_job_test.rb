@@ -2,18 +2,33 @@ require 'test_helper'
 
 class DspacePublicationResultsJobTest < ActiveJob::TestCase
   def setup
-    @good_thesis = theses(:one)
+    @good_thesis = theses(:bachelor)
     @bad_thesis = theses(:two)
+    @bad_checksum = theses(:doctor)
     @no_handle_thesis = theses(:coauthor)
     @invalid_status_thesis = theses(:with_note)
+    @valid_with_no_local_files = theses(:one)
     Aws.config[:sqs] = {
       stub_responses: {
         receive_message: [
           {
             messages: [
               # success
-              { message_id: 'id1', receipt_handle: 'handle1', body: '{"ResultType": "success", "ItemHandle": "http://example.com/handle/123123123", "lastModified": "Thu Sep 09 17: 56: 39 UTC 2021"}',
+              { message_id: 'id1', receipt_handle: 'handle1',
+                body: '{"ResultType": "success", "ItemHandle": "http://example.com/handle/123123123", "lastModified": "Thu Sep 09 17: 56: 39 UTC 2021", "Bitstreams": [{ "BitstreamName": "a_pdf.pdf", "BitstreamUUID": "fakeuuidshhhhh",  "BitstreamChecksum": { "value": "2800ec8c99c60f5b15520beac9939a46", "checkSumAlgorithm": "MD5"}}]}',
                 message_attributes: { 'PackageID' => { string_value: "etd_#{@good_thesis.id}", data_type: 'String' },
+                                      'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } },
+
+              # success but invalid checksum
+              { message_id: 'id1a', receipt_handle: 'handle1a',
+                body: '{"ResultType": "success", "ItemHandle": "http://example.com/handle/123123123", "lastModified": "Thu Sep 09 17: 56: 39 UTC 2021", "Bitstreams": [{ "BitstreamName": "a_pdf.pdf", "BitstreamUUID": "fakeuuidshhhhh",  "BitstreamChecksum": { "value": "borkedchecksum", "checkSumAlgorithm": "MD5"}}]}',
+                message_attributes: { 'PackageID' => { string_value: "etd_#{@bad_checksum.id}", data_type: 'String' },
+                                      'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } },
+
+              # success but thesis no longer has files locally
+              { message_id: 'id1a', receipt_handle: 'handle1a',
+                body: '{"ResultType": "success", "ItemHandle": "http://example.com/handle/123123123", "lastModified": "Thu Sep 09 17: 56: 39 UTC 2021", "Bitstreams": [{ "BitstreamName": "a_pdf.pdf", "BitstreamUUID": "fakeuuidshhhhh",  "BitstreamChecksum": { "value": "2800ec8c99c60f5b15520beac9939a46", "checkSumAlgorithm": "MD5"}}]}',
+                message_attributes: { 'PackageID' => { string_value: "etd_#{@valid_with_no_local_files.id}", data_type: 'String' },
                                       'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } },
 
               # 500 error
@@ -32,7 +47,7 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
 
               # no record
               { message_id: 'id5', receipt_handle: 'handle5', body: '{"ResultType": "success", "ItemHandle": "http://example.com/handle/123123125", "lastModified": "Thu Sep 09 17: 56: 39 UTC 2021"}',
-                message_attributes: { 'PackageID' => { string_value: "etd_9999999999999", data_type: 'String' },
+                message_attributes: { 'PackageID' => { string_value: 'etd_9999999999999', data_type: 'String' },
                                       'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } },
 
               # bad data
@@ -69,31 +84,38 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
     assert_not_equal 'Publication error', @bad_thesis.publication_status
     assert_not_equal 'Publication error', @no_handle_thesis.publication_status
     assert_not_equal 'Publication error', @invalid_status_thesis.publication_status
+    assert_not_equal 'Publication error', @bad_checksum.publication_status
 
     DspacePublicationResultsJob.perform_now
     @bad_thesis.reload
     @no_handle_thesis.reload
     @invalid_status_thesis.reload
+    @bad_checksum.reload
     assert_equal 'Publication error', @bad_thesis.publication_status
     assert_equal 'Publication error', @no_handle_thesis.publication_status
     assert_equal 'Publication error', @invalid_status_thesis.publication_status
+    assert_equal 'Publication error', @bad_checksum.publication_status
   end
 
   test 'thesis handle is updated' do
     assert_nil @good_thesis.dspace_handle
+    assert_nil @bad_checksum.dspace_handle
 
     DspacePublicationResultsJob.perform_now
     @good_thesis.reload
+    @bad_checksum.reload
+
     assert_equal 'http://example.com/handle/123123123', @good_thesis.dspace_handle
+    assert_equal 'http://example.com/handle/123123123', @bad_checksum.dspace_handle
   end
 
   test 'results hash is populated' do
     results = DspacePublicationResultsJob.perform_now
 
     # 6 total results confirms that the non-ETD message was skipped
-    assert_equal 6, results[:total]
-    assert_equal 1, results[:processed]
-    assert_equal 5, results[:errors].count
+    assert_equal 8, results[:total]
+    assert_equal 3, results[:processed]
+    assert_equal 7, results[:errors].count
   end
 
   test 'sends emails' do
@@ -135,13 +157,28 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
     assert_includes results[:errors], "Handle not provided; cannot continue (thesis #{@no_handle_thesis.id})"
 
     # invalid result type
-    assert_includes results[:errors], "Unknown status small victory; cannot continue (thesis #{@invalid_status_thesis.id})"
+    assert_includes results[:errors],
+                    "Unknown status small victory; cannot continue (thesis #{@invalid_status_thesis.id})"
 
     # invalid data
     assert_includes results[:errors], "Error reading from SQS queue: undefined method `split' for nil:NilClass"
 
     # no thesis
     assert_includes results[:errors], "Couldn't find Thesis with 'id'=9999999999999"
+
+    # bad checksum
+    assert_includes results[:errors], 'Thesis 532738922 with handle http://example.com/handle/123123123 was published'\
+                                      ' with non matching checksums. ETD checksums'\
+                                      ' ["2800ec8c99c60f5b15520beac9939a46"] dspace checksums ["borkedchecksum"]. This'\
+                                      ' requires immediate attention to either manually replace the problem file in'\
+                                      ' DSpace or delete the entire thesis from DSpace to ensure that nobody is able'\
+                                      ' to download the broken file.'
+
+    # no local files to checksum
+    assert_includes results[:errors], 'Thesis 980190962 updated to status Publication error due to inability to'\
+                                      ' validate checksums as no local files were attached to the record. This'\
+                                      ' requires staff to manually check the ETD record and DSpace record and take'\
+                                      ' appropriate action.'
   end
 
   test 'do nothing if no messages in queue' do
