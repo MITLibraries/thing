@@ -84,6 +84,7 @@ We use AWS SQS queues to publish theses to DSpace and read data about published 
 
 `SQS_INPUT_QUEUE_URL` - The URL of the SQS input queue used for publication to DSpace.
 `SQS_OUTPUT_QUEUE_NAME` - The name of the SQS output queue. This is used to build the SQS message attributes.
+`SQS_OUTPUT_QUEUE_URL` - The URL of the SQS output queue used to read the results from a publication run.
 
 `SQS_RESULT_MAX_MESSAGES`: Configures the :max_number_of_messages arg of the AWS poll method, which specifies how
 many messages to receive with each polling attempt. Defaults to 10 if unset.
