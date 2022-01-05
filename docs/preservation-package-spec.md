@@ -13,10 +13,10 @@ Each thesis must be submitted as a single zipped bag according to the [bagit spe
       - metadata.csv The metadata file must be named "metadata.csv". See [Metadata File section](#metadata-file) below for details on the contents of this file
     - _last-kerberos-DEG-DEP-YYYY_-thesis.pdf The data folder must at minimum contain the PDF representation of the thesis
     - _last-kerberos-DEG-DEP-YYYY-supplemental1.txt_ The data folder may additionally contain any other files submitted with the thesis including supplementary files, signature pages, etc
-  - bag-info.txt Per the bagit specfication, the bag must contain a bag-info.txt file with the required contents
+  - bag-info.txt Per the bagit specfication, the bag may contain a bag-info.txt file with additional information. Note: this file is optional, but if it is included it must contain the payload-oxum field with a correct value, otherwise Archivematica will reject the bag.
   - bagit.txt Per the bagit specfication, the bag must contain a bagit.txt file with the required contents
   - manifest-_algorithm_.txt Per the bagit specfication, the bag must contain at least one manifest-_algorithm_.txt file containing the checksum and file path of each file in the data folder, where _algorithm_ in the file name should be the cryptographic hash algorithm use to create the checksums, e.g. "sha256"
-  - tagmanifest-_algorithm_.txt Per the bagit specfication, the bag must contain at least one tagmanifest-_algorithm_.txt file containing the checksum and file path of each bagit-related file in the top-level bag folder (except for this file itself, which cannot contain its own checksum), where _algorithm_ in the file name should be the cryptographic hash algorithm use to create the checksums, e.g. "sha256"
+  - tagmanifest-_algorithm_.txt Per the bagit specfication, the bag may contain at least one tagmanifest-_algorithm_.txt file containing the checksum and file path of each bagit-related file in the top-level bag folder (except for this file itself, which cannot contain its own checksum), where _algorithm_ in the file name should be the cryptographic hash algorithm use to create the checksums, e.g. "sha256"
 
 ## Metadata File
 
