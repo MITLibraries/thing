@@ -78,7 +78,7 @@ class DspaceMetadata
 
       # Theoretically both license and copyright URLs are required for publication, but there are no constraints on
       # the models, and we want to future-proof this.
-      @dc['dc.rights.uri'] = thesis_license.url if thesis_license.url
+      @dc['dc.rights.uri'] = thesis_license.evaluate_license_url
     else # author holds copyright and no license provided
       @dc['dc.rights'] = thesis_copyright.statement_dspace
       @dc['dc.rights'] = 'Copyright retained by author(s)'

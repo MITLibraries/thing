@@ -65,4 +65,20 @@ class LicenseTest < ActiveSupport::TestCase
     ccbysa = licenses(:ccbysa)
     assert_equal 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)', ccbysa.map_license_type
   end
+
+  test 'license urls are mapped correctly' do
+    # Maps license url for no Creative Commons licenses
+    nocc = licenses(:nocc)
+    assert_equal 'https://rightsstatements.org/page/InC-EDU/1.0/', nocc.evaluate_license_url
+
+    # Returns regular license url otherwise
+    ccby = licenses(:ccby)
+    assert_equal 'https://creativecommons.org/licenses/by/4.0/', ccby.evaluate_license_url
+
+    ccbysa = licenses(:ccbysa)
+    assert_equal 'https://creativecommons.org/licenses/by-sa/4.0/', ccbysa.evaluate_license_url
+
+    nourl = licenses(:sacrificial)
+    assert_nil nourl.evaluate_license_url
+  end
 end
