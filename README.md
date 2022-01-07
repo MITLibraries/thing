@@ -215,8 +215,20 @@ Example usage:
 - DSS runs (as of this writing that is a manual process documented in the
   [DSS repo](https://github.com/MITLibraries/dspace-submission-service#run-stage))
 - ETD processes output queue to update records and send email to stakeholders with summary data and list
-  of any error records (as of now this is a manual process, but can be triggered via rake task using the
-  Heroku run command such as `heroku run rails dss:process_output_queue --app TARGET-HEROKU-APP`)
+  of any error records. As of now this is a manual process, but can be triggered via rake task using the
+  Heroku run command such as:
+
+  ```shell
+  heroku run rails dss:process_output_queue --app TARGET-HEROKU-APP
+  ```
+
+## Publishing a single thesis
+
+You can publish a single thesis that is already in `Publication review` status by passing the `thesis_id` to a rake task like:
+
+```shell
+heroku run rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
+```
 
 ## Validation of thesis record
 
