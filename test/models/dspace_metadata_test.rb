@@ -147,7 +147,7 @@ class DspaceMetadataTest < ActiveSupport::TestCase
                                                'value' => 'http://rightsstatements.org/page/InC-EDU/1.0/' })
 
     # No URI
-    t.license = licenses(:nocc)
+    t.license = licenses(:sacrificial)
     t.save
     dss_friendly_thesis(t)
     serialized = DspaceMetadata.new(t).serialize_dss_metadata
@@ -162,7 +162,7 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
                                                'value' => 'https://rightsstatements.org/page/InC/1.0/' })
     assert unserialized['metadata'].include?({ 'key' => 'dc.rights',
-                                               'value' => 'In Copyright - Educational Use Permitted' })
+                                               'value' => 'This will be deleted during testing.' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
                                                'value' => 'http://rightsstatements.org/page/InC-EDU/1.0/' })
@@ -187,6 +187,27 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
     refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
                                                'value' => 'http://rightsstatements.org/page/InC-EDU/1.0/' })
+
+    # Author holds copyright and provides a license, but license is no-CC
+    t.license = licenses(:nocc)
+    t.save
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'Attribution 4.0 International (CC BY 4.0)' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'In Copyright' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'Copyright retained by author(s)' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://creativecommons.org/licenses/by/4.0/' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://rightsstatements.org/page/InC/1.0/' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights',
+                                               'value' => 'In Copyright - Educational Use Permitted' })
+    refute unserialized['metadata'].include?({ 'key' => 'dc.rights', 'value' => 'U+00A9 MIT' })
+    assert unserialized['metadata'].include?({ 'key' => 'dc.rights.uri',
+                                               'value' => 'https://rightsstatements.org/page/InC-EDU/1.0/' })
 
     # Any other copyright holder
     t.copyright = copyrights(:mit)
