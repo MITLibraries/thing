@@ -1,4 +1,6 @@
 class DspacePublicationResultsJob < ActiveJob::Base
+  include Checksums
+
   MAX_MESSAGES = ENV.fetch('SQS_RESULT_MAX_MESSAGES', 10)
   WAIT_TIME_SECONDS = ENV.fetch('SQS_RESULT_WAIT_TIME_SECONDS', 10)
   IDLE_TIMEOUT = ENV.fetch('SQS_RESULT_IDLE_TIMEOUT', 0)
@@ -108,10 +110,6 @@ class DspacePublicationResultsJob < ActiveJob::Base
 
   def convert_checksums(thesis)
     thesis.files.map { |f| base64_to_hex(f.checksum) }
-  end
-
-  def base64_to_hex(base64_string)
-    Base64.decode64(base64_string).each_byte.map { |b| format('%02x', b.to_i) }.join
   end
 
   def update_publication_status(thesis, body, results, status)
