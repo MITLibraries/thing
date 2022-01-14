@@ -47,6 +47,7 @@ group :development do
   gem 'listen'
   gem 'rubocop'
   gem 'rubocop-rails'
+  gem 'scout_apm'
   gem 'web-console'
 end
 

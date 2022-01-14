@@ -320,6 +320,8 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    scout_apm (5.1.1)
+      parser
     selectize-rails (0.12.6)
     selenium-webdriver (4.1.0)
       childprocess (>= 0.5, < 5.0)
@@ -407,6 +409,7 @@ DEPENDENCIES
   rubocop
   rubocop-rails
   sass-rails
+  scout_apm
   selenium-webdriver
   sentry-rails
   sentry-ruby
