@@ -223,7 +223,7 @@ class Report
     row_data = {}
     terms = Thesis.all.pluck(:grad_date).uniq.sort
     terms.each do |term|
-      row_data[term] = Thesis.where('grad_date = ?', term).map(&:student_contributed?).count(true)
+      row_data[term] = Thesis.where('grad_date = ?', term).includes(:versions).map(&:student_contributed?).count(true)
     end
     {
       label: 'Students contributing',

@@ -60,6 +60,8 @@ this automatically. It is often nice in development as well.
 `MAINTAINER_EMAIL` - used for `to` field of virus detected emails.
 `THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails. Also the email to which reports are sent.
 `MAINTAINER_EMAIL` - used for `cc` field of report emails.
+`SCOUT_DEV_TRACE` - include this and set it to `true` to enable perfomance monitoring in development. Very useful to
+track down N+1 queries!
 
 ### Production
 

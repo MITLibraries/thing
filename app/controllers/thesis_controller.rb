@@ -43,7 +43,7 @@ class ThesisController < ApplicationController
     @terms = defined_terms Thesis.all
     @publication_statuses = Thesis.all.pluck(:publication_status).uniq.sort
     # Filter relevant theses by selected term from querystring
-    term_filtered = filter_theses_by_term Thesis.all
+    term_filtered = filter_theses_by_term Thesis.all.includes(:degrees, :departments, :users)
     @thesis = filter_theses_by_publication_status term_filtered
   end
 
