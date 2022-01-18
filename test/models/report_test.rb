@@ -58,6 +58,6 @@ class ReportTest < ActiveSupport::TestCase
     result = r.term_tables subset
     assert_equal Department.count, result['departments']['data'].length
     assert_includes result['departments']['data'].keys, Department.first.name_dw
-    assert_equal [3, 0, 0], result['departments']['data'].values
+    assert_equal [3, 0, 0, 0], result['departments']['data'].values
   end
 end

@@ -12,7 +12,7 @@ class Bag
     file_locations = {}
     @thesis.files.map { |f| file_locations["data/#{f.filename}"] = f.blob }
 
-    # TODO: build csv, add it to hash
+    file_locations['data/metadata.csv'] = ArchivematicaMetadata.new(@thesis).to_csv
 
     file_locations
   end
@@ -22,7 +22,13 @@ class Bag
   end
 
   def manifest
-    @thesis.files.map { |f| "#{base64_to_hex(f.checksum)} data/#{f.filename}" }.join("\n")
+    # thesis files
+    manifest = @thesis.files.map { |f| "#{base64_to_hex(f.checksum)} data/#{f.filename}" }
+
+    # metadata file
+    manifest << "#{ArchivematicaMetadata.new(@thesis).md5} data/metadata.csv"
+
+    manifest.join("\n")
   end
 
   def bag_name
@@ -32,9 +38,8 @@ class Bag
 
   # Before we try to bag anything, we need to check if it meets a few conditions. All published theses should have
   # at least one file attached, no duplicate filenames, and a handle pointing to its DSpace record.
-  # TODO: add a check for metadata csv
   def baggable?
-    @thesis.files.any? && @thesis.dspace_handle.present? && !duplicate_filenames?
+    @thesis.files.any? && @thesis.dspace_handle.present? && !duplicate_filenames? && @thesis.copyright.present?
   end
 
   def duplicate_filenames?
