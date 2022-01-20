@@ -28,6 +28,8 @@ jobs:
       - name: run tests
         run: |
           bundle exec rails test
+        env:
+          SPEC_REPORTER: true
       - name: Coveralls
         uses: coverallsapp/github-action@v1.0.1
         with:

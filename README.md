@@ -62,6 +62,8 @@ this automatically. It is often nice in development as well.
 `MAINTAINER_EMAIL` - used for `cc` field of report emails.
 `SCOUT_DEV_TRACE` - include this and set it to `true` to enable perfomance monitoring in development. Very useful to
 track down N+1 queries!
+`SKIP_SLOW` - set this to skip tests flagged as slow
+`SPEC_REPORTER` - set this to see a detailed list of tests and times during test runs
 
 ### Production
 
