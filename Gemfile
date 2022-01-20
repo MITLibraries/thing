@@ -53,6 +53,7 @@ end
 
 group :test do
   gem 'climate_control'
+  gem 'minitest-reporters'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
 end

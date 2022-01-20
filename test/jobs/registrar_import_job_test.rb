@@ -18,6 +18,7 @@ class RegistrarImportJobTest < ActiveJob::TestCase
   end
 
   test 'job runs and returns expected results' do
+    skip "Slow test skipped due to env settings" if ENV.fetch("SKIP_SLOW", false)
     registrar = Registrar.last
     registrar.graduation_list.attach(io: File.open('test/fixtures/files/registrar_data_full_anonymized.csv'),
                                      filename: 'registrar_data_full_anonymized.csv')
