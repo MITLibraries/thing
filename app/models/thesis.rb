@@ -44,6 +44,7 @@ class Thesis < ApplicationRecord
 
   has_many_attached :files
   has_one_attached :dspace_metadata
+  has_one_attached :bag
 
   accepts_nested_attributes_for :users
   accepts_nested_attributes_for :advisors, allow_destroy: true
