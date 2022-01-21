@@ -28,3 +28,8 @@ three:
   name_dw: Music and Theater Arts
   code_dw: 21M
   name_dspace: Massachusetts Institute of Technology. Music and Theater Arts Section
+
+non_number_code:
+  name_dw: Non numeric code that also does not start with a number
+  code_dw: hallo
+  name_dspace: MIT. Non numeric code

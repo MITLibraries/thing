@@ -165,6 +165,8 @@ published:
   issues_found: false
   publication_status: 'Published'
   dspace_handle: '1234.5/6789'
+  copyright: mit
+
 
 june_2018:
   title: MyStringJune

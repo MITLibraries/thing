@@ -20,9 +20,11 @@ class BagTest < ActiveSupport::TestCase
 
   test 'creates manifest' do
     thesis = theses(:published)
-    checksum = base64_to_hex(thesis.files.first.checksum)
+    checksums = []
+    checksums << "#{base64_to_hex(thesis.files.first.checksum)} data/a_pdf.pdf"
+    checksums << "#{ArchivematicaMetadata.new(thesis).md5} data/metadata.csv"
     bag = Bag.new(thesis)
-    assert_equal "#{checksum} data/a_pdf.pdf", bag.manifest
+    assert_equal checksums.join("\n"), bag.manifest
   end
 
   test 'files in manifest are separated with newlines' do
@@ -42,8 +44,15 @@ class BagTest < ActiveSupport::TestCase
 
   test 'data generates file location hash' do
     bag = Bag.new(theses(:published))
-    expected_hash = { 'data/a_pdf.pdf' => theses(:published).files.first.blob }
-    assert_equal expected_hash, bag.data
+    expected = theses(:published).files.first.blob
+    assert_equal expected, bag.data['data/a_pdf.pdf']
+  end
+
+  test 'data generates metadata file' do
+    t = theses(:published)
+    bag = Bag.new(t)
+    expected = ArchivematicaMetadata.new(t).to_csv
+    assert_equal expected, bag.data['data/metadata.csv']
   end
 
   test 'detects duplicate filenames' do
