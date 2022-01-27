@@ -4,13 +4,13 @@ class RegistrarControllerTest < ActionDispatch::IntegrationTest
   test 'submit redirects to login' do
     get '/registrar/new'
     assert_response :redirect
-    assert_redirected_to '/users/auth/saml'
+    assert_redirected_to '/login'
   end
 
   test 'view redirects to login' do
     get "/registrar/#{registrar(:valid).id}"
     assert_response :redirect
-    assert_redirected_to '/users/auth/saml'
+    assert_redirected_to '/login'
   end
 
   test 'thesis_admins can submit and view registrar' do

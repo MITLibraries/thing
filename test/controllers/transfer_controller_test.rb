@@ -22,7 +22,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
   test 'anonymous users are redirected to login when accessing new transfer form' do
     get '/transfer/new'
     assert_response :redirect
-    assert_redirected_to '/users/auth/saml'
+    assert_redirected_to '/login'
   end
 
   test 'basic user cannot access new transfer form' do
@@ -232,7 +232,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody signed in.
     get transfer_path(transfers(:valid))
     assert_response :redirect
-    assert_redirected_to '/users/auth/saml'
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see a transfer processing form' do

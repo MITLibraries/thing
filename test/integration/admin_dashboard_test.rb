@@ -9,12 +9,12 @@ class AdminDashboardTest < ActionDispatch::IntegrationTest
     auth_teardown
   end
 
-  test 'accessing admin panel unauthenticated redirects to root' do
+  test 'accessing admin panel unauthenticated redirects to login' do
     get '/admin'
     assert_response :redirect
     follow_redirect!
     assert_response :success
-    assert_equal('/', path)
+    assert_equal('/login', path)
   end
 
   test 'accessing admin panel as a basic user redirects to root' do
