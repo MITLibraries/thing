@@ -42,6 +42,8 @@ class Thesis < ApplicationRecord
   has_many :authors, dependent: :destroy
   has_many :users, through: :authors
 
+  has_many :submission_information_packages, dependent: :destroy
+
   has_many_attached :files
   has_one_attached :dspace_metadata
 
