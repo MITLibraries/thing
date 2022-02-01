@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_20_182546) do
+ActiveRecord::Schema.define(version: 2022_01_26_190428) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -171,6 +171,19 @@ ActiveRecord::Schema.define(version: 2021_07_20_182546) do
     t.index ["user_id"], name: "index_registrars_on_user_id"
   end
 
+  create_table "submission_information_packages", force: :cascade do |t|
+    t.datetime "preserved_at"
+    t.integer "preservation_status", default: 0, null: false
+    t.string "bag_declaration"
+    t.string "bag_name"
+    t.text "manifest"
+    t.text "metadata"
+    t.integer "thesis_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["thesis_id"], name: "index_submission_information_packages_on_thesis_id"
+  end
+
   create_table "submitters", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "department_id", null: false
@@ -251,6 +264,7 @@ ActiveRecord::Schema.define(version: 2021_07_20_182546) do
   add_foreign_key "holds", "hold_sources"
   add_foreign_key "holds", "theses"
   add_foreign_key "registrars", "users"
+  add_foreign_key "submission_information_packages", "theses"
   add_foreign_key "submitters", "departments"
   add_foreign_key "submitters", "users"
   add_foreign_key "transfers", "departments"
