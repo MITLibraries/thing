@@ -28,6 +28,7 @@ gem 'sentry-ruby'
 gem 'simple_form'
 gem 'skylight'
 gem 'uglifier'
+gem 'zip_tricks'
 
 group :production do
   gem 'pg'
