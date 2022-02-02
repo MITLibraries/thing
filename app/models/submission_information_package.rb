@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: submission_information_packages
+#
+#  id                  :integer          not null, primary key
+#  preserved_at        :datetime
+#  preservation_status :integer          default(0), not null
+#  bag_declaration     :string
+#  bag_name            :string
+#  manifest            :text
+#  metadata            :text
+#  thesis_id           :integer          not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#
 # Creates the structure for an individual thesis to be preserved in Archivematica according to the BagIt spec:
 # https://datatracker.ietf.org/doc/html/rfc8493.
 #
@@ -8,6 +23,7 @@ class SubmissionInformationPackage < ApplicationRecord
 
   has_paper_trail
   belongs_to :thesis
+  has_one_attached :bag
 
   validates :baggable_thesis?, presence: true
 
@@ -42,9 +58,12 @@ class SubmissionInformationPackage < ApplicationRecord
     self.manifest = new_manifest.join("\n")
   end
 
+  # The bag_name has to be unique due to our using it as the basis of an ActiveStorage key. Using a UUID
+  # was not preferred as the target system of these bags adds it's own UUID to the file when it arrives there
+  # so the filename was unwieldy with two UUIDs embedded in it so we simply increment integers.
   def set_bag_name
     safe_handle = thesis.dspace_handle.gsub('/', '_')
-    self.bag_name = "#{safe_handle}-thesis"
+    self.bag_name = "#{safe_handle}-thesis-#{thesis.submission_information_packages.count + 1}"
   end
 
   # Before we try to bag anything, we need to check if it meets a few conditions. All published theses should have
