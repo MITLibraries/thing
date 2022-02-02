@@ -361,6 +361,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.5.4)
+    zip_tricks (5.6.0)
 
 PLATFORMS
   ruby
@@ -406,6 +407,7 @@ DEPENDENCIES
   timecop
   uglifier
   web-console
+  zip_tricks
 
 RUBY VERSION
    ruby 2.7.2p137

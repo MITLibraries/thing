@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: submission_information_packages
+#
+#  id                  :integer          not null, primary key
+#  preserved_at        :datetime
+#  preservation_status :integer          default(0), not null
+#  bag_declaration     :string
+#  bag_name            :string
+#  manifest            :text
+#  metadata            :text
+#  thesis_id           :integer          not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#
 require 'test_helper'
 
 class SubmissionInformationPackageTest < ActiveSupport::TestCase
@@ -40,7 +55,7 @@ class SubmissionInformationPackageTest < ActiveSupport::TestCase
 
   test 'generates bag name on create' do
     sip = theses(:published).submission_information_packages.create
-    assert_equal '1234.5_6789-thesis', sip.bag_name
+    assert_equal '1234.5_6789-thesis-1', sip.bag_name
   end
 
   test 'generates metadata file on create' do
