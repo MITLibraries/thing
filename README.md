@@ -226,12 +226,33 @@ Example usage:
   heroku run rails dss:process_output_queue --app TARGET-HEROKU-APP
   ```
 
-## Publishing a single thesis
+### Publishing a single thesis
 
 You can publish a single thesis that is already in `Publication review` status by passing the `thesis_id` to a rake task like:
 
 ```shell
 heroku run rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
+```
+
+## Preservation workflow
+
+The publishing workflow will automatically trigger preservation for all of the published theses in the results queue.
+At this point a submission information package is generated for each thesis, then a bag is constructed, zipped, and
+streamed to an S3 bucket. (See the SubmissionInformationPackage and SubmissionInformationPackageZipper classes for more
+details on this part of the process.)
+
+Once they are in the S3 bucket, the bags are automatically replicated to the Digital Preservation S3 bucket, where they
+can be ingested into Archivematica.
+
+A thesis can be sent to preservation more than once. In order to track provenance across multiple preservation events,
+we persist certain data about the SIP and audit the model using [paper_trail](https://github.com/paper-trail-gem/paper_trail).
+
+### Preserving a single thesis
+
+You can manually send a published thesis to preservation by passing the thesis ID to the following rake task:
+
+```shell
+heroku run rails preservation:preserve_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
 ```
 
 ## Validation of thesis record

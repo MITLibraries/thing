@@ -86,9 +86,9 @@ class SubmissionInformationPackageTest < ActiveSupport::TestCase
     assert_not_nil sip.metadata
   end
 
-  test 'preservation_status defaults to 0' do
+  test 'preservation_status defaults to unpreserved' do
     sip = theses(:published).submission_information_packages.create
-    assert_equal 0, sip.preservation_status
+    assert_equal 'unpreserved', sip.preservation_status
   end
 
   test 'data generates file location hash' do
