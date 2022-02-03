@@ -2,7 +2,7 @@ require 'test_helper'
 
 class SubmissionInformationPackageZipperTest < ActiveSupport::TestCase
     
-  # because we need to actually use the file it's easier to attache it in the test rather
+  # because we need to actually use the file it's easier to attach it in the test rather
   # than use our fixtures as the fixtures oddly don't account for the file actually being
   # where ActiveStorage expects them to be. We also need this to be a record that looks like
   # a published record so we'll use the published fixture, remove the fixtured files, and attach
