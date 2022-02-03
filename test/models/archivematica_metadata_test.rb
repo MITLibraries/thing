@@ -54,7 +54,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
     meta = ArchivematicaMetadata.new(t)
     csv = meta.instance_variable_get(:@csv_hash)
     assert_equal(csv[:f0],
-      ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_16_theses", nil, "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "Massachusetts Institute of Technology. Department of Aeronautics and Astronautics", "In Copyright - Educational Use Permitted", "Copyright MIT", "http://rightsstatements.org/page/InC-EDU/1.0/"]
+      ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_16_theses", "Yobot, Yo", "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "Massachusetts Institute of Technology. Department of Aeronautics and Astronautics", "In Copyright - Educational Use Permitted", "Copyright MIT", "http://rightsstatements.org/page/InC-EDU/1.0/"]
     )
   end
 
@@ -67,7 +67,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
     meta = ArchivematicaMetadata.new(t)
     csv = meta.instance_variable_get(:@csv_hash)
     assert_equal(csv[:f0],
-      ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_16_theses", nil, "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "Massachusetts Institute of Technology. Department of Aeronautics and Astronautics", "In Copyright", "Copyright retained by author(s)", "https://rightsstatements.org/page/InC/1.0/"]
+      ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_16_theses", "Yobot, Yo", "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "Massachusetts Institute of Technology. Department of Aeronautics and Astronautics", "In Copyright", "Copyright retained by author(s)", "https://rightsstatements.org/page/InC/1.0/"]
     )
   end
 
@@ -80,7 +80,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
     meta = ArchivematicaMetadata.new(t)
     csv = meta.instance_variable_get(:@csv_hash)
     assert_equal(csv[:f0],
-      ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_16_theses", nil, "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "Massachusetts Institute of Technology. Department of Aeronautics and Astronautics", "Attribution 4.0 International (CC BY 4.0)", "Copyright retained by author(s)", "https://creativecommons.org/licenses/by/4.0/"]
+      ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_16_theses", "Yobot, Yo", "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "Massachusetts Institute of Technology. Department of Aeronautics and Astronautics", "Attribution 4.0 International (CC BY 4.0)", "Copyright retained by author(s)", "https://creativecommons.org/licenses/by/4.0/"]
     )
   end
 
@@ -92,7 +92,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
     meta = ArchivematicaMetadata.new(t)
     csv = meta.instance_variable_get(:@csv_hash)
     assert_equal(csv[:f0],
-    ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#hallo_theses", nil, "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "MIT. Non numeric code", "In Copyright - Educational Use Permitted", "Copyright MIT", "http://rightsstatements.org/page/InC-EDU/1.0/"]
+    ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#hallo_theses", "Yobot, Yo", "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "MIT. Non numeric code", "In Copyright - Educational Use Permitted", "Copyright MIT", "http://rightsstatements.org/page/InC-EDU/1.0/"]
     )
   end
 
@@ -102,7 +102,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
     meta = ArchivematicaMetadata.new(t)
     csv = meta.instance_variable_get(:@csv_hash)
     assert_equal(csv[:f0],
-    ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_16_theses", nil, "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "Massachusetts Institute of Technology. Department of Aeronautics and Astronautics", "In Copyright - Educational Use Permitted", "Copyright MIT", "http://rightsstatements.org/page/InC-EDU/1.0/"]
+    ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_16_theses", "Yobot, Yo", "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "Massachusetts Institute of Technology. Department of Aeronautics and Astronautics", "In Copyright - Educational Use Permitted", "Copyright MIT", "http://rightsstatements.org/page/InC-EDU/1.0/"]
     )
   end
 
@@ -114,7 +114,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
     meta = ArchivematicaMetadata.new(t)
     csv = meta.instance_variable_get(:@csv_hash)
     assert_equal(csv[:f0],
-    ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_21A_theses", nil, "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "MIT Anthropology Program", "In Copyright - Educational Use Permitted", "Copyright MIT", "http://rightsstatements.org/page/InC-EDU/1.0/"]
+    ["data/a_pdf.pdf", "Level 3", "MyString", "2017-09", t.files.first.blob.created_at, "Thesis", "MyText", "", "Thesis PDF", "2800ec8c99c60f5b15520beac9939a46", "MD5", "Massachusetts Institute of Technology", "AIC#Course_21A_theses", "Yobot, Yo", "0001", "Addy McAdvisor", "MFA", "Master of Fine Arts", "Bachelor", "MIT Anthropology Program", "In Copyright - Educational Use Permitted", "Copyright MIT", "http://rightsstatements.org/page/InC-EDU/1.0/"]
     )
   end
 
@@ -145,7 +145,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
 
       t = theses(:one)
       publishing_friendly_thesis(t)
-      assert_equal("1863ba7b410bd73ab5bc47a0baddb913", ArchivematicaMetadata.new(t).md5)
+      assert_equal("c38f8ac8cdeb08bc344b6d5b7002458a", ArchivematicaMetadata.new(t).md5)
 
     end
   end

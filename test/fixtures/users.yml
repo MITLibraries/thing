@@ -32,6 +32,7 @@ yo:
   surname: 'Yobot'
   display_name: 'Yo Yobot'
   orcid: '0001'
+  preferred_name: 'Yobot, Yo'
 
 admin:
   uid: 'admin_id'
@@ -60,6 +61,7 @@ basic:
   surname: 'Robot'
   display_name: 'Basic Robot'
   orcid: '0002'
+  preferred_name: 'Robot, Basic'
 
 second:
   uid: 'second'

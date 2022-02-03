@@ -184,6 +184,9 @@ class UserTest < ActiveSupport::TestCase
   test 'updates user from csv' do
     filepath = 'test/fixtures/files/registrar_data_user_updated.csv'
     row = CSV.readlines(File.open(filepath), headers: true).first
+    user = users(:yo)
+    user.preferred_name = nil
+    user.save
     user = User.create_or_update_from_csv(row)
     user.reload
     assert_equal 'New', user.given_name
@@ -239,6 +242,7 @@ class UserTest < ActiveSupport::TestCase
 
   test 'updates display_name on record update' do
     u = users(:yo)
+    u.preferred_name = nil
     assert_equal(u.display_name, 'Yo Yobot')
     u.given_name = 'John'
     u.surname = 'Coltrane'
