@@ -196,6 +196,10 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
+    marc (1.1.1)
+      rexml
+      scrub_rb (>= 1.0.1, < 2)
+      unf
     marcel (1.0.2)
     matrix (0.4.2)
     method_source (1.0.0)
@@ -307,6 +311,7 @@ GEM
       tilt
     scout_apm (5.1.1)
       parser
+    scrub_rb (1.0.1)
     selectize-rails (0.12.6)
     selenium-webdriver (4.1.0)
       childprocess (>= 0.5, < 5.0)
@@ -347,6 +352,9 @@ GEM
       concurrent-ruby (~> 1.0)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.8)
     unicode-display_width (2.1.0)
     warden (1.2.9)
       rack (>= 2.0.9)
@@ -385,6 +393,7 @@ DEPENDENCIES
   letter_opener
   listen
   lograge
+  marc
   minitest-reporters
   mitlibraries-theme
   omniauth-saml

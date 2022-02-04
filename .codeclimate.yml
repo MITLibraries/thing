@@ -1,4 +1,4 @@
 plugins:
   rubocop:
     enabled: true
-    channel: rubocop-1-18-3
+    channel: rubocop-1-23-0
