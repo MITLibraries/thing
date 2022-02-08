@@ -181,6 +181,39 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
                                       ' appropriate action.'
   end
 
+  test 'enqueues preservation submission prep job' do
+    assert_enqueued_with(job: PreservationSubmissionPrepJob) do
+      DspacePublicationResultsJob.perform_now
+    end
+  end
+
+  # There is only one valid thesis in our stubbed responses because one processed thesis has invalid checksums and
+  # the other no longer has files locally.
+  test 'only valid theses are ready for preservation' do
+    results = DspacePublicationResultsJob.perform_now
+    assert_equal 1, results[:preservation_ready].count
+  end
+
+  test 'preservation submission prep job is not enqueued if no theses are ready for preservation' do
+    Aws.config[:sqs] = {
+      stub_responses: {
+        receive_message: [
+          {
+            messages: [
+              # invalid result type
+              { message_id: 'id4', receipt_handle: 'handle4', body: '{"ResultType": "small victory", "ItemHandle": "http://example.com/handle/123123124", "lastModified": "Thu Sep 09 17: 56: 39 UTC 2021"}',
+                message_attributes: { 'PackageID' => { string_value: "etd_#{@invalid_status_thesis.id}", data_type: 'String' },
+                                      'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } }
+            ]
+          },
+          { messages: [] }
+        ]
+      }
+    }
+    DspacePublicationResultsJob.perform_now
+    assert_enqueued_jobs 0
+  end
+
   test 'do nothing if no messages in queue' do
     Aws.config[:sqs] = {
       stub_responses: {

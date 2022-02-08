@@ -8,7 +8,7 @@ class DspacePublicationResultsJob < ActiveJob::Base
   queue_as :default
 
   def perform
-    results = { total: 0, processed: 0, errors: [] }
+    results = { total: 0, processed: 0, errors: [], preservation_ready: [] }
     queue_url = ENV.fetch('SQS_OUTPUT_QUEUE_URL')
     Rails.logger.info("Reading messages from queue #{queue_url}...")
 
@@ -19,6 +19,7 @@ class DspacePublicationResultsJob < ActiveJob::Base
       results[:errors] << "Error reading from SQS queue: #{e}"
     end
 
+    PreservationSubmissionPrepJob.perform_later(results[:preservation_ready]) if results[:preservation_ready].any?
     ReportMailer.publication_results_email(results).deliver_now if results[:total].positive? ||
                                                                    results[:errors].any?
     results
@@ -65,6 +66,10 @@ class DspacePublicationResultsJob < ActiveJob::Base
 
     if actual_checksums.map { |c| c.in?(expected_checksums) }.all?(true)
       Rails.logger.info("All DSpace checksums for thesis #{thesis.id} are valid")
+
+      # since all other validations have been performed by this point, we can confirm the thesis is ready for
+      # preservation if its checksums are valid.
+      results[:preservation_ready] << thesis
     else
       update_status_and_log_bad_checksums(thesis, results, actual_checksums, expected_checksums)
     end
