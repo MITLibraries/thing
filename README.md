@@ -219,15 +219,15 @@ There are three types of data that get loaded into this system:
 
 These should only be loaded when the application database is initially set up (e.g. for new PR/development deploys or if the staging database needs to be destroyed and recreated). These seeds contain default values for certain tables such as copyrights, licenses, hold sources, and degree types.
 
-The above seed data is loaded automatically during PR builds from Github. During local development it can be loaded during first deployment by running `rake db:seed`.
+The above seed data is loaded automatically during PR builds from Github. During local development it can be loaded during first deployment by running `rails db:seed`.
 
-Additionally, degrees and departments can be manually seeded from a CSV file if desired by running `rake db:seed_degrees <csv_file_url>` and `rake db:seed_departments <csv_file_url>`, respectively. See Jira project documentation for link to a Google doc with the initial list of departments and degrees that were loaded into the production database (not maintained).
+Additionally, degrees and departments can be manually seeded from a CSV file if desired by running `rails db:seed_degrees <csv_file_url>` and `rails db:seed_departments <csv_file_url>`, respectively. See Jira project documentation for link to a Google doc with the initial list of departments and degrees that were loaded into the production database (not maintained).
 
 Seed data is not maintained to match the production database values, which can be changed by admin users as needed. The production database *shouldn't* ever need to be reseeded.
 
-### Test Data
+### QA/Stakeholder Testing Data
 
-We're working on a process to load test data in an automated fashion. Check back soon!
+We're working on a process to load test data for stakeholder testing/QA in an automated fashion. Note this is different from fixture data used for automated tests. Check back soon for more info!
 
 ### Registrar Data
 
@@ -235,7 +235,7 @@ Thesis and author data for each term is loaded from a CSV file downloaded from t
 
 Loading registrar data may also add new degrees and departments, which are then manually updated and maintained by stakeholders.
 
-Note: if registrar data needs to be loaded in a local, PR, or staging deployment it should be anonymized first to ensure no protected user data is added to a non-secure database. See Jira project documentation for a link to a Google doc with an initial set of anonymized registrar data, or ask stakeholders for such if needed.
+Note: if registrar data needs to be loaded in a local, PR, or staging deployment it should be anonymized first to ensure no protected user data is added to a non-secure database. The test fixtures (test/fixtures/files) include both full and small sample files containing anonymized registrar data that can be used for this purpose.
 
 ## Publishing workflow
 
