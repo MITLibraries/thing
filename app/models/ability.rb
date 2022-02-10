@@ -91,5 +91,8 @@ class Ability
     cannot 'destroy', :department
     cannot 'destroy', :hold_source
     cannot 'destroy', :license
+    cannot 'destroy', :submission_information_package
+    cannot 'update', :submission_information_package
+    cannot 'edit', :submission_information_package
   end
 end

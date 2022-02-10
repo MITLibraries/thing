@@ -34,6 +34,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     publication_status: Field::Select.with_options(
       collection: Thesis::PUBLICATION_STATUS_OPTIONS
     ),
+    submission_information_packages: Field::HasMany,
     author_note: Field::Text,
     processor_note: Field::Text,
     metadata_complete: Field::Boolean,
@@ -76,6 +77,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     holds
     status
     publication_status
+    submission_information_packages
     dspace_handle
     author_note
     processor_note

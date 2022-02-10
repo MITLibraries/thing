@@ -167,6 +167,18 @@ published:
   dspace_handle: '1234.5/6789'
   copyright: mit
 
+published_with_sip:
+  title: MyPublishedThesis
+  abstract: "A thesis that has been published to DSpace@MIT"
+  grad_date: 2021-06-01
+  departments: [one]
+  degrees: [one]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+  publication_status: 'Published'
+  dspace_handle: '1234.5/6789'
+  copyright: mit
 
 june_2018:
   title: MyStringJune
