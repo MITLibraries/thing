@@ -45,3 +45,8 @@ doctor_files_attachment:
   record: doctor (Thesis)
   purpose: thesis_pdf
   blob: doctor_files_blob
+
+sip_one_bag_attachment:
+  name: bag
+  record: sip_one (SubmissionInformationPackage)
+  blob: doctor_files_blob

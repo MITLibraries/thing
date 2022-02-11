@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resources :holds
     resources :hold_sources
     resources :licenses
+    resources :submission_information_packages
     resources :submitters
     resources :theses
     resources :transfers

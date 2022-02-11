@@ -1,8 +1,12 @@
-<% field.attachments.each do |attachment| %>
-  <ul>
-    <li>Link: <%= link_to(attachment.filename, url_for(attachment)) %></li>
-    <li>Purpose: <%= attachment.purpose %></li>
-    <li>Description: <%= attachment.description %></li>
-  </ul>
-  <hr />
+<% if field.attachments.kind_of?(ActiveStorage::Attached::One) %>
+  <%= link_to(field.attachments.filename, url_for(field.attachments)) %>
+<% else %>
+  <% field.attachments.each do |attachment| %>
+    <ul>
+      <li>Link: <%= link_to(attachment.filename, url_for(attachment)) %></li>
+      <li>Purpose: <%= attachment.purpose %></li>
+      <li>Description: <%= attachment.description %></li>
+    </ul>
+    <hr />
+  <% end %>
 <% end %>

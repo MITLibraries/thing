@@ -1,0 +1,49 @@
+sip_one:
+  preserved_at: Master of Fine Arts
+  preservation_status: 0
+  bag_declaration: |-
+    BagIt-Version: 1.0
+    Tag-File-Character-Encoding: UTF-8
+  bag_name: 123456_67890-thesis-1
+  manifest: |-
+    196128f55c62f4c246bed52b07d3ae1c data/registrar.csv
+    3ac6f5cac4e09a6c95ee4004ebe19c51 data/metadata.csv
+  metadata: >-
+    filename,Level_of_DPCommitment,dc.title,dc.date.issued,dc.date.submitted,dc.type,dc.description.abstract,dc.identifier.uri,BitstreamDescription,BitstreamChecksumValue,BitstreamChecksumAlgorithm,dc.publisher,dc.terms.isPartOf,dc.terms.isPartOf,dc.contributor.author,dc.contributor.author,dc.identifier.orcid,dc.identifier.orcid,dc.contributor.advisor,dc.contributor.advisor,dc.description.degree,thesis.degree.name,mit.thesis.degree,dc.description.degree,thesis.degree.name,mit.thesis.degree,dc.contributor.department,dc.contributor.department,dc.rights,dc.rights,dc.rights.uri
+
+    data/registrar.csv,Level 3,On the importance of titles,2022-02,2021-08-13
+    18:22:45 UTC,Thesis,"Lorem ipsum dolor sit amet, consectetur adipiscing
+    elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    Risus viverra adipiscing at in. Scelerisque viverra mauris in aliquam sem
+    fringilla. Tellus orci ac auctor augue. Dui sapien eget mi proin sed. Vel
+    fringilla est ullamcorper eget nulla. Tristique et egestas quis ipsum
+    suspendisse. Nibh ipsum consequat nisl vel pretium lectus quam id. Enim
+    neque volutpat ac tincidunt. Vestibulum rhoncus est pellentesque elit
+    ullamcorper dignissim cras tincidunt lobortis. Id semper risus in hendrerit
+    gravida rutrum quisque non tellus. At volutpat diam ut venenatis tellus in
+    metus vulputate. Urna neque viverra justo nec ultrices dui sapien eget mi.
+    Tellus pellentesque eu tincidunt tortor aliquam. Pharetra vel turpis nunc
+    eget lorem dolor sed viverra ipsum. Sit amet aliquam id diam maecenas
+    ultricies mi eget mauris. Vulputate enim nulla aliquet porttitor. Egestas
+    tellus rutrum tellus pellentesque. In hac habitasse platea dictumst
+    vestibulum rhoncus est. Volutpat sed cras ornare arcu dui. Dui nunc mattis
+    enim ut tellus elementum. Donec massa sapien faucibus et molestie ac. Metus
+    aliquam eleifend mi in nulla posuere sollicitudin aliquam ultrices. Sem et
+    tortor consequat id porta nibh. Blandit massa enim nec dui. Pellentesque
+    adipiscing commodo elit at imperdiet dui accumsan. Egestas erat imperdiet
+    sed euismod nisi porta lorem mollis aliquam. Condimentum id venenatis a
+    condimentum vitae sapien pellentesque habitant morbi. Molestie a iaculis at
+    erat pellentesque. Tellus elementum sagittis vitae et leo duis ut.
+    Suspendisse in est ante in nibh mauris cursus mattis molestie. Consectetur
+    purus ut faucibus pulvinar elementum integer. Quis lectus nulla at volutpat
+    diam ut venenatis tellus in. Volutpat commodo sed egestas
+    egestas.",123456/67890,Thesis
+    PDF,196128f55c62f4c246bed52b07d3ae1c,MD5,Massachusetts Institute of
+    Technology,AIC#BEH_theses,AIC#Course_16_theses,"Adams, Samuel
+    Alexandra","Lastname, Firstname","","","Superlast,
+    Superfirst","Anothersuperlast, Anothersuperfirst",Env.E.,Environmental
+    Engineer,Engineer,S.B.,Bachelor of Science in Music and Theater
+    Arts,Bachelor,asdf,Massachusetts Institute of Technology. Department of
+    Aeronautics and Astronautics,In Copyright - Educational Use
+    Permitted,Copyright MIT,http://rightsstatements.org/page/InC-EDU/1.0/
+  thesis: published_with_sip
