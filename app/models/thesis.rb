@@ -95,12 +95,18 @@ class Thesis < ApplicationRecord
   before_save :combine_graduation_date, :update_status
   after_find :split_graduation_date
 
-  # scope :name_asc, lambda {
-  #  includes(:user).order('users.surname, users.given_name')
-  # }
   scope :date_asc, -> { order('grad_date') }
   scope :in_review, -> { where('publication_status = ?', 'Publication review') }
   scope :without_files, -> { where.missing(:files_attachments) }
+  scope :without_sips, lambda {
+                         includes(:submission_information_packages)
+                           .where(submission_information_packages: { thesis_id: nil })
+                       }
+  scope :with_sips, lambda {
+                      includes(:submission_information_packages)
+                        .where.not(submission_information_packages: { thesis_id: nil })
+                    }
+  scope :published_without_sips, -> { where(publication_status: 'Published').without_sips }
   scope :valid_months_only, lambda {
     select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
   }
