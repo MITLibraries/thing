@@ -1127,4 +1127,47 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal 1, thesis.dspace_metadata.attachments.length
     assert thesis.valid?
   end
+
+  test 'without_sips scope accurately returns only theses without sips' do
+    orig_count = Thesis.without_sips.count
+    thesis = theses(:published)
+    assert_includes Thesis.without_sips, thesis
+
+    thesis.submission_information_packages.create
+    assert_equal orig_count-1, Thesis.without_sips.count
+    assert_not_includes Thesis.without_sips, thesis
+  end
+
+  test 'with_sips scope accurately returns only theses with sips' do
+    orig_count = Thesis.with_sips.count
+    thesis = theses(:published)
+    assert_not_includes Thesis.with_sips, thesis
+
+    thesis.submission_information_packages.create
+    assert_equal orig_count+1, Thesis.with_sips.count
+    assert_includes Thesis.with_sips, thesis
+  end
+
+  test 'published_without_sips scope accurately returns only published without sips' do
+    orig_count = Thesis.published_without_sips.count
+
+    # published status no sip
+    thesis = theses(:published)
+    assert_includes Thesis.published_without_sips, thesis
+
+    # published status has sip
+    thesis.submission_information_packages.create
+    assert_equal orig_count-1, Thesis.published_without_sips.count
+    assert_not_includes Thesis.published_without_sips, thesis
+
+    # no published status has sip
+    thesis.publication_status = 'Publication error'
+    thesis.save
+    assert_not_includes Thesis.published_without_sips, thesis
+
+    # no published status no sip
+    thesis.submission_information_packages.first.destroy
+    thesis.save
+    assert_not_includes Thesis.published_without_sips, thesis
+  end
 end
