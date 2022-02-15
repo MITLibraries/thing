@@ -8,6 +8,7 @@
   <li>Total theses in output queue: <%= @results[:total] %></li>
   <li>Total theses updated: <%= @results[:processed] %></li>
   <li>Total theses sent to preservation: <%= @results[:preservation_ready].count %>
+  <li>Total theses exported as MARC: <%= @results[:marc_exports].count %>
   <li>Errors found: <%= @results[:errors].count %></li>
 </ul>
 

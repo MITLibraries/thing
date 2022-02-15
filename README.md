@@ -120,12 +120,15 @@ Assigning roles and the `Admin` flag is done in the web UI.
 
 ## Sending Receipt Email in Production
 
-`SMTP_ADDRESS`
-`SMTP_PASSWORD`
-`SMTP_PORT`
-`SMTP_USER`
+`SMTP_ADDRESS`, `SMTP_PASSWORD`, `SMTP_PORT`, `SMTP_USER` - all required to send mail.
+
 `THESIS_ADMIN_EMAIL` - used for `from` field of receipt emails. Also the email to which reports are sent.
+
 `MAINTAINER_EMAIL` - used for `cc` field of report emails.
+
+`METADATA_ADMIN_EMAIL` - used for `to` field of MARC export report emails (see
+[Metadata export workflow](#metadata-export-workflow)).
+
 `DISABLE_ALL_EMAIL` - emails won't be sent unless this is set to `false`.
 
 In development, emails are written to a file in `tmp`. In testing, they are
@@ -280,6 +283,12 @@ You can manually send a published thesis to preservation by passing the thesis I
 ```shell
 heroku run rails preservation:preserve_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
 ```
+
+## Metadata export workflow
+
+The publishing workflow will automatically trigger a MARC export of all the published theses  in the results queue. The
+generated marcxml file is zipped, attached to an email, and sent to the cataloging team (see [Sending Receipt Email in
+Production](#sending-receipt-email-in-production)).
 
 ## Validation of thesis record
 
