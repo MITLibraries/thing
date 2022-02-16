@@ -38,7 +38,7 @@ class SubmissionInformationPackageTest < ActiveSupport::TestCase
     thesis = theses(:published)
     checksums = []
     checksums << "#{base64_to_hex(thesis.files.first.checksum)} data/a_pdf.pdf"
-    checksums << "#{ArchivematicaMetadata.new(thesis).md5} data/metadata.csv"
+    checksums << "#{ArchivematicaMetadata.new(thesis).md5} data/metadata/metadata.csv"
     sip = thesis.submission_information_packages.create
     assert_equal checksums.join("\n"), sip.manifest
   end
@@ -102,7 +102,7 @@ class SubmissionInformationPackageTest < ActiveSupport::TestCase
     t = theses(:published)
     sip = t.submission_information_packages.create
     expected = ArchivematicaMetadata.new(t).to_csv
-    assert_equal expected, sip.data['data/metadata.csv']
+    assert_equal expected, sip.data['data/metadata/metadata.csv']
   end
 
   test 'a SIP is valid if its thesis is baggable' do
