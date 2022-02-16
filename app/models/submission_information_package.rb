@@ -35,7 +35,7 @@ class SubmissionInformationPackage < ApplicationRecord
     file_locations = {}
     thesis.files.map { |f| file_locations["data/#{f.filename}"] = f.blob }
 
-    file_locations['data/metadata.csv'] = metadata
+    file_locations['data/metadata/metadata.csv'] = metadata
 
     file_locations
   end
@@ -55,7 +55,7 @@ class SubmissionInformationPackage < ApplicationRecord
     new_manifest = thesis.files.map { |f| "#{base64_to_hex(f.checksum)} data/#{f.filename}" }
 
     # metadata file
-    new_manifest << "#{ArchivematicaMetadata.new(thesis).md5} data/metadata.csv"
+    new_manifest << "#{ArchivematicaMetadata.new(thesis).md5} data/metadata/metadata.csv"
 
     self.manifest = new_manifest.join("\n")
   end
