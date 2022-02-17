@@ -32,7 +32,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
     meta = ArchivematicaMetadata.new(t)
     csv = meta.instance_variable_get(:@csv_hash)
     assert_equal(csv[:headers],
-      ["filename", "Level_of_DPCommitment", "dc.title", "dc.date.issued", "dc.date.submitted", "dc.type", "dc.description.abstract", "dc.identifier.uri", "BitstreamDescription", "BitstreamChecksumValue", "BitstreamChecksumAlgorithm", "dc.publisher", "dc.terms.isPartOf", "dc.contributor.author", "dc.identifier.orcid", "dc.contributor.advisor", "dc.description.degree", "thesis.degree.name", "mit.thesis.degree", "dc.contributor.department", "dc.rights", "dc.rights", "dc.rights.uri"]
+      ["filename", "Level_of_DPCommitment", "dc.title", "dc.date.issued", "dc.date.submitted", "dc.type", "dc.description.abstract", "dc.identifier.uri", "BitstreamDescription", "BitstreamChecksumValue", "BitstreamChecksumAlgorithm", "dc.publisher", "dcterms.isPartOf", "dc.contributor.author", "dc.identifier.orcid", "dc.contributor.advisor", "dc.description.degree", "thesis.degree.name", "mit.thesis.degree", "dc.contributor.department", "dc.rights", "dc.rights", "dc.rights.uri"]
     )
   end
 
@@ -145,7 +145,7 @@ class ArchivematicaMetadatataTest < ActiveSupport::TestCase
 
       t = theses(:one)
       publishing_friendly_thesis(t)
-      assert_equal("c38f8ac8cdeb08bc344b6d5b7002458a", ArchivematicaMetadata.new(t).md5)
+      assert_equal("b4f000886b890d2628f3d7500cecdfd9", ArchivematicaMetadata.new(t).md5)
 
     end
   end

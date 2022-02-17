@@ -215,7 +215,7 @@ class ArchivematicaMetadata
   # repeatable, take care to increment all file rows but only include details in thesis_pdf
   def dc_terms_is_part_of
     @thesis.departments.each do |dept|
-      @csv_hash[:headers] << 'dc.terms.isPartOf'
+      @csv_hash[:headers] << 'dcterms.isPartOf'
 
       @thesis.files.each_with_index do |file, i|
         @csv_hash["f#{i}".to_sym] << thesis_pdf_checker(file,
