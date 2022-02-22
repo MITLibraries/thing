@@ -1,3 +1,5 @@
+require 'zip'
+
 class MarcBatch
   def initialize(theses, marc_filename, zip_filename)
     @theses = theses

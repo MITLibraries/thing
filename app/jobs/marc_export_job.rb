@@ -8,7 +8,7 @@ class MarcExportJob < ActiveJob::Base
       zip_file = MarcBatch.new(theses, marc_filename, zip_filename).build
       BatchMailer.marc_batch_email(zip_filename, zip_file, theses).deliver_now
     ensure
-      zip_file.close
+      zip_file&.close
     end
   end
 

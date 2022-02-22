@@ -404,6 +404,7 @@ DEPENDENCIES
   rails (~> 6.1.0)
   rubocop
   rubocop-rails
+  rubyzip
   sass-rails
   scout_apm
   selenium-webdriver
