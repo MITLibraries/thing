@@ -194,7 +194,20 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
     assert_equal 1, results[:preservation_ready].count
   end
 
-  test 'preservation submission prep job is not enqueued if no theses are ready for preservation' do
+  test 'enqueues MARC export job' do
+    assert_enqueued_with(job: MarcExportJob) do
+      DspacePublicationResultsJob.perform_now
+    end
+  end
+
+  # The requirements are less strict than for preservation because any published thesis should be exported as MARC, even
+  # if it's not valid by preservation standards.
+  test 'only published theses are exported as MARC' do
+    results = DspacePublicationResultsJob.perform_now
+    assert_equal 3, results[:marc_exports].count
+  end
+
+  test 'preservation and MARC export jobs are not enqueued if no theses are ready for preservation or export' do
     Aws.config[:sqs] = {
       stub_responses: {
         receive_message: [

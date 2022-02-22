@@ -1,0 +1,6 @@
+<p>Hello,</p>
+
+<p>Attached is a metadata export of <%= @theses.count %> theses generated on
+<%= Date.current.strftime('%A, %B %d, %Y') %> at <%= Time.now.strftime('%r %Z') %>.
+
+<p>Please contact the ETD team at <%= ENV['THESIS_ADMIN_EMAIL'] %> with any questions.</p>

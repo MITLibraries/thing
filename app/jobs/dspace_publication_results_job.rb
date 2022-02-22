@@ -8,7 +8,7 @@ class DspacePublicationResultsJob < ActiveJob::Base
   queue_as :default
 
   def perform
-    results = { total: 0, processed: 0, errors: [], preservation_ready: [] }
+    results = { total: 0, processed: 0, errors: [], preservation_ready: [], marc_exports: [] }
     queue_url = ENV.fetch('SQS_OUTPUT_QUEUE_URL')
     Rails.logger.info("Reading messages from queue #{queue_url}...")
 
@@ -20,6 +20,7 @@ class DspacePublicationResultsJob < ActiveJob::Base
     end
 
     PreservationSubmissionPrepJob.perform_later(results[:preservation_ready]) if results[:preservation_ready].any?
+    MarcExportJob.perform_later(results[:marc_exports]) if results[:marc_exports].any?
     ReportMailer.publication_results_email(results).deliver_now if results[:total].positive? ||
                                                                    results[:errors].any?
     results
@@ -36,6 +37,7 @@ class DspacePublicationResultsJob < ActiveJob::Base
       Rails.logger.info("Thesis #{thesis.id} updated to status #{thesis.publication_status} with handle"\
                         " #{thesis.dspace_handle}")
       results[:processed] += 1
+      results[:marc_exports] << thesis
     else
       thesis.publication_status = 'Publication error'
       thesis.save

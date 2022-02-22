@@ -11,6 +11,7 @@ Rails.application.configure do
   ENV['SP_PRIVATE_KEY'] = ''
   ENV['SP_CERTIFICATE'] = ''
   ENV['THESIS_ADMIN_EMAIL'] = 'test@example.com'
+  ENV['METADATA_ADMIN_EMAIL'] = 'test-metadata@example.com'
   ENV['SQS_INPUT_QUEUE_URL'] = 'http://localhost:5000/123456789012/etd-test-input'
   ENV['SQS_OUTPUT_QUEUE_NAME'] = 'etd-test-output'
   ENV['SQS_OUTPUT_QUEUE_URL'] = 'http://localhost:5000/123456789012/etd-test-output'
