@@ -231,6 +231,19 @@ class Report
     }
   end
 
+  def data_authors_not_graduated
+    row_data = {}
+    terms = Thesis.all.pluck(:grad_date).uniq.sort
+    terms.each do |term|
+      row_data[term] = Thesis.includes(users: :authors).with_files.where('grad_date = ?', term)
+                             .map(&:authors_graduated?).count(false)
+    end
+    {
+      label: 'Authors not graduated',
+      data: pad_terms(row_data)
+    }
+  end
+
   def data_thesis_records
     {
       label: 'Thesis records',
@@ -264,6 +277,7 @@ class Report
     output['summary'].push data_files_attached_to_theses
     output['summary'].push data_issues
     output['summary'].push data_student_contributions
+    output['summary'].push data_authors_not_graduated
     output['summary'].push data_multiple_authors
     output['summary'].push data_multiple_degrees
     output['summary'].push data_multiple_departments
@@ -333,6 +347,16 @@ class Report
       next unless student_initiated_record?(record)
 
       result.push([record, record.versions.first.whodunnit])
+    end
+    result
+  end
+
+  def list_authors_not_graduated(collection)
+    result = []
+    collection.order(:grad_date).uniq.each do |record|
+      next if record.authors_graduated?
+
+      result.push(record)
     end
     result
   end

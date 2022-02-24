@@ -574,20 +574,14 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'basic users cannot see holds by source report' do
     sign_in users(:basic)
     get report_holds_by_source_path
-    assert_redirected_to '/'
-    follow_redirect!
-    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
   test 'submitters cannot see holds by source report' do
     sign_in users(:transfer_submitter)
     get report_holds_by_source_path
-    assert_redirected_to '/'
-    follow_redirect!
-    assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
-  test 'processors can see holds by sourcereport' do
+  test 'processors can see holds by source report' do
     sign_in users(:processor)
     get report_holds_by_source_path
     assert_response :success
@@ -605,7 +599,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  # ~~~~~~~~~~~~~~~ Holds by source report ~~~~~~~~~~~~~~~~
+  # ~~~~~~~~~~~~~~~ Holds by source report features ~~~~~~~~~~~~~~~~
   test 'holds by source report shows holds with any source by default' do
     hold_count = Hold.all.count
 
@@ -667,5 +661,106 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Now request the queue with both filters applied, and see the correct record count
     get report_holds_by_source_path, params: { graduation: '2017-09-01', hold_source: 'technology licensing office' }
     assert_select 'table tbody tr', count: source_count
+  end
+
+  # ~~~~~~~~~~~~~~~~~ Authors not graduated report ~~~~~~~~~~~~~~~~~~~~~~
+  test 'authors not graduated report exists' do
+    sign_in users(:admin)
+    get report_authors_not_graduated_path
+    assert_response :success
+  end
+
+  test 'anonymous users are prompted to log in by authors not graduated report' do
+    # Note that nobody is signed in.
+    get report_authors_not_graduated_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see authors not graduated report' do
+    sign_in users(:basic)
+    get report_authors_not_graduated_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see authors not graduated report' do
+    sign_in users(:transfer_submitter)
+    get report_authors_not_graduated_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see authors not graduated report' do
+    sign_in users(:processor)
+    get report_authors_not_graduated_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see authors not graduated report' do
+    sign_in users(:thesis_admin)
+    get report_authors_not_graduated_path
+    assert_response :success
+  end
+
+  test 'admins can see authors not graduated report' do
+    sign_in users(:admin)
+    get report_authors_not_graduated_path
+    assert_response :success
+  end
+
+  # ~~~~~~~~~~~~~~~~~ Authors not graduated features ~~~~~~~~~~~~~~~~~~~~
+  test 'empty authors not graduated report shows useful text' do
+    sign_in users(:processor)
+
+    # Picking an outlandish grad date to ensure we won't have theses
+    get report_authors_not_graduated_path, params: { graduation: '1100-09-01' }
+    assert_select 'table tbody td', text: 'All thesis authors for the given term have confirmed graduation.', count: 1
+  end
+
+  test 'theses with no files do not appear on authors-not-graduated report' do
+    thesis = theses(:two)
+    assert_not thesis.authors_graduated?
+    assert_not thesis.files?
+
+    sign_in users(:processor)
+    get report_authors_not_graduated_path
+    assert_select 'table tbody td', text: thesis.title, count: 0
+  end
+
+  test 'theses with files and at least one unconfirmed graduation appear on authors not graduated report' do
+    transfer = transfers(:valid)
+    thesis = theses(:two)
+    attach_files(transfer, thesis)
+    assert_not thesis.authors_graduated?
+    assert thesis.files?
+
+    sign_in users(:processor)
+    get report_authors_not_graduated_path
+    assert_select 'table tbody td', text: thesis.title, count: 1
+  end
+
+  test 'thesis with all graduated authors do not appear on authors not graduated report' do
+    thesis = theses(:published)
+    assert thesis.authors_graduated?
+    assert thesis.files?
+
+    sign_in users(:processor)
+    get report_authors_not_graduated_path
+    assert_select 'table tbody td', text: thesis.title, count: 0
+  end
+
+  test 'authors not graduated report can be filtered by term' do
+    transfer = transfers(:valid)
+    thesis = theses(:two)
+    attach_files(transfer, thesis)
+
+    sign_in users(:processor)
+    get report_authors_not_graduated_path
+    assert_select 'table tbody tr', count: 1
+
+    get report_authors_not_graduated_path, params: { graduation: '2018-09-01' }
+    assert_select 'table tbody td', text: 'All thesis authors for the given term have confirmed graduation.', count: 1
   end
 end

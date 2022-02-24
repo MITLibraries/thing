@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   end
 
   get 'report', to: 'report#index', as: 'report_index'
+  get 'report/authors_not_graduated', to: 'report#authors_not_graduated', as: 'report_authors_not_graduated'
   get 'report/empty_theses', to: 'report#empty_theses', as: 'report_empty_theses'
   get 'report/expired_holds', to: 'report#expired_holds', as: 'report_expired_holds'
   get 'report/files', to: 'report#files', as: 'report_files'
