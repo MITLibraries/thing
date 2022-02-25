@@ -290,8 +290,14 @@ class Report
     result
   end
 
+  # This assumes a couple of things: first, that all items in a collection should be instances of the same model, and
+  # second, that the model of any non-thesis collections belongs_to the Thesis model.
   def extract_terms(collection)
-    collection.pluck(:grad_date).uniq.sort
+    if collection.first.is_a? Thesis
+      collection.pluck(:grad_date).uniq.sort
+    else
+      collection.includes(:thesis).pluck(:grad_date).uniq.sort
+    end
   end
 
   def record_empty_theses(collection)

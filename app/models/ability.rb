@@ -59,6 +59,7 @@ class Ability
     can :term, Report
     can :empty_theses, Report
     can :expired_holds, Report
+    can :holds_by_source, Report
     can :student_submitted_theses, Report
 
     can %i[read update], Thesis

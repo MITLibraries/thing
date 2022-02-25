@@ -342,7 +342,8 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'default files report is empty' do
     sign_in users(:processor)
     get report_files_path
-    assert_select 'table tbody td', text: 'There are no files without an assigned purpose within the selected term.', count: 1
+    assert_select 'table tbody td', text: 'There are no files without an assigned purpose within the selected term.',
+                                    count: 1
   end
 
   test 'files have no default purpose, and appear on the files report' do
@@ -362,7 +363,8 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     get report_files_path
     assert_select 'table tbody td', text: 'a_pdf.pdf', count: 2
     get report_files_path, params: { graduation: '2018-09-01' }
-    assert_select 'table tbody td', text: 'There are no files without an assigned purpose within the selected term.', count: 1
+    assert_select 'table tbody td', text: 'There are no files without an assigned purpose within the selected term.',
+                                    count: 1
   end
 
   test 'files disappear from files report when a purpose is set' do
@@ -560,5 +562,110 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
 
     get report_student_submitted_theses_path, params: { graduation: '2018-09-01' }
     assert_select 'table tbody td', text: 'There are no student-submitted theses for the given term.', count: 1
+  end
+
+  # ~~~~~~~~~~~~~~~ Holds by source report ~~~~~~~~~~~~~~~~
+  test 'anonymous users cannot see holds by source report' do
+    # Note that nobody is signed in.
+    get report_holds_by_source_path
+    assert_response :redirect
+  end
+
+  test 'basic users cannot see holds by source report' do
+    sign_in users(:basic)
+    get report_holds_by_source_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot see holds by source report' do
+    sign_in users(:transfer_submitter)
+    get report_holds_by_source_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can see holds by sourcereport' do
+    sign_in users(:processor)
+    get report_holds_by_source_path
+    assert_response :success
+  end
+
+  test 'thesis_admins can see holds by source report' do
+    sign_in users(:thesis_admin)
+    get report_holds_by_source_path
+    assert_response :success
+  end
+
+  test 'admins can see holds by source report' do
+    sign_in users(:admin)
+    get report_holds_by_source_path
+    assert_response :success
+  end
+
+  # ~~~~~~~~~~~~~~~ Holds by source report ~~~~~~~~~~~~~~~~
+  test 'holds by source report shows holds with any source by default' do
+    hold_count = Hold.all.count
+
+    sign_in users(:processor)
+    get report_holds_by_source_path
+    assert_select 'table tbody tr', count: hold_count
+  end
+
+  test 'holds by source report allows filtering by term' do
+    hold_count = Hold.all.count
+    term_count = Hold.joins(:thesis).where('theses.grad_date = ?', '2017-09-01').count
+    assert_not_equal hold_count, term_count
+
+    # Add 1 to the select counts for the 'All terms'/'All sources' options
+    term_select_count = Report.new.extract_terms(Hold.all).count + 1
+
+    sign_in users(:processor)
+    get report_holds_by_source_path
+    assert_select 'table tbody tr', count: hold_count
+    assert_select 'select[name="graduation"] option', count: term_select_count
+
+    # Now request the queue with a filter applied, and see the correct record count
+    get report_holds_by_source_path, params: { graduation: '2017-09-01' }
+    assert_select 'table tbody tr', count: term_count
+  end
+
+  test 'holds by source report allows filtering by hold source' do
+    hold_count = Hold.all.count
+    source_count = Hold.where(hold_source_id: "#{hold_sources(:tlo).id}").count
+
+    # Add 1 to the select counts for the 'All terms'/'All sources' options
+    source_select_count = HoldSource.pluck(:source).uniq.count + 1
+
+    sign_in users(:processor)
+    get report_holds_by_source_path
+    assert_select 'table tbody tr', count: hold_count
+    assert_select 'select[name="hold_source"] option', count: source_select_count
+
+    # Now request the queue with a filter applied, and the correct record count
+    get report_holds_by_source_path, params: { hold_source: 'technology licensing office' }
+    assert_select 'table tbody tr', count: source_count
+  end
+
+  test 'holds by source report allows filtering by both term and publication status' do
+    hold_count = Hold.all.count
+    source_count = Hold.joins(:thesis).where('theses.grad_date = ?', '2017-09-01')
+                                      .where(hold_source_id: "#{hold_sources(:tlo).id}").count
+
+    # Add 1 to the select counts for the 'All terms'/'All sources' options
+    term_select_count = Report.new.extract_terms(Hold.all).count + 1
+    source_select_count = HoldSource.pluck(:source).uniq.count + 1
+
+    sign_in users(:processor)
+    get report_holds_by_source_path
+    assert_select 'table tbody tr', count: hold_count
+    assert_select 'select[name="graduation"] option', count: term_select_count
+    assert_select 'select[name="hold_source"] option', count: source_select_count
+
+    # Now request the queue with both filters applied, and see the correct record count
+    get report_holds_by_source_path, params: { graduation: '2017-09-01', hold_source: 'technology licensing office' }
+    assert_select 'table tbody tr', count: source_count
   end
 end
