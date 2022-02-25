@@ -12,6 +12,15 @@
       <%= render 'shared/whodunnit_accuracy_statement' %>
     <% end %>
 
+    <h4>Downloadable CSV of Published Theses for this Term</h4>
+    <% if @table['status']['data']['Published'] > 0 %>
+      Download CSV
+    <% else %>
+      No Published theses so no metadata CSV is available.
+    <% end %>
+
+    <hr>
+
     <%= render(partial: 'card', collection: @data) %>
 
     <hr>

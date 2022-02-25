@@ -304,6 +304,25 @@ class Thesis < ApplicationRecord
     self.graduation_month = grad_date.strftime('%B')
   end
 
+  def date_primary_thesis_file_received
+    return unless files.present? && one_thesis_pdf?
+
+    files.map do |file|
+      next unless file.purpose == "thesis_pdf"
+      return "#{file.created_at.strftime('%Y-%m-%d')}"
+    end
+  end
+
+  # In the unlikely scenario that the the status was changed to 'Published'
+  # multiple times, this assumes we want the most recent date Published.
+  def date_published
+    published_versions = versions.select do |version|
+      version.changeset['publication_status'][1] == 'Published' if version.changeset['publication_status'].present?
+    end
+    dates_published = published_versions.map { |version| version.changeset['updated_at'][1] }
+    dates_published.max.strftime('%Y-%m-%d')
+  end
+
   # Given a row of CSV data from Registrar import plus existing
   # instances of user, degree, and department, and a THing formatted
   # graduation date, find a thesis by Kerberos ID of author from CSV data and

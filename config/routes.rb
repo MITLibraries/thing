@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   get 'report/proquest_files', to: 'report#proquest_files', as: 'report_proquest_files'
   get 'report/student_submitted_theses', to: 'report#student_submitted_theses', as: 'report_student_submitted_theses'
   get 'report/term', to: 'report#term', as: 'report_term'
+  get 'report/term_csv', to: 'report#term_csv', as: 'report_term_csv'
   get 'thesis/confirm', to: 'thesis#confirm', as: 'thesis_confirm'
   get 'thesis/deduplicate', to: 'thesis#deduplicate', as: 'thesis_deduplicate'
   get 'thesis/publication_statuses', to: 'thesis#publication_statuses', as: 'thesis_publication_statuses'

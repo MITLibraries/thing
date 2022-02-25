@@ -6,6 +6,8 @@ class ReportController < ApplicationController
 
   include ThesisHelper
 
+  require 'CSV'
+
   def empty_theses
     term = params[:graduation] ? params[:graduation].to_s : 'all'
     @this_term = 'all terms'
@@ -65,6 +67,36 @@ class ReportController < ApplicationController
     subset = filter_theses_by_term theses
     @data = report.term_data subset, term
     @table = report.term_tables subset
+  end
+
+  def term_csv
+    term = params[:graduation]
+    @theses = Thesis.where(publication_status: 'Published').where('grad_date = ?', params[:graduation])
+    @csv_hash = {
+      headers: ['authors', 'title', 'departments', 'degrees', 'tranfer_date', 'published_date', 'handle']
+    }
+    @theses.each do |thesis|
+      row = []
+      row << thesis.users.map{|user| user.name.tr(',', ' ')}.join(';')
+      row << thesis.title
+      row << thesis.departments.map{|d| d.name_dspace.tr(',', ' ')}.join(';')
+      row << thesis.degrees.map{|d| d.name_dspace.tr(',', ' ')}.join(';')
+      row << thesis.date_primary_thesis_file_received
+      row << thesis.date_published
+      row << thesis.dspace_handle
+      @csv_hash["thesis_#{thesis.id}".to_sym] = row
+    end
+
+    respond_to do |format|
+      format.csv do
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = "attachment; filename=theses.csv"
+        render(
+          formats: [:csv],
+          template: 'thesis/theses_by_term',
+        )
+      end
+    end
   end
 
   private
