@@ -53,7 +53,7 @@ class Marc
   def data245
     @record.append(MARC::DataField.new(
                      '245', '0', '0',
-                     ['a', @thesis.title]
+                     ['a', @thesis.title&.squish]
                    ))
   end
 
@@ -128,11 +128,33 @@ class Marc
                    ))
   end
 
+  # This MARC field is limited in length to 1879 characters and spaces but is repeatable. This splits our abstract
+  # to safely fit within these parameters.
+  # First we try to split on line breaks, but if the line breaks are also too long we do a rather blunt cut.
+  # It would be better to split on words or sentences.
   def data520
-    @record.append(MARC::DataField.new(
-                     '520', ' ', ' ',
-                     ['a', @thesis.abstract]
-                   ))
+    max_length = 1879
+    @thesis.abstract&.each_line do |line|
+      # skip any blank lines. Mostly if multiple linebreaks were added to the text.
+      next if line.strip.empty?
+
+      # if the line length is valid for 520, add it
+      if line.length < max_length
+        @record.append(MARC::DataField.new(
+                    '520', '3', ' ',
+                    ['a', line.encode(options: :xml).strip]
+                  ))
+      # split lines that remain too long into valid size strings
+      else
+        part = line.chars.to_a.each_slice(max_length).map(&:join)
+        part.each do |part_line|
+          @record.append(MARC::DataField.new(
+                    '520', '3', ' ',
+                    ['a', part_line.encode(options: :xml).strip]
+                  ))
+        end
+      end
+    end
   end
 
   def data655
