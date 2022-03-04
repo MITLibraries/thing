@@ -1,0 +1,32 @@
+<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">Holds by source for <%= @this_term %></h3>
+
+    <%= render 'holds_by_source_filter' %>
+
+    <table class="table" summary="This table presents a list of holds filtered by source."
+     title="Student submitted metadata">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Author(s)</th>
+          <th scope="col">Grad date</th>
+          <th scope="col">Hold source</th>
+          <th scope="col">Status</th>
+          <th scope="col">Date requested</th>
+          <th scope="col">Start date</th>
+          <th scope="col">End date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'hold', collection: @list) || render('hold_empty') %>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>

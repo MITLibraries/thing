@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   get 'report/empty_theses', to: 'report#empty_theses', as: 'report_empty_theses'
   get 'report/expired_holds', to: 'report#expired_holds', as: 'report_expired_holds'
   get 'report/files', to: 'report#files', as: 'report_files'
+  get 'report/holds_by_source', to: 'report#holds_by_source', as: 'report_holds_by_source'
   get 'report/proquest_files', to: 'report#proquest_files', as: 'report_proquest_files'
   get 'report/student_submitted_theses', to: 'report#student_submitted_theses', as: 'report_student_submitted_theses'
   get 'report/term', to: 'report#term', as: 'report_term'

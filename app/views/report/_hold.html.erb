@@ -1,0 +1,14 @@
+<tr>
+  <td><%= link_to title_helper(hold.thesis), edit_admin_thesis_path(hold.thesis.id) %></td>
+  <td>
+    <% hold.thesis.authors.each do |author| %>
+      <%= author.user.display_name %><br>
+    <% end %>
+  </td>
+  <td><%= hold.thesis.graduation_month[...3] %> <%= hold.thesis.graduation_year %></td>
+  <td><%= hold.hold_source.source %></td>
+  <td><%= hold.status %></td>
+  <td><%= hold.date_requested %></td>
+  <td><%= hold.date_start %></td>
+  <td><%= hold.date_end %></td>
+</tr>
