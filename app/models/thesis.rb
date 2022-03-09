@@ -98,6 +98,7 @@ class Thesis < ApplicationRecord
   scope :date_asc, -> { order('grad_date') }
   scope :in_review, -> { where('publication_status = ?', 'Publication review') }
   scope :without_files, -> { where.missing(:files_attachments) }
+  scope :with_files, -> { joins(:files_attachments) }
   scope :without_sips, lambda {
                          includes(:submission_information_packages)
                            .where(submission_information_packages: { thesis_id: nil })

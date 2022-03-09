@@ -1,0 +1,14 @@
+<tr>
+  <td><%= link_to title_helper(not_graduated), edit_admin_thesis_path(not_graduated.id) %></td>
+  <td>
+    <% not_graduated.authors.each do |author| %>
+      <%= link_to author.user.display_name, edit_admin_author_path(author.id) %><br>
+    <% end %>
+  </td>
+  <td>
+    <% not_graduated.departments.each do |dept| %>
+      <%= dept.name_dw %><br>
+    <% end %>
+  </td>
+  <td><%= not_graduated.graduation_month[...3] %> <%= not_graduated.graduation_year%></td>
+</tr>

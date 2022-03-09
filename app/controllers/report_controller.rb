@@ -7,6 +7,17 @@ class ReportController < ApplicationController
   include ThesisHelper
   include HoldHelper
 
+  def authors_not_graduated
+    term = params[:graduation] ? params[:graduation].to_s : 'all'
+    @this_term = 'all terms'
+    @this_term = term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') if term != 'all'
+    report = Report.new
+    theses = Thesis.with_files.includes(authors: :user).includes(:departments)
+    @terms = report.extract_terms theses
+    subset = filter_theses_by_term theses
+    @list = report.list_authors_not_graduated subset
+  end
+
   def empty_theses
     term = params[:graduation] ? params[:graduation].to_s : 'all'
     @this_term = 'all terms'

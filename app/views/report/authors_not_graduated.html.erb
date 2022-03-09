@@ -1,0 +1,34 @@
+<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">Authors without confirmed graduation for <%= @this_term %></h3>
+
+    <div class="alert alert-banner">
+      <p><i class="fa fa-info-circle fa-lg"></i> Note: This report only includes theses with files attached.</p>
+  </div>
+
+
+    <%= render 'shared/defined_terms_filter' %>
+
+    <table class="table" summary="This table presents a list of theses with metadata submitted by students from whom we have not confirmed graduation."
+     title="Not graduated metadata">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Author(s)</th>
+          <th scope="col">Department(s)</th>
+          <th scope="col">Degree date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'not_graduated', collection: @list) || render('not_graduated_empty') %>
+      </tbody>
+    </table>
+
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>
