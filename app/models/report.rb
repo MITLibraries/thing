@@ -235,8 +235,9 @@ class Report
     row_data = {}
     terms = Thesis.all.pluck(:grad_date).uniq.sort
     terms.each do |term|
-      row_data[term] = Thesis.includes(users: :authors).with_files.where('grad_date = ?', term)
-                             .map(&:authors_graduated?).count(false)
+      row_data[term] = Thesis.with_files.includes(authors: :user).includes(:departments).select do |t|
+        !t.authors_graduated?
+      end.uniq.count
     end
     {
       label: 'Authors not graduated',
