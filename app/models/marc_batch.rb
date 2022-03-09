@@ -9,7 +9,7 @@ class MarcBatch
 
   def build
     marc_file = Tempfile.new(@marc_filename)
-    zip_file = Tempfile.new(@zip_filename, binmode: true)
+    zip_file = Tempfile.new(@zip_filename)
     create_marc_file(marc_file)
     zip_marc_file(zip_file, marc_file)
     zip_file
@@ -18,7 +18,7 @@ class MarcBatch
   private
 
   def create_marc_file(marc_file)
-    writer = MARC::XMLWriter.new(marc_file.path)
+    writer = MARC::Writer.new(marc_file.path)
     @theses.each do |thesis|
       record = Marc.new(thesis)
       writer.write(record.record)

@@ -2,7 +2,7 @@ class MarcExportJob < ActiveJob::Base
   queue_as :default
 
   def perform(theses)
-    marc_filename = "#{filename}.xml"
+    marc_filename = "#{filename}.mrc"
     zip_filename = "#{filename}.zip"
     begin
       zip_file = MarcBatch.new(theses, marc_filename, zip_filename).build

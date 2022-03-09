@@ -266,3 +266,16 @@ doctor:
   files_complete: true
   metadata_complete: true
   issues_found: false
+
+long_abstracts_are_fun:
+  title: Fock
+  abstract: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat. Morbi tincidunt augue interdum velit euismod in. Odio ut enim blandit volutpat maecenas volutpat blandit. Cras tincidunt lobortis feugiat vivamus. Pellentesque diam volutpat commodo sed egestas egestas. Dui sapien eget mi proin sed libero. Sollicitudin tempor id eu nisl nunc. Quam nulla porttitor massa id. Eget nulla facilisi etiam dignissim. Non diam phasellus vestibulum lorem sed risus. Eleifend quam adipiscing vitae proin sagittis nisl. Tincidunt lobortis feugiat vivamus at augue. Fermentum et sollicitudin ac orci. Maecenas sed enim ut sem viverra aliquet eget sit. Nunc pulvinar sapien et ligula ullamcorper malesuada proin libero. Integer quis auctor elit sed. Posuere ac ut consequat semper viverra nam libero justo. Dui sapien eget mi proin sed libero enim sed. Sed euismod nisi porta lorem mollis aliquam ut. Orci dapibus ultrices in iaculis nunc sed augue. Congue quisque egestas diam in arcu. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt. Tempor orci dapibus ultrices in iaculis nunc sed augue lacus. Quam elementum pulvinar etiam non Mauris ultrices eros in cursus turpis massa tincidunt. Senectus et netus et malesuada fames ac turpis egestas maecenas. Morbi non arcu risus quis. Diam quis enim lobortis scelerisque fermentum dui faucibus. Vel elit scelerisque mauris pellentesque pulvinar. Laoreet id donec ultrices tincidunt arcu non. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Aliquet lectus proin nibh nisl condimentum id venenatis a condimentum. Id porta nibh venenatis cras sed felis eget velit aliquet. Dictum varius duis at consectetur lorem donec massa sapien. Mauris rhoncus aenean vel elit scelerisque mauris pellentesque pulvinar pellentesque. Habitant morbi tristique senectus et netus et malesuada fames. Risus commodo viverra maecenas accumsan lacus vel. Sed arcu non odio euismod lacinia at quis risus. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Nulla malesuada pellentesque elit eget gravida. Consequat nisl vel pretium lectus quam id leo in vitae. Sollicitudin nibh sit amet commodo. Quis eleifend quam adipiscing vitae proin sagittis nisl. Cras adipiscing enim eu turpis. Ornare quam viverra orci sagittis eu volutpat odio. Lorem sed risus ultricies tristique nulla aliquet. Curabitur vitae nunc sed velit dignissim. Tincidunt arcu non sodales neque sodales. Nulla at volutpat diam ut venenatis tellus in metus. Blandit cursus risus at ultrices. Enim facilisis gravida neque convallis a.
+  grad_date: 2022-06-01
+  copyright: public
+  departments: [one]
+  degrees: [two]
+  advisors: [abstract]
+  files_complete: true
+  issues_found: false
+  publication_status: 'Published'
+  dspace_handle: '1234.5/6789'

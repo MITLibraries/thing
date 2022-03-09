@@ -157,7 +157,8 @@ class DspacePublicationResultsJob < ActiveJob::Base
 
         Rails.logger.info("Thesis ID: #{thesis_id}")
         begin
-          thesis = Thesis.find(thesis_id.to_i)
+          thesis = Thesis.includes(authors: :user).includes(:departments).includes(:advisors).includes(:degrees)
+                         .includes(files_attachments: :blob).find(thesis_id.to_i)
         rescue ActiveRecord::RecordNotFound => e
           Rails.logger.info(e)
           results[:errors] << e.to_s

@@ -155,7 +155,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'empty theses report shows a card' do
     sign_in users(:processor)
     get report_empty_theses_path
-    assert_select '.card-empty-theses span', text: '18 have no attached files', count: 1
+    assert_select '.card-empty-theses span', text: '19 have no attached files', count: 1
   end
 
   test 'empty theses report has links to processing pages' do
@@ -167,7 +167,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'empty theses report allows filtering by term' do
     sign_in users(:processor)
     get report_empty_theses_path
-    assert_select '.card-empty-theses span', text: '18 have no attached files', count: 1
+    assert_select '.card-empty-theses span', text: '19 have no attached files', count: 1
     get report_empty_theses_path, params: { graduation: '2018-09-01' }
     assert_select '.card-empty-theses span', text: '2 have no attached files', count: 1
   end
@@ -224,7 +224,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'term report shows a few fields' do
     sign_in users(:processor)
     get report_term_path
-    assert_select '.card-overall .message', text: '25 thesis records', count: 1
+    assert_select '.card-overall .message', text: '26 thesis records', count: 1
     assert_select '.card-files .message', text: '7 have files attached', count: 1
     assert_select '.card-issues span', text: '1 flagged with issues', count: 1
     assert_select '.card-students-contributing span', text: '0 have had metadata contributed by students', count: 1
@@ -237,7 +237,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'term report allows filtering' do
     sign_in users(:processor)
     get report_term_path
-    assert_select '.card-overall .message', text: '25 thesis records', count: 1
+    assert_select '.card-overall .message', text: '26 thesis records', count: 1
     get report_term_path, params: { graduation: '2018-09-01' }
     assert_select '.card-overall .message', text: '2 thesis records', count: 1
     assert_response :success
