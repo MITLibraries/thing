@@ -51,6 +51,28 @@ class ReportTest < ActiveSupport::TestCase
     assert_equal result['departments'][0][:data].values, [0, 3, 0, 0, 0, 0, 0, 4, 0]
   end
 
+  test 'index includes summary data of authors not graduated' do
+    thesis = theses(:bachelor)
+    another_thesis = theses(:published)
+    assert_not_equal thesis.grad_date, another_thesis.grad_date
+    assert thesis.files?
+    assert another_thesis.files?
+
+    a = thesis.authors.first
+    a.graduation_confirmed = false
+    a.save
+    assert_not thesis.authors_graduated?
+
+    a = another_thesis.authors.first
+    a.graduation_confirmed = false
+    a.save
+    assert_not another_thesis.authors_graduated?
+
+    r = Report.new
+    result = r.index_data
+    assert_equal result['summary'][5][:data].values, [0, 1, 0, 0, 0, 0, 0, 1, 0]
+  end
+
   # ~~~~ Term detail report
   test 'term detail includes a breakdown of departments' do
     r = Report.new
