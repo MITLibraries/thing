@@ -73,6 +73,28 @@ class ReportTest < ActiveSupport::TestCase
     assert_equal result['summary'][5][:data].values, [0, 1, 0, 0, 0, 0, 0, 1, 0]
   end
 
+  test 'authors not graduated summary data dedups theses with multiple files' do
+    thesis = theses(:bachelor)
+    a = thesis.authors.first
+    a.graduation_confirmed = false
+    a.save
+    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    transfer = transfers(:valid)
+    transfer.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
+    transfer.save
+    transfer.reload
+    thesis.files.attach(transfer.files.first.blob)
+    thesis.save
+    thesis.reload
+    assert thesis.files.count > 1
+    assert_not thesis.authors_graduated?
+
+    r = Report.new
+    result = r.index_data
+    assert_not_equal result['summary'][5][:data].values, [0, 2, 0, 0, 0, 0, 0, 0, 0]
+    assert_equal result['summary'][5][:data].values, [0, 1, 0, 0, 0, 0, 0, 0, 0]
+  end
+
   # ~~~~ Term detail report
   test 'term detail includes a breakdown of departments' do
     r = Report.new
