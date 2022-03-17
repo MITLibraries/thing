@@ -644,6 +644,54 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal 'Publication review', thesis.publication_status
   end
 
+  test 'updates status on validation' do
+    thesis = theses(:publication_review)
+    assert_equal 'Publication review', thesis.publication_status
+
+    thesis.issues_found = 'true'
+    thesis.validate
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  # Once degrees or advisors are added, the corresponding convenience methods should correctly identify their presence.
+  test 'correctly evaluates presence of nested attributes' do
+    thesis = theses(:publication_review)
+    thesis.degrees = []
+    thesis.advisors = []
+    thesis.save
+    thesis.reload
+    assert_not thesis.degrees?
+    assert_not thesis.advisors?
+
+    thesis.advisors << advisors(:first)
+    thesis.degrees << degrees(:one)
+    assert thesis.degrees?
+    assert thesis.advisors?
+  end
+
+  # If nested attributes are saved but the thesis model isn't, the publication status should still update. This
+  # may not be the case with certain ActiveRecord callbacks (e.g., before_save), hence the need for this regression test.
+  test 'publication status is updated even if thesis model is not' do
+    # Take a thesis that is ready for publication review
+    thesis = theses(:publication_review)
+    assert thesis.evaluate_status
+    assert_equal 'Publication review', thesis.publication_status
+
+    # Make it not ready for publication by removing degrees and advisors
+    thesis.advisors = []
+    thesis.save
+    thesis.reload
+    assert_not thesis.evaluate_status
+    assert_equal 'Not ready for publication', thesis.publication_status
+
+    # Attach advisor and degree, and status should evaluate and update
+    thesis.advisors << advisors(:first)
+    thesis.save
+    thesis.reload
+    assert thesis.evaluate_status
+    assert_equal 'Publication review', thesis.publication_status
+  end
+
   test 'theses can have attached files (in the fixture)' do
     thesis = theses(:publication_review)
     thesis.save

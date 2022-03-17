@@ -92,7 +92,8 @@ class Thesis < ApplicationRecord
 
   VALID_MONTHS = %w[February May June September].freeze
 
-  before_save :combine_graduation_date, :update_status
+  before_save :combine_graduation_date
+  after_validation :update_status
   after_find :split_graduation_date
 
   scope :date_asc, -> { order('grad_date') }
@@ -122,7 +123,7 @@ class Thesis < ApplicationRecord
 
   # Returns a true/false value if there are any associated advisors.
   def advisors?
-    !advisors.count.zero?
+    advisors.any?
   end
 
   # Returns a true/false value (rendered as "yes" or "no") if all authors
@@ -138,7 +139,7 @@ class Thesis < ApplicationRecord
 
   # Returns a true/false value if there are any affiliated degrees.
   def degrees?
-    !degrees.count.zero?
+    degrees.any?
   end
 
   # This is the summation of all status checks, which must all return a boolean TRUE in order for a thesis record to be
@@ -162,7 +163,7 @@ class Thesis < ApplicationRecord
 
   # Returns a true/false value if there are any attached files.
   def files?
-    !files.count.zero?
+    files.any?
   end
 
   # Returns a true/false value if all files have a defined purpose.
@@ -233,12 +234,8 @@ class Thesis < ApplicationRecord
   # required in certain conditions (i.e. abstracts are required for master and doctoral theses, but not for bachelor
   # theses). These checks are summarized on the thesis processing form using the "Sufficient metadata?" field in the
   # status panel.
-  #
-  # Please note, further, that the valid? call in this method will run all defined data validations. A number of fields
-  # in the data model (i.e. graduation_month and graduation_year) are only covered by this approach.
   def required_fields?
     if [
-      valid?,
       required_abstract?,
       advisors?,
       copyright_id?,
