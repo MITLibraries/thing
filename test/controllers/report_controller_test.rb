@@ -59,6 +59,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_index_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see summary report' do
@@ -114,6 +115,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_empty_theses_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see empty theses report' do
@@ -183,6 +185,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_term_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see term report' do
@@ -254,6 +257,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_expired_holds_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see expired holds report' do
@@ -301,6 +305,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_files_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see files report' do
@@ -392,6 +397,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_proquest_files_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see proquest files report' do
@@ -475,6 +481,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_student_submitted_theses_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see student-submitted theses report' do
@@ -569,6 +576,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_holds_by_source_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see holds by source report' do
@@ -674,6 +682,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get report_authors_not_graduated_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see authors not graduated report' do

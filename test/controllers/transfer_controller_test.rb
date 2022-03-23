@@ -176,6 +176,7 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody signed in.
     get transfer_select_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see transfer queue' do
