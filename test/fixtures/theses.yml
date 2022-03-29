@@ -8,7 +8,6 @@
 #  grad_date          :date             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  status             :string           default("active")
 #  processor_note     :text
 #  author_note        :text
 #  files_complete     :boolean          default(FALSE), not null
@@ -49,7 +48,6 @@ downloaded:
   grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
-  status: 'downloaded'
 
 withdrawn:
   title: MyStringWithdrawn
@@ -57,7 +55,6 @@ withdrawn:
   grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
-  status: 'withdrawn'
 
 active:
   title: MyStringActive
@@ -66,7 +63,6 @@ active:
   departments: [one]
   degrees: [one]
   coauthors: 'Coauthor, Student'
-  status: 'active'  # The default, but specified for testing purposes.
 
 with_note:
   title: MyStringNote
@@ -74,7 +70,6 @@ with_note:
   grad_date: 2017-09-01
   departments: [one]
   degrees: [one]
-  status: 'active'  # The default, but specified for testing purposes.
   processor_note: 'Absolutely for sure rocket science'
   copyright: mit
   license: nocc
@@ -85,7 +80,6 @@ with_hold:
   grad_date: 2017-09-01
   departments: [one]
   degrees: [one, two]
-  status: 'active'
   processor_note: 'Something sensitive'
 
 released_hold:
@@ -94,7 +88,6 @@ released_hold:
   grad_date: 2021-06-01
   departments: [one]
   degrees: [one]
-  status: 'active'
   processor_note: 'One hold, which was released'
 
 multiple_holds:
@@ -103,7 +96,6 @@ multiple_holds:
   grad_date: 2021-06-01
   departments: [one]
   degrees: [one]
-  status: 'active'
   processor_note: 'Multiple holds in various states'
 
 issues_found:

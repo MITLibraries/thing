@@ -8,7 +8,6 @@
 #  grad_date          :date             not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  status             :string           default("active")
 #  processor_note     :text
 #  author_note        :text
 #  files_complete     :boolean          default(FALSE), not null
@@ -79,9 +78,6 @@ class Thesis < ApplicationRecord
   validates :issues_found, exclusion: [nil]
 
   validates :users, presence: true
-
-  STATUS_OPTIONS = %w[active withdrawn downloaded].freeze
-  validates_inclusion_of :status, in: STATUS_OPTIONS
 
   PUBLICATION_STATUS_OPTIONS = ['Not ready for publication',
                                 'Publication review',
