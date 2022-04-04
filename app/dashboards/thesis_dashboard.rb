@@ -28,9 +28,6 @@ class ThesisDashboard < Administrate::BaseDashboard
     updated_at: Field::DateTime,
     files: AttachmentField,
     files_complete: Field::Boolean,
-    status: Field::Select.with_options(
-      collection: Thesis::STATUS_OPTIONS
-    ),
     publication_status: Field::Select.with_options(
       collection: Thesis::PUBLICATION_STATUS_OPTIONS
     ),
@@ -75,7 +72,6 @@ class ThesisDashboard < Administrate::BaseDashboard
     degrees
     advisors
     holds
-    status
     publication_status
     submission_information_packages
     dspace_handle
@@ -102,7 +98,6 @@ class ThesisDashboard < Administrate::BaseDashboard
     title
     coauthors
     abstract
-    status
     publication_status
     dspace_handle
     graduation_year
