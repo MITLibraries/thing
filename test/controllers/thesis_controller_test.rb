@@ -20,7 +20,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~ the submission system ~~~~~~~~~~~~~~~~~~~~~~~~~~
   test 'new prompts for login' do
     get '/thesis/new'
-    assert_redirected_to '/users/auth/saml'
+    assert_redirected_to '/login'
   end
 
   test 'new when logged in' do
@@ -93,6 +93,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'anonymous user cannot view another user thesis' do
     get "/thesis/#{theses(:one).id}"
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'admin users can view another user thesis' do
@@ -195,6 +196,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get thesis_select_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see processing queue' do
@@ -273,6 +275,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get thesis_deduplicate_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see duplicates report' do
@@ -332,6 +335,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get thesis_publication_statuses_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see publication status report' do
@@ -447,6 +451,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # Note that nobody is signed in.
     get thesis_process_path(theses(:one))
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot see processing form' do
@@ -488,6 +493,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     patch thesis_process_update_path(theses(:one)),
           params: { thesis: { title: 'Something nonsensical' } }
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot submit thesis processing form' do
@@ -651,6 +657,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'anonymous users get redirected if they load the publication preview list' do
     get thesis_publish_preview_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users get redirected if they load the publication preview list' do
@@ -706,6 +713,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   test 'anonymous users get redirected if they request publication to dspace' do
     get thesis_publish_to_dspace_path
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 
   test 'basic users cannot publish to dspace' do

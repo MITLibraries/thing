@@ -28,5 +28,6 @@ class HoldControllerTest < ActionDispatch::IntegrationTest
     @hold = Hold.first
     get hold_history_path(@hold)
     assert_response :redirect
+    assert_redirected_to '/login'
   end
 end

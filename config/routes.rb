@@ -63,5 +63,7 @@ Rails.application.routes.draw do
   get 'vireo', to: redirect('/')
   get 'vireo/:whatever', to: redirect('/')
 
+
+  get 'login', to: 'static#login', as: 'login'
   root to: 'static#index'
 end

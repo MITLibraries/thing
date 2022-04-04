@@ -1,0 +1,26 @@
+<%= content_for(:title, "Thesis Submission | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q box-content well">
+    <p>
+      You will be returned to this application after authenticating with MIT Touchstone.
+    </p>
+
+    <p>
+      <% if Rails.configuration.fake_auth_enabled %>
+        <%= link_to("Continue to MIT Touchstone authentication", user_developer_omniauth_authorize_path, id: "sign_in", class: 'action-auth btn button-primary', method: :post) %>
+      <% else %>
+        <%= link_to("Continue to MIT Touchstone authentication", user_saml_omniauth_authorize_path, id: "sign_in", class: 'action-auth btn button-primary', method: :post) %>
+      <% end %>
+    </p>
+    <br/>
+  </div>
+
+  <aside class="content-sup col1q-r" role="complementary">
+    <div class="bit">
+      <h3 class="title">Need help?</h3>
+      <p>
+        Contact us with any questions: <a href="mailto:mit-theses@mit.edu?Subject=Thesis%20submission%20help" target="_blank">mit-theses@mit.edu</a></p>
+    </div>
+  </aside>
+</div>

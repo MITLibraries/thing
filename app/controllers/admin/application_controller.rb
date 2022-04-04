@@ -13,7 +13,7 @@ module Admin
     def require_user
       return if current_user
 
-      redirect_to root_path, alert: 'Please login to continue'
+      redirect_to login_path, alert: 'Please sign in to continue'
     end
 
     def authorized_or_redirect
