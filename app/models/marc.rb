@@ -32,7 +32,7 @@ class Marc
     @record.append(MARC::DataField.new(
                      '040', ' ', ' ',
                      %w[a MYG],
-                     %w[b env],
+                     %w[b eng],
                      %w[e rda],
                      %w[c MYG]
                    ))
