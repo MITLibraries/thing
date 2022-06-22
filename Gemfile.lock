@@ -316,7 +316,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    scout_apm (5.1.1)
+    scout_apm (5.2.0)
       parser
     scrub_rb (1.0.1)
     selectize-rails (0.12.6)
