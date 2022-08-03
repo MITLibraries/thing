@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.7.6'
+ruby '3.1.2'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -19,6 +19,9 @@ gem 'kaminari'
 gem 'lograge'
 gem 'marc'
 gem 'mitlibraries-theme'
+gem 'net-imap', require: false
+gem 'net-pop', require: false
+gem 'net-smtp', require: false
 gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-saml'
 gem 'paper_trail'
