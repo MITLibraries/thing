@@ -161,7 +161,9 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
                     "Unknown status small victory; cannot continue (thesis #{@invalid_status_thesis.id})"
 
     # invalid data
-    assert_includes results[:errors], "Error reading from SQS queue: undefined method `split' for nil:NilClass"
+    assert_includes results[:errors], "Error reading from SQS queue: undefined method `split' for nil:NilClass\n\n"\
+                                      "        thesis_id = package_id.split('_').last\n                              "\
+                                      "^^^^^^"
 
     # no thesis
     assert_includes results[:errors], "Couldn't find Thesis with 'id'=9999999999999"

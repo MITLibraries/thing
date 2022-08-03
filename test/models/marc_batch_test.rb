@@ -3,7 +3,7 @@ require 'test_helper'
 class MarcBatchTest < ActiveSupport::TestCase
   test 'builds zip file' do
     zip_file = MarcBatch.new([theses(:one)], 'marc.xml', 'marc.zip').build
-    assert File.exists?(zip_file)
+    assert File.exist?(zip_file)
   end
 
   test 'zip file contains only marcxml file' do
@@ -19,6 +19,6 @@ class MarcBatchTest < ActiveSupport::TestCase
     batch = MarcBatch.new([theses(:one)], 'marc.xml', 'marc.zip')
     zip_file = batch.build
     marc_tempfile_path = batch.instance_variable_get(:@marc_filename)    
-    assert_not File.exists?(marc_tempfile_path)
+    assert_not File.exist?(marc_tempfile_path)
   end
 end
