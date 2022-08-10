@@ -10,17 +10,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      - name: Setup System
-        run: |
-          sudo apt update
-          sudo apt-get install libsqlite3-dev
       - uses: ruby/setup-ruby@v1
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
-          key: bundle-use-ruby-ubuntu-latest-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
+          key: bundle-use-ruby-ubuntu-22.04-${{ hashFiles('.ruby-version') }}-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
-            bundle-use-ruby-ubuntu-latest-${{ hashFiles('.ruby-version') }}-
+            bundle-use-ruby-ubuntu-22.04-${{ hashFiles('.ruby-version') }}-
       - name: bundle install
         run: |
           bundle config path vendor/bundle
