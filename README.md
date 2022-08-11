@@ -52,6 +52,7 @@ you'd like to handle.
 this automatically. It is often nice in development as well.
 
 `SENTRY_DSN` - set to your project sentry key to enable exception logging
+`SENTRY_ENV` - Sentry environment for the application. Defaults to 'unknown' if unset.
 
 ## ActiveStorage Configuration
 
