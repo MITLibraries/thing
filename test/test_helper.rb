@@ -8,6 +8,13 @@ SimpleCov.formatters = [
 ]
 SimpleCov.start('rails')
 
+# We've experienced segmentation faults when pre-compiling assets with libsass.
+# Disabling Sprockets export_concurrent setting seems to resolve the issues
+# see: https://github.com/rails/sprockets/issues/633
+# see: https://github.com/sass/sassc-ruby/issues/207#issuecomment-929299171
+require 'sprockets'
+Sprockets.export_concurrent = false
+
 require File.expand_path('../config/environment', __dir__)
 require 'rails/test_help'
 
