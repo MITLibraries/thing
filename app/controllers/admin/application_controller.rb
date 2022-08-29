@@ -10,6 +10,8 @@ module Admin
     before_action :authorized_or_redirect
     before_action :set_paper_trail_whodunnit
 
+    private
+
     def require_user
       return if current_user
 
@@ -17,14 +19,14 @@ module Admin
     end
 
     def authorized_or_redirect
-      return if can?(action_name, resource_name)
+      return if authorized_action?(resource_name, action_name)
 
       redirect_to root_path, alert: 'Not authorized.'
     end
 
     # Hide links to actions if the user is not allowed to do them.
     # This is an override of an Administrate method to work with CanCan
-    def show_action?(action, resource)
+    def authorized_action?(resource, action)
       can? action, resource
     end
   end
