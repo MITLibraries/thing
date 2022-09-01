@@ -33,6 +33,7 @@ gem 'sentry-rails'
 gem 'sentry-ruby'
 gem 'simple_form'
 gem 'skylight'
+gem 'tesseract', tag: '0.5.0', git: 'https://github.com/matt-bernhardt/tesseract.git'
 gem 'uglifier'
 gem 'zip_tricks'
 
