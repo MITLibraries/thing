@@ -18,7 +18,7 @@ gem 'json'
 gem 'kaminari'
 gem 'lograge'
 gem 'marc'
-gem 'mitlibraries-theme'
+gem 'mitlibraries-theme', tag: '0.9.0', git: 'https://github.com/mitlibraries/mitlibraries-theme', branch: 'engx-175-rebuild'
 gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem 'net-smtp', require: false
@@ -33,7 +33,6 @@ gem 'sentry-rails'
 gem 'sentry-ruby'
 gem 'simple_form'
 gem 'skylight'
-gem 'tesseract', tag: '0.5.0', git: 'https://github.com/matt-bernhardt/tesseract.git'
 gem 'uglifier'
 gem 'zip_tricks'
 
