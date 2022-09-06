@@ -1,0 +1,8 @@
+<fieldset class="proquest">
+  <legend>Consent to send thesis to ProQuest</legend>
+  <%= f.input :proquest_allowed, as: :radio_buttons,
+                                 collection: [['Yes', true], ['No', false]],
+                                 required: true,
+                                 validate_presence: true,
+                                 label: "I would like the full-text of my thesis to be made available openly in <a href='https://about.proquest.com/en/dissertations/proquest-dissertations-frequently-asked-questions/proquest-dissertations-authors-frequently-asked-questions/'>ProQuest Dissertation & Theses Global</a>. The Libraries’ new pilot for open access inclusion in PQDT is at no cost to you and aims to increase the visibility and discoverability of your thesis.  Your thesis will not be sent to ProQuest until it is published by MIT.".html_safe %>
+</fieldset>

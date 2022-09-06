@@ -155,6 +155,14 @@ form.simple_form {
       width: 100%;
     }
   }
+  .proquest {
+    label {
+      margin-bottom: 1rem;
+    }
+    .radio.field-subitem {
+      margin-top: 1rem;
+    }
+  }
 }
 
 // transfer processing form

@@ -47,6 +47,7 @@ class Thesis < ApplicationRecord
   has_one_attached :dspace_metadata
 
   accepts_nested_attributes_for :users
+  accepts_nested_attributes_for :authors
   accepts_nested_attributes_for :advisors, allow_destroy: true
   accepts_nested_attributes_for :department_theses, allow_destroy: true
   accepts_nested_attributes_for :files_attachments, allow_destroy: true

@@ -24,8 +24,12 @@ class ThesisController < ApplicationController
 
     # Save this minimum viable thesis
     if @thesis.save
-      # Now that we've saved something, the rest is handled via update.
       params[:id] = @thesis.id
+
+      # Add author ID to params if proquest_allowed was updated.
+      link_author_id
+
+      # Send the rest to update.
       update
     else
       render 'new'
@@ -163,7 +167,8 @@ class ThesisController < ApplicationController
                                    advisors_attributes: %i[id name _destroy],
                                    department_theses_attributes: %i[id thesis_id department_id _destroy],
                                    files_attachments_attributes: %i[id purpose description _destroy],
-                                   users_attributes: %i[id orcid preferred_name])
+                                   users_attributes: %i[id orcid preferred_name],
+                                   authors_attributes: %i[id proquest_allowed])
   end
 
   def sorted_theses(queryset, sort)
@@ -172,5 +177,15 @@ class ThesisController < ApplicationController
     else
       queryset.date_asc
     end
+  end
+
+  # This method is needed to update the proquest_allowed field for new theses.
+  # The proquest_allowed field is validated in the form but not required in the data model, so the conditional
+  # is needed for theses that are created outside the form and don't touch proquest_allowed.
+  def link_author_id
+    return unless params[:thesis][:authors_attributes]
+
+    author = Author.find_by(thesis_id: @thesis.id, user_id: current_user.id)
+    params[:thesis][:authors_attributes]['0'][:id] = author.id
   end
 end

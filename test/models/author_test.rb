@@ -60,4 +60,10 @@ class AuthorTest < ActiveSupport::TestCase
     author.reload
     assert author.graduation_confirmed
   end
+
+  test 'valid without proquest_allowed' do
+    a = authors(:one)
+    assert_nil a.proquest_allowed
+    assert a.valid?
+  end
 end

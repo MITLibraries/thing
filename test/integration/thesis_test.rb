@@ -320,5 +320,81 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     patch thesis_path(thesis),
          params: { thesis: { title: 'A student-contributed update' } }
     assert thesis.student_contributed?
-  end  
+  end
+
+  test 'proquest_allowed is saved when creating a thesis' do
+    sign_in users(:basic)
+    orig_thesis_count = Thesis.count
+    orig_author_count = Author.count
+    thesis_with_proquest = {
+      department_ids: Department.first.id,
+      degree_ids: Degree.first.id,
+      graduation_year: '2021',
+      graduation_month: 'February',
+      authors_attributes: { '0': { proquest_allowed: true } }
+    }
+    post thesis_index_path, params: { thesis: thesis_with_proquest }
+
+    # Confirm that thesis and author records were created.
+    assert_equal orig_thesis_count + 1, Thesis.count
+    assert_equal orig_author_count + 1, Author.count
+
+    # Confirm that thesis author record was updated as expected.
+    assert_equal 1, Thesis.last.authors.count
+    assert_equal true, Thesis.last.authors.first.proquest_allowed
+  end
+
+  test 'proquest_allowed is saved when updating a thesis' do
+    user = users(:yo)
+    thesis = theses(:one)
+    author = authors(:one)
+
+    # Confirm inputs.
+    assert_equal 1, thesis.authors.count
+    assert_equal author.user_id, user.id
+    assert_nil author.proquest_allowed
+
+    # Update proquest_allowed.
+    sign_in user
+    updated = { authors_attributes: { '0' => { id: author.id, proquest_allowed: true } } }
+    patch thesis_path(thesis), params: { thesis: updated }
+    thesis.reload
+
+    # Confirm that thesis author record was updated as expected.
+    assert_equal 1, thesis.authors.count
+    assert_equal thesis.authors.first.user_id, user.id
+    assert_equal true, thesis.authors.first.proquest_allowed
+  end
+
+  test 'a thesis with multiple authors updates proquest_allowed correctly' do
+    multi_author_thesis = theses(:with_hold)
+    first_author = authors(:six)
+    second_author = authors(:seven)
+
+    # Confirm inputs.
+    assert_equal 2, multi_author_thesis.authors.count
+    assert_equal first_author.id, multi_author_thesis.authors.first.id
+    assert_equal second_author.id, multi_author_thesis.authors.second.id
+    assert_nil first_author.proquest_allowed
+    assert_nil second_author.proquest_allowed
+
+    # Update proquest_allowed for first author.
+    sign_in first_author.user
+    updated = { authors_attributes: { '0' => { id: first_author.id, proquest_allowed: true } } }
+    patch thesis_path(multi_author_thesis), params: { thesis: updated }
+    multi_author_thesis.reload
+    sign_out first_author.user
+
+    # Update proquest_allowed for second author.
+    sign_in second_author.user
+    updated = { authors_attributes: { '0' => { id: second_author.id, proquest_allowed: false } } }
+    patch thesis_path(multi_author_thesis), params: { thesis: updated }
+    multi_author_thesis.reload
+
+    # Confirm that author records were updated as expected.
+    assert_equal true, multi_author_thesis.authors.first.proquest_allowed
+    assert_equal first_author.id, multi_author_thesis.authors.first.id
+    assert_equal false, multi_author_thesis.authors.second.proquest_allowed
+    assert_equal second_author.id, multi_author_thesis.authors.second.id
+  end
 end
