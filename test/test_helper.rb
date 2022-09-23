@@ -31,6 +31,10 @@ module ActiveSupport
 
     setup do
       ActiveStorage::Current.host = "https://example.com"
+
+      # This is required for tests that reference the authors_count counter cache on the Thesis model. If we add other
+      # counter caches, we should reset them here.
+      Thesis.all.each { |thesis| Thesis.reset_counters(thesis.id, :authors) }
     end
 
     def mock_auth(user)

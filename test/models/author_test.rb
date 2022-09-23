@@ -62,7 +62,7 @@ class AuthorTest < ActiveSupport::TestCase
   end
 
   test 'valid without proquest_allowed' do
-    a = authors(:one)
+    a = authors(:fourteen)
     assert_nil a.proquest_allowed
     assert a.valid?
   end

@@ -32,6 +32,9 @@
       <% if can?(:proquest_files, Report) %>
         <li><%= link_to("ProQuest forms", report_proquest_files_path) %></li>
       <% end %>
+      <% if can?(:proquest_status, Report) %>
+        <li><%= link_to("ProQuest opt-in status", report_proquest_status_path) %></li>
+      <% end %>
     </ul>
   </nav>
 </div>

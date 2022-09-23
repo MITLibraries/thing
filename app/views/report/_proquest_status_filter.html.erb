@@ -1,0 +1,78 @@
+<%= form_tag(nil, method: "get") do %>
+  <div class="multi-form-tag">
+    <label>
+      Include only theses from:
+      <select name="graduation">
+        <option value="all">All terms</option>
+        <% @terms.each do |term| %>
+          <option value="<%= term %>"<%= ' selected="selected"'.html_safe if params[:graduation].to_s == term.to_s %>>
+            <%= term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') %>
+          </option>
+        <% end %>
+      </select>
+    </label>
+  </div>
+
+  <div class="multi-form-tag">
+    <label>
+      Filter by department:
+      <select name="department">
+        <option value="all">All departments</option>
+        <% @departments.each do |dept| %>
+          <option value="<%= dept %>"<%= ' selected="selected"'.html_safe if params[:department].to_s == dept.to_s %>>
+            <%= dept %>
+          </option>
+        <% end %>
+      </select>
+    </label>
+  </div>
+
+  <div class="multi-form-tag">
+    <label>
+      Filter by degree type:
+      <select name="degree_type">
+        <option value="all">All degree types</option>
+        <% @degree_types.each do |deg| %>
+          <option value="<%= deg %>"<%= ' selected="selected"'.html_safe if params[:degree_type].to_s == deg.to_s %>>
+            <%= deg %>
+          </option>
+        <% end %>
+      </select>
+    </label>
+  </div>
+
+  <div class="gridband layout-2c">
+    <div class="grid-item">
+      <fieldset class="multi-form-tag">
+        <legend>Multiple authors only?</legend>
+        <div>
+          <input type="radio" name="multi_author" id="multi_author_true" value="true"
+                 <%= 'checked' if params[:multi_author] == 'true'%>>
+          <label for="multi_author_true">Yes</label>
+        </div>
+        <div>
+          <input type="radio" name="multi_author" id="multi_author_false" value="false"
+                 <%= 'checked' if params[:multi_author] == 'false'%>>
+          <label for="multi_author_false">No</label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="grid-item">
+      <fieldset class="multi-form-tag">
+        <legend>Published theses only?</legend>
+        <div>
+          <input type="radio" name="published" id="published_true" value="true"
+                 <%= 'checked' if params[:published] == 'true'%>>
+          <label for="published_true">Yes</label>
+        </div>
+        <div>
+          <input type="radio" name="published" id="published_false" value="false"
+                 <%= 'checked' if params[:published] == 'false'%>>
+          <label for="published_false">No</label>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+  <%= submit_tag('Apply filters', class: 'btn button-primary') %>
+<% end %>

@@ -46,6 +46,12 @@ doctor_files_attachment:
   purpose: thesis_pdf
   blob: doctor_files_blob
 
+engineer_files_attachment:
+  name: files
+  record: engineer (Thesis)
+  purpose: thesis_pdf
+  blob: engineer_files_blob
+
 sip_one_bag_attachment:
   name: bag
   record: sip_one (SubmissionInformationPackage)

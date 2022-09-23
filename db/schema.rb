@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_26_202539) do
+ActiveRecord::Schema.define(version: 2022_10_17_163130) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 2022_08_26_202539) do
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|
-    t.bigint "blob_id", null: false
+    t.integer "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
@@ -210,6 +210,7 @@ ActiveRecord::Schema.define(version: 2022_08_26_202539) do
     t.integer "license_id"
     t.string "dspace_handle"
     t.boolean "issues_found", default: false, null: false
+    t.integer "authors_count"
     t.index ["copyright_id"], name: "index_theses_on_copyright_id"
     t.index ["license_id"], name: "index_theses_on_license_id"
   end

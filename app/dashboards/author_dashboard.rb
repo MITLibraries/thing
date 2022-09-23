@@ -15,7 +15,9 @@ class AuthorDashboard < Administrate::BaseDashboard
     ),
     thesis: Field::BelongsTo,
     graduation_confirmed: Field::Boolean,
-    proquest_allowed: Field::Boolean,
+    proquest_allowed: Field::Select.with_options(
+      collection: [nil, true, false]
+    ),
     created_at: Field::DateTime,
     updated_at: Field::DateTime
   }.freeze

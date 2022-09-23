@@ -168,7 +168,7 @@ class ThesisTest < ActiveSupport::TestCase
     t = theses(:one)
     u = users(:yo)
     assert_includes t.users, u
-    assert_equal 4, u.authors.count
+    assert_equal 6, u.authors.count
     assert_difference('u.authors.count', -1) { t.destroy }
   end
 
@@ -1188,5 +1188,61 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.submission_information_packages.first.destroy
     thesis.save
     assert_not_includes Thesis.published_without_sips, thesis
+  end
+
+  test 'advanced_degree scope returns only theses with advanced degrees' do
+    adv_degree_count = Thesis.advanced_degree.count
+    assert adv_degree_count < Thesis.count
+
+    # one advanced degree
+    thesis = theses(:doctor)
+    assert_not thesis.degrees.first.degree_type.name == 'Bachelor'
+    assert_includes Thesis.advanced_degree, thesis
+
+    # multiple advanced degrees
+    thesis.degrees << degrees(:three)
+    thesis.save
+    assert_not thesis.degrees.last.id == thesis.degrees.first.id
+    assert_not thesis.degrees.last.degree_type.name == 'Bachelor'
+    assert_includes Thesis.advanced_degree, thesis
+
+    # advanced and undergrad degrees
+    thesis.degrees << degrees(:one)
+    thesis.save
+    assert_includes Thesis.advanced_degree, thesis
+    assert thesis.degrees.last.degree_type.name == 'Bachelor'
+
+    # undergrad degree only
+    thesis.degrees = [degrees(:one)]
+    assert thesis.degrees.count == 1
+    assert thesis.degrees.last.degree_type.name == 'Bachelor'
+    assert adv_degree_count - 1, Thesis.advanced_degree.count
+    assert_not_includes Thesis.advanced_degree, thesis
+
+    # no degrees
+    thesis.degrees = []
+    thesis.save
+    assert thesis.degrees.empty?
+    assert adv_degree_count - 1, Thesis.advanced_degree.count
+    assert_not_includes Thesis.advanced_degree, thesis
+  end
+
+  test 'multiple_authors scope returns only theses with multiple authors' do
+    multi_author_count = Thesis.multiple_authors.count
+    assert multi_author_count < Thesis.count
+
+    # thesis with one author is not included
+    thesis = theses(:one)
+    assert_not_includes Thesis.multiple_authors, thesis
+
+    # thesis with more than one author is included
+    thesis = theses(:two)
+    assert_includes Thesis.multiple_authors, thesis
+
+    # thesis with no authors is not included
+    thesis.authors = []
+    thesis.save
+    assert thesis.authors.empty?
+    assert multi_author_count - 1, Thesis.multiple_authors.count
   end
 end

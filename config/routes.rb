@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   get 'report/files', to: 'report#files', as: 'report_files'
   get 'report/holds_by_source', to: 'report#holds_by_source', as: 'report_holds_by_source'
   get 'report/proquest_files', to: 'report#proquest_files', as: 'report_proquest_files'
+  get 'report/proquest_status', to: 'report#proquest_status', as: 'report_proquest_status'
   get 'report/student_submitted_theses', to: 'report#student_submitted_theses', as: 'report_student_submitted_theses'
   get 'report/term', to: 'report#term', as: 'report_term'
   get 'thesis/confirm', to: 'thesis#confirm', as: 'thesis_confirm'

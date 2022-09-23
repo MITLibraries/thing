@@ -71,6 +71,7 @@ class Ability
     can :holds_by_source, Report
     can :student_submitted_theses, Report
     can :authors_not_graduated, Report
+    can :proquest_status, Report
 
     can %i[read update], Thesis
     can :annotate, Thesis
