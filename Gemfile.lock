@@ -212,10 +212,8 @@ GEM
       rails (>= 5, < 8)
       sassc (~> 2)
     msgpack (1.5.4)
-    net-imap (0.2.3)
-      digest
+    net-imap (0.3.1)
       net-protocol
-      strscan
     net-pop (0.1.1)
       digest
       net-protocol
@@ -361,7 +359,6 @@ GEM
       sprockets (>= 3.0.0)
     sqlite3 (1.5.0)
       mini_portile2 (~> 2.8.0)
-    strscan (3.0.4)
     thor (1.2.1)
     tilt (2.0.11)
     timecop (0.9.5)
