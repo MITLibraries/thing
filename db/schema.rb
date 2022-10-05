@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_29_202143) do
+ActiveRecord::Schema.define(version: 2022_08_26_202539) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 2022_03_29_202143) do
     t.boolean "graduation_confirmed", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "proquest_allowed"
     t.index ["thesis_id"], name: "index_authors_on_thesis_id"
     t.index ["user_id"], name: "index_authors_on_user_id"
   end

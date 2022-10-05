@@ -52,4 +52,28 @@ class ThesisHelperTest < ActionView::TestCase
     params[:status] = 'all'
     assert_equal Thesis.all.count, filter_theses_by_publication_status(Thesis.all).count
   end
+
+  test 'satisfies_advanced_degree? returns true for graduate degree types' do
+    doctoral_thesis = Thesis.new(degrees: [degrees(:two)])
+    master_thesis = Thesis.new(degrees: [degrees(:three)])
+    engineer_thesis = Thesis.new(degrees: [degrees(:four)])
+    assert_equal true, satisfies_advanced_degree?(doctoral_thesis)
+    assert_equal true, satisfies_advanced_degree?(master_thesis)
+    assert_equal true, satisfies_advanced_degree?(engineer_thesis)
+  end
+
+  test 'satisfies_advanced_degree? returns false for undergraduate degree types' do
+    undergrad_thesis = Thesis.new(degrees: [degrees(:one)])
+    assert_equal false, satisfies_advanced_degree?(undergrad_thesis)
+  end
+
+  test 'satisfies_advanced_degree? returns true if a thesis satisfies multiple advanced degree types' do
+    grad_thesis = Thesis.new(degrees: [degrees(:two), degrees(:three)])
+    assert_equal true, satisfies_advanced_degree?(grad_thesis)
+  end
+
+  test 'satisfies_advanced_degree? returns true if a thesis satisfies both undergraduate and graduate degree types' do
+    hybrid_thesis = Thesis.new(degrees: [degrees(:one), degrees(:two)])
+    assert_equal true, satisfies_advanced_degree?(hybrid_thesis)
+  end
 end

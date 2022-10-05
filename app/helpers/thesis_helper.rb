@@ -18,4 +18,9 @@ module ThesisHelper
 
     theses
   end
+
+  def satisfies_advanced_degree?(thesis)
+    advanced_degree_types = %w[Doctoral Engineer Master]
+    thesis.degrees.any? { |d| advanced_degree_types.include? d.degree_type.name }
+  end
 end

@@ -15,6 +15,7 @@ class AuthorDashboard < Administrate::BaseDashboard
     ),
     thesis: Field::BelongsTo,
     graduation_confirmed: Field::Boolean,
+    proquest_allowed: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime
   }.freeze
@@ -28,6 +29,7 @@ class AuthorDashboard < Administrate::BaseDashboard
     user
     thesis
     graduation_confirmed
+    proquest_allowed
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -36,6 +38,7 @@ class AuthorDashboard < Administrate::BaseDashboard
     user
     thesis
     graduation_confirmed
+    proquest_allowed
     created_at
     updated_at
   ].freeze
@@ -47,6 +50,7 @@ class AuthorDashboard < Administrate::BaseDashboard
     user
     thesis
     graduation_confirmed
+    proquest_allowed
   ].freeze
 
   # COLLECTION_FILTERS
