@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 2022_10_17_163130) do
     t.text "description"
     t.integer "purpose"
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_id", "record_type"], name: "index_active_storage_attachments_on_record_id_and_record_type"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
@@ -40,6 +41,7 @@ ActiveRecord::Schema.define(version: 2022_10_17_163130) do
     t.integer "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+    t.index ["blob_id"], name: "index_active_storage_variant_records_on_blob_id"
   end
 
   create_table "advisor_theses", id: false, force: :cascade do |t|
@@ -99,6 +101,7 @@ ActiveRecord::Schema.define(version: 2022_10_17_163130) do
     t.string "name_dspace"
     t.integer "degree_type_id"
     t.index ["code_dw"], name: "index_degrees_on_code_dw", unique: true
+    t.index ["degree_type_id"], name: "index_degrees_on_degree_type_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
