@@ -1,0 +1,15 @@
+<% return unless theses.any? %>
+<p class="box-content card-proquest-status inline-action">
+  <% if counts[:opted_in] > 0 %>
+    <span class="hero-text"><%= counts[:opted_in] %> have opted in </span><br>
+  <% end %>
+  <% if counts[:opted_out] > 0 %>
+    <span class="hero-text"><%= counts[:opted_out] %> have opted out</span><br>
+  <% end %>
+  <% if counts[:no_decision] %>
+    <span class="hero-text"><%= counts[:no_decision] %> have not completed opt-in form</span><br>
+  <% end %>
+  <% if counts[:conflict] > 0 %>
+    <span class="hero-text"><%= counts[:conflict] %> have conflicting opt-in statuses</span>
+  <% end %>
+</p>

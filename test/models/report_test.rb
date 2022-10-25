@@ -48,7 +48,7 @@ class ReportTest < ActiveSupport::TestCase
     result = r.index_data
     assert_equal Department.count, result['departments'].pluck(:label).length
     assert_includes result['departments'].pluck(:label), Department.first.name_dw
-    assert_equal result['departments'][0][:data].values, [0, 3, 0, 0, 0, 0, 0, 4, 0]
+    assert_equal result['departments'][0][:data].values, [0, 2, 0, 0, 0, 0, 0, 3, 1]
   end
 
   test 'index includes summary data of authors not graduated' do
@@ -70,7 +70,7 @@ class ReportTest < ActiveSupport::TestCase
 
     r = Report.new
     result = r.index_data
-    assert_equal result['summary'][5][:data].values, [0, 1, 0, 0, 0, 0, 0, 1, 0]
+    assert_equal result['summary'][5][:data].values, [0, 1, 0, 0, 0, 0, 0, 1, 1]
   end
 
   test 'authors not graduated summary data dedups theses with multiple files' do
@@ -92,7 +92,7 @@ class ReportTest < ActiveSupport::TestCase
     r = Report.new
     result = r.index_data
     assert_not_equal result['summary'][5][:data].values, [0, 2, 0, 0, 0, 0, 0, 0, 0]
-    assert_equal result['summary'][5][:data].values, [0, 1, 0, 0, 0, 0, 0, 0, 0]
+    assert_equal result['summary'][5][:data].values, [0, 1, 0, 0, 0, 0, 0, 0, 1]
   end
 
   # ~~~~ Term detail report
@@ -102,6 +102,6 @@ class ReportTest < ActiveSupport::TestCase
     result = r.term_tables subset
     assert_equal Department.count, result['departments']['data'].length
     assert_includes result['departments']['data'].keys, Department.first.name_dw
-    assert_equal [3, 0, 0, 0], result['departments']['data'].values
+    assert_equal [2, 1, 0, 0], result['departments']['data'].values
   end
 end

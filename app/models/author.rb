@@ -11,7 +11,7 @@
 #
 class Author < ApplicationRecord
   belongs_to :user
-  belongs_to :thesis
+  belongs_to :thesis, counter_cache: true
 
   validates :graduation_confirmed, exclusion: [nil]
 

@@ -350,6 +350,20 @@ some additional capabilities via javascript decoration, such as appending to (or
 pruning from) a pending bulk file transfer. The file uploading itself is
 unaffected by this altenative.
 
+## Resetting counter cache
+
+We use counter cache to improve the application's performance. Currently, all counters are associated with the Thesis
+model. You can run the following rake task to update the counters:
+
+```shell
+heroku run rails cache:reset_thesis_counters --app TARGET-HEROKU-APP
+```
+
+This command should only be run once in a given app to update existing the counter columns on existing records. After
+that, the counters will update automatically.
+
+The rake task should be updated as we add new counter cache columns.
+
 # Local deployment
 
 Use heroku local. We have also experimented with docker, and are retaining it in case we move toward dockerizing all the things in future.

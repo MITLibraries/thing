@@ -96,7 +96,7 @@ class Thesis < ApplicationRecord
   scope :date_asc, -> { order('grad_date') }
   scope :in_review, -> { where('publication_status = ?', 'Publication review') }
   scope :without_files, -> { where.missing(:files_attachments) }
-  scope :with_files, -> { joins(:files_attachments) }
+  scope :with_files, -> { joins(:files_attachments).distinct }
   scope :without_sips, lambda {
                          includes(:submission_information_packages)
                            .where(submission_information_packages: { thesis_id: nil })
@@ -110,6 +110,8 @@ class Thesis < ApplicationRecord
     select { |t| VALID_MONTHS.include? t.grad_date.strftime('%B') }
   }
   scope :publication_statuses, -> { PUBLICATION_STATUS_OPTIONS }
+  scope :multiple_authors, -> { where('authors_count > ?', 1) }
+  scope :advanced_degree, -> { includes(degrees: :degree_type).distinct.where.not(degree_type: { name: 'Bachelor' }) }
 
   # Returns a true/false value (rendered as "yes" or "no") if there are any
   # holds with a status of either 'active' or 'expired'. A false/"No" is

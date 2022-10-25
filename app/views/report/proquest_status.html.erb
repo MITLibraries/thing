@@ -1,0 +1,30 @@
+<%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
+
+<div class="layout-3q1q layout-band">
+  <div class="col3q">
+    <h3 class="title title-page">ProQuest opt-in status for theses in <%= @this_term %></h3>
+
+    <%= render 'proquest_status_filter' %>
+
+    <%= render partial: 'proquest_status_card', locals: { counts: @data, theses: @list } %>
+
+    <table class="table" summary="This table presents a list of theses with their ProQuest opt-in status."
+     title="ProQuest opt-in status">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Author(s)</th>
+          <th scope="col">DSpace handle</th>
+          <th scope="col">Opted in to ProQuest?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(partial: 'proquest_thesis', collection: @list) || render('proquest_status_empty') %>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="content-sup col1q-r">
+    <%= render 'shared/report_submenu' %>
+  </aside>
+</div>

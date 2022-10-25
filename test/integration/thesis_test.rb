@@ -113,7 +113,7 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
   test 'students can edit their advisor name via thesis form' do
     mock_auth(users(:yo))
     count = Advisor.count
-    sample = users(:yo).theses.fourth
+    sample = users(:yo).theses.third
     sample_advisor = sample.advisors.first
     assert_not_equal 'Another Name', sample_advisor.name
 
@@ -352,18 +352,18 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     # Confirm inputs.
     assert_equal 1, thesis.authors.count
     assert_equal author.user_id, user.id
-    assert_nil author.proquest_allowed
+    assert_equal true, author.proquest_allowed
 
     # Update proquest_allowed.
     sign_in user
-    updated = { authors_attributes: { '0' => { id: author.id, proquest_allowed: true } } }
+    updated = { authors_attributes: { '0' => { id: author.id, proquest_allowed: false } } }
     patch thesis_path(thesis), params: { thesis: updated }
     thesis.reload
 
     # Confirm that thesis author record was updated as expected.
     assert_equal 1, thesis.authors.count
     assert_equal thesis.authors.first.user_id, user.id
-    assert_equal true, thesis.authors.first.proquest_allowed
+    assert_equal false, thesis.authors.first.proquest_allowed
   end
 
   test 'a thesis with multiple authors updates proquest_allowed correctly' do
@@ -375,8 +375,8 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 2, multi_author_thesis.authors.count
     assert_equal first_author.id, multi_author_thesis.authors.first.id
     assert_equal second_author.id, multi_author_thesis.authors.second.id
-    assert_nil first_author.proquest_allowed
-    assert_nil second_author.proquest_allowed
+    assert_equal false, first_author.proquest_allowed
+    assert_equal false, second_author.proquest_allowed
 
     # Update proquest_allowed for first author.
     sign_in first_author.user
@@ -387,14 +387,14 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
 
     # Update proquest_allowed for second author.
     sign_in second_author.user
-    updated = { authors_attributes: { '0' => { id: second_author.id, proquest_allowed: false } } }
+    updated = { authors_attributes: { '0' => { id: second_author.id, proquest_allowed: true } } }
     patch thesis_path(multi_author_thesis), params: { thesis: updated }
     multi_author_thesis.reload
 
     # Confirm that author records were updated as expected.
     assert_equal true, multi_author_thesis.authors.first.proquest_allowed
     assert_equal first_author.id, multi_author_thesis.authors.first.id
-    assert_equal false, multi_author_thesis.authors.second.proquest_allowed
+    assert_equal true, multi_author_thesis.authors.second.proquest_allowed
     assert_equal second_author.id, multi_author_thesis.authors.second.id
   end
 end

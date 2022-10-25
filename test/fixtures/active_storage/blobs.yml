@@ -60,3 +60,12 @@ doctor_files_blob:
   byte_size: 19333
   checksum: KADsjJnGD1sVUgvqyZOaRg==
   service_name: test
+
+engineer_files_blob:
+  key: <%= ActiveStorage::Blob.generate_unique_secure_token %>
+  filename: a_pdf.pdf
+  content_type: application/pdf
+  metadata: '{"identified":true,"analyzed":true}'
+  byte_size: 19333
+  checksum: KADsjJnGD1sVUgvqyZOaRg==
+  service_name: test

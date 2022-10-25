@@ -14,6 +14,7 @@ one:
   user: yo
   thesis: one
   graduation_confirmed: false
+  proquest_allowed: true
 
 oneco:
   user: basic
@@ -24,11 +25,13 @@ two:
   user: yo
   thesis: two
   graduation_confirmed: true
+  proquest_allowed: true
 
 three:
   user: basic
   thesis: two
   graduation_confirmed: false
+  proquest_allowed: false
 
 four:
   user: basic
@@ -44,11 +47,13 @@ six:
   user: yo
   thesis: with_hold
   graduation_confirmed: false
+  proquest_allowed: false
 
 seven:
   user: second
   thesis: with_hold
   graduation_confirmed: false
+  proquest_allowed: false
 
 review:
   user: yo
@@ -84,3 +89,15 @@ thirteen:
   user: basic
   thesis: doctor
   graduation_confirmed: true
+  proquest_allowed: true
+
+fourteen:
+  user: yo
+  thesis: pending_publication
+  graduation_confirmed: true
+
+fifteen:
+  user: yo
+  thesis: doctor
+  graduation_confirmed: true
+  proquest_allowed: false

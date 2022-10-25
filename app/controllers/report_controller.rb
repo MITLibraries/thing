@@ -50,6 +50,20 @@ class ReportController < ApplicationController
     @list = report.list_proquest_files subset
   end
 
+  def proquest_status
+    term = params[:graduation] ? params[:graduation].to_s : 'all'
+    @this_term = 'all terms'
+    @this_term = term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') if term != 'all'
+    theses = Thesis.with_files.advanced_degree.includes(authors: :user).includes(:departments)
+                   .includes(degrees: :degree_type)
+    @terms = Report.new.extract_terms theses
+    @departments = Department.pluck(:name_dw)
+    @degree_types = DegreeType.pluck(:name).reject { |type| type == 'Bachelor' }
+    filtered = filter_proquest_status(theses)
+    @data = proquest_status_counts(filtered)
+    @list = filtered
+  end
+
   def student_submitted_theses
     term = params[:graduation] ? params[:graduation].to_s : 'all'
     @this_term = 'all terms'

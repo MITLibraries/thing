@@ -139,7 +139,7 @@ pending_publication:
   title: MyPendingThesis
   abstract: "A thesis that has been declared pending for publication"
   grad_date: 2021-06-01
-  departments: [one]
+  departments: [two]
   degrees: [one]
   files_complete: true
   metadata_complete: true
@@ -240,7 +240,7 @@ master:
   abstract: MyText
   grad_date: 2018-06-01
   copyright: govt
-  departments: [one]
+  departments: [two]
   degrees: [three]
   advisors: [first]
   files_complete: true
@@ -258,6 +258,19 @@ doctor:
   files_complete: true
   metadata_complete: true
   issues_found: false
+
+engineer:
+  title: MyEngineerThesis
+  abstract: MyText
+  grad_date: 2022-06-01
+  copyright: public
+  departments: [one]
+  degrees: [four]
+  advisors: [first]
+  files_complete: true
+  metadata_complete: true
+  issues_found: false
+  publication_status: Published
 
 long_abstracts_are_fun:
   title: Fock
