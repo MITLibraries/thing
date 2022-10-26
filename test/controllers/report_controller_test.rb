@@ -918,7 +918,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     get report_proquest_status_path
     assert_select 'table tbody tr', count: thesis_count
 
-    get report_proquest_status_path, params: { published: 'true' }
+    get report_proquest_status_path, params: { published_only: 'true' }
     assert_select 'table tbody tr', count: published_count
   end
 
@@ -931,7 +931,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     get report_proquest_status_path
     assert_select 'table tbody tr', count: thesis_count
 
-    get report_proquest_status_path, params: { published: 'false' }
+    get report_proquest_status_path, params: { published_only: 'false' }
     assert_select 'table tbody tr', count: thesis_count
   end
 
@@ -949,7 +949,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_select 'table tbody tr', count: thesis_count
 
     get report_proquest_status_path,
-        params: { graduation: '2018-06-01', degree_type: 'Engineer', published: 'true' }
+        params: { graduation: '2018-06-01', degree_type: 'Engineer', published_only: 'true' }
     assert_select 'table tbody tr', count: filtered_count
   end
 

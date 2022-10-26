@@ -42,7 +42,7 @@ module ThesisHelper
   end
 
   def filter_theses_by_published(theses)
-    return theses.where(publication_status: 'Published') if params[:published] && params[:published] == 'true'
+    return theses.where(publication_status: 'Published') if params[:published_only] && params[:published_only] == 'true'
 
     theses
   end

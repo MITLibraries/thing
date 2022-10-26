@@ -130,13 +130,13 @@ class ThesisHelperTest < ActionView::TestCase
 
   test 'filter_theses_by_published returns a filtered set of theses' do
     theses = Thesis.all
-    params[:published] = 'true'
+    params[:published_only] = 'true'
     assert_not_equal theses.count, filter_theses_by_published(theses).count
   end
 
   test 'filter_theses_by_published does nothing when published param is set to false' do
     theses = Thesis.all
-    params[:published] = 'false'
+    params[:published_only] = 'false'
     assert_equal theses.count, filter_theses_by_published(theses).count
   end
 
@@ -157,7 +157,7 @@ class ThesisHelperTest < ActionView::TestCase
 
     # Set params to correspond with expected conditions.
     params[:graduation] = '2018-06-01'
-    params[:published] = 'false'
+    params[:published_only] = 'false'
     params[:department] = departments(:one).name_dw
     params[:degree] = degrees(:two).name_dw
     params[:multi_author] = 'true'
