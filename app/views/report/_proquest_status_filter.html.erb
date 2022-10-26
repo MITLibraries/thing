@@ -61,14 +61,14 @@
       <fieldset class="multi-form-tag">
         <legend>Published theses only?</legend>
         <div>
-          <input type="radio" name="published" id="published_true" value="true"
-                 <%= 'checked' if params[:published] == 'true'%>>
-          <label for="published_true">Yes</label>
+          <input type="radio" name="published_only" id="published_only_true" value="true"
+                 <%= 'checked' if params[:published_only] == 'true'%>>
+          <label for="published_only_true">Yes</label>
         </div>
         <div>
-          <input type="radio" name="published" id="published_false" value="false"
-                 <%= 'checked' if params[:published] == 'false'%>>
-          <label for="published_false">No</label>
+          <input type="radio" name="published_only" id="published_only_false" value="false"
+                 <%= 'checked' if params[:published_only] == 'false'%>>
+          <label for="published_only_false">No</label>
         </div>
       </fieldset>
     </div>
