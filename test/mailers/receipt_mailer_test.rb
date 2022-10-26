@@ -20,6 +20,36 @@ class ReceiptMailerTest < ActionMailer::TestCase
     end
   end
 
+  test 'confirmation emails for graduate theses include ProQuest consent' do
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      thesis = theses(:doctor)
+      user = users(:basic)
+      email = ReceiptMailer.receipt_email(thesis, user)
+
+      # Send the email, then test that it got queued
+      assert_emails 1 do
+        email.deliver_now
+      end
+
+      assert_match '<strong>Consent to send thesis to ProQuest:</strong> Opt-in status not reconciled', email.body.to_s
+    end
+  end
+
+  test 'confirmation emails for undergraduate theses do not include ProQuest consent' do
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      thesis = theses(:one)
+      user = users(:yo)
+      email = ReceiptMailer.receipt_email(thesis, user)
+
+      # Send the email, then test that it got queued
+      assert_emails 1 do
+        email.deliver_now
+      end
+
+      refute_match '<strong>Consent to send thesis to ProQuest:</strong>', email.body.to_s
+    end
+  end
+
   test 'sends confirmation emails for transfer records' do
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       transfer = transfers(:valid)

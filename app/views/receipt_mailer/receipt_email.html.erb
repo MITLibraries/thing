@@ -37,6 +37,9 @@ The information we have on record is listed below.</p>
 <strong>Abstract:</strong><br>
 <%= simple_format(@thesis.abstract, {}, wrapper_tag: "p") %>
 <strong>Notes:</strong> <%= @thesis.author_note %><br>
+<% if satisfies_advanced_degree?(@thesis) %>
+  <strong>Consent to send thesis to ProQuest:</strong> <%= render_proquest_status(@thesis) %>
+<% end %>
 </div>
 
 <p>Let us know if you have any questions. And again, congratulations 

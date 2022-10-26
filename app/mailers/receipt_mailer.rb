@@ -1,4 +1,6 @@
 class ReceiptMailer < ApplicationMailer
+  helper ThesisHelper
+
   def receipt_email(thesis, user)
     return unless ENV.fetch('DISABLE_ALL_EMAIL', 'true') == 'false' # allows PR builds to disable emails
 
