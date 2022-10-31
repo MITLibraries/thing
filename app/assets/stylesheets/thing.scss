@@ -160,6 +160,12 @@ form.simple_form {
       margin-bottom: 1rem;
       font-weight:  $fw-normal;
     }
+    .opt-border {
+      display:  block;
+      border:  .1px dotted;
+      margin-top: 1rem;
+      margin-bottom:  1rem;
+    }
     .radio.field-subitem {
       margin-top: 1rem;
     }
