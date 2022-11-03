@@ -13,6 +13,7 @@
 class Transfer < ApplicationRecord
   belongs_to :user
   belongs_to :department
+  before_save :update_files_count
 
   has_many_attached :files
 
@@ -74,9 +75,29 @@ class Transfer < ApplicationRecord
 
   def unassigned_files
     count = 0
-    files.blobs.all.each do |blob|
-      count += 1 if blob.attachment_ids.count == 1
+    if files.blobs.is_a?(Array)
+      files.blobs.each do |blob|
+        count += 1 if blob.attachment_ids.count == 1
+      end
+    else
+      files.blobs.all.each do |blob|
+        count += 1 if blob.attachment_ids.count == 1
+      end
     end
     count
+  end
+
+  # This is triggered on before_save, but we must also remember to call Transfer#save to trigger this
+  # any time we are changing the files attached in a manner that wouldn't update Transfer directly.
+  # This can happen during the Transfer processing workflow (attaching files to Theses) and Thesis
+  # processing workflows (removing files from Theses)
+  def update_files_count
+    Rails.logger.debug("TRANSFER_COUNTS: Initial files_count for thesis #{id} is #{files_count}")
+    self.files_count = files.count
+    Rails.logger.debug("TRANSFER_COUNTS: Updated files_count for thesis #{id} is #{files_count}")
+
+    Rails.logger.debug("TRANSFER_COUNTS: Initial unassigned_files_count for thesis #{id} is #{unassigned_files_count}")
+    self.unassigned_files_count = unassigned_files
+    Rails.logger.debug("TRANSFER_COUNTS: Updated unassigned_files_count for thesis #{id} is #{unassigned_files_count}")
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_17_163130) do
+ActiveRecord::Schema.define(version: 2022_10_18_182433) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -225,6 +225,8 @@ ActiveRecord::Schema.define(version: 2022_10_17_163130) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.text "note"
+    t.integer "files_count", default: 0, null: false
+    t.integer "unassigned_files_count", default: 0, null: false
     t.index ["department_id"], name: "index_transfers_on_department_id"
     t.index ["user_id"], name: "index_transfers_on_user_id"
   end

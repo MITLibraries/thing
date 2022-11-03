@@ -138,14 +138,31 @@ class TransferTest < ActiveSupport::TestCase
   end
 
   test 'unassigned_files updates as needed' do
-    assert_equal 0, @transfer.unassigned_files
+    # confirm an initial state on a transfer
+    @transfer.save # required to update initial counts from fixtured data
+    assert_equal 0, @transfer.unassigned_files_count
+    assert_equal 1, @transfer.files_count
 
-    @newfile = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
-    @transfer.files.attach(io: File.open(@newfile), filename: 'a_pdf.pdf')
-    assert_equal 1, @transfer.unassigned_files
+    # add a file to a transfer and confirm it is not assigned to a thesis
+    @newfile = Rails.root.join('test', 'fixtures', 'files', 'b_pdf.pdf')
+    @transfer.files.attach(io: File.open(@newfile), filename: 'b_pdf.pdf')
+    @transfer.save
+    assert_equal 1, @transfer.unassigned_files_count
+    assert_equal 2, @transfer.files_count
 
+    # assign that file to a thesis to confirm the unassigned changes appropriately
+    file = @transfer.files.last
     @thesis = theses(:one)
-    @thesis.files.attach(@transfer.files.blobs.last)
-    assert_equal 0, @transfer.unassigned_files
+    @thesis.files.attach(file.blob)
+    @thesis.save
+    @transfer.save
+    assert_equal 0, @transfer.unassigned_files_count
+
+    # unassign that file from a thesis to confirm the unassigned count changes appropriately
+    @thesis.files = []
+    @thesis.save
+    @transfer.save
+    assert_equal 1, @transfer.unassigned_files_count
+    assert_equal 2, @transfer.files_count
   end
 end
