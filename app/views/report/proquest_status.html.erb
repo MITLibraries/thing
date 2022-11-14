@@ -1,5 +1,11 @@
 <%= content_for(:title, "Thesis Reporting | MIT Libraries") %>
 
+<% content_for :additional_js do %>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<% end %>
+
+<link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
+
 <div class="layout-3q1q layout-band">
   <div class="col3q">
     <h3 class="title title-page">ProQuest opt-in status for theses in <%= @this_term %></h3>
@@ -8,7 +14,7 @@
 
     <%= render partial: 'proquest_status_card', locals: { counts: @data, theses: @list } %>
 
-    <table class="table" summary="This table presents a list of theses with their ProQuest opt-in status."
+    <table class="table" id="proquestStatus" summary="This table presents a list of theses with their ProQuest opt-in status."
      title="ProQuest opt-in status">
       <thead>
         <tr>
@@ -28,3 +34,15 @@
     <%= render 'shared/report_submenu' %>
   </aside>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+  $('#proquestStatus').DataTable({
+    pageLength: -1,
+    lengthMenu: [
+      [10, 25, 50, -1],
+      [10, 25, 50, 'All'],
+    ],
+  });
+});
+</script>
