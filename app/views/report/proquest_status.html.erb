@@ -9,6 +9,10 @@
 <div class="layout-3q1q layout-band">
   <div class="col3q">
     <h3 class="title title-page">ProQuest opt-in status for theses in <%= @this_term %></h3>
+    <div class="alert alert-banner">
+      <p><i class="fa fa-info-circle fa-lg"></i> This report only lists theses that satisfy advanced degrees and have
+      at least one file attached.</p>
+    </div>
 
     <%= render 'proquest_status_filter' %>
 
