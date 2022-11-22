@@ -352,17 +352,28 @@ unaffected by this altenative.
 
 ## Resetting counter cache
 
-We use counter cache to improve the application's performance. Currently, all counters are associated with the Thesis
-model. You can run the following rake task to update the counters:
+We use counter caches to improve the application's performance. These commands should only need to be run at
+most once in a given app to update counter columns on existing records. After that, the counters will update
+automatically. If you suspect something has gone wrong with the counters, you can re-run them to ensure they are
+accurate with no side effects other than the counters definitely being wrong for a few minutes as they recalculate.
+
+These rake tasks should be updated as we add new counter cache columns.
+
+### Thesis counter_cache
+
+You can run the following rake task to update the counters:
 
 ```shell
 heroku run rails cache:reset_thesis_counters --app TARGET-HEROKU-APP
 ```
 
-This command should only be run once in a given app to update existing the counter columns on existing records. After
-that, the counters will update automatically.
+### Transfer counter_cache
 
-The rake task should be updated as we add new counter cache columns.
+This is a non-standard counter_cache that needs to calculate counters based on Theses and not just Transfers.
+
+```shell
+heroku run rails cache:reset_transfer_counters --app TARGET-HEROKU-APP
+```
 
 # Local deployment
 

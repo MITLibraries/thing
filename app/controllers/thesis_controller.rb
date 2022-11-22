@@ -122,6 +122,9 @@ class ThesisController < ApplicationController
         flash[:success] += '<p>The following files were removed from this thesis. They can still be found attached to their original transfer, via the following links:</p><ul>'.html_safe
         removed.each do |r|
           flash[:success] += "<li><a href='/transfer/#{r['transfer_id']}'>#{r['filename']}</a></li>".html_safe
+
+          # update the original transfer so unassigned_files_count will be accurate
+          Transfer.find(r['transfer_id']).save
         end
         flash[:success] += '</ul>'.html_safe
       end
@@ -144,6 +147,7 @@ class ThesisController < ApplicationController
     list = []
     return list unless thesis_params['files_attachments_attributes']
 
+    Rails.logger.debug('TRANSFER_COUNTS: Files count changed on thesis, expect updated Transfer count logs')
     thesis_params['files_attachments_attributes'].values.select { |item| item['_destroy'] == '1' }.each do |file|
       needle = ActiveStorage::Attachment.find_by(id: file['id']).blob
       list.append({

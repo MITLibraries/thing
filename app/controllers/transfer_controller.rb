@@ -46,11 +46,12 @@ class TransferController < ApplicationController
       thesis.files.attach(file.blob)
       flash[:success] += "#{file.filename}<br>".html_safe
     end
+    transfer.save # triggers update to files_counts
     redirect_to transfer_path(transfer.id, view_all: params[:view_all] || 'false')
   end
 
   def select
-    @transfer = Transfer.all
+    @transfers = Transfer.all.with_attached_files.includes(:user).includes(:department)
   end
 
   def show
