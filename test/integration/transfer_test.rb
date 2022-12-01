@@ -25,6 +25,13 @@ class TransferIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal @transfer_params[:graduation_year], Transfer.last.graduation_year
   end
 
+  test 'file counts are correct after creation' do
+    mock_auth(users(:transfer_submitter))
+    post transfer_index_path, params: { transfer: @transfer_params }
+    assert_equal 1, Transfer.last.unassigned_files_count
+    assert_equal 1, Transfer.last.files_count
+  end
+
   test 'including a note still success' do
     mock_auth(users(:transfer_submitter))
     orig_count = Transfer.count

@@ -14,6 +14,7 @@ class Transfer < ApplicationRecord
   belongs_to :user
   belongs_to :department
   before_save :update_files_count
+  after_create_commit :initial_files_count
 
   has_many_attached :files
 
@@ -85,6 +86,14 @@ class Transfer < ApplicationRecord
       end
     end
     count
+  end
+
+  # This ensures that the activestorage objects are actually available before we update the initial files counts.
+  # The files are not available until the after_create_commit callback so our before_save callback does not work
+  # for initial Transfer creation. This does mean we calculate the counts twice on creation (once with the count as
+  # always zero, then the initial commit, then during the after_create_commit we re-save which counts them properly).
+  def initial_files_count
+    save
   end
 
   # This is triggered on before_save, but we must also remember to call Transfer#save to trigger this
