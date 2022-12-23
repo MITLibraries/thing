@@ -168,7 +168,6 @@ class ThesisTest < ActiveSupport::TestCase
     t = theses(:one)
     u = users(:yo)
     assert_includes t.users, u
-    assert_equal 6, u.authors.count
     assert_difference('u.authors.count', -1) { t.destroy }
   end
 
@@ -1244,5 +1243,143 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.save
     assert thesis.authors.empty?
     assert multi_author_count - 1, Thesis.multiple_authors.count
+  end
+
+  test 'consented_to_proquest scope returns only theses with authors that have opted in to ProQuest' do
+    proquest_consent_count = Thesis.consented_to_proquest.count
+    assert proquest_consent_count < Thesis.count
+
+    # single-author thesis that has opted in is included
+    thesis = theses(:one)
+    assert_includes Thesis.consented_to_proquest, thesis
+
+    # single-author thesis that has opted out is excluded
+    thesis = theses(:with_note)
+    assert_not_includes Thesis.consented_to_proquest, thesis
+
+    # single-author thesis with no opt-in status is excluded
+    thesis = theses(:coauthor)
+    assert_not_includes Thesis.consented_to_proquest, thesis
+
+    # multi-author thesis that has opted in is included
+    thesis = theses(:two)
+    assert_includes Thesis.consented_to_proquest, thesis
+
+    # multi-author thesis that has opted out is excluded
+    thesis = theses(:with_hold)
+    assert_not_includes Thesis.consented_to_proquest, thesis
+
+    # multi-author thesis with conflicting opt-in statuses is excluded
+    thesis = theses(:doctor)
+    assert_not_includes Thesis.consented_to_proquest, thesis
+  end
+
+  test 'only certain proquest_exported values are valid' do
+    thesis = theses(:one)
+    assert thesis.proquest_exported = 'Not exported'
+    assert thesis.valid?
+
+    thesis.proquest_exported = 'Full harvest'
+    thesis.save
+    assert thesis.valid?
+
+    thesis.proquest_exported = 'Partial harvest'
+    thesis.save
+    assert thesis.valid?
+  end
+
+  test 'not_consented_to_proquest scope returns only theses with authors that have not opted in to ProQuest' do
+    # single-author thesis that has opted out is included
+    thesis = theses(:with_note)
+    assert_includes Thesis.not_consented_to_proquest, thesis
+
+    # single-author thesis with no opt-in status is included
+    thesis = theses(:coauthor)
+    assert_includes Thesis.not_consented_to_proquest, thesis
+
+    # single-author thesis that has opted in is excluded
+    thesis = theses(:one)
+    assert_not_includes Thesis.not_consented_to_proquest, thesis
+
+    # multi-author thesis with all opt-outs is included
+    thesis = theses(:with_hold)
+    assert_includes Thesis.not_consented_to_proquest, thesis
+
+    # multi-author thesis with one opt-in and one opt-out is excluded
+    thesis = theses(:doctor)
+    assert_not_includes Thesis.not_consented_to_proquest, thesis
+
+    # multi-author thesis that has opted in is excluded
+    thesis = theses(:two)
+    assert_not_includes Thesis.not_consented_to_proquest, thesis
+  end
+
+  test 'exported_to_proquest scope includes theses flagged for partial harvest' do
+    partially_harvestable_thesis = theses(:doctor)
+    assert_includes Thesis.exported_to_proquest, partially_harvestable_thesis
+  end
+
+  test 'exported_to_proquest scope includes theses flagged for full harvest' do
+    fully_harvestable_thesis = theses(:engineer)
+    assert_includes Thesis.exported_to_proquest, fully_harvestable_thesis
+  end
+
+  test 'exported_to_proquest scope excludes theses that have not been exported' do
+    unexported_thesis = theses(:one)
+    assert_not_includes Thesis.exported_to_proquest, unexported_thesis
+  end
+
+  test 'not_exported_to_proquest scope includes theses that have not been exported' do
+    unexported_thesis = theses(:one)
+    assert_includes Thesis.not_exported_to_proquest, unexported_thesis
+  end
+
+  test 'not_exported_to_proquest scope does not include theses flagged for harvest' do
+    partially_harvestable_thesis = theses(:doctor)
+    fully_harvestable_thesis = theses(:engineer)
+    assert_not_includes Thesis.not_exported_to_proquest, partially_harvestable_thesis
+    assert_not_includes Thesis.not_exported_to_proquest, fully_harvestable_thesis
+  end
+
+  test 'published scope returns only theses that are published' do
+    published_thesis = theses(:published)
+    not_ready_thesis = theses(:issues_found)
+    pending_publication_thesis = theses(:pending_publication)
+    in_review_thesis = theses(:publication_review)
+
+    assert_includes Thesis.published, published_thesis
+    assert_not_includes Thesis.published, not_ready_thesis
+    assert_not_includes Thesis.published, pending_publication_thesis
+    assert_not_includes Thesis.published, in_review_thesis
+  end
+
+  test 'partial_proquest_export scope returns the expected set of theses' do
+    partial_export_thesis = theses(:ready_for_partial_export)
+    full_export_thesis = theses(:ready_for_full_export)
+    no_export_thesis = theses(:one)
+
+    assert_includes Thesis.partial_proquest_export, partial_export_thesis
+    assert_not_includes Thesis.partial_proquest_export, full_export_thesis
+    assert_not_includes Thesis.partial_proquest_export, no_export_thesis
+  end
+
+  test 'full_proquest_export scope returns the expected set of theses' do
+    partial_export_thesis = theses(:ready_for_partial_export)
+    full_export_thesis = theses(:ready_for_full_export)
+    no_export_thesis = theses(:one)
+
+    assert_includes Thesis.full_proquest_export, full_export_thesis
+    assert_not_includes Thesis.full_proquest_export, partial_export_thesis
+    assert_not_includes Thesis.full_proquest_export, no_export_thesis
+  end
+
+  test 'ready_for_proquest_export scope returns all theses to be exported' do
+    partial_export_thesis = theses(:ready_for_partial_export)
+    full_export_thesis = theses(:ready_for_full_export)
+    no_export_thesis = theses(:one)
+
+    assert_includes Thesis.ready_for_proquest_export, partial_export_thesis
+    assert_includes Thesis.ready_for_proquest_export, full_export_thesis
+    assert_not_includes Thesis.ready_for_proquest_export, no_export_thesis
   end
 end

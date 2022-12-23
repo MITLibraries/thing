@@ -31,12 +31,13 @@ three:
   user: basic
   thesis: two
   graduation_confirmed: false
-  proquest_allowed: false
+  proquest_allowed: true
 
 four:
   user: basic
   thesis: with_note
   graduation_confirmed: true
+  proquest_allowed: false
 
 five:
   user: basic
@@ -74,6 +75,7 @@ ten:
   user: basic
   thesis: published
   graduation_confirmed: true
+  proquest_allowed: true
 
 eleven:
   user: basic
@@ -101,3 +103,21 @@ fifteen:
   thesis: doctor
   graduation_confirmed: true
   proquest_allowed: false
+
+sixteen:
+  user: yo
+  thesis: engineer
+  graduation_confirmed: true
+  proquest_allowed: true
+
+seventeen:
+  user: yo
+  thesis: ready_for_partial_export
+  graduation_confirmed: true
+  proquest_allowed: false
+
+eighteen:
+  user: yo
+  thesis: ready_for_full_export
+  graduation_confirmed: true
+  proquest_allowed: true

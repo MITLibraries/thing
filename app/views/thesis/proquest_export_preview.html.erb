@@ -1,0 +1,56 @@
+<%= content_for(:title, "Thesis Processing | MIT Libraries") %>
+
+<% content_for :additional_js do %>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<% end %>
+
+<link href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<h3 class="title title-page">Export theses for ProQuest</h3>
+
+<%= render 'shared/you_are' %>
+
+<div class="gridband" id="export-action" aria-live="polite" role="region">
+  <div class="inline-action well warning">
+    <% if @theses.count < 1 %>
+      <p>No theses are available to export.</p>
+    <% else %>
+      <div class="message">
+        <h4 class="title">Ready to export <%= @theses.count %> theses?</h4>
+        <p>If the set of thesis records below is correct, click the button at right to export their handles. Use the
+           <%= link_to "ProQuest Status Report", report_proquest_status_path %> to review ProQuest opt-in statuses.</p>
+      </div>
+      <div class="actions">
+        <%= link_to "Export theses to send to ProQuest", thesis_proquest_export_path, class: 'button button-primary' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<table class="table" id="proquestPreview" summary="This table presents a list of theses with their ProQuest opt-in status."
+ title="ProQuest opt-in status">
+  <thead>
+    <tr>
+      <th scope="col">Title</th>
+      <th scope="col">Author(s)</th>
+      <th scope="col">Term</th>
+      <th scope="col">DSpace handle</th>
+      <th scope="col">Opted in to ProQuest?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render(partial: 'proquest_export_thesis', collection: @theses) || render('shared/proquest_thesis_empty') %>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+$(document).ready(function () {
+  $('#proquestPreview').DataTable({
+    pageLength: -1,
+    lengthMenu: [
+      [10, 25, 50, -1],
+      [10, 25, 50, 'All'],
+    ],
+  });
+});
+</script>

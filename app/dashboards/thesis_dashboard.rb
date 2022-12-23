@@ -40,7 +40,8 @@ class ThesisDashboard < Administrate::BaseDashboard
     coauthors: Field::String,
     copyright: Field::BelongsTo,
     license: Field::BelongsTo,
-    dspace_handle: Field::String
+    dspace_handle: Field::String,
+    proquest_exported: Field::String
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -80,6 +81,7 @@ class ThesisDashboard < Administrate::BaseDashboard
     metadata_complete
     files_complete
     files
+    proquest_exported
   ].freeze
 
   # FORM_ATTRIBUTES

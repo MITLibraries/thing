@@ -769,4 +769,122 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select '.alert-banner.success', text: 'The theses you selected have been added to the publication queue. Status updates are not immediate.', count: 1
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~ proquest export preview ~~~~~~~~~~~~~~~~~~~~~
+  test 'anonymous users get redirected if they load the proquest export preview list' do
+    get thesis_proquest_export_preview_path
+    assert_response :redirect
+    assert_redirected_to '/login'
+  end
+
+  test 'basic users get redirected if they load the proquest export preview list' do
+    sign_in users(:basic)
+    get thesis_proquest_export_preview_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters get redirected if they load the proquest export preview list' do
+    sign_in users(:transfer_submitter)
+    get thesis_proquest_export_preview_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can load the proquest export preview list' do
+    sign_in users(:processor)
+    get thesis_proquest_export_preview_path
+    assert_response :success
+  end
+
+  test 'thesis admins can load the proquest export preview list' do
+    sign_in users(:thesis_admin)
+    get thesis_proquest_export_preview_path
+    assert_response :success
+  end
+
+  test 'admins can load the proquest export preview list' do
+    sign_in users(:admin)
+    get thesis_proquest_export_preview_path
+    assert_response :success
+  end
+
+  test 'proquest export cannot be initiated with no eligible theses' do
+    sign_in users(:processor)
+    Thesis.destroy_all
+    get thesis_proquest_export_preview_path
+    assert_select 'div#export-action', count: 1
+    assert_select 'div#export-action a[href=?]', thesis_proquest_export_path, count: 0
+  end
+
+  test 'proquest export preview, with eligible theses, includes a button to export' do
+    sign_in users(:processor)
+    get thesis_proquest_export_preview_path
+    assert_select 'div#export-action', count: 1
+    assert_select 'div#export-action a[href=?]', thesis_proquest_export_path
+  end
+
+  # ~~~~~~~~~~~~~~~~~~~~~ exporting theses to proquest ~~~~~~~~~~~~~~~~~~~~~
+  test 'anonymous users get redirected if they request export to proquest' do
+    get thesis_proquest_export_path
+    assert_response :redirect
+    assert_redirected_to '/login'
+  end
+
+  test 'basic users cannot export export_to_proquest proquest' do
+    sign_in users(:basic)
+    get thesis_proquest_export_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'submitters cannot export to proquest' do
+    sign_in users(:transfer_submitter)
+    get thesis_proquest_export_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+  end
+
+  test 'processors can export to proquest' do
+    sign_in users(:processor)
+    get thesis_proquest_export_path
+    assert_redirected_to thesis_proquest_export_preview_path
+  end
+
+  test 'thesis_admins can export to proquest' do
+    sign_in users(:thesis_admin)
+    get thesis_proquest_export_path
+    assert_redirected_to thesis_proquest_export_preview_path
+  end
+
+  test 'admins can export_to_proquest' do
+    sign_in users(:admin)
+    get thesis_proquest_export_path
+    assert_redirected_to thesis_proquest_export_preview_path
+  end
+
+  test 'exporting to proquest redirects to proquest export preview path with a flash message' do
+    sign_in users(:processor)
+    clear_enqueued_jobs
+    assert_enqueued_jobs 0
+
+    get thesis_proquest_export_path
+    assert_enqueued_jobs 1
+    assert_redirected_to thesis_proquest_export_preview_path
+    follow_redirect!
+    assert_select '.alert-banner.success', text: 'The theses you selected will be exported. Status updates are not immediate.', count: 1
+  end
+
+  test 'exporting to proquest with no eligible theses redirects to proquest export preview path with a flash message' do
+    sign_in users(:processor)
+    Thesis.destroy_all
+    get thesis_proquest_export_path
+    assert_redirected_to thesis_proquest_export_preview_path
+    follow_redirect!
+    assert_select '.alert-banner.warning', text: 'No theses are available to export.', count: 1
+  end
 end

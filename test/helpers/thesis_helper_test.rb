@@ -171,7 +171,7 @@ class ThesisHelperTest < ActionView::TestCase
   end
 
   test 'evaluate_proquest_status identifies opt-in conflicts' do
-    conflict_thesis = theses(:two)
+    conflict_thesis = theses(:doctor)
     assert conflict_thesis.authors.count > 1
     assert_not_equal conflict_thesis.authors.first.proquest_allowed, conflict_thesis.authors.second.proquest_allowed
     assert_equal 'conflict', evaluate_proquest_status(conflict_thesis)
@@ -194,7 +194,7 @@ class ThesisHelperTest < ActionView::TestCase
     true_thesis = theses(:one)
     false_thesis = theses(:with_hold)
     nil_thesis = theses(:coauthor)
-    conflict_thesis = theses(:two)
+    conflict_thesis = theses(:doctor)
 
     # Confirm proquest_allowed values.
     assert_equal true, evaluate_proquest_status(true_thesis)
@@ -213,7 +213,7 @@ class ThesisHelperTest < ActionView::TestCase
     true_thesis = theses(:one)
     false_thesis = theses(:with_hold)
     nil_thesis = theses(:coauthor)
-    conflict_thesis = theses(:two)
+    conflict_thesis = theses(:doctor)
 
     assert_equal({ opted_in: 1, opted_out: 0, no_decision: 0, conflict: 0 }, proquest_status_counts([true_thesis]))
     assert_equal({ opted_in: 0, opted_out: 1, no_decision: 0, conflict: 0 }, proquest_status_counts([false_thesis]))

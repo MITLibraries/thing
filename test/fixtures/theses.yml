@@ -258,6 +258,7 @@ doctor:
   files_complete: true
   metadata_complete: true
   issues_found: false
+  proquest_exported: 'Partial harvest'
 
 engineer:
   title: MyEngineerThesis
@@ -271,6 +272,7 @@ engineer:
   metadata_complete: true
   issues_found: false
   publication_status: Published
+  proquest_exported: 'Full harvest'
 
 long_abstracts_are_fun:
   title: Fock
@@ -284,3 +286,29 @@ long_abstracts_are_fun:
   issues_found: false
   publication_status: 'Published'
   dspace_handle: '1234.5/6789'
+
+proquest_export_full:
+  title: Exported for full ProQuest harvest
+  dspace_handle: '1234/5678'
+  grad_date: 2023-02-01
+  proquest_exported: Full harvest
+
+proquest_export_partial:
+  title: Exported for partial ProQuest harvest
+  dspace_handle: '2345/6789'
+  grad_date: 2023-02-01
+  proquest_exported: Partial harvest
+
+ready_for_full_export:
+  title: Ready for full ProQuest harvest
+  dspace_handle: '1234/5678'
+  grad_date: 2023-02-01
+  degrees: [three]
+  publication_status: Published
+
+ready_for_partial_export:
+  title: Ready for partial ProQuest harvest
+  dspace_handle: '2345/6789'
+  grad_date: 2023-02-01
+  degrees: [two]
+  publication_status: Published

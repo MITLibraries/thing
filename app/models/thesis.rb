@@ -25,6 +25,7 @@ class Thesis < ApplicationRecord
 
   belongs_to :copyright, optional: true
   belongs_to :license, optional: true
+  belongs_to :proquest_export_batch, optional: true
 
   has_many :degree_theses
   has_many :degrees, through: :degree_theses
@@ -112,6 +113,23 @@ class Thesis < ApplicationRecord
   scope :publication_statuses, -> { PUBLICATION_STATUS_OPTIONS }
   scope :multiple_authors, -> { where('authors_count > ?', 1) }
   scope :advanced_degree, -> { includes(degrees: :degree_type).distinct.where.not(degree_type: { name: 'Bachelor' }) }
+  scope :doctoral, -> { includes(degrees: :degree_type).distinct.where(degree_type: { name: 'Doctoral' }) }
+  scope :consented_to_proquest, lambda {
+                                  includes(authors: :user).where(authors: { proquest_allowed: true })
+                                                          .excluding(includes(authors: :user)
+                                                                     .where(authors: { proquest_allowed: false }))
+                                }
+  scope :not_consented_to_proquest, lambda {
+                                      excluding(includes(authors: :user).where(authors: { proquest_allowed: true }))
+                                    }
+  scope :exported_to_proquest, -> { where(proquest_exported: ['Partial harvest', 'Full harvest']) }
+  scope :not_exported_to_proquest, -> { where(proquest_exported: 'Not exported') }
+  scope :published, -> { where(publication_status: 'Published') }
+  scope :partial_proquest_export, -> { published.doctoral.not_exported_to_proquest.not_consented_to_proquest }
+  scope :full_proquest_export, -> { published.advanced_degree.not_exported_to_proquest.consented_to_proquest }
+  scope :ready_for_proquest_export, -> { partial_proquest_export + full_proquest_export }
+
+  enum proquest_exported: ['Not exported', 'Full harvest', 'Partial harvest']
 
   # Returns a true/false value (rendered as "yes" or "no") if there are any
   # holds with a status of either 'active' or 'expired'. A false/"No" is

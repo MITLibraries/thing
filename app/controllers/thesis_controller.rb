@@ -134,6 +134,22 @@ class ThesisController < ApplicationController
     redirect_to thesis_process_path
   end
 
+  def proquest_export_preview
+    @theses = Thesis.ready_for_proquest_export
+  end
+
+  # TODO: we need to generate and send a budget report CSV for partially harvested theses (spec TBD).
+  def proquest_export
+    if Thesis.ready_for_proquest_export.any?
+      ProquestExportJob.perform_later(Thesis.partial_proquest_export, Thesis.full_proquest_export)
+      flash[:success] = 'The theses you selected will be exported. ' \
+                        'Status updates are not immediate.'
+    else
+      flash[:warning] = 'No theses are available to export.'
+    end
+    redirect_to thesis_proquest_export_preview_path
+  end
+
   private
 
   # Various methods need to build an array of academic terms which meet varying conditions, in order to support a UI

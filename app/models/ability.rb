@@ -80,10 +80,12 @@ class Ability
     can :mark_withdrawn, Thesis
     can :process_theses, Thesis
     can :process_theses_update, Thesis
+    can :publication_statuses, Thesis
     can :publish_preview, Thesis
     can :publish_to_dspace, Thesis
+    can :proquest_export, Thesis
+    can :proquest_export_preview, Thesis
     can :select, Thesis
-    can :publication_statuses, Thesis
 
     can :read, Transfer
     can :select, Transfer

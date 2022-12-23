@@ -155,9 +155,10 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   # ~~~~ Empty thesis features
 
   test 'empty theses report shows a card' do
+    no_files_count = Thesis.without_files.count
     sign_in users(:processor)
     get report_empty_theses_path
-    assert_select '.card-empty-theses span', text: '19 have no attached files', count: 1
+    assert_select '.card-empty-theses span', text: "#{no_files_count} have no attached files", count: 1
   end
 
   test 'empty theses report has links to processing pages' do
@@ -167,11 +168,13 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'empty theses report allows filtering by term' do
+    no_files_count = Thesis.without_files.count
+    term_filter_no_files_count = Thesis.where(grad_date: '2018-09-01').without_files.count
     sign_in users(:processor)
     get report_empty_theses_path
-    assert_select '.card-empty-theses span', text: '19 have no attached files', count: 1
+    assert_select '.card-empty-theses span', text: "#{no_files_count} have no attached files", count: 1
     get report_empty_theses_path, params: { graduation: '2018-09-01' }
-    assert_select '.card-empty-theses span', text: '2 have no attached files', count: 1
+    assert_select '.card-empty-theses span', text: "#{term_filter_no_files_count} have no attached files", count: 1
   end
 
   # ~~~~~~~~~~~~~~~~~~~~ Report term detail ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -227,22 +230,24 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   test 'term report shows a few fields' do
     sign_in users(:processor)
     get report_term_path
-    assert_select '.card-overall .message', text: '27 thesis records', count: 1
-    assert_select '.card-files .message', text: '8 have files attached', count: 1
-    assert_select '.card-issues span', text: '1 flagged with issues', count: 1
-    assert_select '.card-students-contributing span', text: '0 have had metadata contributed by students', count: 1
-    assert_select '.card-multiple-authors span', text: '4 have multiple authors', count: 1
-    assert_select '.card-multiple-degrees span', text: '1 has multiple degrees', count: 1
-    assert_select '.card-multiple-departments span', text: '1 has multiple departments', count: 1
+    assert_select '.card-overall .message', count: 1
+    assert_select '.card-files .message', count: 1
+    assert_select '.card-issues span', count: 1
+    assert_select '.card-students-contributing span', count: 1
+    assert_select '.card-multiple-authors span', count: 1
+    assert_select '.card-multiple-degrees span', count: 1
+    assert_select '.card-multiple-departments span', count: 1
     assert_response :success
   end
 
   test 'term report allows filtering' do
+    thesis_count = Thesis.count
+    term_filtered_count = Thesis.where(grad_date: '2018-09-01').count
     sign_in users(:processor)
     get report_term_path
-    assert_select '.card-overall .message', text: '27 thesis records', count: 1
+    assert_select '.card-overall .message', text: "#{thesis_count} thesis records", count: 1
     get report_term_path, params: { graduation: '2018-09-01' }
-    assert_select '.card-overall .message', text: '2 thesis records', count: 1
+    assert_select '.card-overall .message', text: "#{term_filtered_count} thesis records", count: 1
     assert_response :success
   end
 
