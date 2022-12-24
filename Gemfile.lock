@@ -211,7 +211,7 @@ GEM
       rails (>= 5, < 8)
       sassc (~> 2)
     msgpack (1.6.0)
-    net-imap (0.3.2)
+    net-imap (0.3.4)
       date
       net-protocol
     net-pop (0.1.2)
