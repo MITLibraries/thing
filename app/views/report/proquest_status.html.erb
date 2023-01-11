@@ -10,8 +10,8 @@
   <div class="col3q">
     <h3 class="title title-page">ProQuest opt-in status for theses in <%= @this_term %></h3>
     <div class="alert alert-banner">
-      <p><i class="fa fa-info-circle fa-lg"></i> This report only lists theses that satisfy advanced degrees and have
-      at least one file attached.</p>
+      <p><i class="fa fa-info-circle fa-lg"></i> Theses listed in this report satisfy advanced degrees and have at least
+      one file attached.</p>
     </div>
 
     <%= render 'proquest_status_filter' %>
@@ -26,10 +26,11 @@
           <th scope="col">Author(s)</th>
           <th scope="col">DSpace handle</th>
           <th scope="col">Opted in to ProQuest?</th>
+          <th scope="col">Exported to ProQuest?</th>
         </tr>
       </thead>
       <tbody>
-        <%= render(partial: 'proquest_thesis', collection: @list) || render('proquest_status_empty') %>
+        <%= render(partial: 'proquest_status_thesis', collection: @list) || render('shared/proquest_thesis_empty') %>
       </tbody>
     </table>
   </div>

@@ -39,6 +39,8 @@ Rails.application.routes.draw do
   get 'thesis/publish', to: 'thesis#publish_to_dspace', as: 'thesis_publish_to_dspace'
   get 'thesis/select', to: 'thesis#select', as: 'thesis_select'
   get 'thesis/start', to: 'thesis#start', as: 'thesis_start'
+  get 'thesis/proquest_export_preview', to: 'thesis#proquest_export_preview', as: 'thesis_proquest_export_preview'
+  get 'thesis/proquest_export', to: 'thesis#proquest_export', as: 'thesis_proquest_export'
   resources :registrar, only: [:new, :create, :show]
   resources :thesis, only: [:new, :create, :edit, :show, :update]
   get 'harvest', to: 'registrar#list_registrar', as: 'harvest'

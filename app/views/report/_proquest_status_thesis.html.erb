@@ -1,0 +1,11 @@
+<tr>
+  <td><%= link_to title_helper(proquest_status_thesis), edit_admin_thesis_path(proquest_status_thesis.id) %></td>
+  <td>
+    <% proquest_status_thesis.authors.each do |author| %>
+      <%= link_to author.user.display_name, edit_admin_author_path(author.id) %><br>
+    <% end %>
+  </td>
+  <td><%= proquest_status_thesis.dspace_handle %></td>
+  <td><%= render_proquest_status(proquest_status_thesis) %></td>
+  <td><%= proquest_status_thesis.proquest_exported %></td>
+</tr>

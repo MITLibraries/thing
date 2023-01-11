@@ -113,7 +113,7 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
   test 'students can edit their advisor name via thesis form' do
     mock_auth(users(:yo))
     count = Advisor.count
-    sample = users(:yo).theses.third
+    sample = users(:yo).theses.fourth
     sample_advisor = sample.advisors.first
     assert_not_equal 'Another Name', sample_advisor.name
 

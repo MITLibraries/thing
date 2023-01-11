@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_18_182433) do
+ActiveRecord::Schema.define(version: 2022_12_09_161518) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -168,6 +168,11 @@ ActiveRecord::Schema.define(version: 2022_10_18_182433) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "proquest_export_batches", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "registrars", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -214,8 +219,11 @@ ActiveRecord::Schema.define(version: 2022_10_18_182433) do
     t.string "dspace_handle"
     t.boolean "issues_found", default: false, null: false
     t.integer "authors_count"
+    t.integer "proquest_exported", default: 0, null: false
+    t.integer "proquest_export_batch_id"
     t.index ["copyright_id"], name: "index_theses_on_copyright_id"
     t.index ["license_id"], name: "index_theses_on_license_id"
+    t.index ["proquest_export_batch_id"], name: "index_theses_on_proquest_export_batch_id"
   end
 
   create_table "transfers", force: :cascade do |t|

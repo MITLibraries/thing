@@ -25,6 +25,9 @@
             <% if can? :list_registrar, Registrar %>
               <%= nav_link_to("Harvest CSV", harvest_path) %>
             <% end %>
+            <% if can? :proquest_export, Thesis %>
+              <%= nav_link_to("Export for ProQuest", thesis_proquest_export_preview_path) %>
+            <% end %>
             <% if can? :index, Report %>
               <%= nav_link_to("Report", report_index_path) %>
             <% end %>

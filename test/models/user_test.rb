@@ -352,7 +352,8 @@ class UserTest < ActiveSupport::TestCase
 
   test 'editable_theses returns a set of thesis records' do
     u = users(:yo)
-    assert_equal 3, u.editable_theses.count
+    editable_thesis_count = u.theses.where(metadata_complete: false).where(issues_found: false).count
+    assert_equal editable_thesis_count, u.editable_theses.count
   end
 
   test 'editable_theses returns a thesis with neither metadata nor issues flags set' do

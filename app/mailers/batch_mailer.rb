@@ -9,4 +9,18 @@ class BatchMailer < ApplicationMailer
          cc: ENV['MAINTAINER_EMAIL'],
          subject: 'ETD MARC batch export')
   end
+
+  def proquest_export_email(json_blob, thesis_count)
+    return unless ENV.fetch('DISABLE_ALL_EMAIL', 'true') == 'false' # allows PR builds to disable emails
+
+    @thesis_count = thesis_count
+    attachments[json_blob.filename.to_s] = {
+      mime_type: json_blob.content_type,
+      content: json_blob.download
+    }
+    mail(from: "MIT Libraries <#{ENV['THESIS_ADMIN_EMAIL']}>",
+         to: ENV['THESIS_ADMIN_EMAIL'],
+         cc: ENV['MAINTAINER_EMAIL'],
+         subject: 'ETD ProQuest export')
+  end
 end
