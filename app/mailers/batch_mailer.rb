@@ -4,7 +4,7 @@ class BatchMailer < ApplicationMailer
 
     @theses = theses
     attachments[marc_zip_filename.to_s] = File.binread(marc_zip_file)
-    mail(from: "MIT Libraries <#{ENV['THESIS_ADMIN_EMAIL']}>",
+    mail(from: "MIT Libraries <#{ENV['ETD_APP_EMAIL']}>",
          to: ENV['METADATA_ADMIN_EMAIL'],
          cc: ENV['MAINTAINER_EMAIL'],
          subject: 'ETD MARC batch export')
@@ -18,7 +18,7 @@ class BatchMailer < ApplicationMailer
       mime_type: json_blob.content_type,
       content: json_blob.download
     }
-    mail(from: "MIT Libraries <#{ENV['THESIS_ADMIN_EMAIL']}>",
+    mail(from: "MIT Libraries <#{ENV['ETD_APP_EMAIL']}>",
          to: ENV['THESIS_ADMIN_EMAIL'],
          cc: ENV['MAINTAINER_EMAIL'],
          subject: 'ETD ProQuest export')

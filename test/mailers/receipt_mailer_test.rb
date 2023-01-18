@@ -13,7 +13,7 @@ class ReceiptMailerTest < ActionMailer::TestCase
       end
 
       # Test the body of the sent email contains what we expect it to
-      assert_equal ['test@example.com'], email.from
+      assert_equal ['app@example.com'], email.from
       assert_equal ['admin@example.com'], email.to
       assert_equal 'Your thesis information submission', email.subject
       assert_equal read_fixture('receipt_email').join, email.body.to_s
@@ -64,7 +64,7 @@ class ReceiptMailerTest < ActionMailer::TestCase
       end
 
       # Test the body of the sent email contains what we expect it to
-      assert_equal ['test@example.com'], email.from
+      assert_equal ['app@example.com'], email.from
       assert_equal ['transfer@example.com'], email.to
       assert_equal 'Thesis files transferred', email.subject
       # Please note: we are not attempting to assert_equal on the entire

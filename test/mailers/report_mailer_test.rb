@@ -15,7 +15,7 @@ class ReportMailerTest < ActionMailer::TestCase
 
       # Make sure it was sent to the right person with the right content. We are only testing a subset of the body
       # rather than a full sample email to avoid future testing complications
-      assert_equal ['test@example.com'], email.from
+      assert_equal ['app@example.com'], email.from
       assert_equal ['test@example.com'], email.to
       assert_equal 'Registrar data import summary', email.subject
       assert_match 'New theses: 1', email.body.to_s
@@ -32,7 +32,7 @@ class ReportMailerTest < ActionMailer::TestCase
         email.deliver_now
       end
 
-      assert_equal ['test@example.com'], email.from
+      assert_equal ['app@example.com'], email.from
       assert_equal ['test@example.com'], email.to
       assert_equal 'DSpace publication results summary', email.subject.to_s
       assert_match 'Total theses in output queue: 2', email.body.to_s

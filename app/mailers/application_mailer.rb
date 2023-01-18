@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: ENV['THESIS_ADMIN_EMAIL']
+  default from: ENV['ETD_APP_EMAIL']
   layout 'mailer'
 end
