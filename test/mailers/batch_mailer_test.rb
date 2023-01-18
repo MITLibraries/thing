@@ -13,7 +13,7 @@ class BatchMailerTest < ActionMailer::TestCase
       end
 
       # Make sure it was sent to the right person with the expected attachment.
-      assert_equal ['test@example.com'], email.from
+      assert_equal ['app@example.com'], email.from
       assert_equal ['test-metadata@example.com'], email.to
       assert_equal 'ETD MARC batch export', email.subject
       assert_equal 'marc.zip', email.attachments.first.filename
@@ -48,7 +48,7 @@ class BatchMailerTest < ActionMailer::TestCase
       end
 
       # Make sure it was sent to the right person with the expected attachment.
-      assert_equal ['test@example.com'], email.from
+      assert_equal ['app@example.com'], email.from
       assert_equal ['test@example.com'], email.to
       assert_equal 'ETD ProQuest export', email.subject
       assert_equal 'pq.json', email.attachments.first.filename

@@ -4,7 +4,7 @@ class ReportMailer < ApplicationMailer
 
     @registrar = registrar
     @results = results
-    mail(from: "MIT Libraries <#{ENV['THESIS_ADMIN_EMAIL']}>",
+    mail(from: "MIT Libraries <#{ENV['ETD_APP_EMAIL']}>",
          to: ENV['THESIS_ADMIN_EMAIL'],
          cc: ENV['MAINTAINER_EMAIL'],
          subject: 'Registrar data import summary')
@@ -14,7 +14,7 @@ class ReportMailer < ApplicationMailer
     return unless ENV.fetch('DISABLE_ALL_EMAIL', 'true') == 'false' # allows PR builds to disable emails
 
     @results = results
-    mail(from: "MIT Libraries <#{ENV['THESIS_ADMIN_EMAIL']}>",
+    mail(from: "MIT Libraries <#{ENV['ETD_APP_EMAIL']}>",
          to: ENV['THESIS_ADMIN_EMAIL'],
          cc: ENV['MAINTAINER_EMAIL'],
          subject: 'DSpace publication results summary')
