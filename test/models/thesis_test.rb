@@ -1269,8 +1269,25 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:with_hold)
     assert_not_includes Thesis.consented_to_proquest, thesis
 
-    # multi-author thesis with conflicting opt-in statuses is excluded
+    # multi-author thesis with conflicting opt-in statuses (true, false) is excluded
     thesis = theses(:doctor)
+    assert_not_includes Thesis.consented_to_proquest, thesis
+
+    # multi-author thesis with conflicting opt-in statuses (true, nil) is excluded
+    first_author = thesis.authors.first
+    second_author = thesis.authors.second
+    assert_equal 2, thesis.authors.count
+    assert_equal true, first_author.proquest_allowed
+
+    second_author.proquest_allowed = nil
+    second_author.save
+    assert_nil second_author.proquest_allowed
+    assert_not_includes Thesis.consented_to_proquest, thesis
+
+    # multi-author thesis with conflicting opt-in statuses (false, nil) is excluded
+    first_author.proquest_allowed = false
+    thesis.save
+    assert_equal false, first_author.proquest_allowed
     assert_not_includes Thesis.consented_to_proquest, thesis
   end
 

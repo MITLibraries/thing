@@ -118,6 +118,8 @@ class Thesis < ApplicationRecord
                                   includes(authors: :user).where(authors: { proquest_allowed: true })
                                                           .excluding(includes(authors: :user)
                                                                      .where(authors: { proquest_allowed: false }))
+                                                          .excluding(includes(authors: :user)
+                                                                     .where(authors: { proquest_allowed: nil }))
                                 }
   scope :not_consented_to_proquest, lambda {
                                       excluding(includes(authors: :user).where(authors: { proquest_allowed: true }))
