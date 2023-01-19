@@ -1318,17 +1318,33 @@ class ThesisTest < ActiveSupport::TestCase
     thesis = theses(:one)
     assert_not_includes Thesis.not_consented_to_proquest, thesis
 
+    # multi-author thesis that has opted in is excluded
+    thesis = theses(:two)
+    assert_not_includes Thesis.not_consented_to_proquest, thesis
+
     # multi-author thesis with all opt-outs is included
     thesis = theses(:with_hold)
     assert_includes Thesis.not_consented_to_proquest, thesis
 
-    # multi-author thesis with one opt-in and one opt-out is excluded
+    # multi-author thesis with one opt-in and one opt-out is included
     thesis = theses(:doctor)
-    assert_not_includes Thesis.not_consented_to_proquest, thesis
+    assert_includes Thesis.not_consented_to_proquest, thesis
 
-    # multi-author thesis that has opted in is excluded
-    thesis = theses(:two)
-    assert_not_includes Thesis.not_consented_to_proquest, thesis
+    # multi-author thesis with one opt-in and one null is included
+    assert_equal 2, thesis.authors.count
+    first_author = thesis.authors.first
+    second_author = thesis.authors.second
+    assert_equal true, first_author.proquest_allowed
+    assert_equal false, second_author.proquest_allowed
+
+    second_author.proquest_allowed = nil
+    second_author.save
+    assert_includes Thesis.not_consented_to_proquest, thesis
+
+    # multi-author thesis with one opt-out and one null is included
+    first_author.proquest_allowed = false
+    first_author.save
+    assert_includes Thesis.not_consented_to_proquest, thesis
   end
 
   test 'exported_to_proquest scope includes theses flagged for partial harvest' do

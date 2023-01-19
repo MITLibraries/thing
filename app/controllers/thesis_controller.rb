@@ -141,7 +141,7 @@ class ThesisController < ApplicationController
   # TODO: we need to generate and send a budget report CSV for partially harvested theses (spec TBD).
   def proquest_export
     if Thesis.ready_for_proquest_export.any?
-      ProquestExportJob.perform_later(Thesis.partial_proquest_export, Thesis.full_proquest_export)
+      ProquestExportJob.perform_later(Thesis.partial_proquest_export.to_a, Thesis.full_proquest_export.to_a)
       flash[:success] = 'The theses you selected will be exported. ' \
                         'Status updates are not immediate.'
     else
