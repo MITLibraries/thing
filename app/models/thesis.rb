@@ -122,7 +122,8 @@ class Thesis < ApplicationRecord
                                                                      .where(authors: { proquest_allowed: nil }))
                                 }
   scope :not_consented_to_proquest, lambda {
-                                      excluding(includes(authors: :user).where(authors: { proquest_allowed: true }))
+                                      left_joins(authors: :user).where(authors: { proquest_allowed: nil })
+                                                                .or(where(authors: { proquest_allowed: false }))
                                     }
   scope :exported_to_proquest, -> { where(proquest_exported: ['Partial harvest', 'Full harvest']) }
   scope :not_exported_to_proquest, -> { where(proquest_exported: 'Not exported') }
