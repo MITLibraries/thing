@@ -312,3 +312,19 @@ ready_for_partial_export:
   grad_date: 2023-02-01
   degrees: [two]
   publication_status: Published
+
+pq_conflict_true_nil:
+  title: ProQuest export conflict (doctoral, one yes, one nil)
+  dspace_handle: '2345/6789'
+  grad_date: 2023-02-01
+  degrees: [two]
+  departments: [one]
+  publication_status: Published
+
+pq_conflict_false_nil:
+  title: ProQuest export conflict (doctoral, one yes, one nil)
+  dspace_handle: '2345/6789'
+  grad_date: 2023-02-01
+  degrees: [two]
+  departments: [one]
+  publication_status: Published

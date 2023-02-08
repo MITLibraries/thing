@@ -121,3 +121,27 @@ eighteen:
   thesis: ready_for_full_export
   graduation_confirmed: true
   proquest_allowed: true
+
+nineteen:
+  user: yo
+  thesis: pq_conflict_true_nil
+  graduation_confirmed: true
+  proquest_allowed: true
+
+twenty:
+  user: basic
+  thesis: pq_conflict_true_nil
+  graduation_confirmed: true
+  proquest_allowed: false
+
+twentyone:
+  user: yo
+  thesis: pq_conflict_false_nil
+  graduation_confirmed: true
+  proquest_allowed: false
+
+twentytwo:
+  user: basic
+  thesis: pq_conflict_false_nil
+  graduation_confirmed: true
+  proquest_allowed: nil
