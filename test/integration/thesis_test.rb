@@ -111,12 +111,12 @@ class ThesisIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'students can edit their advisor name via thesis form' do
-    mock_auth(users(:yo))
     count = Advisor.count
-    sample = users(:yo).theses.fourth
-    sample_advisor = sample.advisors.first
+    sample_advisor = advisors(:first)
+    sample = sample_advisor.theses.first
     assert_not_equal 'Another Name', sample_advisor.name
 
+    mock_auth(sample.users.first)
     updated = sample.serializable_hash
     sample_advisor.name = 'Another Name'
     updated['advisors_attributes'] = sample_advisor.serializable_hash

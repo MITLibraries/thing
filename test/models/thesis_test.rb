@@ -1274,20 +1274,11 @@ class ThesisTest < ActiveSupport::TestCase
     assert_not_includes Thesis.consented_to_proquest, thesis
 
     # multi-author thesis with conflicting opt-in statuses (true, nil) is excluded
-    first_author = thesis.authors.first
-    second_author = thesis.authors.second
-    assert_equal 2, thesis.authors.count
-    assert_equal true, first_author.proquest_allowed
-
-    second_author.proquest_allowed = nil
-    second_author.save
-    assert_nil second_author.proquest_allowed
+    thesis = theses(:pq_conflict_true_nil)
     assert_not_includes Thesis.consented_to_proquest, thesis
 
     # multi-author thesis with conflicting opt-in statuses (false, nil) is excluded
-    first_author.proquest_allowed = false
-    thesis.save
-    assert_equal false, first_author.proquest_allowed
+    thesis = theses(:pq_conflict_false_nil)
     assert_not_includes Thesis.consented_to_proquest, thesis
   end
 
@@ -1331,19 +1322,11 @@ class ThesisTest < ActiveSupport::TestCase
     assert_includes Thesis.not_consented_to_proquest, thesis
 
     # multi-author thesis with one opt-in and one null is included
-    assert_equal 2, thesis.authors.count
-    first_author = thesis.authors.first
-    second_author = thesis.authors.second
-    assert_equal true, first_author.proquest_allowed
-    assert_equal false, second_author.proquest_allowed
-
-    second_author.proquest_allowed = nil
-    second_author.save
+    thesis = theses(:pq_conflict_true_nil)
     assert_includes Thesis.not_consented_to_proquest, thesis
 
     # multi-author thesis with one opt-out and one null is included
-    first_author.proquest_allowed = false
-    first_author.save
+    thesis = theses(:pq_conflict_false_nil)
     assert_includes Thesis.not_consented_to_proquest, thesis
   end
 
