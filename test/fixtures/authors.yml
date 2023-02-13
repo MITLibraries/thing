@@ -145,3 +145,15 @@ twentytwo:
   thesis: pq_conflict_false_nil
   graduation_confirmed: true
   proquest_allowed: nil
+
+twentythree:
+  user: yo
+  thesis: budget_report_multiple
+  graduation_confirmed: true
+  proquest_allowed: false
+
+twentyfour:
+  user: basic
+  thesis: budget_report_multiple
+  graduation_confirmed: true
+  proquest_allowed: false

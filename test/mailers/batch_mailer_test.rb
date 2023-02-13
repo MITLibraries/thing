@@ -36,11 +36,16 @@ class BatchMailerTest < ActionMailer::TestCase
       theses = [theses(:doctor), theses(:engineer)]
       export = ProquestExportBatch.new
       export_json = export.build_json(theses)
+      export_csv = export.build_budget_report(theses)
       export.proquest_export.attach(io: StringIO.new(export_json),
                                     filename: 'pq.json',
                                     content_type: 'application/json')
+      export.budget_report.attach(io: StringIO.new(export_csv),
+                                    filename: 'pq.csv',
+                                    content_type: 'application/csv')
       export.save
-      email = BatchMailer.proquest_export_email(export.proquest_export, theses)
+      email = BatchMailer.proquest_export_email(export.proquest_export, export.budget_report,  theses.count,
+                                                theses.count)
 
       # Send the email, then test that it got queued
       assert_emails 1 do
@@ -52,7 +57,9 @@ class BatchMailerTest < ActionMailer::TestCase
       assert_equal ['test@example.com'], email.to
       assert_equal 'ETD ProQuest export', email.subject
       assert_equal 'pq.json', email.attachments.first.filename
+      assert_equal 'pq.csv', email.attachments.second.filename
       assert_includes '2 theses', email.body.to_s
+      assert_includes '1 doctoral theses', email.body.to_s
     end
   end
 end

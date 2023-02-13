@@ -1,4 +1,11 @@
 <p>Hello,</p>
 
-<p>Attached is a ProQuest export of <%= @thesis_count %> theses generated on
-<%= Date.current.strftime('%A, %B %d, %Y') %> at <%= Time.now.strftime('%r %Z') %>.
+<p>Attached is a report of <%= @thesis_count %> theses exported to ProQuest from the
+<a href="https://thesis-submit.mit.edu/">ETD application</a> on <%= Date.current.strftime('%A, %B %d, %Y') %> at
+<%= Time.now.strftime('%r %Z') %>.</p>
+
+<p>Included in this export are <%= @budget_report_count %> doctoral theses with authors that have not opted in to have
+their theses submitted to ProQuest. ProQuest will harvest these theses' metadata. Please use the attached budget report
+for budget reconciliation purposes.</p>
+
+<p>Please contact the ETD team at <%= ENV['THESIS_ADMIN_EMAIL'] %> with any questions.</p>
