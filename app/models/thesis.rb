@@ -128,8 +128,17 @@ class Thesis < ApplicationRecord
   scope :exported_to_proquest, -> { where(proquest_exported: ['Partial harvest', 'Full harvest']) }
   scope :not_exported_to_proquest, -> { where(proquest_exported: 'Not exported') }
   scope :published, -> { where(publication_status: 'Published') }
-  scope :partial_proquest_export, -> { published.doctoral.not_exported_to_proquest.not_consented_to_proquest }
-  scope :full_proquest_export, -> { published.advanced_degree.not_exported_to_proquest.consented_to_proquest }
+
+  # Only theses with from the 9/2022 degree period and onward should be exported to ProQuest.
+  scope :proquest_degree_period, -> { where('grad_date >= ?', Date.parse('September 2022')) }
+  scope :partial_proquest_export, lambda {
+                                    published.doctoral.proquest_degree_period.not_exported_to_proquest
+                                             .not_consented_to_proquest
+                                  }
+  scope :full_proquest_export, lambda {
+                                 published.advanced_degree.proquest_degree_period.not_exported_to_proquest
+                                          .consented_to_proquest
+                               }
   scope :ready_for_proquest_export, -> { partial_proquest_export + full_proquest_export }
 
   enum proquest_exported: ['Not exported', 'Full harvest', 'Partial harvest']

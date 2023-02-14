@@ -157,3 +157,15 @@ twentyfour:
   thesis: budget_report_multiple
   graduation_confirmed: true
   proquest_allowed: false
+
+twentyfive:
+  user: yo
+  thesis: full_proquest_wrong_term
+  graduation_confirmed: true
+  proquest_allowed: true
+
+twentysix:
+  user: yo
+  thesis: partial_proquest_wrong_term
+  graduation_confirmed: true
+  proquest_allowed: true

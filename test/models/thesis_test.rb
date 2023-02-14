@@ -1369,33 +1369,74 @@ class ThesisTest < ActiveSupport::TestCase
     assert_not_includes Thesis.published, in_review_thesis
   end
 
+  test 'proquest_degree_period scope does not include theses with a grad date prior to Sept 2022' do
+    wrong_term = theses(:full_proquest_wrong_term)
+    another_wrong_term = theses(:partial_proquest_wrong_term)
+
+    # Confirm that the grad dates are different, so we are testing at least two degree periods before Sept '22
+    assert_not_equal wrong_term.grad_date, another_wrong_term.grad_date
+    
+    # Confirm that both fixtures have a grad date prior to Sept '22
+    assert wrong_term.grad_date < Date.parse('September 2022')
+    assert another_wrong_term.grad_date < Date.parse('September 2022')
+
+    assert_not_includes Thesis.proquest_degree_period, wrong_term
+    assert_not_includes Thesis.proquest_degree_period, another_wrong_term
+  end
+
+  test 'proquest_degree_period scope includes theses with a grad date after Sept 2022' do
+    correct_term = theses(:ready_for_full_export)
+    another_correct_term = theses(:ready_for_partial_export)
+
+    # Confirm that the grad dates are different, so we are testing at least two degree periods after Sept '22
+    assert_not_equal correct_term.grad_date, another_correct_term.grad_date
+    
+    # Confirm that both fixtures have a grad date after to Sept '22
+    assert correct_term.grad_date > Date.parse('September 2022')
+    assert another_correct_term.grad_date > Date.parse('September 2022')
+  end
+
+  test 'proquest_degree_period scope includes theses from the Sept 2022 grad date' do
+    thesis = theses(:budget_report_multiple)
+    assert_equal Date.parse('September 2022'), thesis.grad_date
+    assert_includes Thesis.proquest_degree_period, thesis
+  end
+
   test 'partial_proquest_export scope returns the expected set of theses' do
     partial_export_thesis = theses(:ready_for_partial_export)
     full_export_thesis = theses(:ready_for_full_export)
+    wrong_term_thesis = theses(:partial_proquest_wrong_term)
     no_export_thesis = theses(:one)
 
     assert_includes Thesis.partial_proquest_export, partial_export_thesis
     assert_not_includes Thesis.partial_proquest_export, full_export_thesis
+    assert_not_includes Thesis.partial_proquest_export, wrong_term_thesis
     assert_not_includes Thesis.partial_proquest_export, no_export_thesis
   end
 
   test 'full_proquest_export scope returns the expected set of theses' do
     partial_export_thesis = theses(:ready_for_partial_export)
     full_export_thesis = theses(:ready_for_full_export)
+    wrong_term_thesis = theses(:full_proquest_wrong_term)
     no_export_thesis = theses(:one)
 
     assert_includes Thesis.full_proquest_export, full_export_thesis
     assert_not_includes Thesis.full_proquest_export, partial_export_thesis
+    assert_not_includes Thesis.full_proquest_export, wrong_term_thesis
     assert_not_includes Thesis.full_proquest_export, no_export_thesis
   end
 
   test 'ready_for_proquest_export scope returns all theses to be exported' do
     partial_export_thesis = theses(:ready_for_partial_export)
     full_export_thesis = theses(:ready_for_full_export)
+    wrong_term_partial_export_thesis = theses(:partial_proquest_wrong_term)
+    wrong_term_full_export_thesis = theses(:full_proquest_wrong_term)
     no_export_thesis = theses(:one)
 
     assert_includes Thesis.ready_for_proquest_export, partial_export_thesis
     assert_includes Thesis.ready_for_proquest_export, full_export_thesis
+    assert_not_includes Thesis.ready_for_proquest_export, wrong_term_partial_export_thesis
+    assert_not_includes Thesis.ready_for_proquest_export, wrong_term_full_export_thesis
     assert_not_includes Thesis.ready_for_proquest_export, no_export_thesis
   end
 end
