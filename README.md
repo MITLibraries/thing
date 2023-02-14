@@ -292,6 +292,32 @@ The publishing workflow will automatically trigger a MARC export of all the publ
 generated marcxml file is zipped, attached to an email, and sent to the cataloging team (see [Sending Receipt Email in
 Production](#sending-receipt-email-in-production)).
 
+## ProQuest export workflow
+
+Students have the option to agree to send their thesis and its metadata to ProQuest. If all authors of a thesis consent,
+the thesis will be flagged for ProQuest export. Otherwise, the thesis will not be flagged for export.
+
+This process differs for doctoral theses. We pay ProQuest to harvest metadata for doctoral theses regardless of the
+thesis' ProQuest consent status. If the authors of a doctoral thesis provide conflicting responses, all authors decline,
+or at least one author does not respond, then the thesis is flagged for 'partial harvest'. In this case, ProQuest will
+harvest the thesis metadata *only*, not the thesis itself.
+
+Processors can review all theses that are flagged for export in a dashboard. Once they have confirmed that the list is
+correct, they initiate a job that generates a JSON report of all theses that have not yet been exported. The JSON
+contains each thesis' DSpace handle and its export status (partial or full harvest). The processor then forwards this
+JSON file to the ProQuest Dissertations and Theses team, who will harvest metadata -- and files, where applicable --
+using the DSpace handles provided.
+
+The same job that generates the JSON report also creates a CSV listing each 'partial harvest' thesis. This CSV is used
+for budget reconciliation, and is sent to the ETD team in the same email as the JSON report.
+
+Each export instantiates a ProquestExportBatch ActiveRecord object, to which the CSV and JSON files are attached using
+ActiveStorage. Additionally, a ProquestExportBatch object is associated with all theses it exports. This allows us to
+provide information about past export jobs as needed.
+
+The ProQuest export workflow begins with the September 2022 degree period. All theses from prior degree periods are
+excluded from export.
+
 ## Validation of thesis record
 
 Prior to theses being published to external systems (such as the repository, or
