@@ -1,15 +1,13 @@
 module FakeAuthConfig
   # Used in an initializer to determine if the application is configured and
   # allowed to use fake authentication.
-  def fake_auth_status
+  def self.fake_auth_status
     return true if fake_auth_enabled? && app_name_pattern_match?
 
     false
   end
 
-  private
-
-  def fake_auth_enabled?
+  private_class_method def self.fake_auth_enabled?
     # Default to fake auth in development unless FAKE_AUTH_ENABLED=false
     # This allows rake tasks to run without loading ENV.
     # This line is not testable because it checks for dev env explicitly.
@@ -26,10 +24,10 @@ module FakeAuthConfig
   # name to match the pr build name patterns.
   # In test env we require setting a fake app name to allow for testing of the
   # pattern.
-  def app_name_pattern_match?
+  private_class_method def self.app_name_pattern_match?
     return true if Rails.env.development?
 
     review_app_pattern = /^thesis-(submit|dropbox)-pr-\d+$/
-    review_app_pattern.match(ENV['HEROKU_APP_NAME']).present?
+    review_app_pattern.match(ENV.fetch('HEROKU_APP_NAME', nil)).present?
   end
 end

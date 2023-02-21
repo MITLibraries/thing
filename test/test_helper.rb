@@ -30,7 +30,7 @@ module ActiveSupport
     fixtures :all
 
     setup do
-      ActiveStorage::Current.host = "https://example.com"
+      ActiveStorage::Current.url_options = { host: 'https://example.com' }
 
       # This is required for tests that reference the authors_count counter cache on the Thesis model. If we add other
       # counter caches, we should reset them here.
