@@ -10,14 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_09_161518) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_12_09_161518) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.integer "record_id", null: false
     t.integer "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.text "description"
     t.integer "purpose"
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
@@ -32,7 +31,7 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.text "metadata"
     t.integer "byte_size", null: false
     t.string "checksum", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
@@ -53,16 +52,16 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
 
   create_table "advisors", force: :cascade do |t|
     t.string "name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "authors", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "thesis_id", null: false
     t.boolean "graduation_confirmed", default: false, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "proquest_allowed"
     t.index ["thesis_id"], name: "index_authors_on_thesis_id"
     t.index ["user_id"], name: "index_authors_on_user_id"
@@ -74,8 +73,8 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.text "display_description", null: false
     t.text "statement_dspace", null: false
     t.text "url"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "degree_theses", id: false, force: :cascade do |t|
@@ -87,14 +86,14 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
 
   create_table "degree_types", force: :cascade do |t|
     t.string "name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name"], name: "index_degree_types_on_name", unique: true
   end
 
   create_table "degrees", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "code_dw", null: false
     t.string "name_dw"
     t.string "abbreviation"
@@ -109,13 +108,13 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.integer "attempts", default: 0, null: false
     t.text "handler", null: false
     t.text "last_error"
-    t.datetime "run_at"
-    t.datetime "locked_at"
-    t.datetime "failed_at"
+    t.datetime "run_at", precision: nil
+    t.datetime "locked_at", precision: nil
+    t.datetime "failed_at", precision: nil
     t.string "locked_by"
     t.string "queue"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
@@ -130,8 +129,8 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
 
   create_table "departments", force: :cascade do |t|
     t.string "name_dw", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "code_dw", default: "", null: false
     t.string "name_dspace"
     t.string "authority_key_dspace"
@@ -141,8 +140,8 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
 
   create_table "hold_sources", force: :cascade do |t|
     t.text "source", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "holds", force: :cascade do |t|
@@ -154,8 +153,8 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.string "case_number"
     t.integer "status", null: false
     t.text "processing_notes"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["hold_source_id"], name: "index_holds_on_hold_source_id"
     t.index ["thesis_id"], name: "index_holds_on_thesis_id"
   end
@@ -164,40 +163,40 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.text "display_description", null: false
     t.text "license_type", null: false
     t.text "url"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "proquest_export_batches", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "registrars", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_registrars_on_user_id"
   end
 
   create_table "submission_information_packages", force: :cascade do |t|
-    t.datetime "preserved_at"
+    t.datetime "preserved_at", precision: nil
     t.integer "preservation_status", default: 0, null: false
     t.string "bag_declaration"
     t.string "bag_name"
     t.text "manifest"
     t.text "metadata"
     t.integer "thesis_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["thesis_id"], name: "index_submission_information_packages_on_thesis_id"
   end
 
   create_table "submitters", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "department_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["department_id"], name: "index_submitters_on_department_id"
     t.index ["user_id"], name: "index_submitters_on_user_id"
   end
@@ -206,8 +205,8 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.string "title"
     t.text "abstract"
     t.date "grad_date", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.text "processor_note"
     t.text "author_note"
     t.boolean "files_complete", default: false, null: false
@@ -230,8 +229,8 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.integer "user_id", null: false
     t.integer "department_id", null: false
     t.date "grad_date", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.text "note"
     t.integer "files_count", default: 0, null: false
     t.integer "unassigned_files_count", default: 0, null: false
@@ -243,8 +242,8 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.string "uid", null: false
     t.string "email", null: false
     t.boolean "admin", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "role", default: "basic"
     t.string "given_name"
     t.string "surname"
@@ -266,7 +265,7 @@ ActiveRecord::Schema.define(version: 2022_12_09_161518) do
     t.string "whodunnit"
     t.text "object", limit: 1073741823
     t.text "object_changes", limit: 1073741823
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 

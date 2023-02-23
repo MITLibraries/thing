@@ -18,15 +18,15 @@ gem 'json'
 gem 'kaminari'
 gem 'lograge'
 gem 'marc'
-gem 'mitlibraries-theme'
+gem 'mitlibraries-theme', git: 'https://github.com/mitlibraries/mitlibraries-theme', tag: 'v1.0.0'
 gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem 'net-smtp', require: false
 gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-saml'
-gem 'paper_trail'
+gem 'paper_trail', '~> 12.3'
 gem 'puma'
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 7.0'
 gem 'rubyzip'
 gem 'sass-rails'
 gem 'sentry-rails'
