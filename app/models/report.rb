@@ -386,8 +386,8 @@ class Report
     {
       'title' => 'Thesis counts by department',
       'summary' => 'This table presents a summary of which departments have how many theses for the selected term. ' \
-                   'The second column shows the programs at MIT which grant degrees, while the first column shows how ' \
-                   'many theses have come from that program during this period.',
+                   'The second column shows the programs at MIT which grant degrees, while the first column shows ' \
+                   'how many theses have come from that program during this period.',
       'note' => 'Please note: total theses indicated by this table may be greater than the overall number of theses ' \
                 'because some theses have multiple departments.',
       'column' => 'Department',

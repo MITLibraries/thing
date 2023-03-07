@@ -80,8 +80,9 @@ class ThesisController < ApplicationController
     # Get array of defined terms where unpublished theses have files attached
     @terms = defined_terms Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')
     # Filter relevant theses by selected term from querystring
-    @thesis = filter_theses_by_term Thesis.joins(:files_attachments).includes(%i[departments users]).group(:id).where('publication_status != ?',
-                                                                                                                      'Published')
+    @thesis = filter_theses_by_term Thesis.joins(:files_attachments).includes(%i[departments users]).group(:id).where(
+      'publication_status != ?', 'Published'
+    )
   end
 
   def show
