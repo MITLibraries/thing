@@ -6,6 +6,18 @@ require "active_support/core_ext/integer/time"
 # and recreated between test runs. Don't rely on the data there!
 
 Rails.application.configure do
+
+  # Bullet configuration: currently disabled because we can't currently fix all issues
+  # This configuration block is still useful to allow manually enabling detection locally
+  # to investigate problems.
+  config.after_initialize do
+    Bullet.enable        = true
+    Bullet.bullet_logger = true
+    Bullet.raise         = false # raise an error if n+1 query occurs
+    Bullet.unused_eager_loading_enable = false
+    Bullet.counter_cache_enable        = false
+  end
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   ENV['SP_PRIVATE_KEY'] = ''
