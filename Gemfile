@@ -24,7 +24,7 @@ gem 'net-pop', require: false
 gem 'net-smtp', require: false
 gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-saml'
-gem 'paper_trail', '~> 12.3'
+gem 'paper_trail'
 gem 'puma'
 gem 'rails', '~> 7.0'
 gem 'rubyzip'

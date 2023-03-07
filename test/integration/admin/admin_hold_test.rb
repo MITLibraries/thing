@@ -137,7 +137,7 @@ class AdminHoldDashboardTest < ActionDispatch::IntegrationTest
     patch admin_hold_path(hold), params: { hold: { status: 'released' } }
     hold.reload
     assert_equal 'released', hold.status
-    assert_equal Date.today.strftime('%Y-%m-%d'), hold.date_released.strftime('%Y-%m-%d')
+    assert_equal Date.today.strftime('%Y-%m-%d'), Date.parse(hold.date_released).strftime('%Y-%m-%d')
   end
 
   test 'hold release date is the most recent released status change' do
