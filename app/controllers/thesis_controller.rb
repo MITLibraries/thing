@@ -40,14 +40,15 @@ class ThesisController < ApplicationController
     # Get array of defined terms where theses have coauthors
     @terms = defined_terms Thesis.where.not('coauthors = ?', '')
     # Filter relevant theses by selected term from querystring
-    @thesis = filter_theses_by_term Thesis.where.not('coauthors = ?', '').includes([:departments, :users])
+    @thesis = filter_theses_by_term Thesis.where.not('coauthors = ?', '').includes(%i[departments users])
   end
 
   def publication_statuses
     @terms = defined_terms Thesis.all
     @publication_statuses = Thesis.all.pluck(:publication_status).uniq.sort
     # Filter relevant theses by selected term from querystring
-    term_filtered = filter_theses_by_term Thesis.all.includes(:degrees, :departments, :users).includes(degrees: :degree_type)
+    term_filtered = filter_theses_by_term Thesis.all.includes(:degrees, :departments,
+                                                              :users).includes(degrees: :degree_type)
     @thesis = filter_theses_by_publication_status term_filtered
   end
 
@@ -79,8 +80,8 @@ class ThesisController < ApplicationController
     # Get array of defined terms where unpublished theses have files attached
     @terms = defined_terms Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')
     # Filter relevant theses by selected term from querystring
-    @thesis = filter_theses_by_term Thesis.joins(:files_attachments).includes([:departments, :users]).group(:id).where('publication_status != ?',
-                                                                                      'Published')
+    @thesis = filter_theses_by_term Thesis.joins(:files_attachments).includes(%i[departments users]).group(:id).where('publication_status != ?',
+                                                                                                                      'Published')
   end
 
   def show
@@ -109,7 +110,9 @@ class ThesisController < ApplicationController
   end
 
   def process_theses
-    @thesis = Thesis.with_attached_files.includes([:departments, authors: [:user], degrees: [:degree_type]]).find(params[:id])
+    @thesis = Thesis.with_attached_files.includes([:departments, {
+                                                    authors: [:user], degrees: [:degree_type]
+                                                  }]).find(params[:id])
   end
 
   def process_theses_update
