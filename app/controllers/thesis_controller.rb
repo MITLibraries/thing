@@ -40,19 +40,20 @@ class ThesisController < ApplicationController
     # Get array of defined terms where theses have coauthors
     @terms = defined_terms Thesis.where.not('coauthors = ?', '')
     # Filter relevant theses by selected term from querystring
-    @thesis = filter_theses_by_term Thesis.where.not('coauthors = ?', '')
+    @thesis = filter_theses_by_term Thesis.where.not('coauthors = ?', '').includes(%i[departments users])
   end
 
   def publication_statuses
     @terms = defined_terms Thesis.all
     @publication_statuses = Thesis.all.pluck(:publication_status).uniq.sort
     # Filter relevant theses by selected term from querystring
-    term_filtered = filter_theses_by_term Thesis.all.includes(:degrees, :departments, :users)
+    term_filtered = filter_theses_by_term Thesis.all.includes(:degrees, :departments,
+                                                              :users).includes(degrees: :degree_type)
     @thesis = filter_theses_by_publication_status term_filtered
   end
 
   def edit
-    @thesis = Thesis.find(params[:id])
+    @thesis = Thesis.includes([degrees: :degree_type]).find(params[:id])
     @thesis.association(:advisors).add_to_target(Advisor.new) if @thesis.advisors.count.zero?
   end
 
@@ -79,8 +80,9 @@ class ThesisController < ApplicationController
     # Get array of defined terms where unpublished theses have files attached
     @terms = defined_terms Thesis.joins(:files_attachments).group(:id).where('publication_status != ?', 'Published')
     # Filter relevant theses by selected term from querystring
-    @thesis = filter_theses_by_term Thesis.joins(:files_attachments).group(:id).where('publication_status != ?',
-                                                                                      'Published')
+    @thesis = filter_theses_by_term Thesis.joins(:files_attachments).includes(%i[departments users]).group(:id).where(
+      'publication_status != ?', 'Published'
+    )
   end
 
   def show
@@ -98,7 +100,7 @@ class ThesisController < ApplicationController
   end
 
   def update
-    @thesis = Thesis.find(params[:id])
+    @thesis = Thesis.includes([authors: :user]).find(params[:id])
     if @thesis.update(thesis_params)
       flash[:success] = "#{@thesis.title} has been updated."
       ReceiptMailer.receipt_email(@thesis, current_user).deliver_later
@@ -109,7 +111,9 @@ class ThesisController < ApplicationController
   end
 
   def process_theses
-    @thesis = Thesis.find(params[:id])
+    @thesis = Thesis.with_attached_files.includes([:departments, {
+                                                    authors: [:user], degrees: [:degree_type]
+                                                  }]).find(params[:id])
   end
 
   def process_theses_update
@@ -135,7 +139,7 @@ class ThesisController < ApplicationController
   end
 
   def proquest_export_preview
-    @theses = Thesis.ready_for_proquest_export
+    @theses = Thesis.includes([authors: :user]).ready_for_proquest_export
   end
 
   # TODO: we need to generate and send a budget report CSV for partially harvested theses (spec TBD).

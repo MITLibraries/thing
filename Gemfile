@@ -41,6 +41,7 @@ group :production do
 end
 
 group :development, :test do
+  gem 'bullet'
   gem 'byebug'
   gem 'capybara'
   gem 'selenium-webdriver'

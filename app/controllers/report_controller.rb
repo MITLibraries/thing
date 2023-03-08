@@ -31,12 +31,14 @@ class ReportController < ApplicationController
   end
 
   def expired_holds
-    @list = Hold.active_or_expired.ends_today_or_before.order(:date_end)
+    @list = Hold.active_or_expired.ends_today_or_before.order(:date_end).includes([:thesis, {
+                                                                                    thesis: %i[authors departments]
+                                                                                  }])
   end
 
   def files
     report = Report.new
-    theses = Thesis.all
+    theses = Thesis.all.with_attached_files.includes(%i[authors departments])
     @terms = report.extract_terms theses
     subset = filter_theses_by_term theses
     @list = report.list_unattached_files subset
@@ -69,7 +71,7 @@ class ReportController < ApplicationController
     @this_term = 'all terms'
     @this_term = term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') if term != 'all'
     report = Report.new
-    theses = Thesis.all
+    theses = Thesis.all.includes([:versions])
     @terms = report.extract_terms theses
     subset = filter_theses_by_term theses
     @list = report.list_student_submitted_metadata subset
@@ -79,7 +81,7 @@ class ReportController < ApplicationController
     term = params[:graduation] ? params[:graduation].to_s : 'all'
     @this_term = 'all terms'
     @this_term = term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y') if term != 'all'
-    holds = Hold.all.includes(:thesis).includes(:hold_source).includes(thesis: :users).includes(thesis: :authors)
+    holds = Hold.all.includes([:thesis, :hold_source, { thesis: [:authors, { authors: :user }] }])
     @terms = Report.new.extract_terms holds
     @hold_sources = HoldSource.pluck(:source).uniq.sort
     term_filtered = filter_holds_by_term holds

@@ -15,11 +15,11 @@ class Report
       'value' => subset.pluck(:id).uniq.count,
       'verb' => 'has',
       'label' => 'files attached',
-      'note' => 'Only theses with a status of "Not ready for publication" and "Publication review" will be visible '\
+      'note' => 'Only theses with a status of "Not ready for publication" and "Publication review" will be visible ' \
                 'in the processing queue.',
       'link' => {
         'url' => url_helpers.thesis_select_path(graduation: term),
-        'text' => "See #{subset.where('publication_status != ?', 'Published').pluck(:id).uniq.count} unpublished "\
+        'text' => "See #{subset.where('publication_status != ?', 'Published').pluck(:id).uniq.count} unpublished " \
                   'theses in processing queue'
       }
     }
@@ -235,8 +235,8 @@ class Report
     row_data = {}
     terms = Thesis.all.pluck(:grad_date).uniq.sort
     terms.each do |term|
-      row_data[term] = Thesis.with_files.where('grad_date = ?', term).includes(authors: :user).includes(:departments)
-                             .reject(&:authors_graduated?).uniq.count
+      row_data[term] =
+        Thesis.with_files.where('grad_date = ?', term).includes([:authors]).reject(&:authors_graduated?).uniq.count
     end
     {
       label: 'Authors not graduated',
@@ -373,7 +373,7 @@ class Report
     table_populate_defaults result, Copyright.pluck(:holder)
     {
       'title' => 'Thesis counts by copyright',
-      'summary' => 'This table presents a summary of thesis records by their copyright status. The second column '\
+      'summary' => 'This table presents a summary of thesis records by their copyright status. The second column ' \
                    'names the copyright holder, while the first column shows how many records have that copyright.',
       'column' => 'Copyright holder',
       'data' => result
@@ -385,10 +385,10 @@ class Report
     table_populate_defaults result, Department.pluck(:name_dw)
     {
       'title' => 'Thesis counts by department',
-      'summary' => 'This table presents a summary of which departments have how many theses for the selected term. '\
-                   'The second column shows the programs at MIT which grant degrees, while the first column shows how '\
-                   'many theses have come from that program during this period.',
-      'note' => 'Please note: total theses indicated by this table may be greater than the overall number of theses '\
+      'summary' => 'This table presents a summary of which departments have how many theses for the selected term. ' \
+                   'The second column shows the programs at MIT which grant degrees, while the first column shows ' \
+                   'how many theses have come from that program during this period.',
+      'note' => 'Please note: total theses indicated by this table may be greater than the overall number of theses ' \
                 'because some theses have multiple departments.',
       'column' => 'Department',
       'data' => result
@@ -407,10 +407,10 @@ class Report
     table_populate_defaults result, License.pluck(:display_description)
     {
       'title' => 'Thesis counts by Creative Commons license',
-      'summary' => 'This table presents a summary of which Creative Commons license has been selected by the author, '\
-                   'for those theses for which the author retains copyright. The second column gives the specific CC '\
+      'summary' => 'This table presents a summary of which Creative Commons license has been selected by the author, ' \
+                   'for those theses for which the author retains copyright. The second column gives the specific CC ' \
                    'license selected, while the first column shows how many theses have selected it.',
-      'note' => 'Please note: theses for which the author does not claim copyright will have "Undefined" in this '\
+      'note' => 'Please note: theses for which the author does not claim copyright will have "Undefined" in this ' \
                 'field.',
       'column' => 'License',
       'data' => result
@@ -438,7 +438,7 @@ class Report
     table_populate_defaults result, Thesis.publication_statuses
     {
       'title' => 'Thesis counts by publication status',
-      'summary' => 'This table presents a summary of thesis records by their publication status. The second column '\
+      'summary' => 'This table presents a summary of thesis records by their publication status. The second column ' \
                    'gives the status, while the first column gives how many records have that status.',
       'column' => 'Publication status',
       'data' => result

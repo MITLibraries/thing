@@ -27,7 +27,7 @@ class RegistrarController < ApplicationController
   end
 
   def list_registrar
-    @registrars = Registrar.all
+    @registrars = Registrar.with_attached_graduation_list.includes([:user]).all
     @jobs = Delayed::Job.where(queue: 'default')
   end
 

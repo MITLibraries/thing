@@ -51,18 +51,19 @@ class TransferController < ApplicationController
   end
 
   def select
-    @transfers = Transfer.all.with_attached_files.includes(:user).includes(:department)
+    @transfers = Transfer.all.includes(:user).includes(:department)
   end
 
   def show
     # Load the details of the requested Transfer record
-    @transfer = Transfer.find(params[:id])
+    @transfer = Transfer.with_attached_files.find(params[:id])
 
     # Load the Thesis records for the period covered by this Transfer (the
     # graduation month/year, and the department)
     @theses = Thesis.where('grad_date = ?', @transfer.grad_date)
     @theses = @theses.includes(:departments).where('departments.name_dw = ?',
                                                    @transfer.department.name_dw).references(:departments)
+    @theses.with_attached_files
   end
 
   private
