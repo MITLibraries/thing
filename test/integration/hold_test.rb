@@ -89,4 +89,32 @@ class HoldIntegrationTest < ActionDispatch::IntegrationTest
     get hold_history_path(hold)
     assert_select "a[href='/admin/hold_sources/#{hold.hold_source_id}']", hold.hold_source.source
   end
+
+  # Due to a bug in PaperTrail, data we migrated from YAML to JSON incorrectly stored enums as integers instead of
+  # their mapped values. This caused the hold_history view to render integers for statuses. This test confirms a
+  # patch for how this data is rendered, and may be removed if we decide to remediate this problem with a data migration.
+  test 'status field renders translated enum, not integer' do
+    mock_auth users(:thesis_admin)
+    post admin_holds_path, params: { hold: @hold_params }
+    hold = Hold.last
+    version = hold.versions.last
+    version.object_changes['status'] = [nil, 0]
+    version.save
+
+    get hold_history_path(hold)
+    assert_select 'td', text: '0', count: 0
+    assert_select 'td', text: 'active', count: 1
+
+    version.object_changes['status'] = [nil, 1]
+    version.save
+    get hold_history_path(hold)
+    assert_select 'td', text: '1', count: 0
+    assert_select 'td', text: 'expired', count: 1 
+
+    version.object_changes['status'] = [nil, 2]
+    version.save
+    get hold_history_path(hold)
+    assert_select 'td', text: '2', count: 0
+    assert_select 'td', text: 'released', count: 1 
+  end
 end

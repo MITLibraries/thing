@@ -70,7 +70,12 @@ class Hold < ApplicationRecord
   # multiple times, this assumes we want the most recent date released.
   def date_released
     released_versions = versions.select do |version|
-      version.changeset['status'][1] == 'released' if version.changeset['status'].present?
+      next unless version.changeset['status'].present?
+
+      # We check for the integer 2 here because that corresponds with 'released', and PT has been incorrectly storing
+      # all enum values as integers since we started using it. That is fixed now that we migrated to JSON, but it
+      # remains a problem with historical data.
+      version.changeset['status'][1] == 'released' || version.changeset['status'][1] == 2
     end
     dates_released = released_versions.map { |version| version.changeset['updated_at'][1] }
     dates_released.max

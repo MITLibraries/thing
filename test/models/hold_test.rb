@@ -71,7 +71,7 @@ class HoldTest < ActiveSupport::TestCase
   end
 
   test 'active_or_expired scope returns both statuses together' do
-    assert_equal ["active", "expired"], Hold.active_or_expired.map(&:status).uniq.sort
+    assert_equal %w[active expired], Hold.active_or_expired.map(&:status).uniq.sort
   end
 
   test 'active_or_expired scope returns an active hold' do
@@ -172,5 +172,41 @@ class HoldTest < ActiveSupport::TestCase
     assert_equal 2, h.users.length
     assert_equal 'Second Student', h.users.first.display_name
     assert_equal 'Yo Yobot', h.users.second.display_name
+  end
+
+  test 'date_released renders release date' do
+    hold = Hold.create('thesis' => Thesis.first, 'hold_source_id' => HoldSource.first.id,
+                       'date_requested' => Date.today, 'date_start' => Date.today, 'date_end' => Date.tomorrow,
+                       'status' => 'released')
+    assert_equal 1, hold.versions.count
+    assert_equal [nil, 'released'], hold.versions.last.changeset['status']
+
+    pt_release_date = hold.versions.last.changeset['updated_at'][1]
+    assert_equal pt_release_date, hold.date_released
+  end
+
+  test 'date_released renders release date even if status is stored as an integer' do
+    hold = Hold.create('thesis' => Thesis.first, 'hold_source_id' => HoldSource.first.id,
+                       'date_requested' => Date.today, 'date_start' => Date.today, 'date_end' => Date.tomorrow,
+                       'status' => 'active')
+    version = hold.versions.last
+    version.object_changes['status'] = [nil, 2]
+    version.save
+    pt_release_date = hold.versions.last.changeset['updated_at'][1]
+    assert_equal pt_release_date, hold.date_released
+  end
+
+  test 'date_released correctly evaluates release date' do
+    hold = Hold.create('thesis' => Thesis.first, 'hold_source_id' => HoldSource.first.id,
+                       'date_requested' => Date.today, 'date_start' => Date.today, 'date_end' => Date.tomorrow,
+                       'status' => 'released')
+    earlier_release_date = hold.versions.last.changeset['updated_at'][1]
+    hold.status = 'active'
+    hold.save
+    hold.status = 'released'
+    hold.save
+    later_release_date = hold.versions.last.changeset['updated_at'][1]
+    assert_not_equal earlier_release_date, later_release_date
+    assert_equal later_release_date, hold.date_released
   end
 end
