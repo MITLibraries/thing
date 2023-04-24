@@ -10,6 +10,8 @@ module HoldHelper
       field_value = link_to hold_source.source, admin_hold_source_path(field_value)
     end
 
+    field_value = render_status(field_value) if field_name == 'status'
+
     field_value
   end
 
@@ -27,5 +29,22 @@ module HoldHelper
     end
 
     holds
+  end
+
+  # This patches a PaperTrail bug that saves enums to the version table as integers instead of their mapped values.
+  # We never noticed this bug because it occurs only with YAML data, but PT is able to correctly parse enums when it
+  # unserializes YAML data. This is not the case with JSON data, so historical statuses are stored as integers and
+  # render as integers. Because PT no longer maps the enums, we do so here.
+  def render_status(value)
+    case value
+    when 0
+      'active'
+    when 1
+      'expired'
+    when 2
+      'released'
+    else
+      value
+    end
   end
 end
