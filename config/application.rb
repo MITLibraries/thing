@@ -19,15 +19,5 @@ module Thing
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     config.active_job.queue_adapter = :delayed_job
-
-    # This is required only for the db migration to convert YAML to JSON. We should remove it once we've run that
-    # migration in all environments.
-    config.active_record.yaml_column_permitted_classes = [
-      ActiveSupport::HashWithIndifferentAccess,
-      ActiveSupport::TimeWithZone,
-      ActiveSupport::TimeZone,
-      Date,
-      Time
-    ]
   end
 end
