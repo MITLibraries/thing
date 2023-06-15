@@ -66,4 +66,14 @@ class CopyrightTest < ActiveSupport::TestCase
     assert_equal copyright_count - 1, Copyright.count
     assert_equal thesis_count, Thesis.count
   end
+
+  test 'display_to_author includes display_to_author true' do
+    copyright = copyrights(:author)
+    assert(Copyright.display_to_author.include?(copyright))
+  end
+
+  test 'display_to_author excludes display_to_author false' do
+    copyright = copyrights(:nodisplay)
+    refute(Copyright.display_to_author.include?(copyright))
+  end
 end

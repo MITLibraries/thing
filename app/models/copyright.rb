@@ -15,7 +15,9 @@ class Copyright < ApplicationRecord
   has_many :theses
 
   validates :holder, presence: true
-  validates :display_to_author, presence: true
+  validates :display_to_author, inclusion: [true, false]
   validates :display_description, presence: true
   validates :statement_dspace, presence: true
+
+  scope :display_to_author, -> { where(display_to_author: true) }
 end

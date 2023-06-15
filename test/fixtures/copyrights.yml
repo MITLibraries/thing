@@ -51,3 +51,9 @@ sacrificial:
   display_to_author: true
   display_description: "This will be deleted during testing."
   statement_dspace: "This will be deleted during testing."
+
+nodisplay:
+  holder: Author
+  display_to_author: false
+  display_description: "This will not display as selectable to authors."
+  statement_dspace: "This will not display as selectable to authors."

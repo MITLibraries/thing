@@ -125,6 +125,7 @@
 
     <%= f.association :copyright, as: :select,
                                   required: true,
+                                  collection: Copyright.display_to_author,
                                   validate: { presence: true },
                                   include_hidden: false,
                                   label: 'Copyright holder *',
