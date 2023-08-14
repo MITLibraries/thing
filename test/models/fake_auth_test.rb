@@ -60,4 +60,11 @@ class FakeAuthTest < ActiveSupport::TestCase
       assert_equal(false, FakeAuthConfig.fake_auth_status)
     end
   end
+
+  test 'fakeauth enabled temp staging app name' do
+    ClimateControl.modify FAKE_AUTH_ENABLED: 'true',
+                          HEROKU_APP_NAME: 'thesis-submit-staging-new' do
+      assert_equal true, FakeAuthConfig.fake_auth_status
+    end
+  end
 end
