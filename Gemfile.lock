@@ -449,6 +449,7 @@ DEPENDENCIES
   pg
   puma
   rails (~> 7.0)
+  rails-mermaid_erd
   rubocop
   rubocop-rails
   rubyzip

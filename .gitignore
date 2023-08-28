@@ -27,3 +27,6 @@ coverage
 
 storage
 .vscode
+
+# Ignore Rails Mermaid ERD gem generated HTML. (We put the markdown in the readme instead.)
+docs/etd_erd.html
