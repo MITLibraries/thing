@@ -4,7 +4,7 @@
 #
 #  id                  :integer          not null, primary key
 #  preserved_at        :datetime
-#  preservation_status :integer          default(0), not null
+#  preservation_status :integer          default("unpreserved"), not null
 #  bag_declaration     :string
 #  bag_name            :string
 #  manifest            :text

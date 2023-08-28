@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: degree_periods
+#
+#  id         :integer          not null, primary key
+#  grad_month :string
+#  grad_year  :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
 class DegreePeriod < ApplicationRecord
   has_paper_trail
   has_one :archivematica_accession, dependent: :destroy

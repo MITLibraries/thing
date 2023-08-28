@@ -4,7 +4,7 @@
 #
 #  id                  :integer          not null, primary key
 #  preserved_at        :datetime
-#  preservation_status :integer          default(0), not null
+#  preservation_status :integer          default("unpreserved"), not null
 #  bag_declaration     :string
 #  bag_name            :string
 #  manifest            :text
@@ -13,6 +13,7 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #
+
 # Creates the structure for an individual thesis to be preserved in Archivematica according to the BagIt spec:
 # https://datatracker.ietf.org/doc/html/rfc8493.
 #

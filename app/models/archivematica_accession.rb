@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: accessions
+# Table name: archivematica_accessions
 #
 #  id               :integer          not null, primary key
 #  accession_number :string
