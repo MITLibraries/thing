@@ -92,6 +92,12 @@ class Ability
     can :files, Transfer
 
     can :read, Hold
+
+    can :manage, :archivematica_accession
+    can :manage, ArchivematicaAccession
+
+    can :manage, :degree_period
+    can :manage, DegreePeriod
   end
 
   # Library staff who can use the admin dashboards (which includes operations

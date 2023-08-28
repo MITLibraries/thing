@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+june_2023:
+  grad_month: 'June'
+  grad_year: '2023'
+
+no_archivematica_accessions:
+  grad_month: 'May'
+  grad_year: '2024'

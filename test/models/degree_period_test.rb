@@ -1,0 +1,106 @@
+require "test_helper"
+
+class DegreePeriodTest < ActiveSupport::TestCase
+  test 'only grad years between 1900 and 2099 are valid' do
+    d = degree_periods(:june_2023)
+    assert d.valid?
+
+    d.grad_year = '1982'
+    assert d.valid?
+
+    d.grad_year = '2007'
+    assert d.valid?
+
+    d.grad_year = '2099'
+    assert d.valid?
+
+    d.grad_year = '1723'
+    assert_not d.valid?
+
+    d.grad_year = '2155'
+    assert_not d.valid?
+  end
+  
+  test 'only certain grad months are valid' do
+    d = degree_periods(:june_2023)
+    assert_equal 'June', d.grad_month
+    assert d.valid?
+
+    d.grad_month = 'May'
+    assert d.valid?
+
+    d.grad_month = 'September'
+    assert d.valid?
+
+    d.grad_month = 'February'
+    assert d.valid?
+
+    d.grad_month = 'January'
+    assert_not d.valid?
+
+    d.grad_month = 'August'
+    assert_not d.valid?
+
+    d.grad_month = 'Foo'
+    assert_not d.valid?
+  end
+
+  test 'preceding or trailing characters in a grad year are invalid' do
+    d = degree_periods(:june_2023)
+    assert_equal '2023', d.grad_year
+    assert d.valid?
+
+    d.grad_year = '2023 '
+    assert_not d.valid?
+
+    d.grad_year = ' 2023'
+    assert_not d.valid?
+  end
+
+  test 'preceding or trailing characters in a grad month are invalid' do
+    d = degree_periods(:june_2023)
+    assert_equal 'June', d.grad_month
+    assert d.valid?
+
+    d.grad_month = 'June '
+    assert_not d.valid?
+
+    d.grad_month = ' June'
+    assert_not d.valid?
+  end
+
+  test 'destroying a degree period also destroys its dependent archivematica accession' do
+    d = degree_periods(:june_2023)
+    archivematica_accession_count = ArchivematicaAccession.count
+    d.destroy
+    new_archivematica_accession_count = ArchivematicaAccession.count
+    new_archivematica_accession_count == archivematica_accession_count - 1
+  end
+
+  test 'a degree period cannot have the same grad_month and grad_year as an existing degree period' do
+    d = degree_periods(:june_2023)
+    assert_equal '2023', d.grad_year
+    assert_equal 'June', d.grad_month
+
+    # Records with the same month or year are valid...
+    same_month = DegreePeriod.new(grad_month: 'June', grad_year: '1999')
+    assert same_month.valid?
+
+    same_year = DegreePeriod.new(grad_month: 'February', grad_year: '2023')
+    assert same_year.valid?
+
+    # ...but one with the same month and year raises an error.
+    assert_raises ActiveRecord::RecordInvalid do
+      DegreePeriod.create!(grad_month: 'June', grad_year: '2023')
+    end
+  end
+
+  test 'editing a degree period generates a version' do
+    d = degree_periods(:june_2023)
+    versions_count = d.versions.count
+
+    d.grad_year = '2099'
+    d.save
+    assert_equal versions_count + 1, d.versions.count
+  end
+end
