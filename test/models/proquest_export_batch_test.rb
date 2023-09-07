@@ -1,3 +1,11 @@
+# == Schema Information
+#
+# Table name: proquest_export_batches
+#
+#  id         :integer          not null, primary key
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
 require 'test_helper'
 require 'csv'
 

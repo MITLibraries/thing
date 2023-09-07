@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: submission_information_packages
+#
+#  id                  :integer          not null, primary key
+#  preserved_at        :datetime
+#  preservation_status :integer          default("unpreserved"), not null
+#  bag_declaration     :string
+#  bag_name            :string
+#  manifest            :text
+#  metadata            :text
+#  thesis_id           :integer          not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#
 sip_one:
   preserved_at: Master of Fine Arts
   preservation_status: 0

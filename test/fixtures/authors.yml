@@ -8,6 +8,7 @@
 #  graduation_confirmed :boolean          default(FALSE), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  proquest_allowed     :boolean
 #
 
 one:

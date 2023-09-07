@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_07_141544) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_21_194847) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -56,6 +56,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_07_141544) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "archivematica_accessions", force: :cascade do |t|
+    t.string "accession_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "degree_period_id", null: false
+    t.index ["accession_number"], name: "index_archivematica_accessions_on_accession_number", unique: true
+    t.index ["degree_period_id"], name: "index_archivematica_accessions_on_degree_period_id", unique: true
+  end
+
   create_table "authors", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "thesis_id", null: false
@@ -75,6 +84,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_07_141544) do
     t.text "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "degree_periods", force: :cascade do |t|
+    t.string "grad_month"
+    t.string "grad_year"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["grad_month", "grad_year"], name: "index_degree_periods_on_grad_month_and_grad_year", unique: true
   end
 
   create_table "degree_theses", id: false, force: :cascade do |t|
@@ -271,6 +288,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_07_141544) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "archivematica_accessions", "degree_periods"
   add_foreign_key "authors", "theses"
   add_foreign_key "authors", "users"
   add_foreign_key "degrees", "degree_types"

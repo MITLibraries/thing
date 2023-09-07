@@ -1,0 +1,18 @@
+# == Schema Information
+#
+# Table name: degree_periods
+#
+#  id         :integer          not null, primary key
+#  grad_month :string
+#  grad_year  :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+june_2023:
+  grad_month: 'June'
+  grad_year: '2023'
+
+no_archivematica_accessions:
+  grad_month: 'May'
+  grad_year: '2024'

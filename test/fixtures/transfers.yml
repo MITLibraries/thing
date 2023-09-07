@@ -2,13 +2,15 @@
 #
 # Table name: transfers
 #
-#  id            :integer          not null, primary key
-#  user_id       :integer          not null
-#  department_id :integer          not null
-#  grad_date     :date             not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  note          :text
+#  id                     :integer          not null, primary key
+#  user_id                :integer          not null
+#  department_id          :integer          not null
+#  grad_date              :date             not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  note                   :text
+#  files_count            :integer          default(0), not null
+#  unassigned_files_count :integer          default(0), not null
 #
 valid:
   department: one

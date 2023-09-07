@@ -2,11 +2,13 @@ Rails.application.routes.draw do
   # For details see http://guides.rubyonrails.org/routing.html
   namespace :admin do
     resources :users
+    resources :archivematica_accessions
     resources :advisors
     resources :authors
     resources :copyrights
     resources :degrees
     resources :degree_types
+    resources :degree_periods
     resources :departments
     resources :department_theses
     resources :holds

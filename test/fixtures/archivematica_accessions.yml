@@ -1,0 +1,18 @@
+# == Schema Information
+#
+# Table name: archivematica_accessions
+#
+#  id               :integer          not null, primary key
+#  accession_number :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  degree_period_id :integer          not null
+#
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the "{}" from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+valid_number_and_degree_period:
+  accession_number: '2023_001'
+  degree_period: june_2023

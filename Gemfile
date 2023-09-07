@@ -53,6 +53,7 @@ group :development do
   gem 'dotenv-rails'
   gem 'letter_opener'
   gem 'listen'
+  gem 'rails-mermaid_erd'
   gem 'rubocop'
   gem 'rubocop-rails'
   gem 'scout_apm'
