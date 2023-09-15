@@ -115,4 +115,18 @@ class AdminArchivematicaAccessionTest < ActionDispatch::IntegrationTest
     delete admin_archivematica_accession_path(archivematica_accession)
     assert_not ArchivematicaAccession.exists?(archivematica_accession_id)
   end
+
+  test 'new form can be prefilled with degree period' do
+    mock_auth users(:thesis_admin)
+    get new_admin_archivematica_accession_path, params: { degree_period_id: degree_periods(:june_2023).id }
+    assert_select 'select#archivematica_accession_degree_period_id', count: 1
+    assert_select 'option', text: 'June 2023', count: 1
+  end
+
+  test 'new form can be loaded with no prefilled degree period' do
+    mock_auth users(:thesis_admin)
+    get new_admin_archivematica_accession_path
+    assert_select 'select#archivematica_accession_degree_period_id', count: 1
+    assert_select 'option', text: '', count: 1
+  end
 end

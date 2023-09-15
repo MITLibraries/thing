@@ -48,6 +48,14 @@
                                         hint: link_to('See details in admin interface', admin_thesis_path(f.object), target: :_blank) %>
           </li>
           <li>
+            <%= f.input :accession_number?, as: :string,
+                                        readonly: true,
+                                        label_html: { style: 'width: 50%' },
+                                        input_html: { class: 'disabled', style: 'width: 40%', value: f.object.accession_number.present?? 'Yes' : 'No' },
+                                        hint_html: { style: 'display: block' },
+                                        hint: (link_to('Create new accession number', new_admin_archivematica_accession_path(degree_period_id: f.object.look_up_degree_period), target: :_blank) if f.object.accession_number.nil?) %>
+          </li>
+          <li>
             <fieldset>
               <legend>Issues found</legend>
               <%= f.input :issues_found, as: :radio_buttons,

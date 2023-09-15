@@ -146,6 +146,19 @@ class Thesis < ApplicationRecord
 
   enum proquest_exported: ['Not exported', 'Full harvest', 'Partial harvest']
 
+  # Looks up the thesis' accession number based on its degree period.
+  def accession_number
+    degree_period = look_up_degree_period
+    return if degree_period.nil?
+    return if degree_period.archivematica_accession.nil?
+
+    degree_period.archivematica_accession.accession_number
+  end
+
+  def look_up_degree_period
+    DegreePeriod.find_by(grad_year: graduation_year, grad_month: graduation_month)
+  end
+
   # Returns a true/false value (rendered as "yes" or "no") if there are any
   # holds with a status of either 'active' or 'expired'. A false/"No" is
   # only returned if all holds are 'released'.
@@ -189,7 +202,8 @@ class Thesis < ApplicationRecord
       no_active_holds?,
       authors_graduated?,
       departments_have_dspace_name?,
-      degrees_have_types?
+      degrees_have_types?,
+      accession_number.present?
     ].all?
   end
 
