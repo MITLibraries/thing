@@ -24,6 +24,7 @@ By default, it renders:
   <%= render "stylesheet" %>
   <%= stylesheet_link_tag "administrate" %>
   <%= csrf_meta_tags %>
+  <%= csp_meta_tag if defined?(csp_meta_tag) %>
 </head>
 <body>
   <%= render "icons" %>
@@ -31,7 +32,7 @@ By default, it renders:
   <div class="app-container">
     <%= render "navigation" -%>
 
-    <main class="main-content" role="main">
+    <main class="main-content">
       <%= render "flashes" -%>
       <%= yield %>
     </main>
