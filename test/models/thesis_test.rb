@@ -610,6 +610,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal true, thesis.no_active_holds?
     assert_equal true, thesis.departments_have_dspace_name?
     assert_equal true, thesis.degrees_have_types?
+    assert_equal true, thesis.accession_number.present?
     assert_equal 'Publication review', thesis.publication_status
     # Attempting to set a different status will be overwritten by the update_status method
     thesis.publication_status = 'Not ready for publication'
@@ -1441,5 +1442,81 @@ class ThesisTest < ActiveSupport::TestCase
     assert_not_includes Thesis.ready_for_proquest_export, wrong_term_partial_export_thesis
     assert_not_includes Thesis.ready_for_proquest_export, wrong_term_full_export_thesis
     assert_not_includes Thesis.ready_for_proquest_export, no_export_thesis
+  end
+
+  test 'can look up accession number' do
+    t = theses(:one)
+
+    # a thesis needs a grad date to have an accession number
+    assert_not t.grad_date.nil?
+    assert_not t.accession_number.nil?
+  end
+
+  test 'accession number matches expectations' do
+    t = theses(:one)
+    assert t.accession_number.starts_with? t.graduation_year
+  end
+
+  test 'can look up degree period' do
+    thesis = theses(:one)
+
+    # Ensure the thesis has a degree period
+    assert_not_nil DegreePeriod.find_by(grad_year: thesis.graduation_year, grad_month: thesis.graduation_month)
+
+    # Ensure that degree period lookup returns the appropriate record
+    degree_period = thesis.look_up_degree_period
+    assert_equal thesis.graduation_year, degree_period.grad_year
+    assert_equal thesis.graduation_month, degree_period.grad_month
+  end
+
+  test 'returns nil on degree period lookup if no degree period exists' do
+    thesis = theses(:one)
+
+    # Ensure the thesis has no degree period
+    thesis.graduation_year = '3000'
+    thesis.save
+    assert_nil DegreePeriod.find_by(grad_year: thesis.graduation_year, grad_month: thesis.graduation_month)
+
+    # Ensure that degree period lookup also returns nil
+    assert_nil thesis.look_up_degree_period
+  end
+
+  test 'bachelor theses cannot be put into publication review without accession number' do
+    t = theses(:bachelor)
+    t.save
+    t.reload
+    assert_equal 'Publication review', t.publication_status
+
+    t.graduation_year = '3000'
+    t.save
+    t.reload
+    assert_nil t.accession_number
+    assert_not_equal 'Publication review', t.publication_status
+  end
+
+  test 'master theses cannot be put into publication review without an accession number' do
+    t = theses(:master)
+    t.save
+    t.reload
+    assert_equal 'Publication review', t.publication_status
+
+    t.graduation_year = '3000'
+    t.save
+    t.reload
+    assert_nil t.accession_number
+    assert_not_equal 'Publication review', t.publication_status
+  end
+
+  test 'doctoral theses cannot be put into publication review without an accession number' do
+    t = theses(:doctor)
+    t.save
+    t.reload
+    assert_equal 'Publication review', t.publication_status
+
+    t.graduation_year = '3000'
+    t.save
+    t.reload
+    assert_nil t.accession_number
+    assert_not_equal 'Publication review', t.publication_status
   end
 end

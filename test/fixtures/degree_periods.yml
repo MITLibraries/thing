@@ -16,3 +16,15 @@ june_2023:
 no_archivematica_accessions:
   grad_month: 'May'
   grad_year: '2024'
+
+september_2017:
+  grad_month: 'September'
+  grad_year: '2017'
+
+june_2018:
+  grad_month: 'June'
+  grad_year: '2018'
+
+june_2021:
+  grad_month: 'June'
+  grad_year: '2021'

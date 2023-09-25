@@ -16,3 +16,15 @@
 valid_number_and_degree_period:
   accession_number: '2023_001'
   degree_period: june_2023
+
+september_2017_001:
+  accession_number: '2017_001'
+  degree_period: september_2017
+
+june_2018_001:
+  accession_number: '2018_001'
+  degree_period: june_2018
+
+june_2021_001:
+  accession_number: '2021_001'
+  degree_period: june_2021
