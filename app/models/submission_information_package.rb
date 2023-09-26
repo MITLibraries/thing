@@ -70,11 +70,12 @@ class SubmissionInformationPackage < ApplicationRecord
   end
 
   # Before we try to bag anything, we need to check if it meets a few conditions. All published theses should have
-  # at least one file attached, no duplicate filenames, and a handle pointing to its DSpace record.
+  # at least one file attached, no duplicate filenames, a handle pointing to its DSpace record, and an accession number.
   def baggable_thesis?
-    return unless thesis
+    return false unless thesis
 
-    thesis.files.any? && thesis.dspace_handle.present? && !duplicate_filenames? && thesis.copyright.present?
+    thesis.files.any? && thesis.dspace_handle.present? && !duplicate_filenames? && thesis.copyright.present? \
+    && thesis.accession_number.present?
   end
 
   def duplicate_filenames?

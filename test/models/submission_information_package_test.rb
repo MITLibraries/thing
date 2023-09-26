@@ -146,6 +146,19 @@ class SubmissionInformationPackageTest < ActiveSupport::TestCase
     assert_not sip.valid?
   end
 
+  test 'a SIP is invalid if its thesis has no accession number' do
+    # unbaggable thesis (no accession number)
+    thesis = theses(:published)
+    degree_period = thesis.look_up_degree_period
+    accession = degree_period.archivematica_accession
+    accession.destroy
+    assert_nil thesis.accession_number
+
+    sip = thesis.submission_information_packages.new
+    thesis.save
+    assert_not sip.valid?
+  end
+
   test 'a SIP is invalid if it has no thesis' do
     sip = SubmissionInformationPackage.create
     assert_not sip.valid?

@@ -38,4 +38,13 @@ class SubmissionInformationPackageZipperTest < ActiveSupport::TestCase
       assert_equal('manifest-md5.txt', zipfile.find_entry("manifest-md5.txt").to_s)
     end
   end
+
+  test 'sip has the correct key' do
+    thesis = setup_thesis
+    sip = thesis.submission_information_packages.create
+    SubmissionInformationPackageZipper.new(sip)
+
+    blob = thesis.submission_information_packages.last.bag.blob
+    assert blob.key.starts_with? "etdsip/#{thesis.accession_number}"
+  end
 end
