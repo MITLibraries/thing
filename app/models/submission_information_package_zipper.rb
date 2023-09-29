@@ -19,7 +19,8 @@ class SubmissionInformationPackageZipper
   # This key needs to be unique. By default, ActiveStorage generates a UUID, but since we want a file path for our
   # Archivematica needs, we are generating a key. We handle uniqueness on the `bag_name` side.
   def keygen(sip)
-    "etdsip/#{sip.thesis.accession_number}/#{sip.bag_name}.zip"
+    thesis = sip.thesis
+    "etdsip/#{thesis.graduation_year}/#{thesis.graduation_month}-#{thesis.accession_number}/#{sip.bag_name}.zip"
   end
 
   # bagamatic takes a sip, creates a temporary zip file, and returns that file
