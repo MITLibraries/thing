@@ -45,6 +45,6 @@ class SubmissionInformationPackageZipperTest < ActiveSupport::TestCase
     SubmissionInformationPackageZipper.new(sip)
 
     blob = thesis.submission_information_packages.last.bag.blob
-    assert blob.key.starts_with? "etdsip/#{thesis.accession_number}"
+    assert blob.key.starts_with? "etdsip/#{thesis.graduation_year}/#{thesis.graduation_month}-#{thesis.accession_number}"
   end
 end
