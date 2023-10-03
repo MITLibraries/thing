@@ -5,7 +5,7 @@ class RegistrarImportJob < ActiveJob::Base
 
   def perform(registrar)
     results = { read: 0, processed: 0, new_users: 0, new_theses: 0, updated_theses: 0, new_degrees: [], new_depts: [],
-                errors: [] }
+                new_degree_periods: [], errors: [] }
 
     CSV.new(registrar.graduation_list.download, headers: true).each.with_index(1) do |row, i|
       Rails.logger.info("Parsing row #{i}")
@@ -33,6 +33,8 @@ class RegistrarImportJob < ActiveJob::Base
       results[:new_depts] << department if department.id_previously_changed?
       grad_date = reformat_grad_date(row['Degree Award Date'])
       logger.info("Grad date is #{grad_date.inspect}")
+      degree_period = DegreePeriod.from_grad_date(grad_date)
+      results[:new_degree_periods] << degree_period if degree_period.id_previously_changed?
       begin
         # Set whodunnit for thesis transaction
         PaperTrail.request.whodunnit = 'registrar'

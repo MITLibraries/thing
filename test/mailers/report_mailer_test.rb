@@ -5,7 +5,7 @@ class ReportMailerTest < ActionMailer::TestCase
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       registrar = registrar(:valid)
       results = { read: 0, processed: 0, new_users: 0, new_theses: 1, updated_theses: 0, new_degrees: [], new_depts: [],
-                  errors: [] }
+                  new_degree_periods: [], errors: [] }
       email = ReportMailer.registrar_import_email(registrar, results)
 
       # Send the email, then test that it got queued

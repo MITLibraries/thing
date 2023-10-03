@@ -18,7 +18,7 @@ class RegistrarImportJobTest < ActiveJob::TestCase
   end
 
   test 'job runs and returns expected results' do
-    skip "Slow test skipped due to env settings" if ENV.fetch("SKIP_SLOW", false)
+    skip 'Slow test skipped due to env settings' if ENV.fetch('SKIP_SLOW', false)
     registrar = Registrar.last
     registrar.graduation_list.attach(io: File.open('test/fixtures/files/registrar_data_full_anonymized.csv'),
                                      filename: 'registrar_data_full_anonymized.csv')
@@ -30,6 +30,7 @@ class RegistrarImportJobTest < ActiveJob::TestCase
     assert_equal 430, results[:new_users]
     assert_equal 42, results[:new_degrees].length
     assert_equal 30, results[:new_depts].length
+    assert_equal 3, results[:new_degree_periods].length
     assert_equal 1, results[:errors].length
     assert_includes results[:errors][0], 'Row #418 missing a Kerberos ID'
 
@@ -41,6 +42,7 @@ class RegistrarImportJobTest < ActiveJob::TestCase
     assert_equal 0, results[:new_users]
     assert_equal 0, results[:new_degrees].length
     assert_equal 0, results[:new_depts].length
+    assert_equal 0, results[:new_degree_periods].length
     assert_equal 1, results[:errors].length
     assert_includes results[:errors][0], 'Row #418 missing a Kerberos ID'
   end
