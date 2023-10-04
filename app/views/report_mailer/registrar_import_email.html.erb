@@ -14,6 +14,7 @@
   <li>New authors: <%= @results[:new_users] %></li>
   <li>New degrees: <%= @results[:new_degrees].count %></li>
   <li>New DLCs: <%= @results[:new_depts].count %></li>
+  <li>New degree periods: <%= @results[:new_degree_periods].count %></li>
 </ul>
 
 <% if @results[:errors].any? %>
@@ -42,6 +43,18 @@
   <ul>
     <% @results[:new_depts].each do |dept| %>
       <li><%= link_to dept.name_dw, admin_department_url(dept) %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @results[:new_degree_periods].any? %>
+  <p>The following new degree periods must be assigned Archivematica accession numbers to enable publication for
+  associated theses:</p>
+
+  <ul>
+    <% @results[:new_degree_periods].each do |degree_period| %>
+      <li><%= link_to "#{degree_period.grad_month} #{degree_period.grad_year}",
+                       new_admin_archivematica_accession_url(degree_period_id: degree_period.id) %></li>
     <% end %>
   </ul>
 <% end %>

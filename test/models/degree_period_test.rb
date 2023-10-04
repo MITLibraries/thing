@@ -8,7 +8,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
-require "test_helper"
+require 'test_helper'
 
 class DegreePeriodTest < ActiveSupport::TestCase
   test 'only grad years between 1900 and 2099 are valid' do
@@ -30,7 +30,7 @@ class DegreePeriodTest < ActiveSupport::TestCase
     d.grad_year = '2155'
     assert_not d.valid?
   end
-  
+
   test 'only certain grad months are valid' do
     d = degree_periods(:june_2023)
     assert_equal 'June', d.grad_month
@@ -112,5 +112,21 @@ class DegreePeriodTest < ActiveSupport::TestCase
     d.grad_year = '2099'
     d.save
     assert_equal versions_count + 1, d.versions.count
+  end
+
+  test 'finds existing degree period from reformatted grad date' do
+    date = Date.new(2023, 6, 1)
+    degree_period = DegreePeriod.from_grad_date(date)
+    assert_equal degree_periods(:june_2023), degree_period
+  end
+
+  test 'creates new degree period from reformatted grad date' do
+    degree_period_count = DegreePeriod.count
+    date = Date.new(2024, 6, 1)
+    assert_not DegreePeriod.find_by(grad_month: 'June', grad_year: '2024')
+
+    degree_period = DegreePeriod.from_grad_date(date)
+    assert_equal degree_period_count + 1, DegreePeriod.count
+    assert_equal degree_period, DegreePeriod.last
   end
 end

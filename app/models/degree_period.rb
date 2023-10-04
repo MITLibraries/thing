@@ -18,4 +18,20 @@ class DegreePeriod < ApplicationRecord
 
   VALID_GRAD_MONTHS = %w[May June September February].freeze
   validates_inclusion_of :grad_month, in: VALID_GRAD_MONTHS
+
+  # Given a grad date from a registrar data import CSV (or elsewhere, look up a Degree Period and create one if it does
+  # not exist.
+  def self.from_grad_date(grad_date)
+    new_grad_month = grad_date.strftime('%B')
+    new_grad_year = grad_date.strftime('%Y')
+    degree_period = DegreePeriod.find_by(grad_month: new_grad_month, grad_year: new_grad_year)
+    if degree_period.blank?
+      new_degree_period = DegreePeriod.create!(grad_month: new_grad_month, grad_year: new_grad_year)
+      Rails.logger.warn("New department created, requires Processor attention: \
+                         #{new_degree_period.grad_month} #{new_degree_period.grad_year}")
+      new_degree_period
+    else
+      degree_period
+    end
+  end
 end
