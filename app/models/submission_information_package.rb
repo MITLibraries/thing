@@ -20,13 +20,14 @@
 # Note: instances of this class are invalid without an associated thesis that has a DSpace handle, a copyright, and
 # at least one attached file with no duplicate filenames.
 class SubmissionInformationPackage < ApplicationRecord
+  include Baggable
   include Checksums
 
   has_paper_trail
   belongs_to :thesis
   has_one_attached :bag
 
-  validates :baggable_thesis?, presence: true
+  validates :baggable?, presence: true
 
   before_create :set_metadata, :set_bag_declaration, :set_manifest, :set_bag_name
 
@@ -42,6 +43,10 @@ class SubmissionInformationPackage < ApplicationRecord
   end
 
   private
+
+  def baggable?
+    baggable_thesis?(thesis)
+  end
 
   def set_metadata
     self.metadata = ArchivematicaMetadata.new(thesis).to_csv
@@ -67,19 +72,5 @@ class SubmissionInformationPackage < ApplicationRecord
   def set_bag_name
     safe_handle = thesis.dspace_handle.gsub('/', '_')
     self.bag_name = "#{safe_handle}-thesis-#{thesis.submission_information_packages.count + 1}"
-  end
-
-  # Before we try to bag anything, we need to check if it meets a few conditions. All published theses should have
-  # at least one file attached, no duplicate filenames, a handle pointing to its DSpace record, and an accession number.
-  def baggable_thesis?
-    return false unless thesis
-
-    thesis.files.any? && thesis.dspace_handle.present? && !duplicate_filenames? && thesis.copyright.present? \
-    && thesis.accession_number.present?
-  end
-
-  def duplicate_filenames?
-    filenames = thesis.files.map { |f| f.filename.to_s }
-    filenames.select { |f| filenames.count(f) > 1 }.uniq.any?
   end
 end

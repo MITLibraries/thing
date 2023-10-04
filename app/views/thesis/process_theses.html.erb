@@ -107,6 +107,13 @@
                                            label: false %>
             </fieldset>
           </li>
+          <li>
+            <%= f.input :files_have_unique_names?, as: :string,
+                                              readonly: true,
+                                              label_html: { style: 'width: 50%' },
+                                              input_html: { class: 'disabled', style: 'width: 40%', value: f.object.unique_filenames?(f.object)? 'Yes' : 'No' },
+                                              label: 'All files have unique names' %>
+          </li>
         </ul>
       </div>
     </div>

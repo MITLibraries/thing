@@ -24,6 +24,8 @@
 #
 
 class Thesis < ApplicationRecord
+  include Baggable
+
   has_paper_trail
 
   belongs_to :copyright, optional: true
@@ -203,7 +205,8 @@ class Thesis < ApplicationRecord
       authors_graduated?,
       departments_have_dspace_name?,
       degrees_have_types?,
-      accession_number.present?
+      accession_number.present?,
+      unique_filenames?(self)
     ].all?
   end
 
