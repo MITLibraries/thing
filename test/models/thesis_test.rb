@@ -598,19 +598,20 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.save
     thesis.reload
     # Fixture meets all conditions
-    assert_equal true, thesis.valid?
-    assert_equal true, thesis.files?
-    assert_equal true, thesis.files_have_purpose?
-    assert_equal true, thesis.files_complete
-    assert_equal true, thesis.metadata_complete
-    assert_equal false, thesis.issues_found
-    assert_equal true, thesis.no_issues_found?
-    assert_equal true, thesis.authors_graduated?
-    assert_equal false, thesis.active_holds?
-    assert_equal true, thesis.no_active_holds?
-    assert_equal true, thesis.departments_have_dspace_name?
-    assert_equal true, thesis.degrees_have_types?
-    assert_equal true, thesis.accession_number.present?
+    assert thesis.valid?
+    assert thesis.files?
+    assert thesis.files_have_purpose?
+    assert thesis.files_complete
+    assert thesis.metadata_complete
+    refute thesis.issues_found
+    assert thesis.no_issues_found?
+    assert thesis.authors_graduated?
+    refute thesis.active_holds?
+    assert thesis.no_active_holds?
+    assert thesis.departments_have_dspace_name?
+    assert thesis.degrees_have_types?
+    assert thesis.accession_number.present?
+    assert thesis.unique_filenames?(thesis)
     assert_equal 'Publication review', thesis.publication_status
     # Attempting to set a different status will be overwritten by the update_status method
     thesis.publication_status = 'Not ready for publication'
@@ -1518,5 +1519,33 @@ class ThesisTest < ActiveSupport::TestCase
     t.reload
     assert_nil t.accession_number
     assert_not_equal 'Publication review', t.publication_status
+  end
+
+  test 'master theses cannot be put into publication review without unique filenames' do
+    t = theses(:master)
+    t.save
+    t.reload
+    assert_equal 'Publication review', t.publication_status
+    assert t.unique_filenames?(t)
+
+    attach_file_with_purpose_to(t, purpose = 'signature_page')
+    t.save
+    t.reload
+    assert_not_equal 'Publication review', t.publication_status
+    refute t.unique_filenames?(t)
+  end
+
+  test 'doctoral theses cannot be put into publication review without unique filenames' do
+    t = theses(:doctor)
+    t.save
+    t.reload
+    assert_equal 'Publication review', t.publication_status
+    assert t.unique_filenames?(t)
+
+    attach_file_with_purpose_to(t, purpose = 'signature_page')
+    t.save
+    t.reload
+    assert_not_equal 'Publication review', t.publication_status
+    refute t.unique_filenames?(t)
   end
 end
