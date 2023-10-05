@@ -85,6 +85,7 @@ class Ability
     can :publish_to_dspace, Thesis
     can :proquest_export, Thesis
     can :proquest_export_preview, Thesis
+    can :reset_all_publication_errors, Thesis
     can :select, Thesis
 
     can :read, Transfer

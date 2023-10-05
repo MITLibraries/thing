@@ -356,3 +356,17 @@ budget_report_multiple:
   departments: [one, two]
   dspace_handle: 1234/5678
   publication_status: Published
+
+publication_error:
+  title: Errors are fun
+  grad_date: 2023-09-01
+  degrees: [two]
+  departments: [one]
+  publication_status: 'Publication error'
+
+publication_error_too:
+  title: Errors are fun again
+  grad_date: 2023-09-01
+  degrees: [one]
+  departments: [two]
+  publication_status: 'Publication error'

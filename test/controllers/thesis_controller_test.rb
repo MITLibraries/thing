@@ -887,4 +887,81 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select '.alert-banner.warning', text: 'No theses are available to export.', count: 1
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~ resetting publishing error status ~~~~~~~~~~~~~~~~~~~~~
+  test 'anonymous users get redirected if they try to reset publishing errors' do
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+
+    get reset_all_publication_errors_path
+    assert_response :redirect
+    assert_redirected_to '/login'
+
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+  end
+
+  test 'basic users cannot reset publishing errors' do
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+
+    sign_in users(:basic)
+    get reset_all_publication_errors_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+  end
+
+  test 'submitters cannot reset publishing errors' do
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+
+    sign_in users(:transfer_submitter)
+    get reset_all_publication_errors_path
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_select 'div.alert', text: 'Not authorized.', count: 1
+
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+  end
+
+  test 'processors can reset publishing errors' do
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+
+    sign_in users(:processor)
+    get reset_all_publication_errors_path
+    assert_redirected_to thesis_select_path
+
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count == 0
+  end
+
+  test 'thesis_admins can reset publishing errors' do
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+
+    sign_in users(:thesis_admin)
+    get reset_all_publication_errors_path
+    assert_redirected_to thesis_select_path
+
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count == 0
+  end
+
+  test 'admins can reset publishing errors' do
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count > 0
+
+    sign_in users(:admin)
+    get reset_all_publication_errors_path
+    assert_redirected_to thesis_select_path
+    
+    error_count = Thesis.where(publication_status: 'Publication error').count
+    assert error_count == 0
+  end
 end
