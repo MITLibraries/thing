@@ -154,6 +154,14 @@ class ThesisController < ApplicationController
     redirect_to thesis_proquest_export_preview_path
   end
 
+  def reset_all_publication_errors
+    Thesis.where(publication_status: 'Publication error').update(publication_status: 'Not ready for publication')
+
+    flash[:success] = 'Publication error statuses have been reset'
+
+    redirect_to thesis_select_path
+  end
+
   private
 
   # Various methods need to build an array of academic terms which meet varying conditions, in order to support a UI

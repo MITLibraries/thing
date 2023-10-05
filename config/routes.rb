@@ -43,6 +43,8 @@ Rails.application.routes.draw do
   get 'thesis/start', to: 'thesis#start', as: 'thesis_start'
   get 'thesis/proquest_export_preview', to: 'thesis#proquest_export_preview', as: 'thesis_proquest_export_preview'
   get 'thesis/proquest_export', to: 'thesis#proquest_export', as: 'thesis_proquest_export'
+  get 'thesis/reset_all_publication_errors', to: 'thesis#reset_all_publication_errors', as: 'reset_all_publication_errors'
+
   resources :registrar, only: [:new, :create, :show]
   resources :thesis, only: [:new, :create, :edit, :show, :update]
   get 'harvest', to: 'registrar#list_registrar', as: 'harvest'

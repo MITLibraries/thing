@@ -170,3 +170,11 @@ twentysix:
   thesis: partial_proquest_wrong_term
   graduation_confirmed: true
   proquest_allowed: true
+
+pub_error_one:
+  user: yo
+  thesis: publication_error
+
+pub_error_too:
+  user: yo
+  thesis: publication_error_too
