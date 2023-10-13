@@ -1,38 +1,91 @@
 [![Depfu](https://badges.depfu.com/badges/054347faa25f6d3a4d9e66535fd18763/overview.svg)](https://depfu.com/github/MITLibraries/thing?project=Bundler)
 [![Code Climate](https://codeclimate.com/github/MITLibraries/thing/badges/gpa.svg)](https://codeclimate.com/github/MITLibraries/thing)
 
-# th(esis).ing(est)
+# Electronic Thesis Deposit (ETD)
 
-This is a simple web app to collect metadata and files from a `User` and allow
-`Users` with the role `Admin` to download and edit the metadata.
+This application supports the Institute's thesis deposit, publication, and preservation workflows by providing the
+following features:
 
-# Production: for real read this bit
+* A registrar data importer to batch load thesis metadata for a given term;
+* A form for students to add or edit metadata for their thesis;
+* A batch file uploader for department admins to transfer thesis files for a given term;
+* A processing dashboard for library staff to review thesis files and metadata;
+* Automated workflows to publish theses to [DSpace@MIT](https://dspace.mit.edu/), prepare them for preservation in the
+Institute's Archivematica instance, and export their metadata as MARC to be added to the library catalog.
+* On-demand reporting for staff to review activity by term, publication status, and other criteria.
 
-This application is currently undergoing a major feature change. As such, the
-production instance is represented by the `1.x` branch. If you need to fix a bug
-in production, or update dependencies in production, please open a PR into the
-`1.x` branch and not `main`.
+ETD evolved from an more narrowly focused application known as `thing (th(esis).ing(est))`, which collected metadata
+and files via a form and allowed admin users to download them. This was part of MIT Libraries' previous thesis deposit
+workflow. It has since been replaced with this fully electronic workflow, which requires less manual intervention.
 
-New feature development is continuing in the `main` branch as normal.
+## Architecture decision records (ADRs)
 
-When the new work enters production, we will delete the `1.x` branch and pretend
-it never existed.
-
-# Architecture Decision Records
-
-This repository contains Architecture Decision Records in the
+This repository contains ADRs in the
 [docs/architecture-decisions directory](docs/architecture_decisions).
 
 [adr-tools](https://github.com/npryce/adr-tools) should allow easy creation of
 additional records with a standardized template.
 
-# Developer Notes
+## Developer notes
+
+### Confirming functionality after updating dependencies
+
+The application has excellent test coverage, and most errors are likely to be caught by our test suite. This runs in CI,
+but it's good practice to run it locally after making updates:
+
+`bin/rails test`
+
+Updates to certain gems may require additional checks:
+
+#### `administrate`
+
+We generally do not test for the presence or appearance of UI elements, as such tests can be brittle. If you suspect
+that a dependency update may affect the UI in some way, it's a good idea to review it more closely. This is most likely to occur with updates to the `administrate` gem, which we use
+to manage the admin dashboards. We maintain some custom views (see `app/views/admin`) and fields (see `app/fields`) for
+this gem that may need to be updated along with the gem. The `administrate` maintainers typically include a warning at
+the top of the release notes if it will affect custom views, but it's a good idea to double-check the release notes
+either way before updating this gem.
+
+#### `paper_trail`
+
+While `paper_trail` is covered in our test suite, audit trails are a crucial data in our application that cannot be 
+backfilled, so updates to this gem may warrant some manual tests. Make sure that calling the `versions` method on an
+object in a PT-enabled model (e.g., Thesis) returns the expected set of versions. You can create a new version by
+updating the object. You may also want to confirm that the `whodunnit` value is equal to the ID of the user that made
+the update.
+
+#### `aws-sdk-rails`
+
+Updates to `aws-sdk-rails` and related gems should prompt testing of the corresponding AWS feature. For example, if you
+notice that `aws-sdk-sqs` is updated, you should confirm that SQS still works by running the publication workflow: first
+publishing a thesis, then running
+[DSpace Submission Service (DSS)](https://github.com/MITLibraries/dspace-submission-service) stage, and finally
+processing the output queue.
+
+If `aws-sdk-s3` is updated, try uploading a file with S3 configured and see if it works, and check existing files to see
+if they're still there. You can test S3 in a PR build, or locally by adding the staging S3 config to your env.
+
+#### `devise`
+
+When updating `devise`, make sure that authentication via Touchstone works. You will need to do this in staging, as
+Touchstone is not configured for PR builds. In the unlikely case that authentication fails in staging, you will need to
+merge a subsequent commit with the previous version, so the broken version does not get deployed to production with
+other changes.
+
+### Annotating the database schema
 
 When changing the db schema, please run `bundle exec annotate` to update the
 model and associated tests to reflect the changes in a nice convenient,
 consistent way.
 
-# Environment Variables
+### Local deployment
+
+Use `bin/rails server` for local testing. If you need test data, you can
+[pull the staging db](https://devcenter.heroku.com/articles/managing-heroku-postgres-using-cli#pg-push-and-pg-pull),
+which contains fake records with no personally identifiable inofrmation. See `config/database.yml.postgres` for sample
+postgres config.
+
+## Environment variables
 
 `DISABLE_LOGRAGE` - set this in to disable lograge single line logging config
 and use rails standard verbose logging.
@@ -54,9 +107,9 @@ this automatically. It is often nice in development as well.
 `SENTRY_DSN` - set to your project sentry key to enable exception logging
 `SENTRY_ENV` - Sentry environment for the application. Defaults to 'unknown' if unset.
 
-## ActiveStorage Configuration
+### ActiveStorage configuration
 
-### Development
+#### Development
 
 `MAINTAINER_EMAIL` - used for `to` field of virus detected emails.
 `ETD_APP_EMAIL` - used for `from` field of receipt emails.
@@ -67,10 +120,11 @@ track down N+1 queries!
 `SKIP_SLOW` - set this to skip tests flagged as slow
 `SPEC_REPORTER` - set this to see a detailed list of tests and times during test runs
 
-### Production
+#### Production
 
 The information necessary to identify a bucket on S3 is configured via this set
 of variables:
+
 `AWS_ACCESS_KEY_ID`
 `AWS_REGION`
 `AWS_S3_BUCKET`
@@ -79,7 +133,7 @@ of variables:
 In addition, you will need to ensure the bucket CORS `AllowedOrigin` settings
 are configured to allow for the domain this app runs at.
 
-## SQS Configuration
+### SQS configuration
 
 We use AWS SQS queues to publish theses to DSpace and read data about published theses from DSpace. The
 [DSpace Submission Service](https://github.com/MITLibraries/dspace-submission-service) middleware supports this workflow.
@@ -92,35 +146,14 @@ We use AWS SQS queues to publish theses to DSpace and read data about published 
 `SQS_OUTPUT_QUEUE_NAME` - The name of the SQS output queue. This is used to build the SQS message attributes.
 `SQS_OUTPUT_QUEUE_URL` - The URL of the SQS output queue used to read the results from a publication run.
 
-`SQS_RESULT_MAX_MESSAGES`: Configures the :max_number_of_messages arg of the AWS poll method, which specifies how
+`SQS_RESULT_MAX_MESSAGES` - Configures the :max_number_of_messages arg of the AWS poll method, which specifies how
 many messages to receive with each polling attempt. Defaults to 10 if unset.
-`SQS_RESULT_WAIT_TIME_SECONDS`: Configures the :wait_time_seconds arg of the AWS poll method, which enables long
+`SQS_RESULT_WAIT_TIME_SECONDS` - Configures the :wait_time_seconds arg of the AWS poll method, which enables long
 polling by specifying a longer queue wait time. Defaults to 10 if unset.
-`SQS_RESULT_IDLE_TIMEOUT`: Configures the :idle_timeout arg of the AWS poll method, which specifies the maximum time
+`SQS_RESULT_IDLE_TIMEOUT` - Configures the :idle_timeout arg of the AWS poll method, which specifies the maximum time
 in seconds to wait for a new message before the polling loop exists. Defaults to 0 if unset.
 
-## User Roles
-
-There are a few user roles that provide different levels of permissions. The
-abilities of each role are defined in the [ability model](https://github.com/MITLibraries/thing/blob/master/app/models/ability.rb).
-
-`Basic` is the default user role and is assigned when a user self creates an
-account. Self creation is the only supported way to create an account. If we
-have a new staff member, they first need to login to self create an account
-with the basic role and then admin staff can assign them appropriate roles.
-
-`Thesis Processor` is used for any users that process theses.
-
-`Thesis Admin` can do everything a `Thesis Processor` can do but can also create
-and update any thesis (not just their own like a `Basic` user).
-
-The `Admin` flag can be assigned to a user with any role. `Admin` users can do
-anything, including deleting or changing theses, modifying user roles, and
-deleting users.
-
-Assigning roles and the `Admin` flag is done in the web UI.
-
-## Sending Receipt Email in Production
+### Email configuration
 
 `SMTP_ADDRESS`, `SMTP_PASSWORD`, `SMTP_PORT`, `SMTP_USER` - all required to send mail.
 
@@ -143,37 +176,39 @@ sent when `FAKE_AUTH_ENABLED` is enabled (like on PR builds), it's best to
 leave email off unless you are actively testing it. Staging and Production use
 real authentication and are thus not a concern.
 
-## Authentication for Development ONLY
+### Authentication configuration
+
+#### Authentication for development
 
 There's a fake auth system you can use on review apps. It bypasses the actual auth system and just logs you in with a fake developer account.
 
-### To enable on review apps
+##### To enable on review apps
 
 - Set `FAKE_AUTH_ENABLED` to `true`
 
-### To enable on localhost
+##### To enable on localhost
 
 In `.env`:
 
 - Set `FAKE_AUTH_ENABLED=true`
 
-### To enable on staging or production
+##### To enable on staging or production
 
 Don't.
 
 Also, you shouldn't be able to. Even if you set `FAKE_AUTH_ENABLED`, the `HEROKU_APP_NAME` check will fail.
 
-### To use in the codebase
+##### To use in the codebase
 
 Use `Rails.configuration.fake_auth_enabled`, NOT `ENV['FAKE_AUTH_ENABLED']`.
 
 Using the latter bypasses the app name check, which can let us inadvertently turn on fake auth in production. `nope`
 
-## Authentication for production
+#### Authentication for production
 
 For SAML authentication, you will need all of the following.
 
-[DLE Docs on SAML](https://mitlibraries.github.io/touchstone_saml.html)
+[DLS docs on SAML](https://mitlibraries.github.io/guides/authentication/touchstone_saml.html)
 
 `IDP_METADATA_URL` - URL from which the IDP metadata can be obtained. This is
 loaded at application start to ensure it remains up to date.
@@ -216,42 +251,115 @@ Example usage:
   lines so you'll need to be careful to reconstruct this
 - `rails debug:saml['tmp/your_saml_to_debug.txt']`
 
-## Data Loading
+## User roles
 
-There are three types of data that get loaded into this system:
+There are a few user roles that provide different levels of permissions. The
+abilities of each role are defined in the [ability model](https://github.com/MITLibraries/thing/blob/master/app/models/ability.rb).
 
-### Database Seeds
+`Basic` is the default user role and is assigned when a user self creates an
+account. Self creation is the only supported way to create an account. If we
+have a new staff member, they first need to login to self create an account
+with the basic role and then admin staff can assign them appropriate roles.
 
-These should only be loaded when the application database is initially set up (e.g. for new PR/development deploys or if the staging database needs to be destroyed and recreated). These seeds contain default values for certain tables such as copyrights, licenses, hold sources, and degree types.
+`Thesis Processor` is assigned to a user that processes theses. This role is not currently used, however, as our thesis
+processors need a higher level of permissions than it offers. We have retained this role for potential future use (e.g.,
+if we have multiple processors, and some don't need the full set of permissions).
 
-The above seed data is loaded automatically during PR builds from Github. During local development it can be loaded during first deployment by running `rails db:seed`.
+`Transfer Submitter` is assigned to users that transfers thesis files (typically department admins). Stakeholders are
+responsible for assigning this role.
 
-Additionally, degrees and departments can be manually seeded from a CSV file if desired by running `rails db:seed_degrees <csv_file_url>` and `rails db:seed_departments <csv_file_url>`, respectively. See Jira project documentation for link to a Google doc with the initial list of departments and degrees that were loaded into the production database (not maintained).
+`Thesis Admin` can do everything a `Thesis Processor` can do but can also create
+and update any thesis (not just their own like a `Basic` user).
 
-Seed data is not maintained to match the production database values, which can be changed by admin users as needed. The production database *shouldn't* ever need to be reseeded.
+Roles and the `Admin` flag can be assigned in the Users administrate dashboard in the web UI.
 
-### QA/Stakeholder Testing Data
+## Audit trail
 
-We're working on a process to load test data for stakeholder testing/QA in an automated fashion. Note this is different from fixture data used for automated tests. Check back soon for more info!
+We use the [`paper_trail`](https://github.com/paper-trail-gem/paper_trail) gem to maintain audit trails of certain
+objects. Classes with `paper_trail` enabled include Thesis, ArchivematicaAccession, and Hold.
 
-### Registrar Data
+Following maintainer recommendations, we chose to migrate our `paper_trail` data from YAML to JSON. In YAML, enum fields
+were stored as integers and mapped to their string values as part of the deserialization process. After migrating to
+JSON, new enums are correctly stored as their mapped string values, but legacy data is still stored in the database
+as integers.
 
-Thesis and author data for each term is loaded from a CSV file downloaded from the Registrar. This process is handled manually in the UI by the thesis processing team, and they have their own documentation on how they obtain the right data to load.
+After consulting with stakeholders, we decided to leave the legacy data as is and map the enums in the UI,
+so as to avoid altering the audit trail. This only affects the hold status field in the Hold table, as that is the only
+enum field under `paper_trail` that we render in a view (see `app/views/hold_status`).
 
-Loading registrar data may also add new degrees and departments, which are then manually updated and maintained by stakeholders.
+## Data loading
 
-Note: if registrar data needs to be loaded in a local, PR, or staging deployment it should be anonymized first to ensure no protected user data is added to a non-secure database. The test fixtures (test/fixtures/files) include both full and small sample files containing anonymized registrar data that can be used for this purpose.
+There are three types of data that get loaded into this system.
+
+### Database seeds
+
+These should only be loaded when the application database is initially set up (e.g. for new PR/development deploys or if
+the staging database needs to be destroyed and recreated). These seeds contain default values for certain tables such as
+copyrights, licenses, hold sources, and degree types.
+
+The above seed data is loaded automatically during PR builds from Github. During local development it can be loaded
+during first deployment by running `rails db:seed`.
+
+Additionally, degrees and departments can be manually seeded from a CSV file if desired by running
+`rails db:seed_degrees <csv_file_url>` and `rails db:seed_departments <csv_file_url>`, respectively. See Jira project
+documentation for link to a Google doc with the initial list of departments and degrees that were loaded into the
+production database (not maintained).
+
+Seed data is not maintained to match the production database values, which can be changed by admin users as needed. *Do
+not ever reseed the production database.*
+
+### QA/Stakeholder testing data
+
+Currently, most stakeholder testing occurs in staging after a feature has been merged, as staging contains test data.
+We're in need of atuomated process to load test data to PR builds for stakeholder testing/QA. (Note this is different
+from fixture data used for automated tests.) This would make it easier to keep the `main` branch deployable while
+multiple features are in QA, and it may help with testing and QA in staging, where records can quickly become invalid
+as the data model changs.
+
+### Registrar data
+
+Thesis and author data for each term is loaded from a CSV file downloaded from the Registrar. This process is handled
+manually in the UI by the thesis processing team, and they have their own documentation on how they obtain the right
+data to load.
+
+Loading registrar data may also add new degrees, departments, degree periods, which are then manually updated and
+maintained by stakeholders.
+
+Note: if registrar data needs to be loaded in a local, PR, or staging deployment it should be anonymized first to ensure
+no protected user data is added to a non-secure database. The test fixtures (test/fixtures/files) include both full and
+small sample files containing anonymized registrar data that can be used for this purpose.
+
+## Processing workflow
+
+Processors review thesis metadata each term to ensure that all necessary files and metadata are present and accurate.
+In addition to fields on the Thesis model, this also includes relevant data from the Author, Degree, Copyright, License,
+Hold, and ArchivematicaAccession models. When all [validations are satisfied](#validations), thesis processors can begin
+the [publishing workflow](#publishing-workflow)
+
+The ArchivematicaAccession model is unique in that it is not directly related to the Thesis model. We first designed
+this application under the assumption that the notion of degree periods would not be shared across the data model.
+However, as the application expanded, we found that this logic was duplicated in multiple places (e.g., the Transfer
+model). When the need emerged to add an ArchivematicaAccession model to assign accession numbers to theses, we corrected
+this by adding a DegreePeriod model that `has_one` ArchivematicaAccession.
+
+We plan to abstract the duplicative degree period logic to the DegreePeriod model, but this is a substantial refactor
+that will require careful planning and execution. In the meantime, a Thesis is not directly associated with an
+ArchivematicaAccession, but instead looks it up based on the DegreePeriod that corresponds with the thesis`
+graduation date.
+
+New degree periods are generated for each subsequent term from [registrar data uploads](#registrar-data), at which point
+processors must create a corresponding Archivematica accession number.
 
 ## Publishing workflow
 
-- stakeholders process theses until they are valid and accurate
-- stakeholders choose theses to publish (Process theses - Select term - Select Publication Review - Publish)
-- ETD will now automatically send data to DSS via the SQS queue
-- DSS runs (as of this writing that is a manual process documented in the
+1. Following the processing workflow, stakeholders choose a term to publish (Process theses - Select term - Select
+Publication Review - Publish)
+2. ETD will now automatically send data to DSS via the SQS queue
+3. DSS runs (as of this writing that is a manual process documented in the
   [DSS repo](https://github.com/MITLibraries/dspace-submission-service#run-stage))
-- ETD processes output queue to update records and send email to stakeholders with summary data and list
-  of any error records. As of now this is a manual process, but can be triggered via rake task using the
-  Heroku run command such as:
+4. ETD processes output queue to update records and send email to stakeholders with summary data and list
+  of any error records. As of now this is a manual process, but can be triggered via rake task using the following
+  Heroku run command:
 
   ```shell
   heroku run rails dss:process_output_queue --app TARGET-HEROKU-APP
@@ -259,7 +367,8 @@ Note: if registrar data needs to be loaded in a local, PR, or staging deployment
 
 ### Publishing a single thesis
 
-You can publish a single thesis that is already in `Publication review` status by passing the `thesis_id` to a rake task like:
+You can publish a single thesis that is already in `Publication review` status by passing the `thesis_id` to a rake
+task:
 
 ```shell
 heroku run rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
@@ -276,7 +385,7 @@ Once they are in the S3 bucket, the bags are automatically replicated to the Dig
 can be ingested into Archivematica.
 
 A thesis can be sent to preservation more than once. In order to track provenance across multiple preservation events,
-we persist certain data about the SIP and audit the model using [paper_trail](https://github.com/paper-trail-gem/paper_trail).
+we persist certain data about the SIP and audit the model using `paper_trail`.
 
 ### Preserving a single thesis
 
@@ -288,7 +397,7 @@ heroku run rails preservation:preserve_thesis_by_id[THESIS_ID] --app TARGET-HERO
 
 ## Metadata export workflow
 
-The publishing workflow will automatically trigger a MARC export of all the published theses  in the results queue. The
+The publishing workflow will automatically trigger a MARC export of all the published theses in the results queue. The
 generated marcxml file is zipped, attached to an email, and sent to the cataloging team (see [Sending Receipt Email in
 Production](#sending-receipt-email-in-production)).
 
@@ -318,7 +427,7 @@ provide information about past export jobs as needed.
 The ProQuest export workflow begins with the September 2022 degree period. All theses from prior degree periods are
 excluded from export.
 
-## Validation of thesis record
+## Validation of thesis records
 
 Prior to theses being published to external systems (such as the repository, or
 a preservation system), a number of checks are performed to ensure that all
@@ -353,16 +462,17 @@ each is required - and where that check is performed.
 
 ### Related records
 
-| Record     | Required? | Verified by                                                                                                                                                                                                                 |
-| ---------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Advisor    | yes       | advisors?                                                                                                                                                                                                                   |
-| Author     | yes       | Two checks<br>- validations<br>- authors_graduated checks the graduated flag on each author record                                                                                                                          |
-| Copyright  | yes       | copyright_id?                                                                                                                                                                                                               |
-| Degree     | yes       | degrees?                                                                                                                                                                                                                    |
-| Department | yes       | validations                                                                                                                                                                                                                 |
-| File       | yes       | Three checks<br>- files? confirms that at least one file is attached<br>- file_have_purpose? confirms that each file has an assigned purpose<br>- one_thesis_pdf? confirms one-and-only-one file has a "thesis_pdf" purpose |
-| Hold       | yes       | no_active_holds? confirms that no attached hold has an "active" or "expired" status<br>("released" holds are okay)                                                                                                          |
-| License    | sometimes | required_license? checks who holds copyright and requires a license if that is the author                                                                                                                                   |
+| Record           | Required? | Verified by |
+| ---------------- | --------- | ----------- |
+| Advisor          | yes       | advisors? |
+| Author           | yes       | Two checks:<br>- validations<br>- authors_graduated checks the graduated flag on each author record |
+| Copyright        | yes       | copyright_id? |
+| Degree           | yes       | `degrees?` and `degrees_have_types?` |
+| Department       | yes       | validations and `departments_have_dspace_name?` |
+| File             | yes       | Four checks:<br>- files? confirms that at least one file is attached<br>-file_have_purpose? confirms that each file has an assigned purpose<br>- one_thesis_pdf? confirms one-and-only-one file has a "thesis_pdf" purpose<br>- `unique_filenames?(self)` confirms that no duplicate filenames exist within a thesis |
+| Hold             | yes       | no_active_holds? confirms that no attached hold has an "active" or "expired" status<br>("released" holds are okay) |
+| License          | sometimes | required_license? checks who holds copyright and requires a license if that is the author |
+| Accession number | yes       | `accession_number.present?` |
 
 ## Alternate file upload feedback
 
@@ -401,22 +511,3 @@ This is a non-standard counter_cache that needs to calculate counters based on T
 ```shell
 heroku run rails cache:reset_transfer_counters --app TARGET-HEROKU-APP
 ```
-
-# Local deployment
-
-Use heroku local. We have also experimented with docker, and are retaining it in case we move toward dockerizing all the things in future.
-
-## Docker Setup
-
-1. Build the docker image
-   docker-compose build
-
-2. Connect the database
-   docker-compose up
-
-3. Update default config/database.yml with PG configuration
-
-4. Create the database and migrate (1st time)
-   docker-compose run web rake db:create db:migrate
-
-At the end of the above commands, you can visit http://localhost:3000 and see the welcome page.
