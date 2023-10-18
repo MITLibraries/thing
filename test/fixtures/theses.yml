@@ -370,3 +370,13 @@ publication_error_too:
   degrees: [one]
   departments: [two]
   publication_status: 'Publication error'
+
+rename_attachment_tests:
+  title: rename_my_attachments
+  abstract: MyText
+  grad_date: 2017-09-01
+  departments: [one]
+  degrees: [one]
+  advisors: [first]
+  copyright: mit
+  license: nocc
