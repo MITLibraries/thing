@@ -254,8 +254,8 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     # options (two specific terms, and the "all terms" option)
     sign_in users(:processor)
     get thesis_select_path
-    assert_select 'table#thesisQueue tbody tr', count: 6
-    assert_select 'select[name="graduation"] option', count: 3
+    assert_select 'table#thesisQueue tbody tr', count: 7
+    assert_select 'select[name="graduation"] option', count: 4
     # Now request the queue with a term filter applied, and see three records
     get thesis_select_path, params: { graduation: '2018-06-01' }
     assert_select 'table#thesisQueue tbody tr', count: 3
@@ -698,7 +698,8 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:processor)
     get thesis_publish_preview_path
     assert_select 'div#publish-to-dspace', count: 1
-    assert_select 'div#publish-to-dspace a[href=?]', thesis_publish_to_dspace_path, text: 'Publish theses to DSpace@MIT', count: 0
+    assert_select 'div#publish-to-dspace a[href=?]', thesis_publish_to_dspace_path,
+                  text: 'Publish theses to DSpace@MIT', count: 0
   end
 
   test 'publication preview, with a term specified, includes a button to actually publish that includes the term parameter' do
@@ -755,19 +756,22 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     get thesis_publish_to_dspace_path
     assert_redirected_to thesis_select_path
     follow_redirect!
-    assert_select '.alert-banner.warning', text: 'Please select a term before attempting to publish theses to DSpace@MIT.', count: 1
+    assert_select '.alert-banner.warning',
+                  text: 'Please select a term before attempting to publish theses to DSpace@MIT.', count: 1
     get thesis_publish_to_dspace_path, params: { graduation: 'all' }
-    assert_redirected_to thesis_select_path( params: { graduation: 'all' })
+    assert_redirected_to thesis_select_path(params: { graduation: 'all' })
     follow_redirect!
-    assert_select '.alert-banner.warning', text: 'Please select a term before attempting to publish theses to DSpace@MIT.', count: 1
+    assert_select '.alert-banner.warning',
+                  text: 'Please select a term before attempting to publish theses to DSpace@MIT.', count: 1
   end
 
   test 'publishing a specific term to dspace ends back at the processing queue with a flash success' do
     sign_in users(:processor)
     get thesis_publish_to_dspace_path, params: { graduation: '2018-09-01' }
-    assert_redirected_to thesis_select_path( params: { graduation: '2018-09-01' })
+    assert_redirected_to thesis_select_path(params: { graduation: '2018-09-01' })
     follow_redirect!
-    assert_select '.alert-banner.success', text: 'The theses you selected have been added to the publication queue. Status updates are not immediate.', count: 1
+    assert_select '.alert-banner.success',
+                  text: 'The theses you selected have been added to the publication queue. Status updates are not immediate.', count: 1
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~ proquest export preview ~~~~~~~~~~~~~~~~~~~~~
@@ -876,7 +880,8 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_enqueued_jobs 1
     assert_redirected_to thesis_proquest_export_preview_path
     follow_redirect!
-    assert_select '.alert-banner.success', text: 'The theses you selected will be exported. Status updates are not immediate.', count: 1
+    assert_select '.alert-banner.success',
+                  text: 'The theses you selected will be exported. Status updates are not immediate.', count: 1
   end
 
   test 'exporting to proquest with no eligible theses redirects to proquest export preview path with a flash message' do
@@ -960,7 +965,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:admin)
     get reset_all_publication_errors_path
     assert_redirected_to thesis_select_path
-    
+
     error_count = Thesis.where(publication_status: 'Publication error').count
     assert error_count == 0
   end

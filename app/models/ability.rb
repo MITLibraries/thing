@@ -6,20 +6,20 @@ class Ability
     # See the documentation for details:
     # https://github.com/CanCanCommunity/cancancan/blob/develop/docs/Defining-Abilities.md
 
-    if user.present?
-      @user = user
-      # Admin users can do everything for all models
-      can :manage, :all if user.admin?
+    return unless user.present?
 
-      # Assign thesis_submitter rights directly to appropriate users as the
-      # process that follows will not pick them up as it is not an explicitly
-      # assigned role
-      transfer_submitter if user.submitter?
+    @user = user
+    # Admin users can do everything for all models
+    can :manage, :all if user.admin?
 
-      # This line matches users' roles with the functions defined below,
-      # giving them privileges accordingly.
-      send(@user.role.to_sym)
-    end
+    # Assign thesis_submitter rights directly to appropriate users as the
+    # process that follows will not pick them up as it is not an explicitly
+    # assigned role
+    transfer_submitter if user.submitter?
+
+    # This line matches users' roles with the functions defined below,
+    # giving them privileges accordingly.
+    send(@user.role.to_sym)
   end
 
   # The default; any logged-in user. The use case here is students uploading
@@ -91,6 +91,8 @@ class Ability
     can :read, Transfer
     can :select, Transfer
     can :files, Transfer
+    can :rename_form, File
+    can :rename, File
 
     can :read, Hold
 

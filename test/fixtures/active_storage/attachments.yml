@@ -56,3 +56,15 @@ sip_one_bag_attachment:
   name: bag
   record: sip_one (SubmissionInformationPackage)
   blob: doctor_files_blob
+
+rename_files_attachment_a:
+  name: files
+  record: rename_attachment_tests (Thesis)
+  purpose: thesis_pdf
+  blob: rename_files_blob_a
+
+rename_files_attachment_b:
+  name: files
+  record: rename_attachment_tests (Thesis)
+  purpose: signature_page
+  blob: rename_files_blob_b

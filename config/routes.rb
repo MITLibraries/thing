@@ -44,6 +44,10 @@ Rails.application.routes.draw do
   get 'thesis/proquest_export_preview', to: 'thesis#proquest_export_preview', as: 'thesis_proquest_export_preview'
   get 'thesis/proquest_export', to: 'thesis#proquest_export', as: 'thesis_proquest_export'
   get 'thesis/reset_all_publication_errors', to: 'thesis#reset_all_publication_errors', as: 'reset_all_publication_errors'
+  
+  # Blob file renaming
+  get 'file/rename/:thesis_id/:attachment_id', to: 'file#rename_form', as: 'rename_file_form'
+  post 'file/rename/:thesis_id/:attachment_id', to: 'file#rename', as: 'rename_file'
 
   resources :registrar, only: [:new, :create, :show]
   resources :thesis, only: [:new, :create, :edit, :show, :update]

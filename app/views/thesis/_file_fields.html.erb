@@ -3,7 +3,10 @@
   <td>
     <%= link_to rails_blob_path(f.object, disposition: "inline"), target: :_blank do %>
       <%= f.object.blob.filename %>
-    <% end %>
+    <% end %>    
+  </td>
+  <td>
+    <%= link_to rename_file_form_path(thesis_id: @thesis, attachment_id: f.object) do %>Rename<% end %>
   </td>
   <td>
     <%= f.object.blob.created_at.in_time_zone('Eastern Time (US & Canada)').strftime('%b %-d, %Y<br>%l:%M %p').html_safe %>
