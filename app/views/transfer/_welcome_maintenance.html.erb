@@ -1,0 +1,9 @@
+<div class="well maintenance-message">
+  <% if ENV.fetch('MAINTENANCE_MESSAGE_TRANSFER', false) %>
+    <h4 class="hd-5"><%= ENV['MAINTENANCE_MESSAGE_TRANSFER'].html_safe %></h4>
+  <% else %>
+    <h4 class="hd-5">The transfer tool is temporarily unavailable while the application is under maintenance. Please
+      contact us at <a href="mailto:mit-theses <mit-theses@mit.edu>" target="_blank">mit-theses@mit.edu</a> with any
+      questions.</h4>
+  <% end %>
+</div>

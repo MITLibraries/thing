@@ -454,4 +454,45 @@ class TransferControllerTest < ActionDispatch::IntegrationTest
 
     assert @response.body.include?(rails_blob_path(@transfer.files.first, disposition: 'inline'))
   end
+
+  test 'form is disabled when app is in maintenance mode' do
+    test_strategy = Flipflop::FeatureSet.current.test!
+    test_strategy.switch!(:maintenance_mode, true)
+
+    sign_in users(:transfer_submitter)
+    get '/transfer/new'
+    assert_select 'textarea', disabled: true, count: 1
+    assert_select 'input', disabled: true, count: 5
+  end
+
+  test 'form is hidden when app is in maintenance mode' do
+    test_strategy = Flipflop::FeatureSet.current.test!
+    test_strategy.switch!(:maintenance_mode, true)
+
+    sign_in users(:transfer_submitter)
+    get '/transfer/new'
+    assert_select 'form', hidden: true, count: 1
+    assert_select 'textarea', hidden: true, count: 1
+    assert_select 'input', hidden: true, count: 5
+  end
+
+  test 'maintenance message renders when app is in maintenance mode' do
+    test_strategy = Flipflop::FeatureSet.current.test!
+    test_strategy.switch!(:maintenance_mode, true)
+
+    sign_in users(:transfer_submitter)
+    get '/transfer/new'
+    assert_select 'div.maintenance-message', count: 1
+  end
+
+  test 'maintenance message can be customized' do
+    test_strategy = Flipflop::FeatureSet.current.test!
+    test_strategy.switch!(:maintenance_mode, true)
+    
+    ClimateControl.modify 'MAINTENANCE_MESSAGE_TRANSFER': 'foo' do
+      sign_in users(:transfer_submitter)
+      get '/transfer/new'
+      assert_select 'div.maintenance-message', text: 'foo'
+    end
+  end
 end
