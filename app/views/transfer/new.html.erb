@@ -8,7 +8,11 @@
 
 <%= render 'shared/you_are' %>
 
-<%= render 'welcome' %>
+<% if Flipflop.enabled?(:maintenance_mode) %>
+  <%= render 'welcome_maintenance' %>
+<% else %>
+  <%= render 'welcome' %>
+<% end %>
 
 <%= simple_form_for(@transfer, url: '/transfer', html: { class: 'transferSubmission' }, validate: true ) do |f| %>
 
@@ -171,5 +175,11 @@
           }
           $("#files_to_upload").html(fileblurb + '<ul>' + filenames + '</ul>');
       });
+    </script>
+  <% end %>
+
+  <% if Flipflop.enabled?(:maintenance_mode) %>
+    <script type="text/javascript">
+      $('#new_transfer').hide().find(':input').prop('disabled', true);
     </script>
   <% end %>

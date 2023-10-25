@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount Flipflop::Engine => "/flipflop"
   # For details see http://guides.rubyonrails.org/routing.html
   namespace :admin do
     resources :users

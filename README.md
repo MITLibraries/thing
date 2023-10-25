@@ -96,6 +96,10 @@ public post key to enable capturing javascript exceptions.
 `LOG_LEVEL` - we set sane defaults in development or production, but you can
 override easily with this ENV if you need to get more details.
 
+`MAINTENANCE_MODE` - this toggles a [Flipflop feature](https://github.com/voormedia/flipflop) that disables thesis
+transfers and informs transfer submitters that the application is under maintenance.
+`MAINTENANCE_MESSAGE_TRANSFER` - provides a custom message to transfer submitters if more details are necessary.
+
 `PREFERRED_DOMAIN` - set this to the domain you would like to use. Any other
 requests that come to the app will redirect to the root of this domain. This is
 useful to prevent access to herokuapp.com domains as well as any legacy domains
