@@ -366,8 +366,11 @@ Publication Review - Publish)
   Heroku run command:
 
   ```shell
-  heroku run rails dss:process_output_queue --app TARGET-HEROKU-APP
+  heroku run -s standard-2x rails dss:process_output_queue --app TARGET-HEROKU-APP
   ```
+
+Note the `-s` option, which sets the dyno size for the run command. We are scaling to the larger '2X' dyno because
+this job is very memory-intensive.
 
 ### Publishing a single thesis
 
@@ -375,7 +378,7 @@ You can publish a single thesis that is already in `Publication review` status b
 task:
 
 ```shell
-heroku run rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
+heroku run -s standard-2x rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
 ```
 
 ## Preservation workflow
