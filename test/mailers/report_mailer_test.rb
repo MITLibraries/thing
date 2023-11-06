@@ -38,7 +38,7 @@ class ReportMailerTest < ActionMailer::TestCase
       assert_match 'Total theses in output queue: 2', email.body.to_s
       assert_match 'Total theses updated: 1', email.body.to_s
       assert_match 'Errors found: 1', email.body.to_s
-      assert_match 'Total theses sent to preservation: 0', email.body.to_s
+      assert_match 'Total theses queued for preservation: 0', email.body.to_s
       assert_match 'Total theses exported as MARC: 1', email.body.to_s
       assert_match 'Couldn&#39;t find Thesis with &#39;id&#39;=9999999999999', email.body.to_s
     end
