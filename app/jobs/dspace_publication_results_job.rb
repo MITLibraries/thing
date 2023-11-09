@@ -19,7 +19,7 @@ class DspacePublicationResultsJob < ActiveJob::Base
       results[:errors] << "Error reading from SQS queue: #{e}"
     end
 
-    PreservationSubmissionPrepJob.perform_later(results[:preservation_ready]) if results[:preservation_ready].any?
+    PreservationSubmissionJob.perform_later(results[:preservation_ready]) if results[:preservation_ready].any?
     MarcExportJob.perform_later(results[:marc_exports]) if results[:marc_exports].any?
     ReportMailer.publication_results_email(results).deliver_now if results[:total].positive? ||
                                                                    results[:errors].any?

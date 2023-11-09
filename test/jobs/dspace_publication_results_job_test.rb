@@ -182,7 +182,7 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
   end
 
   test 'enqueues preservation submission prep job' do
-    assert_enqueued_with(job: PreservationSubmissionPrepJob) do
+    assert_enqueued_with(job: PreservationSubmissionJob) do
       DspacePublicationResultsJob.perform_now
     end
   end

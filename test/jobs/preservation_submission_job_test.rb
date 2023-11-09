@@ -16,17 +16,29 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
     thesis
   end
 
+  test 'sends report emails' do
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      assert_difference('ActionMailer::Base.deliveries.size', 1) do
+        PreservationSubmissionJob.perform_now([setup_thesis])
+      end
+    end
+  end
+
   test 'creates a SIP' do
     thesis = setup_thesis
     assert_equal 0, thesis.submission_information_packages.count
 
-    PreservationSubmissionJob.perform_now(thesis)
+    PreservationSubmissionJob.perform_now([thesis])
     assert_equal 1, thesis.submission_information_packages.count
+  end
+
+  test 'creates multiple SIPs' do
+    theses = [setup_thesis, theses(:published)]
   end
 
   test 'updates preservation_status to "preserved" after successfully processing a thesis' do
     thesis = setup_thesis
-    PreservationSubmissionJob.perform_now(thesis)
+    PreservationSubmissionJob.perform_now([thesis])
     assert_equal 'preserved', thesis.submission_information_packages.last.preservation_status
   end
 
@@ -34,20 +46,20 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
     time = DateTime.new.getutc
     Timecop.freeze(time) do
       thesis = setup_thesis
-      PreservationSubmissionJob.perform_now(thesis)
+      PreservationSubmissionJob.perform_now([thesis])
       assert_equal time, thesis.submission_information_packages.last.preserved_at
     end
   end
 
   test 'rescues exceptions by updating preservation_status to "error"' do
     thesis = theses(:one)
-    PreservationSubmissionJob.perform_now(thesis)
+    PreservationSubmissionJob.perform_now([thesis])
     assert_equal 'error', thesis.submission_information_packages.last.preservation_status
   end
 
   test 'does not update preserved_at if the job enters an error state' do
     thesis = theses(:one)
-    PreservationSubmissionJob.perform_now(thesis)
+    PreservationSubmissionJob.perform_now([thesis])
     assert_nil thesis.submission_information_packages.last.preserved_at
   end
 end
