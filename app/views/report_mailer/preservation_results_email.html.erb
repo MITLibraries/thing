@@ -1,0 +1,21 @@
+<p>Hello,</p>
+
+<p>Below is a report of the Archivematica preservation submission job.</p>
+
+<p>Summary of results:</p>
+
+<ul>
+  <li>Total theses queued for preservation: <%= @results[:total] %></li>
+  <li>Total theses sent to preservation: <%= @results[:processed] %></li>
+  <li>Errors found: <%= @results[:errors].count %></li>
+</ul>
+
+<% if @results[:errors].any? %>
+  <p>The following errors require processor attention:</p>
+
+  <ul>
+    <% @results[:errors].each do |e| %>
+      <li><%= e %></li>
+    <% end %>
+  </ul>
+<% end %>
