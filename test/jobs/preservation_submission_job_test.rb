@@ -33,7 +33,19 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
   end
 
   test 'creates multiple SIPs' do
-    theses = [setup_thesis, theses(:published)]
+    thesis_one = setup_thesis
+    thesis_two = theses(:engineer)
+    assert_equal 0, thesis_one.submission_information_packages.count
+    assert_equal 0, thesis_two.submission_information_packages.count
+
+    theses = [thesis_one, thesis_two]
+    PreservationSubmissionJob.perform_now(theses)
+    assert_equal 1, thesis_one.submission_information_packages.count
+    assert_equal 1, thesis_two.submission_information_packages.count
+
+    PreservationSubmissionJob.perform_now(theses)
+    assert_equal 2, thesis_one.submission_information_packages.count
+    assert_equal 2, thesis_two.submission_information_packages.count
   end
 
   test 'updates preservation_status to "preserved" after successfully processing a thesis' do
@@ -51,15 +63,21 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
     end
   end
 
-  test 'rescues exceptions by updating preservation_status to "error"' do
-    thesis = theses(:one)
-    PreservationSubmissionJob.perform_now([thesis])
-    assert_equal 'error', thesis.submission_information_packages.last.preservation_status
+  test 'throws exceptions when a thesis is unbaggable' do
+    assert_raises StandardError do
+      PreservationSubmissionJob.perform_now([theses[:one]])
+    end
+
+    assert_nothing_raised do
+      PreservationSubmissionJob.perform_now([setup_thesis])
+    end
   end
 
-  test 'does not update preserved_at if the job enters an error state' do
+  test 'does not create a SIP if the job enters an error state' do
     thesis = theses(:one)
+    assert_empty thesis.submission_information_packages
+
     PreservationSubmissionJob.perform_now([thesis])
-    assert_nil thesis.submission_information_packages.last.preserved_at
+    assert_empty thesis.submission_information_packages
   end
 end

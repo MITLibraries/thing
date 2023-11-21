@@ -31,7 +31,7 @@ class SubmissionInformationPackage < ApplicationRecord
 
   before_create :set_metadata, :set_bag_declaration, :set_manifest, :set_bag_name
 
-  enum preservation_status: %i[unpreserved preserved error]
+  enum preservation_status: %i[unpreserved preserved]
 
   def data
     file_locations = {}
