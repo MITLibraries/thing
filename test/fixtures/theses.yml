@@ -275,6 +275,7 @@ engineer:
   metadata_complete: true
   issues_found: false
   publication_status: Published
+  dspace_handle: '3456/7890'
   proquest_exported: 'Full harvest'
 
 long_abstracts_are_fun:
