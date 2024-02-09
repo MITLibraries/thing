@@ -1,8 +1,10 @@
 <div class="wrap-outer-header-local layout-band">
   <div class="wrap-header-local">
-    <div class="local-identity">
-      <h2 class="title title-site"><%= link_to "Thesis Submission at MIT Libraries", root_path %></h2>
-    </div>
+    <% unless ENV['PLATFORM_NAME'] %>
+      <div class="local-identity">
+        <h2 class="title title-site"><%= link_to "Thesis Submission at MIT Libraries", root_path %></h2>
+      </div>
+    <% end %>
     <div class="wrap-local-nav">
       <div class="wrap-bar">
         <nav class="local-nav" aria-label="Main menu">
