@@ -365,14 +365,21 @@ Publication Review - Publish)
   [DSS repo](https://github.com/MITLibraries/dspace-submission-service#run-stage))
 4. ETD processes output queue to update records and send email to stakeholders with summary data and list
   of any error records. As of now this is a manual process, but can be triggered via rake task using the following
-  Heroku run command:
+  sequence of heroku-cli commands:
 
   ```shell
+  # scale the worker dyno to ensure we have enough memory
+  heroku ps:scale worker=1:standard-2x --app TARGET-HEROKU-APP
+
+  # run the output queue processing job
   heroku run -s standard-2x rails dss:process_output_queue --app TARGET-HEROKU-APP
+
+  # wait for all ETD emails to be received (the preservation email is the final one to look for)
+  # scale the worker back down so we do not pay for more CPU/memory than we need
+  heroku ps:scale worker=1:standard-1x --app TARGET-HEROKU-APP
   ```
 
-Note the `-s` option, which sets the dyno size for the run command. We are scaling to the larger '2X' dyno because
-this job is very memory-intensive.
+Note the `-s` option on the second command, which sets the dyno size for the run command. We are scaling to the larger '2X' dyno because this job is very memory-intensive. We also first scale the worker dyno to 2x and then set it back to 1x when we are done for the same reason (preservation takes a lot of memory).
 
 ### Publishing a single thesis
 
