@@ -383,12 +383,14 @@ Note the `-s` option on the second command, which sets the dyno size for the run
 
 ### Publishing a single thesis
 
-You can publish a single thesis that is already in `Publication review` status by passing the `thesis_id` to a rake
+You can publish a single thesis that is already in `Publication review` or `Pending publication` status by passing the `thesis_id` to a rake
 task:
 
 ```shell
 heroku run -s standard-2x rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
 ```
+
+Note: `Pending publication` is allowed here, but not expected to be a normal occurence, to handle the edge case of the app thinking data was sent to SQS but the data not arriving for any reason.
 
 ## Preservation workflow
 
