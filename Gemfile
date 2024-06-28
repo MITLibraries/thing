@@ -6,9 +6,10 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'administrate'
+gem 'administrate', '~> 0.19.0'
 gem 'aws-sdk-rails'
 gem 'aws-sdk-s3'
+gem 'aws-sdk-sqs', '~> 1.63.0'
 gem 'bootsnap'
 gem 'cancancan'
 gem 'cocoon'
@@ -19,7 +20,7 @@ gem 'json'
 gem 'kaminari'
 gem 'lograge'
 gem 'marc'
-gem 'mitlibraries-theme', git: 'https://github.com/mitlibraries/mitlibraries-theme', tag: 'v1.2'
+gem 'mitlibraries-theme', git: 'https://github.com/mitlibraries/mitlibraries-theme', tag: 'v1.4'
 gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem 'net-smtp', require: false
