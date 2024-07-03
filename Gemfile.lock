@@ -236,7 +236,7 @@ GEM
     method_source (1.1.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.7)
-    minitest (5.24.0)
+    minitest (5.24.1)
     minitest-reporters (1.7.1)
       ansi
       builder
@@ -373,10 +373,10 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    sentry-rails (5.18.0)
+    sentry-rails (5.18.1)
       railties (>= 5.0)
-      sentry-ruby (~> 5.18.0)
-    sentry-ruby (5.18.0)
+      sentry-ruby (~> 5.18.1)
+    sentry-ruby (5.18.1)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     simple_form (5.3.1)
