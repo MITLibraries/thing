@@ -9,7 +9,7 @@ end
 gem 'administrate', '~> 0.19.0'
 gem 'aws-sdk-rails'
 gem 'aws-sdk-s3'
-gem 'aws-sdk-sqs', '~> 1.63.0'
+gem 'aws-sdk-sqs', '~> 1.62.0'
 gem 'bootsnap'
 gem 'cancancan'
 gem 'cocoon'
