@@ -7,9 +7,9 @@ git_source(:github) do |repo_name|
 end
 
 gem 'administrate', '~> 0.19.0'
-gem 'aws-sdk-rails', '~> 3.8.0'
-gem 'aws-sdk-s3', '~> 1.146.1'
-gem 'aws-sdk-sqs', '~> 1.62.0'
+gem 'aws-sdk-rails'
+gem 'aws-sdk-s3'
+gem 'aws-sdk-sqs'
 gem 'bootsnap'
 gem 'cancancan'
 gem 'cocoon'
