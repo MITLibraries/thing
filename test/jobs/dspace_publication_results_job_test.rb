@@ -26,7 +26,7 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
                                       'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } },
 
               # success but thesis no longer has files locally
-              { message_id: 'id1a', receipt_handle: 'handle1a',
+              { message_id: 'id1b', receipt_handle: 'handle1a',
                 body: '{"ResultType": "success", "ItemHandle": "http://example.com/handle/123123123", "lastModified": "Thu Sep 09 17: 56: 39 UTC 2021", "Bitstreams": [{ "BitstreamName": "a_pdf.pdf", "BitstreamUUID": "fakeuuidshhhhh",  "BitstreamChecksum": { "value": "2800ec8c99c60f5b15520beac9939a46", "checkSumAlgorithm": "MD5"}}]}',
                 message_attributes: { 'PackageID' => { string_value: "etd_#{@valid_with_no_local_files.id}", data_type: 'String' },
                                       'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } },
@@ -167,18 +167,18 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
     assert_includes results[:errors], "Couldn't find Thesis with 'id'=9999999999999"
 
     # bad checksum
-    assert_includes results[:errors], 'Thesis 532738922 with handle http://example.com/handle/123123123 was published'\
-                                      ' with non matching checksums. ETD checksums'\
-                                      ' ["2800ec8c99c60f5b15520beac9939a46"] dspace checksums ["borkedchecksum"]. This'\
-                                      ' requires immediate attention to either manually replace the problem file in'\
-                                      ' DSpace or delete the entire thesis from DSpace to ensure that nobody is able'\
-                                      ' to download the broken file.'
+    assert_includes results[:errors], 'Thesis 532738922 with handle http://example.com/handle/123123123 was published ' \
+                                      'with non matching checksums. ETD checksums ' \
+                                      '["2800ec8c99c60f5b15520beac9939a46"] dspace checksums ["borkedchecksum"]. This ' \
+                                      'requires immediate attention to either manually replace the problem file in ' \
+                                      'DSpace or delete the entire thesis from DSpace to ensure that nobody is able ' \
+                                      'to download the broken file.'
 
     # no local files to checksum
-    assert_includes results[:errors], 'Thesis 980190962 updated to status Publication error due to inability to'\
-                                      ' validate checksums as no local files were attached to the record. This'\
-                                      ' requires staff to manually check the ETD record and DSpace record and take'\
-                                      ' appropriate action.'
+    assert_includes results[:errors], 'Thesis 980190962 updated to status Publication error due to inability to ' \
+                                      'validate checksums as no local files were attached to the record. This ' \
+                                      'requires staff to manually check the ETD record and DSpace record and take ' \
+                                      'appropriate action.'
   end
 
   test 'enqueues preservation submission prep job' do
