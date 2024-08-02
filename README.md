@@ -369,10 +369,11 @@ Publication Review - Publish)
 
   ```shell
   # scale the worker dyno to ensure we have enough memory
-  heroku ps:scale worker=1:standard-2x --app TARGET-HEROKU-APP
+  # as off Aug 2024 `performance-m` has been sufficient
+  heroku ps:scale worker=1:performance-m --app TARGET-HEROKU-APP
 
   # run the output queue processing job
-  heroku run -s standard-2x rails dss:process_output_queue --app TARGET-HEROKU-APP
+  heroku run -s performance-m rails dss:process_output_queue --app TARGET-HEROKU-APP
 
   # wait for all ETD emails to be received (the preservation email is the final one to look for)
   # scale the worker back down so we do not pay for more CPU/memory than we need
