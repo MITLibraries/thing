@@ -375,8 +375,9 @@ Publication Review - Publish)
   # run the output queue processing job
   heroku run -s performance-m rails dss:process_output_queue --app TARGET-HEROKU-APP
 
-  # wait for all ETD emails to be received (the preservation email is the final one to look for)
-  # scale the worker back down so we do not pay for more CPU/memory than we need
+  # wait for all ETD emails to be received (there are three emails: one overall results summary, one preservation
+  # results summary, and one MARC batch export).
+  # Then, scale the worker back down so we do not pay for more CPU/memory than we need
   heroku ps:scale worker=1:standard-1x --app TARGET-HEROKU-APP
   ```
 
