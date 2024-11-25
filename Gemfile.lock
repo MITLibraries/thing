@@ -243,7 +243,7 @@ GEM
     method_source (1.1.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
-    minitest (5.25.1)
+    minitest (5.25.2)
     minitest-reporters (1.7.1)
       ansi
       builder
@@ -315,7 +315,7 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
-    rails-mermaid_erd (0.5.0)
+    rails-mermaid_erd (0.5.1)
       rails (>= 5.2)
     railties (7.0.8.6)
       actionpack (= 7.0.8.6)
