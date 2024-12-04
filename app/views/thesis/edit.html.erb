@@ -183,12 +183,6 @@
                                 hint: 'If anything is incorrect in the non-editable fields, tell us here.'.html_safe,
                                 hint_html: { id: 'thesis_author_note-hint', class: 'col3q' } %>
 
-      <%= f.simple_fields_for :authors do |author| %>
-        <% if author.object.user_id == current_user.id && satisfies_advanced_degree?(@thesis) %>
-          <%= render 'author_fields', f: author %>
-        <% end %>
-      <% end %>
-
       <div class='field-row'>
         <%= submit_tag 'Submit thesis information', class: 'btn button-primary' %>
       </div>
@@ -205,13 +199,6 @@
 
 <script type="text/javascript">
   $("form.thesisSubmission").validate({
-    errorPlacement: function(error, element) {
-      if (element.attr("name") == "thesis[authors_attributes][0][proquest_allowed]") {
-        error.insertBefore(element);
-      } else {
-        error.insertAfter(element);
-      }
-    },
     invalidHandler: function(event, validator) {
       var errors = validator.numberOfInvalids();
       if (errors) {
