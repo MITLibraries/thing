@@ -6,9 +6,11 @@ function conditionalLicenseField() {
   var value = $("select#thesis_copyright_id option:selected").text();
   if ('I hold copyright' == value) {
     $("div.thesis_license").show();
+    $("select#thesis_license_id").prop('required', true);
   } else {
     $("div.thesis_license").hide();
     $("select#thesis_license_id")[0].value = "";
+    $("select#thesis_license_id").prop('required', false);
   }
 };
 
