@@ -62,6 +62,7 @@ class Thesis < ApplicationRecord
 
   VALIDATION_MSGS = {
     copyright: 'Required - Please identify the copyright holder.',
+    license: 'Required - Please identify the license type.',
     graduation_year: 'Required - Please input your year of graduation.',
     graduation_month: 'Required - Please select your month of graduation.',
     departments: 'Required - Please select your primary department.',
