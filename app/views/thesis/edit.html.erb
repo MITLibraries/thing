@@ -126,6 +126,7 @@
       </div>
 
       <%= f.association :copyright, as: :select,
+                                    selected: @thesis.copyright.present? ? @thesis.copyright.id : 2,
                                     required: true,
                                     collection: Copyright.display_to_author,
                                     validate: { present: true },
@@ -142,12 +143,13 @@
 
       <%= f.association :license, as: :select,
                                   include_hidden: false,
-                                  label: 'License (if you retain copyright)',
+                                  label: 'License (if you retain copyright) *',
                                   label_method: :display_description,
                                   label_html: { class: 'col1q' },
                                   wrapper_html: { class: 'field-row select layout-1q3q layout-band' },
                                   input_html: { class: 'field field-select col3q', multiple: false,
-                                    aria: { describedby: 'thesis_license-hint' } },
+                                    aria: { describedby: 'thesis_license-hint' },
+                                    data: { msg: Thesis::VALIDATION_MSGS[:license] } },
                                   hint: 'Not sure what to select? Learn more about <a href="https://chooser-beta.creativecommons.org/" target="_blank">Creative Commons licenses</a>.'.html_safe,
                                   hint_html: { class: 'col3q', id: 'thesis_license-hint' } %>
 
