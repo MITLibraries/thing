@@ -392,7 +392,7 @@ task:
 heroku run -s standard-2x rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
 ```
 
-Note: `Pending publication` is allowed here, but not expected to be a normal occurence, to handle the edge case of the app thinking data was sent to SQS but the data not arriving for any reason.
+Warning: `Pending publication` is allowed here, but not expected to be a normal occurence, to handle the edge case of the app thinking data was sent to SQS but the data not arriving for any reason. It is possible to send multiple copies of a single thesis to the publishing queue with this feature. Please be sure the SQS queues are fully processed and that you are absolutely confident that sending a `Pending publication` status thesis back into the publishing queue is appropriate. Failure to use care could lead to a single thesis being published more than once, which is bad. This is only a concern specifically for the `Pending publication` and `Publication review` statuses as no other statuses can be sent to the queue with this method.
 
 ## Preservation workflow
 
