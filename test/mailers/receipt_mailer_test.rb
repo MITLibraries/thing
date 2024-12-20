@@ -18,7 +18,9 @@ class ReceiptMailerTest < ActionMailer::TestCase
     end
   end
 
-  test 'confirmation emails for graduate theses include ProQuest consent' do
+  # This used to be a test that the emails _do_ include ProQuest consent, but we removed that feature in December 2024.
+  # This test is to ensure that grad students do not see a nonexistent metadata field in their receipt email.
+  test 'confirmation emails for graduate theses do not include ProQuest consent' do
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       thesis = theses(:doctor)
       user = users(:basic)
@@ -29,7 +31,7 @@ class ReceiptMailerTest < ActionMailer::TestCase
         email.deliver_now
       end
 
-      assert_match '<strong>Consent to send thesis to ProQuest:</strong> Opt-in status not reconciled', email.body.to_s
+      refute_match '<strong>Consent to send thesis to ProQuest:</strong>', email.body.to_s
     end
   end
 
