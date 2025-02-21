@@ -13,6 +13,8 @@ gem 'aws-sdk-sqs'
 gem 'bootsnap'
 gem 'cancancan'
 gem 'cocoon'
+# Pin `concurrent-ruby` until we upgrade to Rails 7.1
+gem 'concurrent-ruby', '< 1.3.5'
 gem 'delayed_job_active_record'
 gem 'devise'
 gem 'flipflop'
