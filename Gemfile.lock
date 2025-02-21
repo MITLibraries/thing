@@ -315,7 +315,7 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
-    rails-mermaid_erd (0.5.0)
+    rails-mermaid_erd (0.6.0)
       rails (>= 5.2)
     railties (7.0.8.7)
       actionpack (= 7.0.8.7)
