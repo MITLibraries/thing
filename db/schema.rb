@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_21_194847) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_21_202836) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -29,8 +29,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_21_194847) do
     t.string "filename", null: false
     t.string "content_type"
     t.text "metadata"
-    t.integer "byte_size", null: false
-    t.string "checksum", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
     t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
@@ -277,7 +277,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_21_194847) do
 
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
-    t.integer "item_id", null: false
+    t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
     t.datetime "created_at", precision: nil

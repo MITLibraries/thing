@@ -32,3 +32,5 @@ storage
 
 # Ignore Rails Mermaid ERD gem generated HTML. (We put the markdown in the readme instead.)
 docs/etd_erd.html
+*.sqlite3-shm
+*.sqlite3-wal

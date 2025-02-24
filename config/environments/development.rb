@@ -23,7 +23,7 @@ Rails.application.configure do
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
-  config.cache_classes = false
+  config.enable_reloading = true
 
   # Do not eager load code on boot.
   config.eager_load = false
@@ -31,15 +31,18 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
+  # Enable server timing
+  config.server_timing = true
+
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
-  if Rails.root.join('tmp', 'caching-dev.txt').exist?
+  if Rails.root.join("tmp/caching-dev.txt").exist?
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+      "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
   else
     config.action_controller.perform_caching = false
@@ -49,17 +52,16 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
-  # We need to set ActiveStorage::Current.host so ActiveStorage blobs have URLs. This is not currently possible without
-  # monkey-patching, so you will need to set current_host whenever you start your console if working with a class that
-  # needs blobs to have URLs (e.g., DspaceMetadata). 
-  # There is an open PR to fix this: https://github.com/rails/rails/pull/42847. Once that's merged into the Rails
-  # codebase, the config line below should fix the problem.
-  # routes.default_url_options[:host] = 'https://example.com'
 
   # Use letter_opener to preview emails.
   config.action_mailer.delivery_method = :letter_opener
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_url_options = { :host => 'localhost:3000' }
+
+  # Don't care if the mailer can't send.
+  config.action_mailer.raise_delivery_errors = false
+
+  config.action_mailer.perform_caching = false
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -76,10 +78,8 @@ Rails.application.configure do
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 
-  # Debug mode disables concatenation and preprocessing of assets.
-  # This option may cause significant delays in view rendering with a large
-  # number of complex assets.
-  config.assets.debug = true
+  # Highlight code that enqueued background job in logs.
+  config.active_job.verbose_enqueue_logs = true
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
@@ -102,10 +102,9 @@ Rails.application.configure do
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
 
-  # Use an evented file watcher to asynchronously detect changes in source code,
-  # routes, locales, etc. This feature depends on the listen gem.
-  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+
+  # Raise error when a before_action's only/except options reference missing actions
+  config.action_controller.raise_on_missing_callback_actions = true
 end
