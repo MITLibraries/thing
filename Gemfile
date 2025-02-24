@@ -35,7 +35,7 @@ gem 'sentry-rails'
 gem 'sentry-ruby'
 gem 'simple_form'
 gem 'skylight'
-gem 'uglifier'
+gem 'terser'
 gem 'zip_tricks'
 
 group :production do
