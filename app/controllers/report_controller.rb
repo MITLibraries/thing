@@ -1,7 +1,7 @@
 class ReportController < ApplicationController
   before_action :require_user
   before_action :authenticate_user!
-  load_and_authorize_resource except: :create
+  load_and_authorize_resource
   protect_from_forgery with: :exception
 
   include ThesisHelper
