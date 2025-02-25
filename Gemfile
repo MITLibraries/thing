@@ -6,7 +6,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'administrate', '~> 0.19.0'
+gem 'administrate', '~> 0.20.0'
 gem 'aws-sdk-rails'
 gem 'aws-sdk-s3'
 gem 'aws-sdk-sqs'
