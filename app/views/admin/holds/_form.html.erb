@@ -21,7 +21,7 @@ and renders all form fields for a resource's editable attributes.
         <%= t(
           "administrate.form.errors",
           pluralized_errors: pluralize(page.resource.errors.count, t("administrate.form.error")),
-          resource_name: display_resource_name(page.resource_name).singularize
+          resource_name: display_resource_name(page.resource_name, singular: true)
         ) %>
       </h2>
 
@@ -33,23 +33,27 @@ and renders all form fields for a resource's editable attributes.
     </div>
   <% end %>
 
-  <% page.attributes.each do |attribute| -%>
-    <% if params[:thesis_id] && attribute.name == 'thesis' %>
-      <div class="panel">
-        <%= hidden_field_tag 'hold[thesis_id]', params[:thesis_id] %>
-        <div class="panel-heading">Thesis info</div>
-        <div class="panel-body">
-          <ul class="list-unbulleted">
-            <li>Title: <%= attribute.data.title %></li>
-            <li>Author(s): <%= attribute.data.users.map { |author| author.name }.join("; ") %></li>
-            <li>Degree(s): <%= attribute.data.degrees.map { |degree| degree.name_dw }.join("; ") %></li>
-            <li>Degree date: <%= attribute.data.grad_date %></li>
-          </ul>
-        </div>
-      </div>
-    <% else %>
-      <div class="field-unit field-unit--<%= attribute.html_class %> field-unit--<%= requireness(attribute) %>">
-        <% if attribute.name == 'dates_thesis_files_received' %>
+  <% page.attributes(controller.action_name).each do |title, attributes| -%>
+    <fieldset class="<%= "field-unit--nested" if title.present? %>">
+      <% if title.present? %>
+        <legend><%= t "helpers.label.#{f.object_name}.#{title}", default: title %></legend>
+      <% end %>
+      <% attributes.each do |attribute| %>
+
+        <% if params[:thesis_id] && attribute.name == 'thesis' %>
+          <div class="panel">
+            <%= hidden_field_tag 'hold[thesis_id]', params[:thesis_id] %>
+            <div class="panel-heading">Thesis info</div>
+            <div class="panel-body">
+              <ul class="list-unbulleted">
+                <li>Title: <%= attribute.data.title %></li>
+                <li>Author(s): <%= attribute.data.users.map { |author| author.name }.join("; ") %></li>
+                <li>Degree(s): <%= attribute.data.degrees.map { |degree| degree.name_dw }.join("; ") %></li>
+                <li>Degree date: <%= attribute.data.grad_date %></li>
+              </ul>
+            </div>
+          </div>
+        <% elsif attribute.name == 'dates_thesis_files_received'%>
           <div class="field-unit__label">
             <label for="hold_dates_files_received">Dates thesis files received</label>
           </div>
@@ -57,10 +61,19 @@ and renders all form fields for a resource's editable attributes.
             <input type="text" id="hold_dates_files_received" value="<%= attribute.data %>" readonly>
           </div>
         <% else %>
-          <%= render_field attribute, f: f %>
+          <div class="field-unit field-unit--<%= attribute.html_class %> field-unit--<%= requireness(attribute) %>">
+            <%= render_field attribute, f: f %>
+
+            <% hint_key = "administrate.field_hints.#{page.resource_name}.#{attribute.name}" %>
+            <% if I18n.exists?(hint_key) -%>
+              <div class="field-unit__hint">
+                <%= I18n.t(hint_key) %>
+              </div>
+            <% end -%>
+          </div>
         <% end %>
-      </div>
-    <% end %>
+      <% end %>
+    </fieldset>
   <% end %>
 
   <div class="form-actions">

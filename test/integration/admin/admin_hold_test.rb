@@ -170,10 +170,11 @@ class AdminHoldDashboardTest < ActionDispatch::IntegrationTest
     get "/admin/holds/new?thesis_id=#{t.id}"
     assert_response :success
     assert_select 'div.panel-heading', text: 'Thesis info'
+    assert_select 'div.panel-body', true
     assert_select 'div.panel-body', text: "Title: MyString
-            Author(s): Yobot, Yo
-            Degree(s): Master of Fine Arts
-            Degree date: 2017-09-01"
+                Author(s): Yobot, Yo
+                Degree(s): Master of Fine Arts
+                Degree date: 2017-09-01"
     assert_select 'select[name=?]', 'hold[thesis_id]', false
   end
 
