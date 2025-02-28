@@ -29,7 +29,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_202836) do
     t.string "filename", null: false
     t.string "content_type"
     t.text "metadata"
-    t.bigint "byte_size", null: false
+    t.integer "byte_size", null: false
     t.string "checksum"
     t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
@@ -276,8 +276,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_202836) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type", null: false
-    t.bigint "item_id", null: false
+    t.string "item_type"
+    t.string "{:null=>false}"
+    t.integer "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
     t.datetime "created_at", precision: nil

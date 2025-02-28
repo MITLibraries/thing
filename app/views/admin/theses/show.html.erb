@@ -37,8 +37,6 @@ as well as a link to its edit page.
       method: :delete,
       data: { confirm: t("administrate.actions.confirm") }
     ) if accessible_action?(page.resource, :destroy) %>
-  </div>
-  <div class="new-hold-button">
     <%= link_to(
       t("administrate.actions.new_resource", name: 'hold'),
       [:new, namespace, :hold, {thesis_id: page.resource.id}],
