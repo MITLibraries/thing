@@ -50,7 +50,11 @@ class AdminHoldDashboardTest < ActionDispatch::IntegrationTest
   test 'hold edit screen includes a dropdown for enumerated status values' do
     mock_auth(users(:thesis_admin))
     get "/admin/holds/#{holds(:valid).id}/edit"
-    assert_select 'select#hold_status', text: "active\nexpired\nreleased"
+    assert_select 'select#hold_status' do |select|
+      assert_select 'option', text: 'active'
+      assert_select 'option', text: 'expired'
+      assert_select 'option', text: 'released'
+    end
   end
 
   test 'audit trail includes the identity of the editor' do
@@ -171,10 +175,7 @@ class AdminHoldDashboardTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'div.panel-heading', text: 'Thesis info'
     assert_select 'div.panel-body', true
-    assert_select 'div.panel-body', text: "Title: MyString
-                Author(s): Yobot, Yo
-                Degree(s): Master of Fine Arts
-                Degree date: 2017-09-01"
+    assert_select 'div.panel-body', text: 'Title: MyString Author(s): Yobot, Yo Degree(s): Master of Fine Arts Degree date: 2017-09-01'
     assert_select 'select[name=?]', 'hold[thesis_id]', false
   end
 
