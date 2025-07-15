@@ -17,6 +17,15 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
     thesis
   end
 
+  def setup_thesis_two
+    thesis = theses(:published_with_sip)
+    thesis.files = []
+    thesis.save
+    file = Rails.root.join('test', 'fixtures', 'files', 'registrar_data_small_sample.csv')
+    thesis.files.attach(io: File.open(file), filename: 'registrar_data_small_sample.csv')
+    thesis
+  end
+
   def stub_apt_lambda_success
     stub_request(:post, ENV['APT_LAMBDA_URL'])
       .to_return(
@@ -137,21 +146,45 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
     end
   end
 
-  test 'does not create payload if job fails' do
+  test 'does not create payloads if job fails' do
     stub_apt_lambda_failure
-    thesis = theses(:one)
-    assert_empty thesis.archivematica_payloads
+    bad_thesis = theses(:one)
+    good_thesis = setup_thesis
+    another_good_thesis = setup_thesis_two
+    assert_empty bad_thesis.archivematica_payloads
+    assert_empty good_thesis.archivematica_payloads
+    assert_empty another_good_thesis.archivematica_payloads
 
-    PreservationSubmissionJob.perform_now([thesis])
-    assert_empty thesis.archivematica_payloads
+    PreservationSubmissionJob.perform_now([good_thesis, bad_thesis, another_good_thesis])
+
+    # first thesis should succeed and have a payload
+    assert_equal 1, good_thesis.archivematica_payloads.count
+
+    # second thesis should fail and not have a payload
+    assert_empty bad_thesis.archivematica_payloads
+
+    # third thesis should succeed and have a payload, despite prior failure
+    assert_equal 1, another_good_thesis.archivematica_payloads.count
   end
 
-  test 'does not create payload if post succeeds but APT fails' do
+  test 'does not create payloads if post succeeds but APT fails' do
     stub_apt_lambda_200_failure
-    thesis = theses(:one)
-    assert_empty thesis.archivematica_payloads
+    bad_thesis = theses(:one)
+    good_thesis = setup_thesis
+    another_good_thesis = setup_thesis_two
+    assert_empty bad_thesis.archivematica_payloads
+    assert_empty good_thesis.archivematica_payloads
+    assert_empty another_good_thesis.archivematica_payloads
 
-    PreservationSubmissionJob.perform_now([thesis])
-    assert_empty thesis.archivematica_payloads
+    PreservationSubmissionJob.perform_now([good_thesis, bad_thesis, another_good_thesis])
+
+    # first thesis should succeed and have a payload
+    assert_equal 1, good_thesis.archivematica_payloads.count
+
+    # second thesis should fail and not have a payload
+    assert_empty bad_thesis.archivematica_payloads
+
+    # third thesis should succeed and have a payload, despite prior failure
+    assert_equal 1, another_good_thesis.archivematica_payloads.count
   end
 end

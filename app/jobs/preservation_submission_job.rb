@@ -27,7 +27,7 @@ class PreservationSubmissionJob < ActiveJob::Base
     post_payload(payload)
     payload.preservation_status = 'preserved'
     payload.preserved_at = DateTime.now
-    payload.save
+    payload.save!
   end
 
   def post_payload(payload)
