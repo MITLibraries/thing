@@ -42,7 +42,7 @@ class ArchivematicaPayload < ApplicationRecord
     {
       action: 'create-bagit-zip',
       challenge_secret: ENV.fetch('APT_CHALLENGE_SECRET', nil),
-      verbose: ENV.fetch('APT_VERBOSE', false),
+      verbose: ActiveModel::Type::Boolean.new.cast(ENV.fetch('APT_VERBOSE', false)),
       input_files: build_input_files,
       checksums_to_generate: ENV.fetch('APT_CHECKSUMS_TO_GENERATE', ['md5']),
       output_zip_s3_uri: bag_output_uri,
