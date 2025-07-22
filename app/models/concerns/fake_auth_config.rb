@@ -27,10 +27,6 @@ module FakeAuthConfig
   private_class_method def self.app_name_pattern_match?
     return true if Rails.env.development?
 
-    # TODO: remove this line once we have confirmed the S3 and SQS migration to the new AWS org. We created a temporary
-    # second review app to test that migration.
-    return true if ENV.fetch('HEROKU_APP_NAME', nil) == 'thesis-submit-staging-new'
-
     review_app_pattern = /^thesis-(submit|dropbox)-pr-\d+$/
     review_app_pattern.match(ENV.fetch('HEROKU_APP_NAME', nil)).present?
   end
