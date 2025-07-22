@@ -40,9 +40,14 @@ Rails.application.configure do
   ENV['SQS_RESULT_WAIT_TIME_SECONDS'] = '10'
   ENV['SQS_RESULT_IDLE_TIMEOUT'] = '0'
   ENV['AWS_REGION'] = 'us-east-1'
+  ENV['AWS_S3_BUCKET'] = 'fake-etd-bucket'
   ENV['DSPACE_DOCTORAL_HANDLE'] = '1721.1/999999'
   ENV['DSPACE_GRADUATE_HANDLE'] = '1721.1/888888'
   ENV['DSPACE_UNDERGRADUATE_HANDLE'] = '1721.1/777777'
+  ENV['APT_CHALLENGE_SECRET'] = 'fake-challenge-secret'
+  ENV['APT_S3_BUCKET'] = 's3://fake-apt-bucket'
+  ENV['APT_LAMBDA_URL'] = 'https://fake-lambda.example.com/'
+  ENV['APT_COMPRESS_ZIP'] = 'true'
 
   # While tests run files are not watched, reloading is not necessary.
   config.enable_reloading = false

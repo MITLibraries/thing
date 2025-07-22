@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_21_202836) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_24_182142) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -63,6 +63,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_202836) do
     t.integer "degree_period_id", null: false
     t.index ["accession_number"], name: "index_archivematica_accessions_on_accession_number", unique: true
     t.index ["degree_period_id"], name: "index_archivematica_accessions_on_degree_period_id", unique: true
+  end
+
+  create_table "archivematica_payloads", force: :cascade do |t|
+    t.integer "preservation_status", default: 0, null: false
+    t.text "payload_json"
+    t.datetime "preserved_at"
+    t.integer "thesis_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["thesis_id"], name: "index_archivematica_payloads_on_thesis_id"
   end
 
   create_table "authors", force: :cascade do |t|
@@ -290,6 +300,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_21_202836) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "archivematica_accessions", "degree_periods"
+  add_foreign_key "archivematica_payloads", "theses"
   add_foreign_key "authors", "theses"
   add_foreign_key "authors", "users"
   add_foreign_key "degrees", "degree_types"
