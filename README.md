@@ -159,6 +159,19 @@ polling by specifying a longer queue wait time. Defaults to 10 if unset.
 `SQS_RESULT_IDLE_TIMEOUT` - Configures the :idle_timeout arg of the AWS poll method, which specifies the maximum time
 in seconds to wait for a new message before the polling loop exists. Defaults to 0 if unset.
 
+### Archival Packaging Tool (APT) configuration
+
+The following enviroment variables are needed to communicate with [APT](https://github.com/MITLibraries/archival-packaging-tool), which is used in the
+[preservation workflow](#publishing-workflow).
+
+`APT_CHALLENGE_SECRET` - Secret value used to authenticate requests to the APT Lambda endpoint.
+`APT_VERBOSE` - If set to `true`, enables verbose logging for APT requests.
+`APT_CHECKSUMS_TO_GENERATE` - Array of checksum algorithms to generate for files (default: ['md5']).
+`APT_COMPRESS_ZIP` - Boolean value to indicate whether the output bag should be compressed as a zip
+file (default: true).
+`APT_S3_BUCKET` - S3 bucket URI where APT output bags are stored.
+`APT_LAMBDA_URL` - The URL of the APT Lambda endpoint for preservation requests.
+
 ### Email configuration
 
 `SMTP_ADDRESS`, `SMTP_PASSWORD`, `SMTP_PORT`, `SMTP_USER` - all required to send mail.
@@ -397,15 +410,15 @@ Note: `Pending publication` is allowed here, but not expected to be a normal occ
 ## Preservation workflow
 
 The publishing workflow will automatically trigger preservation for all of the published theses in the results queue.
-At this point a submission information package is generated for each thesis, then a bag is constructed, zipped, and
-streamed to an S3 bucket. (See the SubmissionInformationPackage and SubmissionInformationPackageZipper classes for more
-details on this part of the process.)
 
-Once they are in the S3 bucket, the bags are automatically replicated to the Digital Preservation S3 bucket, where they
-can be ingested into Archivematica.
+At this point, the preservation job will generate an Archivematica payload for each thesis, which
+are then POSTed to [APT](https://github.com/MITLibraries/archival-packaging-tool) for further processing. Each payload includes a metadata CSV and a JSON object containing structural information about the thesis files. 
 
-A thesis can be sent to preservation more than once. In order to track provenance across multiple preservation events,
-we persist certain data about the SIP and audit the model using `paper_trail`.
+Once the payloads are sent to APT, each thesis is structured as a BagIt bag and saved to an S3
+bucket, where they can be ingested into Archivematica.
+
+A thesis can be sent to preservation more than once. In order to track provenance across multiple preservation events, we persist certain data about the Archivematica payload and audit the model
+using `paper_trail`.
 
 ### Preserving a single thesis
 

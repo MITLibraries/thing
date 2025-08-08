@@ -36,6 +36,7 @@ gem 'sentry-ruby'
 gem 'simple_form'
 gem 'skylight'
 gem 'terser'
+gem 'webmock'
 gem 'zip_tricks'
 
 group :production do

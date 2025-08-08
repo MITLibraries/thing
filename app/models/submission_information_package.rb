@@ -14,6 +14,10 @@
 #  updated_at          :datetime         not null
 #
 
+# This model is no longer used, but it is retained for historical purposes and to preserve existing
+# data. Its functionality has been replaced by the ArchivematicaPayload model, which is used in the
+# current preservation workflow.
+#
 # Creates the structure for an individual thesis to be preserved in Archivematica according to the BagIt spec:
 # https://datatracker.ietf.org/doc/html/rfc8493.
 #
