@@ -82,7 +82,7 @@ class ArchivematicaPayload < ApplicationRecord
 
   # The bag_output_uri key is constructed to match the expected format for Archivematica.
   def bag_output_uri
-    key = "etdsip/#{thesis.graduation_year}/#{thesis.graduation_month}-#{thesis.accession_number}/#{bag_name}.zip"
+    key = "etdsip-apt/#{thesis.graduation_year}/#{thesis.graduation_month}-#{thesis.accession_number}/#{bag_name}.zip"
     [ENV.fetch('APT_S3_BUCKET'), key].join('/')
   end
 
