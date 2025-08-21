@@ -377,24 +377,19 @@ Publication Review - Publish)
 3. DSS runs (as of this writing that is a manual process documented in the
   [DSS repo](https://github.com/MITLibraries/dspace-submission-service#run-stage))
 4. ETD processes output queue to update records and send email to stakeholders with summary data and list
-  of any error records. As of now this is a manual process, but can be triggered via rake task using the following
-  sequence of heroku-cli commands:
+  of any error records. As of now this is a manual process, but can be triggered via rake task using the following heroku-cli command:
 
   ```shell
-  # scale the worker dyno to ensure we have enough memory
-  # as off Aug 2024 `performance-m` has been sufficient
-  heroku ps:scale worker=1:performance-m --app TARGET-HEROKU-APP
-
   # run the output queue processing job
-  heroku run -s performance-m rails dss:process_output_queue --app TARGET-HEROKU-APP
+  heroku run rails dss:process_output_queue --app TARGET-HEROKU-APP
 
   # wait for all ETD emails to be received (there are three emails: one overall results summary, one preservation
   # results summary, and one MARC batch export).
-  # Then, scale the worker back down so we do not pay for more CPU/memory than we need
-  heroku ps:scale worker=1:standard-1x --app TARGET-HEROKU-APP
   ```
 
-Note the `-s` option on the second command, which sets the dyno size for the run command. We are scaling to the larger '2X' dyno because this job is very memory-intensive. We also first scale the worker dyno to 2x and then set it back to 1x when we are done for the same reason (preservation takes a lot of memory).
+Previously, we had to scale up the Heroku worker dynos to accommodate memory spikes. This is no
+longer required as of August 2025, with the integration of the
+[Archival Packaging Tool (APT)](https://github.com/MITLibraries/archival-packaging-tool/).
 
 ### Publishing a single thesis
 
