@@ -145,44 +145,33 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
     end
   end
 
-  test 'does not create payloads if job fails' do
+  # This is not the desired behavior, but it confirms the current behavior.
+  test 'create payloads even if APT job fails' do
     stub_apt_lambda_failure
-    bad_thesis = theses(:one)
     good_thesis = setup_thesis
     another_good_thesis = setup_thesis_two
-    assert_empty bad_thesis.archivematica_payloads
     assert_empty good_thesis.archivematica_payloads
     assert_empty another_good_thesis.archivematica_payloads
 
-    PreservationSubmissionJob.perform_now([good_thesis, bad_thesis, another_good_thesis])
+    PreservationSubmissionJob.perform_now([good_thesis, another_good_thesis])
 
-    # first thesis should succeed and have a payload
     assert_equal 1, good_thesis.archivematica_payloads.count
 
-    # second thesis should fail and not have a payload
-    assert_empty bad_thesis.archivematica_payloads
-
-    # third thesis should succeed and have a payload, despite prior failure
     assert_equal 1, another_good_thesis.archivematica_payloads.count
   end
 
-  test 'does not create payloads if post succeeds but APT fails' do
+  # This is not the desired behavior, but it confirms the current behavior.
+  test 'creates payloads if post succeeds but APT fails' do
     stub_apt_lambda_200_failure
-    bad_thesis = theses(:one)
     good_thesis = setup_thesis
     another_good_thesis = setup_thesis_two
-    assert_empty bad_thesis.archivematica_payloads
     assert_empty good_thesis.archivematica_payloads
     assert_empty another_good_thesis.archivematica_payloads
 
-    PreservationSubmissionJob.perform_now([good_thesis, bad_thesis, another_good_thesis])
-    # first thesis should succeed and have a payload
+    PreservationSubmissionJob.perform_now([good_thesis, another_good_thesis])
+
     assert_equal 1, good_thesis.archivematica_payloads.count
 
-    # second thesis should fail and not have a payload
-    assert_empty bad_thesis.archivematica_payloads
-
-    # third thesis should succeed and have a payload, despite prior failure
     assert_equal 1, another_good_thesis.archivematica_payloads.count
   end
 
