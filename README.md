@@ -384,7 +384,7 @@ Publication Review - Publish)
   of any error records. As of now this is a manual process, but can be triggered via rake task using the following heroku-cli command:
 
   > [!IMPORTANT]
-  > Check the AWS Console to ensure the APT Lambda is not inactive before proceeding. If you do not, the preservation jobs will retry but the initial email to stakeholders will indicate preservation has failed.
+  > Check the AWS Console to ensure the APT Lambda is active (i.e. not inactive) before proceeding. If you do not, the preservation jobs may fail if they have not run for a few days.
 
   ```shell
   # run the output queue processing job
