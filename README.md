@@ -383,9 +383,8 @@ Publication Review - Publish)
 4. ETD processes output queue to update records and send email to stakeholders with summary data and list
   of any error records. As of now this is a manual process, but can be triggered via rake task using the following heroku-cli command:
 
-  >!IMPORTANT
-  >Check the AWS Console to ensure the APT Lambda is not inactive before proceeding.
-  >If you do not, the preservation jobs will retry but the initial email to stakeholders will indicate preservation has failed.
+  > [!IMPORTANT]
+  > Check the AWS Console to ensure the APT Lambda is not inactive before proceeding. If you do not, the preservation jobs will retry but the initial email to stakeholders will indicate preservation has failed.
 
   ```shell
   # run the output queue processing job
