@@ -4,6 +4,16 @@ class PreservationSubmissionJob < ActiveJob::Base
 
   queue_as :default
 
+  # Custom error class for 502 Bad Gateway responses from APT
+  class APTBadGatewayError < StandardError; end
+
+  # Retry up to 10 times for transient 502 Bad Gateway responses. These 502 errors are generally caused by the lambda
+  # entering `Inactive` state after a long period of inactivity, which can take several minutes to recover from.
+  # We are using a fixed wait time of 5 minutes between retries to give the lambda time to warm up, rather than
+  # retrying immediately with exponential backoff as we expect the first few retries to fail in that scenario so this
+  # longer time is more effective.
+  retry_on APTBadGatewayError, wait: 5.minutes, attempts: 10
+
   def perform(theses)
     Rails.logger.info("Preparing to send #{theses.count} theses to preservation")
     results = { total: theses.count, processed: 0, errors: [] }
@@ -13,7 +23,10 @@ class PreservationSubmissionJob < ActiveJob::Base
       preserve_payload(payload)
       Rails.logger.info("Thesis #{thesis.id} has been sent to preservation")
       results[:processed] += 1
-    rescue StandardError, Aws::Errors => e
+    rescue StandardError => e
+      # Explicitly re-raise the 502-specific error so ActiveJob can retry it.
+      raise e if e.is_a?(APTBadGatewayError)
+
       preservation_error = "Thesis #{thesis.id} could not be preserved: #{e}"
       Rails.logger.info(preservation_error)
       results[:errors] << preservation_error
@@ -40,6 +53,12 @@ class PreservationSubmissionJob < ActiveJob::Base
       http.request(request)
     end
 
+    # If the remote endpoint returns 502, raise a APTBadGatewayError so ActiveJob can retry.
+    if response.code.to_s == '502'
+      Rails.logger.warn("Received 502 from APT for payload #{payload.id}; raising for retry")
+      raise APTBadGatewayError, 'APT returned 502 Bad Gateway'
+    end
+
     validate_response(response)
   end
 
@@ -49,8 +68,8 @@ class PreservationSubmissionJob < ActiveJob::Base
     end
 
     result = JSON.parse(response.body)
-    unless result['success'] == true
-      raise "APT failed to create a bag: #{response.body}"
-    end
+    return if result['success'] == true
+
+    raise "APT failed to create a bag: #{response.body}"
   end
 end

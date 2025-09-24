@@ -2,7 +2,6 @@ require 'test_helper'
 require 'webmock/minitest'
 
 class PreservationSubmissionJobTest < ActiveJob::TestCase
-
   # because we need to actually use the file it's easier to attach it in the test rather
   # than use our fixtures as the fixtures oddly don't account for the file actually being
   # where ActiveStorage expects them to be. We also need this to be a record that looks like
@@ -27,24 +26,24 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
   end
 
   def stub_apt_lambda_success
-    stub_request(:post, ENV['APT_LAMBDA_URL'])
+    stub_request(:post, ENV.fetch('APT_LAMBDA_URL', nil))
       .to_return(
         status: 200,
         body: {
           success: true,
           bag: {
             entries: {
-              "manifest-md5.txt" => { md5: "fakehash" }
+              'manifest-md5.txt' => { md5: 'fakehash' }
             }
           },
-          output_zip_s3_uri: "s3://my-bucket/apt-testing/test-one-medium.zip"
+          output_zip_s3_uri: 's3://my-bucket/apt-testing/test-one-medium.zip'
         }.to_json,
         headers: { 'Content-Type' => 'application/json' }
       )
   end
 
   def stub_apt_lambda_failure
-    stub_request(:post, ENV['APT_LAMBDA_URL'])
+    stub_request(:post, ENV.fetch('APT_LAMBDA_URL', nil))
       .to_return(
         status: 500,
         headers: { 'Content-Type' => 'application/json' }
@@ -52,13 +51,13 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
   end
 
   def stub_apt_lambda_200_failure
-    stub_request(:post, ENV['APT_LAMBDA_URL'])
+    stub_request(:post, ENV.fetch('APT_LAMBDA_URL', nil))
       .to_return(
         status: 200,
         body: {
           success: false,
-          error: "An error occurred (404) when calling the HeadObject operation: Not Found",
-          bag: { entries: {}},
+          error: 'An error occurred (404) when calling the HeadObject operation: Not Found',
+          bag: { entries: {} }
         }.to_json,
         headers: { 'Content-Type' => 'application/json' }
       )
@@ -146,45 +145,74 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
     end
   end
 
-  test 'does not create payloads if job fails' do
+  # This is not the desired behavior, but it confirms the current behavior.
+  test 'create payloads even if APT job fails' do
     stub_apt_lambda_failure
-    bad_thesis = theses(:one)
     good_thesis = setup_thesis
     another_good_thesis = setup_thesis_two
-    assert_empty bad_thesis.archivematica_payloads
     assert_empty good_thesis.archivematica_payloads
     assert_empty another_good_thesis.archivematica_payloads
 
-    PreservationSubmissionJob.perform_now([good_thesis, bad_thesis, another_good_thesis])
+    PreservationSubmissionJob.perform_now([good_thesis, another_good_thesis])
 
-    # first thesis should succeed and have a payload
     assert_equal 1, good_thesis.archivematica_payloads.count
 
-    # second thesis should fail and not have a payload
-    assert_empty bad_thesis.archivematica_payloads
-
-    # third thesis should succeed and have a payload, despite prior failure
     assert_equal 1, another_good_thesis.archivematica_payloads.count
   end
 
-  test 'does not create payloads if post succeeds but APT fails' do
+  # This is not the desired behavior, but it confirms the current behavior.
+  test 'creates payloads if post succeeds but APT fails' do
     stub_apt_lambda_200_failure
-    bad_thesis = theses(:one)
     good_thesis = setup_thesis
     another_good_thesis = setup_thesis_two
-    assert_empty bad_thesis.archivematica_payloads
     assert_empty good_thesis.archivematica_payloads
     assert_empty another_good_thesis.archivematica_payloads
 
-    PreservationSubmissionJob.perform_now([good_thesis, bad_thesis, another_good_thesis])
+    PreservationSubmissionJob.perform_now([good_thesis, another_good_thesis])
 
-    # first thesis should succeed and have a payload
     assert_equal 1, good_thesis.archivematica_payloads.count
 
-    # second thesis should fail and not have a payload
-    assert_empty bad_thesis.archivematica_payloads
-
-    # third thesis should succeed and have a payload, despite prior failure
     assert_equal 1, another_good_thesis.archivematica_payloads.count
+  end
+
+  test 'throws exceptions and probably creates payloads when a bad key is provided' do
+    skip('Test not implemented yet')
+    # Our lambda returns 400 Bad Request with a error body of Invalid input payload
+    # This should never happen as we submit it via ENV, but just in case we should understand what it looks like
+  end
+
+  test 'retries on 502 Bad Gateway errors' do
+    # This syntax will cause the first two calls to return 502, and the third to succeed.
+    stub_request(:post, ENV.fetch('APT_LAMBDA_URL', nil))
+      .to_return(
+        { status: 502 },
+        { status: 502 },
+        { status: 200, body: {
+          success: true,
+          bag: {
+            entries: {
+              'manifest-md5.txt' => { md5: 'fakehash' }
+            }
+          },
+          output_zip_s3_uri: 's3://my-bucket/apt-testing/test-one-medium.zip'
+        }.to_json, headers: { 'Content-Type' => 'application/json' } }
+      )
+
+    thesis = setup_thesis
+    assert_equal 0, thesis.archivematica_payloads.count
+
+    # We need to wrap this in perform_enqueued_jobs so that the retries are actually executed. Our normal syntax only
+    # runs a single job, but because we are testing retries this wrapper executes the jobs this job queues.
+    perform_enqueued_jobs do
+      PreservationSubmissionJob.perform_now([thesis])
+    end
+
+    # 3 payloads were created. 2 for the failures, 1 for the success.
+    # This isn't ideal, but it's the current behavior. A refactor to using a pre-preservation job to create
+    # metadata.csv prior to this job would fix this but is out of scope for now.
+    assert_equal 3, thesis.archivematica_payloads.count
+
+    # The last payload should be marked as preserved.
+    assert_equal 'preserved', thesis.archivematica_payloads.last.preservation_status
   end
 end

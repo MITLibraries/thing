@@ -374,10 +374,17 @@ processors must create a corresponding Archivematica accession number.
 1. Following the processing workflow, stakeholders choose a term to publish (Process theses - Select term - Select
 Publication Review - Publish)
 2. ETD will now automatically send data to DSS via the SQS queue
-3. DSS runs (as of this writing that is a manual process documented in the
-  [DSS repo](https://github.com/MITLibraries/dspace-submission-service#run-stage))
+3. DSS runs (as of this writing that is no longer documented in the
+  [DSS repo](https://github.com/MITLibraries/dspace-submission-service))
+   * From the root of a local checkout of `dspace-submission-service`
+   * Python dependencies do *not* need to be installed
+   * Authenticate your terminal to appropriate AWS account and role (dssManagement)
+   * `make run-prod` (or `make run-stage`)
 4. ETD processes output queue to update records and send email to stakeholders with summary data and list
   of any error records. As of now this is a manual process, but can be triggered via rake task using the following heroku-cli command:
+
+  > [!IMPORTANT]
+  > Check the AWS Console to ensure the APT Lambda is active (i.e. not inactive) before proceeding. If you do not, the preservation jobs may fail if they have not run for a few days.
 
   ```shell
   # run the output queue processing job
@@ -397,7 +404,7 @@ You can publish a single thesis that is already in `Publication review` or `Pend
 task:
 
 ```shell
-heroku run -s standard-2x rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
+heroku run rails dss:publish_thesis_by_id[THESIS_ID] --app TARGET-HEROKU-APP
 ```
 
 Note: `Pending publication` is allowed here, but not expected to be a normal occurence, to handle the edge case of the app thinking data was sent to SQS but the data not arriving for any reason.
