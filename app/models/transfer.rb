@@ -92,10 +92,10 @@ class Transfer < ApplicationRecord
 
   # This ensures that the activestorage objects are actually available before we update the initial files counts.
   # The files are not available until the after_create_commit callback so our before_save callback does not work
-  # for initial Transfer creation. This does mean we calculate the counts twice on creation (once with the count as
-  # always zero, then the initial commit, then during the after_create_commit we re-save which counts them properly).
+  # for initial Transfer creation. We use `update_columns` here to avoid triggering another before_save callback
+  # for updating the files_count and unassigned_files_count.
   def initial_files_count
-    save
+    update_columns(unassigned_files_count: files.count)
   end
 
   # This is triggered on before_save, but we must also remember to call Transfer#save to trigger this
