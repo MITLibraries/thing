@@ -159,6 +159,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
+    csv (3.3.5)
     date (3.4.1)
     delayed_job (4.1.13)
       activesupport (>= 3.0, < 9.0)
@@ -480,6 +481,7 @@ DEPENDENCIES
   capybara
   climate_control
   cocoon
+  csv
   delayed_job_active_record
   devise
   dotenv-rails
@@ -522,7 +524,7 @@ DEPENDENCIES
   zip_tricks
 
 RUBY VERSION
-   ruby 3.2.9p265
+   ruby 3.4.7p58
 
 BUNDLED WITH
    2.3.7

@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '3.2.9'
+ruby '3.4.7'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -13,6 +13,7 @@ gem 'aws-sdk-sqs'
 gem 'bootsnap'
 gem 'cancancan'
 gem 'cocoon'
+gem 'csv'
 gem 'delayed_job_active_record'
 gem 'devise'
 gem 'flipflop'
