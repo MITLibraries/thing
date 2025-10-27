@@ -84,7 +84,7 @@ class DegreePeriodTest < ActiveSupport::TestCase
     archivematica_accession_count = ArchivematicaAccession.count
     d.destroy
     new_archivematica_accession_count = ArchivematicaAccession.count
-    new_archivematica_accession_count == archivematica_accession_count - 1
+    assert_equal(new_archivematica_accession_count, archivematica_accession_count - 1)
   end
 
   test 'a degree period cannot have the same grad_month and grad_year as an existing degree period' do
