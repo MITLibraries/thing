@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '3.4.7'
+ruby '3.4.8'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
@@ -41,6 +41,7 @@ gem 'webmock'
 gem 'zip_tricks'
 
 group :production do
+  gem 'connection_pool', '< 3'
   gem 'pg'
 end
 
@@ -66,6 +67,7 @@ end
 
 group :test do
   gem 'climate_control'
+  gem 'minitest', '< 6'
   gem 'minitest-reporters'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
