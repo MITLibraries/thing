@@ -41,6 +41,7 @@ gem 'webmock'
 gem 'zip_tricks'
 
 group :production do
+  gem 'connection_pool', '< 3'
   gem 'pg'
 end
 
@@ -66,6 +67,7 @@ end
 
 group :test do
   gem 'climate_control'
+  gem 'minitest', '< 6'
   gem 'minitest-reporters'
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false
