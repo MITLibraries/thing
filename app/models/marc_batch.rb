@@ -27,7 +27,7 @@ class MarcBatch
   end
 
   def zip_marc_file(zip_file, marc_file)
-    Zip::File.open(zip_file.path, Zip::File::CREATE) do |zip|
+    Zip::File.open(zip_file.path, create: true) do |zip|
       zip.add(@marc_filename, marc_file.path)
     end
     marc_file.close
