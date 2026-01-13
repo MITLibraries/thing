@@ -245,7 +245,8 @@ GEM
     matrix (0.4.2)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (5.27.0)
+    minitest (6.0.1)
+      prism (~> 1.5)
     minitest-reporters (1.7.1)
       ansi
       builder
@@ -497,7 +498,7 @@ DEPENDENCIES
   listen
   lograge
   marc
-  minitest (< 6)
+  minitest (< 7)
   minitest-reporters
   mitlibraries-theme!
   net-imap
