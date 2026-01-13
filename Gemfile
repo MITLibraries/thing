@@ -41,7 +41,7 @@ gem 'webmock'
 gem 'zip_tricks'
 
 group :production do
-  gem 'connection_pool', '< 3'
+  gem 'connection_pool', '< 4'
   gem 'pg'
 end
 
