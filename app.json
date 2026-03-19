@@ -17,6 +17,7 @@
     "AWS_SECRET_ACCESS_KEY": {
       "required": true
     },
+    "DSPACE_V8_METADATA": "false",
     "DISABLE_ALL_EMAIL": "true",
     "FAKE_AUTH_ENABLED": "true",
     "HEROKU_APP_NAME": {
