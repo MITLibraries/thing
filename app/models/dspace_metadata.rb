@@ -102,10 +102,33 @@ class DspaceMetadata
     @metadata_entries << { 'key' => key, 'value' => value }
   end
 
+  # DSpace 6 expects metadata to be sent as a flat array of key/value pairs under
+  # a top-level "metadata" key (added by serialize_dss_metadata).
+  #
+  # Example returned by this method:
+  # [
+  #   { 'key' => 'dc.title', 'value' => 'My Thesis' },
+  #   { 'key' => 'dc.contributor.author', 'value' => 'Student, Second' },
+  #   { 'key' => 'dc.contributor.author', 'value' => 'Student, Third' }
+  # ]
   def serialize_dspace6
     @metadata_entries
   end
 
+  # DSpace 8 expects top-level metadata keys, where each key maps to an array of
+  # value objects. We convert from our internal flat entries so both DSpace 6 and
+  # DSpace 8 serializers can share the same source data.
+  #
+  # Example returned by this method:
+  # {
+  #   'dc.title' => [{ 'value' => 'My Thesis' }],
+  #   'dc.contributor.author' => [
+  #     { 'value' => 'Student, Second' },
+  #     { 'value' => 'Student, Third' }
+  #   ]
+  # }
+  #
+  # Note: language is intentionally omitted for now (out of scope).
   def serialize_dspace8
     result = {}
 
