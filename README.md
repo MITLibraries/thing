@@ -147,7 +147,8 @@ We use AWS SQS queues to publish theses to DSpace and read data about published 
 `DSPACE_DOCTORAL_HANDLE` - The handle for the collection to use for depositing Doctoral theses.
 `DSPACE_GRADUATE_HANDLE` - The handle for the collection to use for depositing Graduate theses.
 `DSPACE_UNDERGRADUATE_HANDLE` - The handle for the collection to use for depositing Undergraduate theses.
-
+`DSPACE_V8_METADATA` - Toggle metadata format for publication payloads. Set to `true` for DSpace 8 format.
+set to `false` for DSpace 6 `metadata` array format. Default is `false`.
 `SQS_INPUT_QUEUE_URL` - The URL of the SQS input queue used for publication to DSpace.
 `SQS_OUTPUT_QUEUE_NAME` - The name of the SQS output queue. This is used to build the SQS message attributes.
 `SQS_OUTPUT_QUEUE_URL` - The URL of the SQS output queue used to read the results from a publication run.

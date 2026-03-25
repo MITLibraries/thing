@@ -4,9 +4,9 @@
 
 class DspaceMetadata
   def initialize(thesis)
-    @dc = {}.compare_by_identity
-    @dc['dc.publisher'] = 'Massachusetts Institute of Technology'
-    @dc['dc.type'] = 'Thesis'
+    @metadata_entries = []
+    add_metadata('dc.publisher', 'Massachusetts Institute of Technology')
+    add_metadata('dc.type', 'Thesis')
     title(thesis)
     contributors(thesis.users, thesis.advisors)
     departments(thesis.departments)
@@ -17,22 +17,26 @@ class DspaceMetadata
 
   # Generates JSON metadata file required for submission to DSS.
   def serialize_dss_metadata
-    { 'metadata' => @dc.map { |k, v| { 'key' => k, 'value' => v } } }.to_json
+    if Flipflop.enabled?(:dspace_v8_metadata)
+      serialize_dspace8.to_json
+    else
+      { 'metadata' => serialize_dspace6 }.to_json
+    end
   end
 
   def title(thesis)
-    @dc['dc.title'] = thesis.title
-    @dc['dc.description.abstract'] = thesis.abstract if thesis.abstract
-    @dc['dc.date.issued'] = thesis.grad_date.strftime('%Y-%m')
+    add_metadata('dc.title', thesis.title)
+    add_metadata('dc.description.abstract', thesis.abstract) if thesis.abstract
+    add_metadata('dc.date.issued', thesis.grad_date.strftime('%Y-%m'))
   end
 
   def contributors(thesis_users, thesis_advisors)
     thesis_users.each do |a|
-      @dc['dc.contributor.author'] = a.preferred_name
+      add_metadata('dc.contributor.author', a.preferred_name)
     end
     parse_orcids(thesis_users)
     thesis_advisors.each do |adv|
-      @dc['dc.contributor.advisor'] = adv.name
+      add_metadata('dc.contributor.advisor', adv.name)
     end
   end
 
@@ -44,49 +48,98 @@ class DspaceMetadata
     return unless orcids.present?
 
     orcids.each do |orcid|
-      @dc['dc.identifier.orcid'] = orcid
+      add_metadata('dc.identifier.orcid', orcid)
     end
   end
 
   def departments(thesis_depts)
     thesis_depts.each do |d|
-      @dc['dc.contributor.department'] = d.name_dspace
+      add_metadata('dc.contributor.department', d.name_dspace)
     end
   end
 
   def degrees(thesis_degrees)
     thesis_degrees.each do |degree|
-      @dc['dc.description.degree'] = degree.abbreviation
-      @dc['thesis.degree.name'] = degree.name_dspace
+      add_metadata('dc.description.degree', degree.abbreviation)
+      add_metadata('thesis.degree.name', degree.name_dspace)
     end
 
     # Degree types should not be repeated if they are the same type.
     types = thesis_degrees.map { |degree| degree.degree_type.name }.uniq
     types.each do |t|
-      @dc['mit.thesis.degree'] = t
+      add_metadata('mit.thesis.degree', t)
     end
   end
 
   def copyright(thesis_copyright, thesis_license)
     if thesis_copyright.holder != 'Author' # copyright holder is anyone but author
-      @dc['dc.rights'] = thesis_copyright.statement_dspace
-      @dc['dc.rights'] = "Copyright #{thesis_copyright.holder}"
-      @dc['dc.rights.uri'] = thesis_copyright.url if thesis_copyright.url
+      add_metadata('dc.rights', thesis_copyright.statement_dspace)
+      add_metadata('dc.rights', "Copyright #{thesis_copyright.holder}")
+      add_metadata('dc.rights.uri', thesis_copyright.url) if thesis_copyright.url
     elsif thesis_license # author holds copyright and provides a license
-      @dc['dc.rights'] = thesis_license.map_license_type
-      @dc['dc.rights'] = 'Copyright retained by author(s)'
+      add_metadata('dc.rights', thesis_license.map_license_type)
+      add_metadata('dc.rights', 'Copyright retained by author(s)')
 
       # Theoretically both license and copyright URLs are required for publication, but there are no constraints on
       # the models, and we want to future-proof this.
-      @dc['dc.rights.uri'] = thesis_license.evaluate_license_url
+      add_metadata('dc.rights.uri', thesis_license.evaluate_license_url)
     else # author holds copyright and no license provided
-      @dc['dc.rights'] = thesis_copyright.statement_dspace
-      @dc['dc.rights'] = 'Copyright retained by author(s)'
-      @dc['dc.rights.uri'] = thesis_copyright.url if thesis_copyright.url
+      add_metadata('dc.rights', thesis_copyright.statement_dspace)
+      add_metadata('dc.rights', 'Copyright retained by author(s)')
+      add_metadata('dc.rights.uri', thesis_copyright.url) if thesis_copyright.url
     end
   end
 
   def date_transferred(files)
-    @dc['dc.date.submitted'] = files.select { |file| file.purpose == 'thesis_pdf' }.first.blob.created_at
+    add_metadata('dc.date.submitted', files.select { |file| file.purpose == 'thesis_pdf' }.first.blob.created_at)
+  end
+
+  private
+
+  def add_metadata(key, value)
+    return if value.nil?
+
+    @metadata_entries << { 'key' => key, 'value' => value }
+  end
+
+  # DSpace 6 expects metadata to be sent as a flat array of key/value pairs under
+  # a top-level "metadata" key (added by serialize_dss_metadata).
+  #
+  # Example returned by this method:
+  # [
+  #   { 'key' => 'dc.title', 'value' => 'My Thesis' },
+  #   { 'key' => 'dc.contributor.author', 'value' => 'Student, Second' },
+  #   { 'key' => 'dc.contributor.author', 'value' => 'Student, Third' }
+  # ]
+  def serialize_dspace6
+    @metadata_entries
+  end
+
+  # DSpace 8 expects top-level metadata keys, where each key maps to an array of
+  # value objects. We convert from our internal flat entries so both DSpace 6 and
+  # DSpace 8 serializers can share the same source data.
+  #
+  # Example returned by this method:
+  # {
+  #   'dc.title' => [{ 'value' => 'My Thesis' }],
+  #   'dc.contributor.author' => [
+  #     { 'value' => 'Student, Second' },
+  #     { 'value' => 'Student, Third' }
+  #   ]
+  # }
+  #
+  # Note: language is intentionally omitted for now (out of scope).
+  def serialize_dspace8
+    result = {}
+
+    @metadata_entries.each do |entry|
+      key = entry['key']
+      value = entry['value']
+
+      result[key] ||= []
+      result[key] << { 'value' => value }
+    end
+
+    result
   end
 end

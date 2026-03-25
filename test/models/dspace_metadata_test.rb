@@ -1,6 +1,10 @@
 require 'test_helper'
 
 class DspaceMetadataTest < ActiveSupport::TestCase
+  setup do
+    Flipflop::FeatureSet.current.test!.switch!(:dspace_v8_metadata, false)
+  end
+
   # Attaching thesis file so tests will pass
   def dss_friendly_thesis(thesis)
     file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
@@ -346,5 +350,41 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     assert_equal ['metadata'], unserialized.keys
     assert_equal unserialized['metadata'].first, { 'key' => 'dc.publisher',
                                                    'value' => 'Massachusetts Institute of Technology' }
+  end
+
+  test 'metadata serializes in DSpace 6 format when feature flag is disabled' do
+    test_strategy = Flipflop::FeatureSet.current.test!
+    test_strategy.switch!(:dspace_v8_metadata, false)
+
+    t = theses(:one)
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    assert_equal ['metadata'], unserialized.keys
+    assert_kind_of Array, unserialized['metadata']
+    assert unserialized['metadata'].include?({ 'key' => 'dc.title', 'value' => 'MyString' })
+  end
+
+  test 'metadata serializes in DSpace 8 format when feature flag is enabled' do
+    test_strategy = Flipflop::FeatureSet.current.test!
+    test_strategy.switch!(:dspace_v8_metadata, true)
+
+    t = Thesis.create(title: 'Who cares', graduation_year: '2021', graduation_month: 'February',
+                      advisors: [advisors(:first), advisors(:second)],
+                      users: [users(:second), users(:third)],
+                      degrees: [degrees(:one), degrees(:two)],
+                      departments: [departments(:one), departments(:two)],
+                      copyright: copyrights(:mit))
+    dss_friendly_thesis(t)
+    serialized = DspaceMetadata.new(t).serialize_dss_metadata
+    unserialized = JSON.parse(serialized)
+
+    refute unserialized.key?('metadata')
+    assert_kind_of Array, unserialized['dc.contributor.author']
+    assert_equal({ 'value' => 'Student, Second' }, unserialized['dc.contributor.author'].first)
+    assert_includes unserialized['dc.contributor.author'], { 'value' => 'Student, Third' }
+    assert_includes unserialized['dc.contributor.advisor'], { 'value' => 'Addy McAdvisor' }
+    assert_includes unserialized['dc.contributor.advisor'], { 'value' => 'Viola McAdvisor' }
   end
 end
