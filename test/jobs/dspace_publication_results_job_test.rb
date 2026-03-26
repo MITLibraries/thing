@@ -179,6 +179,34 @@ class DspacePublicationResultsJobTest < ActiveJob::TestCase
                                       'validate checksums as no local files were attached to the record. This ' \
                                       'requires staff to manually check the ETD record and DSpace record and take ' \
                                       'appropriate action.'
+
+  end
+
+  test 'DSS error fields are surfaced in results errors' do
+    Aws.config[:sqs] = {
+      stub_responses: {
+        receive_message: [
+          {
+            messages: [
+              { message_id: 'id1', receipt_handle: 'handle1',
+                body: '{"ResultType": "error", "ErrorInfo": "Stuff broke", "DSpaceResponse": "N/A", "ExceptionMessage": "500 Server Error: Internal Server Error", "ExceptionTraceback": "Traceback (most recent call last):\nFile submission.py, line 84, in submit\nrequests.exceptions.HTTPError: 500 Server Error"}',
+                message_attributes: { 'PackageID' => { string_value: "etd_#{@bad_thesis.id}", data_type: 'String' },
+                                      'SubmissionSource' => { string_value: 'ETD', data_type: 'String' } } }
+            ]
+          },
+          { messages: [] }
+        ]
+      }
+    }
+
+    results = DspacePublicationResultsJob.perform_now
+
+    dss_error = results[:errors].find { |e| e.include?('ErrorInfo:') }
+    assert_not_nil dss_error, 'Expected DSS error details to be surfaced in results[:errors]'
+    assert_includes dss_error, 'ErrorInfo: Stuff broke'
+    assert_includes dss_error, 'DSpaceResponse: N/A'
+    assert_includes dss_error, 'ExceptionMessage: 500 Server Error: Internal Server Error'
+    assert_includes dss_error, 'ExceptionTraceback: Traceback (most recent call last):'
   end
 
   test 'enqueues preservation submission prep job' do

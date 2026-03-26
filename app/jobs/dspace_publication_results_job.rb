@@ -4,6 +4,8 @@ class DspacePublicationResultsJob < ActiveJob::Base
   MAX_MESSAGES = ENV.fetch('SQS_RESULT_MAX_MESSAGES', 10)
   WAIT_TIME_SECONDS = ENV.fetch('SQS_RESULT_WAIT_TIME_SECONDS', 10)
   IDLE_TIMEOUT = ENV.fetch('SQS_RESULT_IDLE_TIMEOUT', 0)
+  MAX_ERROR_FIELD_LENGTH = 500
+  MAX_TRACEBACK_LENGTH = 1000
 
   queue_as :default
 
@@ -124,7 +126,7 @@ class DspacePublicationResultsJob < ActiveJob::Base
     when 'success'
       update_handle(thesis, body, results)
     when 'error'
-      error = body['DSpaceResponse']
+      error = format_dss_error(body)
       thesis.publication_status = 'Publication error'
       thesis.save
       Rails.logger.info("Thesis #{thesis.id} updated to status #{thesis.publication_status}. Error from DSS: #{error}")
@@ -136,6 +138,42 @@ class DspacePublicationResultsJob < ActiveJob::Base
       Rails.logger.info("Unknown status #{status}; Cannot continue")
       results[:errors] << "Unknown status #{status}; cannot continue (thesis #{thesis.id})"
     end
+  end
+
+  def format_dss_error(body)
+    details = []
+    details << format_error_detail('ErrorInfo', body['ErrorInfo']) if body['ErrorInfo'].present?
+    details << format_error_detail('DSpaceResponse', body['DSpaceResponse']) if body['DSpaceResponse'].present?
+    details << format_error_detail('ExceptionMessage', body['ExceptionMessage']) if body['ExceptionMessage'].present?
+
+    traceback = format_traceback(body['ExceptionTraceback'])
+    details << format_error_detail('ExceptionTraceback', traceback, max_length: MAX_TRACEBACK_LENGTH) if traceback.present?
+
+    return 'No error details provided by DSS' if details.empty?
+
+    details.join(' | ')
+  end
+
+  def format_error_detail(label, value, max_length: MAX_ERROR_FIELD_LENGTH)
+    normalized = value.to_s.gsub(/\s+/, ' ').strip
+    if normalized.length > max_length
+      normalized = "#{normalized[0...max_length]}...(truncated)"
+    end
+
+    "#{label}: #{normalized}"
+  end
+
+  def format_traceback(traceback)
+    lines = if traceback.is_a?(Array)
+              traceback
+            elsif traceback.is_a?(String)
+              traceback.split(/\r?\n/)
+            else
+              []
+            end
+
+    lines = lines.map { |line| line.to_s.strip }
+    lines.reject(&:blank?).first(5).join(' || ')
   end
 
   def poll_messages(queue_url, results)
