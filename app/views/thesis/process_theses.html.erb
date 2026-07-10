@@ -48,6 +48,20 @@
                                         hint: link_to('See details in admin interface', admin_thesis_path(f.object), target: :_blank) %>
           </li>
           <li>
+            <%= f.input :no_other_theses_with_holds?, as: :string,
+                                                   readonly: true,
+                                                   label_html: { style: 'width: 50%' },
+                                                   input_html: { class: 'disabled', style: 'width: 40%', value: @other_theses_with_holds.none? ? 'Yes' : 'No' },
+                                                   label: 'Related holds resolved?' %>
+            <% if @other_theses_with_holds.any? %>
+              <ul style="margin: 0.5em 0 0.75em 0; padding-left: 1.25em;">
+                <% @other_theses_with_holds.each do |other_thesis| %>
+                  <li><%= link_to "Thesis ##{other_thesis.id}", thesis_path(other_thesis) %></li>
+                <% end %>
+              </ul>
+            <% end %>
+          </li>
+          <li>
             <%= f.input :accession_number?, as: :string,
                                         readonly: true,
                                         label_html: { style: 'width: 50%' },

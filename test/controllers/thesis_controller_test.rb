@@ -488,6 +488,30 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'processing form shows links to other theses with active or expired holds' do
+    sign_in users(:processor)
+    Author.create!(user: users(:yo), thesis: theses(:downloaded), graduation_confirmed: true)
+
+    get thesis_process_path(theses(:one))
+
+    assert_response :success
+    assert_select 'label', text: 'Related holds resolved?'
+    assert_select 'input[readonly][value=?]', 'No'
+    assert_select "a[href='#{thesis_path(theses(:with_hold))}']", text: "Thesis ##{theses(:with_hold).id}"
+    assert_select "a[href='#{thesis_path(theses(:downloaded))}']", text: "Thesis ##{theses(:downloaded).id}"
+  end
+
+  test 'processing form does not show other-theses-with-holds section when there are no matches' do
+    sign_in users(:processor)
+
+    get thesis_process_path(theses(:released_hold))
+
+    assert_response :success
+    assert_select 'label', text: 'Related holds resolved?'
+    assert_select 'input[readonly][value=?]', 'Yes'
+    assert_select 'a', text: /Thesis #\d+/, count: 0
+  end
+
   # ~~~~~~~~~~~~~~~~~~~ submitting thesis processing form ~~~~~~~~~~~~~~~~~~~~~
   test 'anonymous users cannot submit thesis processing form' do
     patch thesis_process_update_path(theses(:one)),

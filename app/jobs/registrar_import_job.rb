@@ -6,6 +6,7 @@ class RegistrarImportJob < ActiveJob::Base
   def perform(registrar)
     results = { read: 0, processed: 0, new_users: 0, new_theses: 0, updated_theses: 0, new_degrees: [], new_depts: [],
                 new_degree_periods: [], errors: [] }
+    new_theses = [] # Track newly created theses to detect duplicate theses with holds
 
     CSV.new(registrar.graduation_list.download, headers: true).each.with_index(1) do |row, i|
       Rails.logger.info("Parsing row #{i}")
@@ -39,7 +40,12 @@ class RegistrarImportJob < ActiveJob::Base
         # Set whodunnit for thesis transaction
         PaperTrail.request.whodunnit = 'registrar'
         thesis = Thesis.create_or_update_from_csv(user, degree, department, grad_date, row)
-        thesis.new_thesis? ? results[:new_theses] += 1 : results[:updated_theses] += 1
+        if thesis.new_thesis?
+          results[:new_theses] += 1
+          new_theses << thesis
+        else
+          results[:updated_theses] += 1
+        end
         logger.info("Thesis is #{thesis.inspect}")
       rescue RuntimeError
         e = "Multiple theses found for author #{user.name} for term #{grad_date}, requires Processor attention. CSV row ##{i}: #{row.inspect}"
@@ -55,9 +61,34 @@ class RegistrarImportJob < ActiveJob::Base
       author.set_graduated_from_csv(row)
       results[:processed] += 1
     end
+
+    multiple_hold_users = collect_users_with_multiple_hold_theses(new_theses)
+
     Rails.logger.info(results.to_s)
-    ReportMailer.registrar_import_email(registrar, results).deliver_later
+    ReportMailer.registrar_import_email(registrar, results, multiple_hold_users).deliver_later
     results
+  end
+
+  def collect_users_with_multiple_hold_theses(new_theses)
+    multiple_hold_users = []
+
+    new_theses.each do |thesis|
+      other_theses_with_holds = thesis.other_theses_with_holds.includes(:users).to_a
+      thesis.users.each do |user|
+        user_with_other_theses_with_holds = other_theses_with_holds.select do |other_thesis|
+          other_thesis.users.any? { |u| u.id == user.id }
+        end
+        next if user_with_other_theses_with_holds.empty?
+
+        multiple_hold_users << {
+          user: user,
+          new_thesis: thesis,
+          other_theses_with_holds: user_with_other_theses_with_holds
+        }
+      end
+    end
+
+    multiple_hold_users
   end
 
   # The thesis model sets the day of the month to 1 if only supplied a month

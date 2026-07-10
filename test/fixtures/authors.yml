@@ -58,12 +58,12 @@ seven:
   proquest_allowed: false
 
 review:
-  user: yo
+  user: third
   thesis: publication_review
   graduation_confirmed: true
 
 eight:
-  user: basic
+  user: second
   thesis: publication_review_except_hold
   graduation_confirmed: true
 
@@ -100,7 +100,7 @@ fourteen:
   graduation_confirmed: true
 
 fifteen:
-  user: yo
+  user: admin
   thesis: doctor
   graduation_confirmed: true
   proquest_allowed: false

@@ -107,3 +107,12 @@ thesis_admin:
   given_name: 'Thesis A.'
   surname: 'Robot'
   display_name: 'Thesis A. Robot'
+
+isolated:
+  uid: 'isolated'
+  email: 'isolated@example.com'
+  kerberos_id: 'isolated'
+  given_name: 'Isolated'
+  surname: 'Student'
+  display_name: 'Isolated Student'
+  preferred_name: 'Student, Isolated'

@@ -25,7 +25,7 @@ class MarcTest < ActiveSupport::TestCase
     thesis.authors << authors(:review)
     marc = Marc.new(thesis)
     assert_equal('Robot, Basic', marc.record['100']['a'])
-    assert_equal('Yobot, Yo', marc.record['700']['a'])
+    assert_equal(authors(:review).user.name, marc.record['700']['a'])
   end
 
   test 'control008 follows spec' do
