@@ -17,6 +17,31 @@
   <li>New degree periods: <%= @results[:new_degree_periods].count %></li>
 </ul>
 
+<% if @multiple_hold_users.any? %>
+  <p style="font-weight: bold;">WARNING: Users with active or expired holds on existing theses</p>
+
+  <p>The following users have active or expired holds on existing theses and are receiving new theses from this import.
+  Processors should review these cases to resolve holds during publication review:</p>
+
+  <ul>
+    <% @multiple_hold_users.each do |hold_case| %>
+      <li>
+        <strong><%= hold_case[:user].name %></strong> (ID: <%= hold_case[:user].id %>)
+        <ul>
+          <li>New thesis created: <%= link_to "Thesis ##{hold_case[:new_thesis].id}", thesis_url(hold_case[:new_thesis]) %></li>
+          <li>Other theses with active or expired holds:
+            <ul>
+              <% hold_case[:other_theses_with_holds].each do |other_thesis| %>
+                <li><%= link_to "Thesis ##{other_thesis.id}", thesis_url(other_thesis) %></li>
+              <% end %>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
 <% if @results[:errors].any? %>
   <p>The following errors require processor attention:</p>
 

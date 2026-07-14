@@ -97,21 +97,21 @@ class HoldTest < ActiveSupport::TestCase
 
   test 'ends_today_or_before scope returns a hold which ends today' do
     hold = holds(:valid)
-    hold.date_end = Date.today
+    hold.date_end = Date.current
     hold.save
     assert Hold.ends_today_or_before.pluck(:id).include?(hold.id)
   end
 
   test 'ends_today_or_before scope returns a hold which ends in the past' do
     hold = holds(:valid)
-    hold.date_end = Date.today - 1
+    hold.date_end = Date.current - 1
     hold.save
     assert Hold.ends_today_or_before.pluck(:id).include?(hold.id)
   end
 
   test 'ends_today_or_before scope does not return a hold which ends in the future' do
     hold = holds(:valid)
-    hold.date_end = Date.today + 1
+    hold.date_end = Date.current + 1
     hold.save
     assert_not Hold.ends_today_or_before.pluck(:id).include?(hold.id)
   end

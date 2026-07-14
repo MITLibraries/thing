@@ -53,7 +53,7 @@ class ThesisController < ApplicationController
   end
 
   def edit
-    @thesis = Thesis.includes([degrees: :degree_type]).find(params[:id])
+    @thesis = Thesis.includes([{ degrees: :degree_type }]).find(params[:id])
     @thesis.association(:advisors).add_to_target(Advisor.new) if @thesis.advisors.count.zero?
   end
 
@@ -100,7 +100,7 @@ class ThesisController < ApplicationController
   end
 
   def update
-    @thesis = Thesis.includes([authors: :user]).find(params[:id])
+    @thesis = Thesis.includes([{ authors: :user }]).find(params[:id])
     if @thesis.update(thesis_params)
       flash[:success] = "#{@thesis.title} has been updated."
       ReceiptMailer.receipt_email(@thesis, current_user).deliver_later
@@ -114,6 +114,7 @@ class ThesisController < ApplicationController
     @thesis = Thesis.with_attached_files.includes([:departments, {
                                                     authors: [:user], degrees: [:degree_type]
                                                   }]).find(params[:id])
+    @other_theses_with_holds = @thesis.other_theses_with_holds.to_a
   end
 
   def process_theses_update
@@ -139,7 +140,7 @@ class ThesisController < ApplicationController
   end
 
   def proquest_export_preview
-    @theses = Thesis.includes([authors: :user]).ready_for_proquest_export
+    @theses = Thesis.includes([{ authors: :user }]).ready_for_proquest_export
   end
 
   # TODO: we need to generate and send a budget report CSV for partially harvested theses (spec TBD).

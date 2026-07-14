@@ -170,6 +170,21 @@ class Thesis < ApplicationRecord
     holds.map { |h| h.status.in? %w[active expired] }.any?
   end
 
+  # Returns an ActiveRecord::Relation of other theses for the same user(s)
+  # that have active or expired holds.
+  # Used to alert processors about pre-existing holds prior to publication.
+  def other_theses_with_holds
+    user_ids = users.ids
+    return Thesis.none if user_ids.empty?
+
+    Thesis.joins(:users, :holds)
+          .where(users: { id: user_ids })
+          .merge(Hold.active_or_expired)
+          .where.not(id: id)
+          .distinct
+          .order(:id)
+  end
+
   # Returns a true/false value if there are any associated advisors.
   def advisors?
     advisors.any?
@@ -204,6 +219,7 @@ class Thesis < ApplicationRecord
       metadata_complete?,
       no_issues_found?,
       no_active_holds?,
+      no_other_theses_with_holds?,
       authors_graduated?,
       departments_have_dspace_name?,
       degrees_have_types?,
@@ -235,6 +251,17 @@ class Thesis < ApplicationRecord
   # for the user.
   def no_active_holds?
     !active_holds?
+  end
+
+  # Mirrors no_active_holds? but for other theses by the same user(s).
+  # Publication review is blocked when another thesis for the same user has
+  # an active or expired hold.
+  # 
+  # Releasing a Hold is the expected way for a Hold to be removed. Expiration signals to
+  # processors to review the Hold to see if it can be released, but expiration is not intended as a
+  # signal that the Thesis is publishable.
+  def no_other_theses_with_holds?
+    other_theses_with_holds.none?
   end
 
   # This inverts the issues_found field, so that the checks inside the

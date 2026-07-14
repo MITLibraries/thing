@@ -62,4 +62,51 @@ class ReportMailerTest < ActionMailer::TestCase
       assert_match 'Couldn&#39;t find Thesis with &#39;id&#39;=9999999999999', email.body.to_s
     end
   end
+
+  test 'registrar import email does not show multiple hold users alert when list is empty' do
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      registrar = registrar(:valid)
+      results = { read: 0, processed: 0, new_users: 0, new_theses: 1, updated_theses: 0, new_degrees: [], new_depts: [],
+                  new_degree_periods: [], errors: [] }
+      email = ReportMailer.registrar_import_email(registrar, results, [])
+
+      assert_emails 1 do
+        email.deliver_now
+      end
+
+      assert_no_match 'Users with active or expired holds on existing theses', email.body.to_s
+    end
+  end
+
+  test 'registrar import email shows alert and thesis links for multiple hold users' do
+    ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
+      user = users(:yo)
+      new_thesis = theses(:one)
+      other_thesis_1 = theses(:with_hold)
+      other_thesis_2 = theses(:downloaded)
+
+      registrar = registrar(:valid)
+      results = { read: 0, processed: 0, new_users: 0, new_theses: 1, updated_theses: 0, new_degrees: [], new_depts: [],
+                  new_degree_periods: [], errors: [] }
+
+      multiple_hold_users = [
+        {
+          user: user,
+          new_thesis: new_thesis,
+          other_theses_with_holds: [other_thesis_1, other_thesis_2]
+        }
+      ]
+
+      email = ReportMailer.registrar_import_email(registrar, results, multiple_hold_users)
+
+      assert_emails 1 do
+        email.deliver_now
+      end
+
+      assert_match 'Users with active or expired holds on existing theses', email.body.to_s
+      assert_match "Thesis ##{new_thesis.id}", email.body.to_s
+      assert_match "Thesis ##{other_thesis_1.id}", email.body.to_s
+      assert_match "Thesis ##{other_thesis_2.id}", email.body.to_s
+    end
+  end
 end

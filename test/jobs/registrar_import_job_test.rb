@@ -67,4 +67,52 @@ class RegistrarImportJobTest < ActiveJob::TestCase
     assert_equal 'registrar', User.first.versions.first.whodunnit
     assert_equal 'registrar', Thesis.last.versions.first.whodunnit
   end
+
+  test 'collect_users_with_multiple_hold_theses returns empty array when no users have other held theses' do
+    job = RegistrarImportJob.new
+    user = User.create!(uid: 'test_fresh_user', email: 'fresh@example.com')
+    new_thesis = Thesis.new(
+      title: 'Fresh Thesis',
+      graduation_year: 2025,
+      graduation_month: 'September',
+      departments: [departments(:one)]
+    )
+    new_thesis.users << user
+    new_thesis.save!
+
+    result = job.collect_users_with_multiple_hold_theses([new_thesis])
+    assert_equal [], result
+    assert_equal Array, result.class
+  end
+
+  test 'collect_users_with_multiple_hold_theses flags a thesis for a single user with other held theses' do
+    job = RegistrarImportJob.new
+    new_thesis = theses(:one)
+
+    result = job.collect_users_with_multiple_hold_theses([new_thesis])
+
+    assert_equal 1, result.length
+    assert_equal users(:yo), result.first[:user]
+    assert_equal new_thesis, result.first[:new_thesis]
+    assert_equal Array, result.first[:other_theses_with_holds].class
+    assert_includes result.first[:other_theses_with_holds], theses(:with_hold)
+  end
+
+  test 'collect_users_with_multiple_hold_theses flags only co-authors with other held theses' do
+    job = RegistrarImportJob.new
+    new_thesis = theses(:one)
+
+    # Create a co-author with no other held theses to ensure per-user filtering works.
+    coauthor = User.create!(uid: 'coauthor_test_user', email: 'coauthor@example.com')
+    Author.create!(user: coauthor, thesis: new_thesis, graduation_confirmed: true)
+
+    result = job.collect_users_with_multiple_hold_theses([new_thesis])
+
+    assert_equal 1, result.length
+    assert_equal users(:yo), result.first[:user]
+    assert_equal new_thesis, result.first[:new_thesis]
+    assert_equal Array, result.first[:other_theses_with_holds].class
+    assert_includes result.first[:other_theses_with_holds], theses(:with_hold)
+    assert_not_includes result.map { |row| row[:user] }, coauthor
+  end
 end

@@ -27,7 +27,7 @@ require 'csv'
 require 'test_helper'
 
 class ThesisTest < ActiveSupport::TestCase
-  def attach_file_with_purpose_to(thesis, purpose = 'thesis_pdf')
+  def attach_file_with_purpose_to(thesis, _purpose = 'thesis_pdf')
     file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     thesis.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
     thesis.files.last.purpose = 'thesis_pdf'
@@ -552,7 +552,7 @@ class ThesisTest < ActiveSupport::TestCase
     old_value = Thesis.without_files.count
     assert_includes Thesis.without_files, thesis
     thesis = attach_file_with_purpose_to(thesis)
-    assert_equal old_value-1, Thesis.without_files.count
+    assert_equal old_value - 1, Thesis.without_files.count
     assert_not_includes Thesis.without_files, thesis
   end
 
@@ -706,7 +706,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal 'Publication review', thesis.publication_status
     thesis = attach_file_with_purpose_to(thesis, 'thesis_pdf')
     assert_equal 'Not ready for publication', thesis.publication_status
-    assert_equal ['thesis_pdf', 'thesis_pdf'], thesis.files.map(&:purpose)
+    assert_equal %w[thesis_pdf thesis_pdf], thesis.files.map(&:purpose)
     assert_equal false, thesis.one_thesis_pdf?
   end
 
@@ -881,7 +881,7 @@ class ThesisTest < ActiveSupport::TestCase
     thesis.save
     thesis.reload
     assert_equal 'Not ready for publication', thesis.publication_status
-    assert_equal ['Bachelor', 'Doctoral'], thesis.degrees.map(&:degree_type).pluck(:name)
+    assert_equal %w[Bachelor Doctoral], thesis.degrees.map(&:degree_type).pluck(:name)
     assert_equal false, thesis.required_fields?
   end
 
@@ -953,15 +953,36 @@ class ThesisTest < ActiveSupport::TestCase
 
   test 'Setting an existing hold to "released" can put the thesis into "Publication review" status' do
     thesis = theses(:publication_review_except_hold)
-    thesis.save
-    thesis.reload
     assert_equal 'Not ready for publication', thesis.publication_status
     assert_equal 1, thesis.holds.count
+
+    # Ensure author has no other holds
+    thesis.authors.first.update!(user: users(:isolated))
+    thesis.reload
+    assert_equal true, thesis.no_other_theses_with_holds?
+
     hold = thesis.holds.first
     hold.status = 'released'
     hold.save
     thesis.reload
+    assert_equal true, thesis.no_active_holds?
+    assert_equal true, thesis.no_other_theses_with_holds?
     assert_equal 'Publication review', thesis.publication_status
+  end
+
+  test 'Setting an existing hold to "released" does not put thesis into publication review when other theses for the user still have holds' do
+    thesis = theses(:publication_review_except_hold)
+    thesis.save
+    thesis.reload
+    assert_equal 'Not ready for publication', thesis.publication_status
+    assert_equal 1, thesis.holds.count
+
+    hold = thesis.holds.first
+    hold.status = 'released'
+    hold.save
+    thesis.reload
+    assert_equal false, thesis.no_other_theses_with_holds?
+    assert_equal 'Not ready for publication', thesis.publication_status
   end
 
   test 'Adding a new hold will set the thesis status back to "Not ready for publication"' do
@@ -1157,7 +1178,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert_includes Thesis.without_sips, thesis
 
     thesis.submission_information_packages.create
-    assert_equal orig_count-1, Thesis.without_sips.count
+    assert_equal orig_count - 1, Thesis.without_sips.count
     assert_not_includes Thesis.without_sips, thesis
   end
 
@@ -1167,7 +1188,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert_not_includes Thesis.with_sips, thesis
 
     thesis.submission_information_packages.create
-    assert_equal orig_count+1, Thesis.with_sips.count
+    assert_equal orig_count + 1, Thesis.with_sips.count
     assert_includes Thesis.with_sips, thesis
   end
 
@@ -1180,7 +1201,7 @@ class ThesisTest < ActiveSupport::TestCase
 
     # published status has sip
     thesis.submission_information_packages.create
-    assert_equal orig_count-1, Thesis.published_without_sips.count
+    assert_equal orig_count - 1, Thesis.published_without_sips.count
     assert_not_includes Thesis.published_without_sips, thesis
 
     # no published status has sip
@@ -1380,7 +1401,7 @@ class ThesisTest < ActiveSupport::TestCase
 
     # Confirm that the grad dates are different, so we are testing at least two degree periods before Sept '22
     assert_not_equal wrong_term.grad_date, another_wrong_term.grad_date
-    
+
     # Confirm that both fixtures have a grad date prior to Sept '22
     assert wrong_term.grad_date < Date.parse('September 2022')
     assert another_wrong_term.grad_date < Date.parse('September 2022')
@@ -1395,7 +1416,7 @@ class ThesisTest < ActiveSupport::TestCase
 
     # Confirm that the grad dates are different, so we are testing at least two degree periods after Sept '22
     assert_not_equal correct_term.grad_date, another_correct_term.grad_date
-    
+
     # Confirm that both fixtures have a grad date after to Sept '22
     assert correct_term.grad_date > Date.parse('September 2022')
     assert another_correct_term.grad_date > Date.parse('September 2022')
@@ -1528,7 +1549,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal 'Publication review', t.publication_status
     assert t.unique_filenames?(t)
 
-    attach_file_with_purpose_to(t, purpose = 'signature_page')
+    attach_file_with_purpose_to(t, 'signature_page')
     t.save
     t.reload
     assert_not_equal 'Publication review', t.publication_status
@@ -1542,10 +1563,78 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal 'Publication review', t.publication_status
     assert t.unique_filenames?(t)
 
-    attach_file_with_purpose_to(t, purpose = 'signature_page')
+    attach_file_with_purpose_to(t, 'signature_page')
     t.save
     t.reload
     assert_not_equal 'Publication review', t.publication_status
     refute t.unique_filenames?(t)
+  end
+
+  # Tests for other_theses_with_holds method
+  test 'other_theses_with_holds includes other theses with active holds that share a user' do
+    assert_includes theses(:one).users, users(:yo)
+    assert_includes theses(:with_hold).users, users(:yo)
+
+    result = theses(:one).other_theses_with_holds
+
+    assert_includes result, theses(:with_hold)
+  end
+
+  test 'other_theses_with_holds includes other theses with expired holds that share a user' do
+    Author.create!(user: users(:yo), thesis: theses(:downloaded), graduation_confirmed: true)
+    assert_includes theses(:one).users, users(:yo)
+    assert_includes theses(:downloaded).users, users(:yo)
+
+    result = theses(:one).other_theses_with_holds
+
+    assert_includes result, theses(:downloaded)
+  end
+
+  test 'other_theses_with_holds excludes theses with only released holds' do
+    Author.create!(user: users(:yo), thesis: theses(:released_hold), graduation_confirmed: true)
+    assert_includes theses(:one).users, users(:yo)
+    assert_includes theses(:released_hold).users, users(:yo)
+
+    result = theses(:one).other_theses_with_holds
+
+    assert_not_includes result, theses(:released_hold)
+  end
+
+  test 'other_theses_with_holds excludes the current thesis from results' do
+    result = theses(:with_hold).other_theses_with_holds
+
+    assert_not_includes result, theses(:with_hold)
+  end
+
+  test 'other_theses_with_holds returns distinct theses when a thesis has multiple matching holds' do
+    Author.create!(user: users(:yo), thesis: theses(:downloaded), graduation_confirmed: true)
+    assert_includes theses(:one).users, users(:yo)
+    assert_includes theses(:downloaded).users, users(:yo)
+
+    matching_hold_count = theses(:downloaded).holds.where(status: %i[active expired]).count
+    assert matching_hold_count > 1
+
+    result_ids = theses(:one).other_theses_with_holds.pluck(:id)
+    assert_includes result_ids, theses(:downloaded).id
+    assert_equal result_ids.uniq, result_ids
+  end
+
+  test 'no_other_theses_with_holds? returns false when other theses with active or expired holds exist' do
+    Author.create!(user: users(:yo), thesis: theses(:downloaded), graduation_confirmed: true)
+
+    assert_equal false, theses(:one).no_other_theses_with_holds?
+  end
+
+  test 'publication status stays not ready when another thesis for same user has active hold' do
+    thesis = theses(:publication_review)
+    thesis.users = [users(:yo)]
+    thesis.authors.each { |a| a.update!(graduation_confirmed: true) }
+
+    thesis.save
+    thesis.reload
+
+    
+    assert_equal false, thesis.no_other_theses_with_holds?
+    assert_equal 'Not ready for publication', thesis.publication_status
   end
 end
