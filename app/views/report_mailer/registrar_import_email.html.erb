@@ -28,11 +28,11 @@
       <li>
         <strong><%= hold_case[:user].name %></strong> (ID: <%= hold_case[:user].id %>)
         <ul>
-          <li>New thesis created: <%= link_to "Thesis ##{hold_case[:new_thesis].id}", thesis_url(hold_case[:new_thesis]) %></li>
+          <li>New thesis created: <%= link_to "Thesis ##{hold_case[:new_thesis].id}", admin_thesis_url(hold_case[:new_thesis]) %></li>
           <li>Other theses with active or expired holds:
             <ul>
               <% hold_case[:other_theses_with_holds].each do |other_thesis| %>
-                <li><%= link_to "Thesis ##{other_thesis.id}", thesis_url(other_thesis) %></li>
+                <li><%= link_to "Thesis ##{other_thesis.id}", admin_thesis_url(other_thesis) %></li>
               <% end %>
             </ul>
           </li>
