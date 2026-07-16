@@ -22,7 +22,7 @@ gem 'json'
 gem 'kaminari'
 gem 'lograge'
 gem 'marc'
-gem 'mitlibraries-theme', git: 'https://github.com/mitlibraries/mitlibraries-theme', tag: 'v1.4'
+gem 'mitlibraries-theme', git: 'https://github.com/mitlibraries/mitlibraries-theme', tag: 'v1.5'
 gem 'net-imap', require: false
 gem 'net-pop', require: false
 gem 'net-smtp', require: false
@@ -30,7 +30,7 @@ gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-saml'
 gem 'paper_trail'
 gem 'puma'
-gem 'rails', '~> 7.2.0'
+gem 'rails', '~> 8.0.0'
 gem 'rubyzip'
 gem 'sass-rails'
 gem 'sentry-rails'
@@ -55,7 +55,6 @@ group :development, :test do
 end
 
 group :development do
-  gem 'annotate'
   gem 'dotenv-rails'
   gem 'letter_opener'
   gem 'listen'
