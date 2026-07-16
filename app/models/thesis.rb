@@ -148,7 +148,7 @@ class Thesis < ApplicationRecord
                                }
   scope :ready_for_proquest_export, -> { partial_proquest_export + full_proquest_export }
 
-  enum proquest_exported: ['Not exported', 'Full harvest', 'Partial harvest']
+  enum :proquest_exported, ['Not exported', 'Full harvest', 'Partial harvest']
 
   # Looks up the thesis' accession number based on its degree period.
   def accession_number
