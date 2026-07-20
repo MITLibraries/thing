@@ -4,7 +4,7 @@ class Report
   def card_empty_theses(collection)
     {
       'value' => collection.count,
-      'verb' => 'has',
+      'verb' => ['has', 'have'],
       'label' => 'no attached files'
     }
   end
@@ -13,7 +13,7 @@ class Report
     subset = collection.joins(:files_attachments)
     {
       'value' => subset.pluck(:id).uniq.count,
-      'verb' => 'has',
+      'verb' => ['has', 'have'],
       'label' => 'files attached',
       'note' => 'Only theses with a status of "Not ready for publication" and "Publication review" will be visible ' \
                 'in the processing queue.',
@@ -35,7 +35,7 @@ class Report
   def card_multiple_authors(collection)
     {
       'value' => collection.joins(:authors).group('theses.id').having('COUNT(authors.id) > 1').length,
-      'verb' => 'has',
+      'verb' => ['has', 'have'],
       'label' => 'multiple authors'
     }
   end
@@ -43,7 +43,7 @@ class Report
   def card_multiple_degrees(collection)
     {
       'value' => collection.joins(:degrees).group('theses.id').having('COUNT(degrees.id) > 1').length,
-      'verb' => 'has',
+      'verb' => ['has', 'have'],
       'label' => 'multiple degrees'
     }
   end
@@ -51,7 +51,7 @@ class Report
   def card_multiple_departments(collection)
     {
       'value' => collection.joins(:departments).group('theses.id').having('COUNT(departments.id) > 1').length,
-      'verb' => 'has',
+      'verb' => ['has', 'have'],
       'label' => 'multiple departments'
     }
   end
@@ -60,7 +60,7 @@ class Report
     searchterm = term if term != 'all'
     {
       'value' => collection.count,
-      'verb' => 'thesis record',
+      'verb' => ['thesis record', 'thesis records'],
       'link' => {
         'url' => url_helpers.admin_theses_path(search: searchterm),
         'text' => 'See all in admin dashboard'
@@ -71,7 +71,7 @@ class Report
   def card_student_contributions(collection)
     {
       'value' => collection.map(&:student_contributed?).count(true),
-      'verb' => 'has',
+      'verb' => ['has', 'have'],
       'label' => 'had metadata contributed by students'
     }
   end
