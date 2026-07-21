@@ -32,7 +32,7 @@ class ArchivematicaPayload < ApplicationRecord
 
   before_create :set_metadata_csv, :set_payload_json
 
-  enum preservation_status: %i[unpreserved preserved]
+  enum :preservation_status, %i[unpreserved preserved]
 
   private
 

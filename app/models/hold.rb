@@ -21,7 +21,7 @@ class Hold < ApplicationRecord
   belongs_to :hold_source
   has_many :users, through: :thesis
 
-  enum status: %i[active expired released]
+  enum :status, %i[active expired released]
 
   validates :date_requested, presence: true
   validates :date_start, presence: true

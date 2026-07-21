@@ -8,13 +8,13 @@
       "matchPackageNames": [
         "ruby"
       ],
-      "allowedVersions": "<3.5"
+      "allowedVersions": "<4"
     },
     {
       "matchPackageNames": [
         "rails"
       ],
-      "allowedVersions": "<8.0"
+      "allowedVersions": "<8.2"
     }
   ]
 }
