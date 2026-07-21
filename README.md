@@ -28,6 +28,10 @@ additional records with a standardized template.
 
 ## Developer notes
 
+### Annotations
+
+Please `bundle exec annotaterb models` when making changes to models to update the internal documentation.
+
 ### Confirming functionality after updating dependencies
 
 The application has excellent test coverage, and most errors are likely to be caught by our test suite. This runs in CI,
