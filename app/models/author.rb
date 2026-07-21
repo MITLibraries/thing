@@ -3,12 +3,22 @@
 # Table name: authors
 #
 #  id                   :integer          not null, primary key
-#  user_id              :integer          not null
-#  thesis_id            :integer          not null
 #  graduation_confirmed :boolean          default(FALSE), not null
+#  proquest_allowed     :boolean
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  proquest_allowed     :boolean
+#  thesis_id            :integer          not null
+#  user_id              :integer          not null
+#
+# Indexes
+#
+#  index_authors_on_thesis_id  (thesis_id)
+#  index_authors_on_user_id    (user_id)
+#
+# Foreign Keys
+#
+#  thesis_id  (thesis_id => theses.id)
+#  user_id    (user_id => users.id)
 #
 class Author < ApplicationRecord
   belongs_to :user

@@ -74,7 +74,7 @@ other changes.
 
 ### Annotating the database schema
 
-When changing the db schema, please run `bundle exec annotate` to update the
+When changing the db schema, please run `bundle exec annotaterb models` to update the
 model and associated tests to reflect the changes in a nice convenient,
 consistent way.
 

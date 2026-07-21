@@ -3,13 +3,22 @@
 # Table name: degrees
 #
 #  id             :integer          not null, primary key
+#  abbreviation   :string
+#  code_dw        :string           not null
+#  name_dspace    :string
+#  name_dw        :string
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  code_dw        :string           not null
-#  name_dw        :string
-#  abbreviation   :string
-#  name_dspace    :string
 #  degree_type_id :integer
+#
+# Indexes
+#
+#  index_degrees_on_code_dw         (code_dw) UNIQUE
+#  index_degrees_on_degree_type_id  (degree_type_id)
+#
+# Foreign Keys
+#
+#  degree_type_id  (degree_type_id => degree_types.id)
 #
 
 class Degree < ApplicationRecord

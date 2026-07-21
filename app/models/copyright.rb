@@ -3,9 +3,9 @@
 # Table name: copyrights
 #
 #  id                  :integer          not null, primary key
-#  holder              :text             not null
-#  display_to_author   :boolean          not null
 #  display_description :text             not null
+#  display_to_author   :boolean          not null
+#  holder              :text             not null
 #  statement_dspace    :text             not null
 #  url                 :text
 #  created_at          :datetime         not null

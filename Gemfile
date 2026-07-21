@@ -55,6 +55,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'annotaterb'
   gem 'dotenv-rails'
   gem 'letter_opener'
   gem 'listen'

@@ -3,15 +3,23 @@
 # Table name: submission_information_packages
 #
 #  id                  :integer          not null, primary key
-#  preserved_at        :datetime
-#  preservation_status :integer          default("unpreserved"), not null
 #  bag_declaration     :string
 #  bag_name            :string
 #  manifest            :text
 #  metadata            :text
-#  thesis_id           :integer          not null
+#  preservation_status :integer          default("unpreserved"), not null
+#  preserved_at        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  thesis_id           :integer          not null
+#
+# Indexes
+#
+#  index_submission_information_packages_on_thesis_id  (thesis_id)
+#
+# Foreign Keys
+#
+#  thesis_id  (thesis_id => theses.id)
 #
 require 'test_helper'
 

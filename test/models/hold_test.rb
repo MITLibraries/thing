@@ -3,16 +3,26 @@
 # Table name: holds
 #
 #  id               :integer          not null, primary key
-#  thesis_id        :integer          not null
+#  case_number      :string
+#  date_end         :date             not null
 #  date_requested   :date             not null
 #  date_start       :date             not null
-#  date_end         :date             not null
-#  hold_source_id   :integer          not null
-#  case_number      :string
-#  status           :integer          not null
 #  processing_notes :text
+#  status           :integer          not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  hold_source_id   :integer          not null
+#  thesis_id        :integer          not null
+#
+# Indexes
+#
+#  index_holds_on_hold_source_id  (hold_source_id)
+#  index_holds_on_thesis_id       (thesis_id)
+#
+# Foreign Keys
+#
+#  hold_source_id  (hold_source_id => hold_sources.id)
+#  thesis_id       (thesis_id => theses.id)
 #
 require 'test_helper'
 
