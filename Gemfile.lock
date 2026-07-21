@@ -91,6 +91,9 @@ GEM
       actionview (>= 6.0, < 9.0)
       activerecord (>= 6.0, < 9.0)
       kaminari (~> 1.2.2)
+    annotaterb (4.23.0)
+      activerecord (>= 6.0.0)
+      activesupport (>= 6.0.0)
     ansi (1.6.0)
     ast (2.4.3)
     aws-eventstream (1.4.0)
@@ -465,6 +468,7 @@ PLATFORMS
 
 DEPENDENCIES
   administrate (~> 1.0.0)
+  annotaterb
   aws-sdk-rails
   aws-sdk-s3
   aws-sdk-sqs

@@ -3,19 +3,26 @@
 # Table name: users
 #
 #  id             :integer          not null, primary key
-#  uid            :string           not null
-#  email          :string           not null
 #  admin          :boolean          default(FALSE)
+#  display_name   :string           not null
+#  email          :string           not null
+#  given_name     :string
+#  middle_name    :string
+#  orcid          :string
+#  preferred_name :string
+#  role           :string           default("basic")
+#  surname        :string
+#  uid            :string           not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  role           :string           default("basic")
-#  given_name     :string
-#  surname        :string
 #  kerberos_id    :string           not null
-#  display_name   :string           not null
-#  middle_name    :string
-#  preferred_name :string
-#  orcid          :string
+#
+# Indexes
+#
+#  index_users_on_email        (email) UNIQUE
+#  index_users_on_kerberos_id  (kerberos_id) UNIQUE
+#  index_users_on_orcid        (orcid) UNIQUE
+#  index_users_on_uid          (uid) UNIQUE
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

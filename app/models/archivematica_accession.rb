@@ -8,6 +8,15 @@
 #  updated_at       :datetime         not null
 #  degree_period_id :integer          not null
 #
+# Indexes
+#
+#  index_archivematica_accessions_on_accession_number  (accession_number) UNIQUE
+#  index_archivematica_accessions_on_degree_period_id  (degree_period_id) UNIQUE
+#
+# Foreign Keys
+#
+#  degree_period_id  (degree_period_id => degree_periods.id)
+#
 
 # Accession is where we store the Accession Number that is generated in our Archivematica system. It is used in this
 # application to generate an S3 key that automations in Archivematica can detect and associate with Submission

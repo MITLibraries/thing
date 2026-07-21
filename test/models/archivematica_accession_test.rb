@@ -8,6 +8,15 @@
 #  updated_at       :datetime         not null
 #  degree_period_id :integer          not null
 #
+# Indexes
+#
+#  index_archivematica_accessions_on_accession_number  (accession_number) UNIQUE
+#  index_archivematica_accessions_on_degree_period_id  (degree_period_id) UNIQUE
+#
+# Foreign Keys
+#
+#  degree_period_id  (degree_period_id => degree_periods.id)
+#
 require "test_helper"
 
 class ArchivematicaAccessionTest < ActiveSupport::TestCase

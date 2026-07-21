@@ -8,6 +8,15 @@
 #  updated_at       :datetime         not null
 #  degree_period_id :integer          not null
 #
+# Indexes
+#
+#  index_archivematica_accessions_on_accession_number  (accession_number) UNIQUE
+#  index_archivematica_accessions_on_degree_period_id  (degree_period_id) UNIQUE
+#
+# Foreign Keys
+#
+#  degree_period_id  (degree_period_id => degree_periods.id)
+#
 
 # This model initially had no columns defined. If you add columns to the
 # model remove the "{}" from the fixture names and add the columns immediately

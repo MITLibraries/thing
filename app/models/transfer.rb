@@ -3,14 +3,24 @@
 # Table name: transfers
 #
 #  id                     :integer          not null, primary key
-#  user_id                :integer          not null
-#  department_id          :integer          not null
+#  files_count            :integer          default(0), not null
 #  grad_date              :date             not null
+#  note                   :text
+#  unassigned_files_count :integer          default(0), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  note                   :text
-#  files_count            :integer          default(0), not null
-#  unassigned_files_count :integer          default(0), not null
+#  department_id          :integer          not null
+#  user_id                :integer          not null
+#
+# Indexes
+#
+#  index_transfers_on_department_id  (department_id)
+#  index_transfers_on_user_id        (user_id)
+#
+# Foreign Keys
+#
+#  department_id  (department_id => departments.id)
+#  user_id        (user_id => users.id)
 #
 class Transfer < ApplicationRecord
   belongs_to :user

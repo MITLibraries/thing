@@ -3,24 +3,30 @@
 # Table name: theses
 #
 #  id                       :integer          not null, primary key
-#  title                    :string
 #  abstract                 :text
+#  author_note              :text
+#  authors_count            :integer
+#  coauthors                :string
+#  dspace_handle            :string
+#  files_complete           :boolean          default(FALSE), not null
 #  grad_date                :date             not null
+#  issues_found             :boolean          default(FALSE), not null
+#  metadata_complete        :boolean          default(FALSE), not null
+#  processor_note           :text
+#  proquest_exported        :integer          default("Not exported"), not null
+#  publication_status       :string           default("Not ready for publication"), not null
+#  title                    :string
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  processor_note           :text
-#  author_note              :text
-#  files_complete           :boolean          default(FALSE), not null
-#  metadata_complete        :boolean          default(FALSE), not null
-#  publication_status       :string           default("Not ready for publication"), not null
-#  coauthors                :string
 #  copyright_id             :integer
 #  license_id               :integer
-#  dspace_handle            :string
-#  issues_found             :boolean          default(FALSE), not null
-#  authors_count            :integer
-#  proquest_exported        :integer          default("Not exported"), not null
 #  proquest_export_batch_id :integer
+#
+# Indexes
+#
+#  index_theses_on_copyright_id              (copyright_id)
+#  index_theses_on_license_id                (license_id)
+#  index_theses_on_proquest_export_batch_id  (proquest_export_batch_id)
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

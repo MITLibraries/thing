@@ -3,12 +3,20 @@
 # Table name: archivematica_payloads
 #
 #  id                  :integer          not null, primary key
-#  preservation_status :integer          default("unpreserved"), not null
 #  payload_json        :text
+#  preservation_status :integer          default("unpreserved"), not null
 #  preserved_at        :datetime
-#  thesis_id           :integer          not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  thesis_id           :integer          not null
+#
+# Indexes
+#
+#  index_archivematica_payloads_on_thesis_id  (thesis_id)
+#
+# Foreign Keys
+#
+#  thesis_id  (thesis_id => theses.id)
 #
 # This class assembles a payload to send to the Archival Packaging Tool (APT), which then creates a bag for
 # preservation. It includes the thesis files, metadata, and checksums. The payload is then serialized to JSON

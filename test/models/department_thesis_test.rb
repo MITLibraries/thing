@@ -2,10 +2,16 @@
 #
 # Table name: department_theses
 #
-#  thesis_id     :integer
-#  department_id :integer
 #  id            :integer          not null, primary key
 #  primary       :boolean          default(FALSE), not null
+#  department_id :integer
+#  thesis_id     :integer
+#
+# Indexes
+#
+#  department_and_thesis                     (department_id,thesis_id) UNIQUE
+#  index_department_theses_on_department_id  (department_id)
+#  index_department_theses_on_thesis_id      (thesis_id)
 #
 
 require 'test_helper'

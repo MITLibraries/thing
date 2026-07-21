@@ -8,6 +8,10 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+# Indexes
+#
+#  index_degree_periods_on_grad_month_and_grad_year  (grad_month,grad_year) UNIQUE
+#
 require 'test_helper'
 
 class DegreePeriodTest < ActiveSupport::TestCase

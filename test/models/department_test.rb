@@ -3,12 +3,17 @@
 # Table name: departments
 #
 #  id                   :integer          not null, primary key
+#  authority_key_dspace :string
+#  code_dw              :string           default(""), not null
+#  name_dspace          :string
 #  name_dw              :string           not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  code_dw              :string           default(""), not null
-#  name_dspace          :string
-#  authority_key_dspace :string
+#
+# Indexes
+#
+#  index_departments_on_code_dw  (code_dw) UNIQUE
+#  index_departments_on_name_dw  (name_dw)
 #
 
 require 'test_helper'
