@@ -28,10 +28,6 @@ additional records with a standardized template.
 
 ## Developer notes
 
-### Annotations
-
-Please `bundle exec annotaterb models` when making changes to models to update the internal documentation.
-
 ### Confirming functionality after updating dependencies
 
 The application has excellent test coverage, and most errors are likely to be caught by our test suite. This runs in CI,
@@ -78,7 +74,7 @@ other changes.
 
 ### Annotating the database schema
 
-When changing the db schema, please run `bundle exec annotate` to update the
+When changing the db schema, please run `bundle exec annotaterb models` to update the
 model and associated tests to reflect the changes in a nice convenient,
 consistent way.
 
