@@ -1,6 +1,6 @@
 {
   "name": "thing",
-  "stack": "heroku-22",
+  "stack": "heroku-26",
   "scripts": {
     "postdeploy": "bundle exec rails db:seed"
   },
