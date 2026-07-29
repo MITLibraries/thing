@@ -43,6 +43,24 @@ class HoldTest < ActiveSupport::TestCase
     assert(hold.invalid?)
   end
 
+  test 'invalid without thesis' do
+    hold = holds(:valid)
+    assert hold.thesis.present?
+    assert hold.valid?
+
+    hold.thesis = nil
+    assert_not hold.valid?
+  end
+
+  test 'invalid without hold source' do
+    hold = holds(:valid)
+    assert hold.hold_source.present?
+    assert hold.valid?
+
+    hold.hold_source = nil
+    assert_not hold.valid?
+  end
+
   test 'valid date_start' do
     hold = holds(:valid)
     assert(hold.valid?)
