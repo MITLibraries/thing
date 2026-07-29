@@ -88,11 +88,7 @@ class ReportController < ApplicationController
     @list = filter_holds_by_source term_filtered
   end
 
-  def index
-    report = Report.new
-    @terms = Thesis.pluck(:grad_date).uniq.sort
-    @data = report.index_data
-  end
+  def index; end
 
   def term
     term = params[:graduation] ? params[:graduation].to_s : 'all'
