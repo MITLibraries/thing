@@ -110,14 +110,14 @@ class ThesisController < ApplicationController
     redirect_to thesis_confirm_path
   end
 
-  def process_theses
+  def process_thesis
     @thesis = Thesis.with_attached_files.includes([:departments, {
                                                     authors: [:user], degrees: [:degree_type]
                                                   }]).find(params[:id])
     @other_theses_with_holds = @thesis.other_theses_with_holds.to_a
   end
 
-  def process_theses_update
+  def process_thesis_update
     thesis = Thesis.find(params[:id])
     removed = deleted_file_list
     params[:thesis][:files_complete] = false if removed.count.positive?

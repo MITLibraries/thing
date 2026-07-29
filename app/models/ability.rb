@@ -78,8 +78,8 @@ class Ability
     can :deduplicate, Thesis
     can :mark_downloaded, Thesis
     can :mark_withdrawn, Thesis
-    can :process_theses, Thesis
-    can :process_theses_update, Thesis
+    can :process_thesis, Thesis
+    can :process_thesis_update, Thesis
     can :publication_statuses, Thesis
     can :publish_preview, Thesis
     can :publish_to_dspace, Thesis
