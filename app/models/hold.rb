@@ -36,7 +36,9 @@ class Hold < ApplicationRecord
   validates :date_requested, presence: true
   validates :date_start, presence: true
   validates :date_end, presence: true
+  validates :hold_source, presence: true
   validates :status, presence: true
+  validates :thesis, presence: true
 
   after_save :update_thesis_status
 
