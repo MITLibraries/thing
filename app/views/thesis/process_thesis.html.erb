@@ -14,16 +14,16 @@
     <div class="alert alert-banner error" style="display: none;" role="alert" aria-invalid="true"></div>
   </div>
 
-  <div class="gridband layout-2c">
+  <div class="gridband layout-2c thesis-processing-summary">
     <div class="grid-item">
       <h4>Publication status</h4>
       <p class="box-content">
         <%= @thesis.publication_status %>
       </p>
     </div>
-    <div class="grid-item">
+    <div class="grid-item box-thesis-metadata">
       <h4>Thesis metadata</h4>
-      <div class="box-content" style="margin-bottom: 1em">
+      <div class="box-content">
         <ul class="list-unbulleted">
           <li>
             <%= f.input :required_fields?, as: :string,
@@ -88,9 +88,9 @@
         </ul>
       </div>
     </div>
-    <div class="grid-item">
+    <div class="grid-item box-thesis-files">
       <h4>Thesis files</h4>
-      <div class="box-content" style="margin-bottom: 1em">
+      <div class="box-content">
         <ul class="list-unbulleted">
           <li>
             <%= f.input :files?, as: :string,
@@ -131,7 +131,7 @@
         </ul>
       </div>
     </div>
-    <div class="grid-item">
+    <div class="grid-item thesis-processing-submit">
       <%= submit_tag 'Update', class: 'btn button-primary' %>
     </div>
   </div>

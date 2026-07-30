@@ -200,6 +200,14 @@ table.list-theses {
   width: 100%;
 }
 
+// thesis processing form
+.box-thesis-metadata, .box-thesis-files, .thesis-processing-submit {
+  margin-bottom: 1em;
+}
+.thesis-processing-submit {
+  clear: right;
+}
+
 // DataTables filter buttons
 .filter-row {
   margin: 1.5rem 0;
