@@ -1,13 +1,14 @@
 class BatchMailer < ApplicationMailer
-  def marc_batch_email(marc_zip_filename, marc_zip_file, theses)
+  def marc_batch_email(marc_zip_filename, marc_zip_file, json_filename, json_file, theses)
     return unless ENV.fetch('DISABLE_ALL_EMAIL', 'true') == 'false' # allows PR builds to disable emails
 
     @theses = theses
     attachments[marc_zip_filename.to_s] = File.binread(marc_zip_file)
+    attachments[json_filename.to_s] = File.read(json_file)
     mail(from: "MIT Libraries <#{ENV['ETD_APP_EMAIL']}>",
          to: ENV['METADATA_ADMIN_EMAIL'],
          cc: ENV['MAINTAINER_EMAIL'],
-         subject: 'ETD MARC batch export')
+         subject: 'ETD metadata batch export')
   end
 
   def proquest_export_email(json_blob, csv_blob, thesis_count, budget_report_count)

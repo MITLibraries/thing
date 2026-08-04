@@ -4,11 +4,15 @@ class MarcExportJob < ActiveJob::Base
   def perform(theses)
     marc_filename = "#{filename}.mrc"
     zip_filename = "#{filename}.zip"
+    json_filename = "#{filename}.json"
+
     begin
-      zip_file = MarcBatch.new(theses, marc_filename, zip_filename).build
-      BatchMailer.marc_batch_email(zip_filename, zip_file, theses).deliver_now
+      marc_zip_file = MarcBatch.new(theses, marc_filename, zip_filename).build
+      json_file = JsonBatch.new(theses, json_filename).build
+      BatchMailer.marc_batch_email(zip_filename, marc_zip_file, json_filename, json_file, theses).deliver_now
     ensure
-      zip_file&.close
+      marc_zip_file&.close
+      json_file&.close
     end
   end
 
