@@ -32,9 +32,7 @@ namespace :metadata do
 
     output_file = args.output_file || Rails.root.join("tmp/json_export_#{args.term}_#{DateTime.now.utc.strftime('%H_%M')}.json").to_s
 
-    theses = Thesis.where(publication_status: 'Published').select do |t|
-      t.grad_date.year == query_date.year && t.grad_date.month == query_date.month
-    end
+    theses = Thesis.published.where(grad_date: query_date.all_month)
 
     if theses.any?
       json_batch = JsonBatch.new(theses, File.basename(output_file))

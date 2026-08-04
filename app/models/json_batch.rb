@@ -17,11 +17,9 @@ class JsonBatch
       JsonExporter.new(thesis).to_hash
     end
 
-    json_output = {
-      theses: theses_data
-    }.to_json
+    json_output = { theses: theses_data }
 
-    json_file.write(JSON.pretty_generate(JSON.parse(json_output)))
+    json_file.write(JSON.pretty_generate(json_output))
     json_file.rewind
   end
 end
