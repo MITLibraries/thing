@@ -68,7 +68,7 @@ class ArchivematicaMetadata
     dc_identifier_orcid
     dc_contributor_advisor
     degree_fields
-    dc_contributor_department
+    dc_relation_orgunit
     rights_fields
   end
 
@@ -124,9 +124,9 @@ class ArchivematicaMetadata
     @csv_hash["f#{file_number}".to_sym] << copyright_check(file)
   end
 
-  def dc_contributor_department
+  def dc_relation_orgunit
     @thesis.departments.each do |dept|
-      @csv_hash[:headers] << 'dc.contributor.department'
+      @csv_hash[:headers] << 'dc.relation.orgunit'
       @thesis.files.each_with_index do |file, i|
         @csv_hash["f#{i}".to_sym] << thesis_pdf_checker(file, dept.name_dspace)
       end

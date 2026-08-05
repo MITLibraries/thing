@@ -32,7 +32,7 @@ sip_one:
     196128f55c62f4c246bed52b07d3ae1c data/registrar.csv
     3ac6f5cac4e09a6c95ee4004ebe19c51 data/metadata.csv
   metadata: >-
-    filename,Level_of_DPCommitment,dc.title,dc.date.issued,dc.date.submitted,dc.type,dc.description.abstract,dc.identifier.uri,BitstreamDescription,BitstreamChecksumValue,BitstreamChecksumAlgorithm,dc.publisher,dc.terms.isPartOf,dc.terms.isPartOf,dc.contributor.author,dc.contributor.author,dc.identifier.orcid,dc.identifier.orcid,dc.contributor.advisor,dc.contributor.advisor,dc.description.degree,thesis.degree.name,mit.thesis.degree,dc.description.degree,thesis.degree.name,mit.thesis.degree,dc.contributor.department,dc.contributor.department,dc.rights,dc.rights,dc.rights.uri
+    filename,Level_of_DPCommitment,dc.title,dc.date.issued,dc.date.submitted,dc.type,dc.description.abstract,dc.identifier.uri,BitstreamDescription,BitstreamChecksumValue,BitstreamChecksumAlgorithm,dc.publisher,dc.terms.isPartOf,dc.terms.isPartOf,dc.contributor.author,dc.contributor.author,dc.identifier.orcid,dc.identifier.orcid,dc.contributor.advisor,dc.contributor.advisor,dc.description.degree,thesis.degree.name,mit.thesis.degree,dc.description.degree,thesis.degree.name,mit.thesis.degree,dc.relation.orgunit,dc.relation.orgunit,dc.rights,dc.rights,dc.rights.uri
 
     data/registrar.csv,Level 3,On the importance of titles,2022-02,2021-08-13
     18:22:45 UTC,Thesis,"Lorem ipsum dolor sit amet, consectetur adipiscing

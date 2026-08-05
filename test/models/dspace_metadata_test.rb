@@ -243,10 +243,10 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     unserialized = JSON.parse(serialized)
 
     assert unserialized['metadata'].include?(
-      { 'key' => 'dc.contributor.department',
+      { 'key' => 'dc.relation.orgunit',
         'value' => 'Massachusetts Institute of Technology. Department of Aeronautics and Astronautics' }
     )
-    refute unserialized['metadata'].include?({ 'key' => 'dc.contributor.department',
+    refute unserialized['metadata'].include?({ 'key' => 'dc.relation.orgunit',
                                                'value' => 'MIT Anthropology Program' })
 
     # Multiple departments
@@ -256,10 +256,10 @@ class DspaceMetadataTest < ActiveSupport::TestCase
     unserialized = JSON.parse(serialized)
 
     assert unserialized['metadata'].include?(
-      { 'key' => 'dc.contributor.department',
+      { 'key' => 'dc.relation.orgunit',
         'value' => 'Massachusetts Institute of Technology. Department of Aeronautics and Astronautics' }
     )
-    assert unserialized['metadata'].include?({ 'key' => 'dc.contributor.department',
+    assert unserialized['metadata'].include?({ 'key' => 'dc.relation.orgunit',
                                                'value' => 'MIT Anthropology Program' })
   end
 
