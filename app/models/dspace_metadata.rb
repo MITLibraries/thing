@@ -54,7 +54,7 @@ class DspaceMetadata
 
   def departments(thesis_depts)
     thesis_depts.each do |d|
-      add_metadata('dc.contributor.department', d.name_dspace)
+      add_metadata('dc.relation.orgunit', d.name_dspace)
     end
   end
 
