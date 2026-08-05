@@ -1,5 +1,5 @@
 namespace :metadata do
-  desc 'Generate a JSON export of a single published thesis for testing'
+  desc 'Generate a JSON export of a single published thesis for debugging'
   task :json_export_thesis, [:thesis_id] => :environment do |_t, args|
     if args.thesis_id.blank?
       puts 'No thesis ID provided.'
@@ -9,7 +9,7 @@ namespace :metadata do
     thesis = Thesis.find(args.thesis_id)
 
     if thesis.publication_status == 'Published'
-      json_exporter = JsonExporter.new(thesis)
+      json_exporter = CatalogExporter.new(thesis)
       json_data = json_exporter.to_hash
 
       puts "JSON Export for Thesis #{args.thesis_id}:"
@@ -35,10 +35,10 @@ namespace :metadata do
     theses = Thesis.published.where(grad_date: query_date.all_month)
 
     if theses.any?
-      json_batch = JsonBatch.new(theses, File.basename(output_file))
+      json_batch = CatalogBatch.new(theses, File.basename(output_file))
       json_file = json_batch.build
       FileUtils.cp(json_file.path, output_file)
-      json_file.close
+      json_file.close!
       puts "Exported #{theses.count} theses to: #{output_file}"
     else
       puts "No published theses found for #{args.term}"

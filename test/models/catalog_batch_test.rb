@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class JsonBatchTest < ActiveSupport::TestCase
+class CatalogBatchTest < ActiveSupport::TestCase
   test 'builds a valid JSON file' do
     theses = [theses(:published)]
-    batch = JsonBatch.new(theses, 'test.json')
+    batch = CatalogBatch.new(theses, 'test.json')
     json_file = batch.build
 
     json_content = File.read(json_file.path)
@@ -15,7 +15,7 @@ class JsonBatchTest < ActiveSupport::TestCase
 
   test 'wraps theses in a wrapper object with theses key' do
     theses = [theses(:published)]
-    batch = JsonBatch.new(theses, 'test.json')
+    batch = CatalogBatch.new(theses, 'test.json')
     json_file = batch.build
 
     json_content = File.read(json_file.path)
@@ -28,7 +28,7 @@ class JsonBatchTest < ActiveSupport::TestCase
 
   test 'includes all theses in the batch' do
     theses = [theses(:published), theses(:one)]
-    batch = JsonBatch.new(theses, 'test.json')
+    batch = CatalogBatch.new(theses, 'test.json')
     json_file = batch.build
 
     json_content = File.read(json_file.path)
@@ -40,7 +40,7 @@ class JsonBatchTest < ActiveSupport::TestCase
 
   test 'includes all required fields' do
     theses = [theses(:published)]
-    batch = JsonBatch.new(theses, 'test.json')
+    batch = CatalogBatch.new(theses, 'test.json')
     json_file = batch.build
 
     json_content = File.read(json_file.path)
@@ -61,7 +61,7 @@ class JsonBatchTest < ActiveSupport::TestCase
   end
 
   test 'empty theses array produces valid JSON' do
-    batch = JsonBatch.new([], 'test.json')
+    batch = CatalogBatch.new([], 'test.json')
     json_file = batch.build
 
     json_content = File.read(json_file.path)

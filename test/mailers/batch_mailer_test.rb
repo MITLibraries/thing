@@ -5,7 +5,7 @@ class BatchMailerTest < ActionMailer::TestCase
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       theses = [theses(:one), theses(:two)]
       marc_zip_file = MarcBatch.new(theses, 'marc.xml', 'marc.zip').build
-      json_file = JsonBatch.new(theses, 'marc.json').build
+      json_file = CatalogBatch.new(theses, 'marc.json').build
       email = BatchMailer.marc_batch_email('marc.zip', marc_zip_file, 'marc.json', json_file, theses)
 
       # Send the email, then test that it got queued
@@ -29,7 +29,7 @@ class BatchMailerTest < ActionMailer::TestCase
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       theses = [theses(:one), theses(:two)]
       marc_zip_file = MarcBatch.new(theses, 'marc.xml', 'marc.zip').build
-      json_file = JsonBatch.new(theses, 'marc.json').build
+      json_file = CatalogBatch.new(theses, 'marc.json').build
       email = BatchMailer.marc_batch_email('marc.zip', marc_zip_file, 'marc.json', json_file, theses)
       attachment = email.attachments['marc.zip']
       assert_equal 'application/zip; filename=marc.zip', attachment.content_type

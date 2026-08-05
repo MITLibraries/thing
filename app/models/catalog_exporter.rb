@@ -1,8 +1,20 @@
-class JsonExporter
+# Exports a single thesis as a hash for JSON serialization.
+#
+# Transforms a thesis record into a flat-ish structure with nested arrays for repeating fields
+# (authors, advisors, degrees, departments).
+#
+# Example:
+#   exporter = CatalogExporter.new(thesis)
+#   hash = exporter.to_hash
+#   # => { title: "...", abstract: "...", authors: [{name: "..."}, ...], ... }
+class CatalogExporter
   def initialize(thesis)
     @thesis = thesis
   end
 
+  # Returns a hash representation of the thesis with all fields required by the metadata team.
+  # Includes: title, abstract, graduation_year, dspace_url, advisors, authors, degrees, and
+  # departments. Array fields are normalized to hashes with relevant metadata.
   def to_hash
     {
       abstract:,
@@ -55,6 +67,6 @@ class JsonExporter
   end
 
   def title
-    @thesis.title&.squish
+    @thesis.title.squish
   end
 end

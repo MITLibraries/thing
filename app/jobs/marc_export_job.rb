@@ -8,11 +8,11 @@ class MarcExportJob < ActiveJob::Base
 
     begin
       marc_zip_file = MarcBatch.new(theses, marc_filename, zip_filename).build
-      json_file = JsonBatch.new(theses, json_filename).build
+      json_file = CatalogBatch.new(theses, json_filename).build
       BatchMailer.marc_batch_email(zip_filename, marc_zip_file, json_filename, json_file, theses).deliver_now
     ensure
-      marc_zip_file&.close
-      json_file&.close
+      marc_zip_file&.close!
+      json_file&.close!
     end
   end
 
