@@ -54,12 +54,15 @@ class Ability
     # Allow processors to see the admin dashboard link in the main site nav. See the _site_nav layout for more info.
     can :administrate, Admin
 
-    # Authorize processors to use all submitter dashboard controller actions. If not, any attempts to access the
-    # dashboard will trigger Admin::ApplicationController#authorized_or_redirect.
+    # Authorize processors to use all submitter and advisor dashboard controller actions. If not,
+    # any attempts to access the dashboard will trigger
+    # Admin::ApplicationController#authorized_or_redirect.
+    can :manage, :advisor
     can :manage, :submitter
 
-    # Authorize processors to access submitter model. If not, administrate will raise a NotAuthorizedError when
-    # controller methods are called.
+    # Authorize processors to access submitter and advisor model. If not, administrate will raise a
+    # NotAuthorizedError when controller methods are called.
+    can :manage, Advisor
     can :manage, Submitter
 
     can :files, Report
