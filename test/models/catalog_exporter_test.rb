@@ -3,9 +3,11 @@ require 'test_helper'
 class CatalogExporterTest < ActiveSupport::TestCase
   test 'includes correctly formatted title' do
     thesis = theses(:published)
+    thesis.title = "   A    weirdly \n spaced    title    "
+    thesis.save
     exporter = CatalogExporter.new(thesis)
     json_hash = exporter.to_hash
-    assert_equal thesis.title&.squish, json_hash[:title]
+    assert_equal "A weirdly spaced title", json_hash[:title]
   end
 
   test 'includes abstract' do
