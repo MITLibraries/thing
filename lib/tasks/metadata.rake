@@ -35,10 +35,10 @@ namespace :metadata do
     theses = Thesis.published.where(grad_date: query_date.all_month)
 
     if theses.any?
-      json_batch = CatalogBatch.new(theses, File.basename(output_file))
-      json_file = json_batch.build
-      FileUtils.cp(json_file.path, output_file)
-      json_file.close!
+      catalog_batch = CatalogBatch.new(theses, File.basename(output_file))
+      catalog_file = catalog_batch.build
+      FileUtils.cp(catalog_file.path, output_file)
+      catalog_file.close!
       puts "Exported #{theses.count} theses to: #{output_file}"
     else
       puts "No published theses found for #{args.term}"
