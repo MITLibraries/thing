@@ -4,19 +4,23 @@ class BatchMailerTest < ActionMailer::TestCase
   test 'sends emails for MARC batch exports' do
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       theses = [theses(:one), theses(:two)]
-      zip_file =  MarcBatch.new(theses, 'marc.xml', 'marc.zip').build
-      email = BatchMailer.marc_batch_email('marc.zip', zip_file, theses)
+      marc_zip_file = MarcBatch.new(theses, 'marc.xml', 'marc.zip').build
+      catalog_file = CatalogBatch.new(theses, 'marc.json').build
+      email = BatchMailer.marc_batch_email('marc.zip', marc_zip_file, 'marc.json', catalog_file, theses)
 
       # Send the email, then test that it got queued
       assert_emails 1 do
         email.deliver_now
       end
 
-      # Make sure it was sent to the right person with the expected attachment.
+      # Make sure it was sent to the right person with the expected attachments.
       assert_equal ['app@example.com'], email.from
       assert_equal ['test-metadata@example.com'], email.to
-      assert_equal 'ETD MARC batch export', email.subject
-      assert_equal 'marc.zip', email.attachments.first.filename
+      assert_equal 'ETD metadata batch export', email.subject
+      assert_equal 2, email.attachments.count
+      filenames = email.attachments.map(&:filename)
+      assert_includes filenames, 'marc.zip'
+      assert_includes filenames, 'marc.json'
       assert_includes '2 theses', email.body.to_s
     end
   end
@@ -24,8 +28,9 @@ class BatchMailerTest < ActionMailer::TestCase
   test 'zip file is attached with correct mimetype' do
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
       theses = [theses(:one), theses(:two)]
-      zip_file =  MarcBatch.new(theses, 'marc.xml', 'marc.zip').build
-      email = BatchMailer.marc_batch_email('marc.zip', zip_file, theses)
+      marc_zip_file = MarcBatch.new(theses, 'marc.xml', 'marc.zip').build
+      catalog_file = CatalogBatch.new(theses, 'marc.json').build
+      email = BatchMailer.marc_batch_email('marc.zip', marc_zip_file, 'marc.json', catalog_file, theses)
       attachment = email.attachments['marc.zip']
       assert_equal 'application/zip; filename=marc.zip', attachment.content_type
     end
