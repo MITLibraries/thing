@@ -65,6 +65,49 @@ class FilesControllerTest < ActionDispatch::IntegrationTest
     assert_equal('renamed_a_pdf_too.pdf', @attachment.blob.filename.to_s)
   end
 
+  test 'renamed filenames are normalized before saving' do
+    sign_in users(:thesis_admin)
+    thesis = theses(:publication_review)
+    attachment = thesis.files.first
+
+    post rename_file_path(thesis, attachment),
+         params: { attachment: { filename: "saldi\u0301as\u2013thesis\u200B.pdf" } }
+
+    assert_redirected_to thesis_process_path(thesis)
+    assert_equal "sald\u00EDas-thesis.pdf", attachment.blob.reload.filename.to_s
+  end
+
+  test 'renaming rejects filenames that become duplicates after normalization' do
+    sign_in users(:thesis_admin)
+    thesis = theses(:rename_attachment_tests)
+    attachment = thesis.files.first
+    original_filename = attachment.filename.to_s
+    other_attachment = thesis.files.last
+    other_attachment.blob.update!(filename: 'same-name.pdf')
+
+    post rename_file_path(thesis, attachment),
+         params: { attachment: { filename: "same\u2013name\u200B.pdf" } }
+
+    assert_redirected_to thesis_process_path(thesis)
+    assert_equal 'The updated filename is identical to another filename attached to this thesis.', flash[:error]
+    assert_equal original_filename, attachment.blob.reload.filename.to_s
+  end
+
+  test 'renaming checks names normalized by earlier blob saves' do
+    sign_in users(:thesis_admin)
+    thesis = theses(:rename_attachment_tests)
+    attachment = thesis.files.first
+    original_filename = attachment.filename.to_s
+    thesis.files.last.blob.update!(filename: "same\u2013name.pdf")
+
+    post rename_file_path(thesis, attachment),
+         params: { attachment: { filename: 'same-name.pdf' } }
+
+    assert_redirected_to thesis_process_path(thesis)
+    assert_equal 'The updated filename is identical to another filename attached to this thesis.', flash[:error]
+    assert_equal original_filename, attachment.blob.reload.filename.to_s
+  end
+
   test 'thesis processor can rename blob filename' do
     sign_in users(:processor)
     @thesis = theses(:publication_review)
@@ -172,7 +215,7 @@ class FilesControllerTest < ActionDispatch::IntegrationTest
     assert_equal thesis_process_path(theses(:rename_attachment_tests)), path
 
     assert_select '.alert-banner.error',
-                  text: 'The new name you chose is the same as an existing name of a file attached to this thesis.', count: 1
+                  text: 'The updated filename is identical to another filename attached to this thesis.', count: 1
 
     @attachment_one.reload
     @attachment_two.reload
