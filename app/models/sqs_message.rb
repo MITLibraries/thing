@@ -35,7 +35,7 @@ class SqsMessage
            .sort_by { |item| ordered_filter.index(item[:purpose]) }
            .map do |f|
       {
-        'BitstreamName' => f.blob.filename.to_s,
+        'BitstreamName' => sanitize_filename_for_dspace(f.blob.filename.to_s),
         'FileLocation' => f.blob.url(expires_in: 604800),
         'BitstreamDescription' => bitstream_description(f)
       }
@@ -59,5 +59,29 @@ class SqsMessage
                       'Supplementary file', 'proquest_form' => 'Proquest form', 'signature_page' => 'Signature page' }
     translated_purpose = file_purposes[file.purpose]
     "#{translated_purpose} #{file.description}".strip
+  end
+
+  private
+
+  # DSpace chokes on certain unicode characters. If a thesis has files that contain one of these
+  # characters, DSpace will allow publication, but it won't allow end users to download the files.
+  #
+  # This method normalizes the current known list of problematic characters:
+  # - decomposed combining diacritics
+  # - zero-width spaces (and presumably directional control characters, which are also invisible)
+  # - en-dashes (and presumably other dash variants)
+  #
+  # As we learn of other problematic characters, we should add them to this method.
+  def sanitize_filename_for_dspace(filename)
+    # Normalize to NFC (precomposed form) to fix decomposed combining marks (e.g., í as i + acute
+    # accent)
+    normalized = filename.unicode_normalize(:nfc)
+
+    # Strip zero-width and directional control characters
+    normalized = normalized.gsub(/[\u200B\u200C\u200D\u200E\u200F\u202A-\u202E]/, '')
+
+    # Replace em-dashes, en-dashes, and other dash variants with standard hyphen
+    normalized = normalized.gsub(/[\u2010-\u2015]/, '-')
+    normalized
   end
 end
