@@ -153,4 +153,44 @@ class SqsMessageTest < ActiveSupport::TestCase
     # Not checking the full URI here because ActiveStorage::SetCurrent doesn't generate URIs consistently.
     assert body_json['MetadataLocation'].ends_with?('some_file.json')
   end
+
+  test 'sanitize_filename_for_dspace normalizes decomposed unicode to precomposed' do
+    # Decomposed form: í as i (U+0069) + combining acute accent (U+0301)
+    decomposed = "sald\u0069\u0301as_belen_thesis.pdf"  # i + combining acute, not precomposed í
+    sqs = SqsMessage.new(@thesis)
+    sanitized = sqs.send(:sanitize_filename_for_dspace, decomposed)
+
+    # Should normalize to precomposed form
+    assert_equal decomposed.unicode_normalize(:nfc), sanitized
+  end
+
+  test 'sanitize_filename_for_dspace removes zero-width spaces' do
+    # Contains U+200B (zero-width space)
+    filename_with_zwsp = "Liang-thesis\u200b.pdf"
+    sqs = SqsMessage.new(@thesis)
+    sanitized = sqs.send(:sanitize_filename_for_dspace, filename_with_zwsp)
+    assert_equal "Liang-thesis.pdf", sanitized
+  end
+
+  test 'sanitize_filename_for_dspace replaces en-dashes with hyphens' do
+    # U+2013 is en-dash
+    filename_with_endash = "Siddiqui\u2013sameed-thesis.pdf"
+    sqs = SqsMessage.new(@thesis)
+    sanitized = sqs.send(:sanitize_filename_for_dspace, filename_with_endash)
+    assert_equal "Siddiqui-sameed-thesis.pdf", sanitized
+  end
+
+  test 'sanitize_filename_for_dspace preserves safe precomposed accented characters' do
+    # These are precomposed forms that DSpace accepts
+    safe_filenames = [
+      "garcía_thesis.pdf",      # U+00ED precomposed í
+      "strømstad_thesis.pdf",   # U+00F8 precomposed ø
+      "MillánBarea_thesis.pdf"  # U+00E1 precomposed á
+    ]
+    sqs = SqsMessage.new(@thesis)
+    safe_filenames.each do |filename|
+      sanitized = sqs.send(:sanitize_filename_for_dspace, filename)
+      assert_equal filename, sanitized, "Safe character filename was modified: #{filename}"
+    end
+  end
 end
