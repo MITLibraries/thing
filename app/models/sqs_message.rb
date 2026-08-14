@@ -6,7 +6,7 @@ class SqsMessage
   def initialize(thesis)
     @thesis = thesis
     @package_id = "etd_#{@thesis.id}"
-    @metadata_uri = thesis.dspace_metadata.blob.url(expires_in: 604800)
+    @metadata_uri = thesis.dspace_metadata.blob.url(expires_in: 604_800)
   end
 
   def message_attributes
@@ -36,7 +36,7 @@ class SqsMessage
            .map do |f|
       {
         'BitstreamName' => sanitize_filename_for_dspace(f.blob.filename.to_s),
-        'FileLocation' => f.blob.url(expires_in: 604800),
+        'FileLocation' => f.blob.url(expires_in: 604_800),
         'BitstreamDescription' => bitstream_description(f)
       }
     end
@@ -47,7 +47,7 @@ class SqsMessage
   def collection_handle
     if @thesis.degrees.any? { |d| d.degree_type.name == 'Doctoral' }
       ENV.fetch('DSPACE_DOCTORAL_HANDLE')
-    elsif @thesis.degrees.any? { |d| d.degree_type.name == 'Master' || d.degree_type.name == 'Engineer' }
+    elsif @thesis.degrees.any? { |d| %w[Master Engineer].include?(d.degree_type.name) }
       ENV.fetch('DSPACE_GRADUATE_HANDLE')
     else
       ENV.fetch('DSPACE_UNDERGRADUATE_HANDLE')
@@ -81,7 +81,6 @@ class SqsMessage
     normalized = normalized.gsub(/[\u200B\u200C\u200D\u200E\u200F\u202A-\u202E]/, '')
 
     # Replace em-dashes, en-dashes, and other dash variants with standard hyphen
-    normalized = normalized.gsub(/[\u2010-\u2015]/, '-')
-    normalized
+    normalized.gsub(/[\u2010-\u2015]/, '-')
   end
 end

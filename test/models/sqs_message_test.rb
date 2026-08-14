@@ -50,10 +50,12 @@ class SqsMessageTest < ActiveSupport::TestCase
     @thesis.save
     @thesis.reload
     assert_equal 5, @thesis.files.length
-    assert_equal ['thesis_pdf', 'proquest_form', 'signature_page', 'thesis_source', 'thesis_supplementary_file'], @thesis.files.map{|f| f.purpose}
+    assert_equal(%w[thesis_pdf proquest_form signature_page thesis_source thesis_supplementary_file], @thesis.files.map do |f|
+      f.purpose
+    end)
     files = SqsMessage.new(@thesis).map_files
     assert_equal 2, files.length
-    assert_equal ['Thesis PDF My thesis', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
+    assert_equal(['Thesis PDF My thesis', 'Supplementary file'], files.map { |f| f['BitstreamDescription'] })
   end
 
   test 'thesis_pdf are attached before supplementary files' do
@@ -67,10 +69,14 @@ class SqsMessageTest < ActiveSupport::TestCase
     @thesis.files.last.purpose = 'thesis_supplementary_file'
     @thesis.save
     @thesis.reload
-    assert_equal ['thesis_supplementary_file', 'thesis_pdf', 'thesis_supplementary_file'], @thesis.files.map{|f| f.purpose}
+    assert_equal(%w[thesis_supplementary_file thesis_pdf thesis_supplementary_file], @thesis.files.map do |f|
+      f.purpose
+    end)
     files = SqsMessage.new(@thesis).map_files
-    assert_equal ['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
-    assert_equal ['thesis_pdf.pdf', 'supplemental_file.pdf', 'flexible_pdf.pdf'], files.map{ |f| f['BitstreamName'] }
+    assert_equal(['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map do |f|
+      f['BitstreamDescription']
+    end)
+    assert_equal(['thesis_pdf.pdf', 'supplemental_file.pdf', 'flexible_pdf.pdf'], files.map { |f| f['BitstreamName'] })
     # Swapping file purposes will result in the same set of files being sorted into a different order. This is meant to
     # demonstrate confidence that alphabetical order is not part of the logic being used - the thesis pdf comes first,
     # followed by supplemental files in the order they were attached.
@@ -80,8 +86,10 @@ class SqsMessageTest < ActiveSupport::TestCase
     @thesis.files.last.purpose = 'thesis_pdf' # last-attached "flexible_pdf" should now be sorted first
     @thesis.files.second.purpose = 'thesis_supplementary_file' # second-attached "thesis_pdf" should now be sorted last
     files = SqsMessage.new(@thesis).map_files
-    assert_equal ['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
-    assert_equal ['flexible_pdf.pdf', 'supplemental_file.pdf', 'thesis_pdf.pdf'], files.map{ |f| f['BitstreamName'] }
+    assert_equal(['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map do |f|
+      f['BitstreamDescription']
+    end)
+    assert_equal(['flexible_pdf.pdf', 'supplemental_file.pdf', 'thesis_pdf.pdf'], files.map { |f| f['BitstreamName'] })
   end
 
   test 'returns correct bitstream description' do
@@ -156,12 +164,12 @@ class SqsMessageTest < ActiveSupport::TestCase
 
   test 'sanitize_filename_for_dspace normalizes decomposed unicode to precomposed' do
     # Decomposed form: í as i (U+0069) + combining acute accent (U+0301)
-    decomposed = "saldías_belen_thesis.pdf"  # Will be NFD if created on macOS
+    decomposed = 'saldías_belen_thesis.pdf' # Will be NFD if created on macOS
     sqs = SqsMessage.new(@thesis)
     sanitized = sqs.send(:sanitize_filename_for_dspace, decomposed)
 
     # Should normalize to precomposed form
-    assert_equal "saldías_belen_thesis.pdf".unicode_normalize(:nfc), sanitized
+    assert_equal 'saldías_belen_thesis.pdf'.unicode_normalize(:nfc), sanitized
   end
 
   test 'sanitize_filename_for_dspace removes zero-width spaces' do
@@ -169,7 +177,7 @@ class SqsMessageTest < ActiveSupport::TestCase
     filename_with_zwsp = "Liang-thesis\u200b.pdf"
     sqs = SqsMessage.new(@thesis)
     sanitized = sqs.send(:sanitize_filename_for_dspace, filename_with_zwsp)
-    assert_equal "Liang-thesis.pdf", sanitized
+    assert_equal 'Liang-thesis.pdf', sanitized
   end
 
   test 'sanitize_filename_for_dspace replaces en-dashes with hyphens' do
@@ -177,15 +185,15 @@ class SqsMessageTest < ActiveSupport::TestCase
     filename_with_endash = "Siddiqui\u2013sameed-thesis.pdf"
     sqs = SqsMessage.new(@thesis)
     sanitized = sqs.send(:sanitize_filename_for_dspace, filename_with_endash)
-    assert_equal "Siddiqui-sameed-thesis.pdf", sanitized
+    assert_equal 'Siddiqui-sameed-thesis.pdf', sanitized
   end
 
   test 'sanitize_filename_for_dspace preserves safe precomposed accented characters' do
     # These are precomposed forms that DSpace accepts
     safe_filenames = [
-      "garcía_thesis.pdf",      # U+00ED precomposed í
-      "strømstad_thesis.pdf",   # U+00F8 precomposed ø
-      "MillánBarea_thesis.pdf"  # U+00E1 precomposed á
+      'garcía_thesis.pdf',      # U+00ED precomposed í
+      'strømstad_thesis.pdf',   # U+00F8 precomposed ø
+      'MillánBarea_thesis.pdf'  # U+00E1 precomposed á
     ]
     sqs = SqsMessage.new(@thesis)
     safe_filenames.each do |filename|
