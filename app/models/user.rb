@@ -58,6 +58,9 @@ class User < ApplicationRecord
   has_many :submitters
   has_many :departments, through: :submitters
 
+  scope :with_multiple_theses, -> { joins(:theses).group('users.id').having('COUNT(theses.id) > 1') }
+  scope :with_multiple_theses_with_holds, -> { joins(theses: :holds).group('users.id').having('COUNT(DISTINCT theses.id) > 1').distinct }
+
   ROLES = %w[basic processor thesis_admin].freeze
   validates_inclusion_of :role, in: ROLES
 

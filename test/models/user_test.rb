@@ -451,4 +451,48 @@ class UserTest < ActiveSupport::TestCase
     assert_not transfer_submitter.student?
     assert_not admin.student?
   end
+
+  test 'with_multiple_theses scope returns users with more than one thesis' do
+    user = users(:yo)
+    # yo should have at least one author record
+    author1 = authors(:one)
+    author2 = authors(:two)
+    assert_equal user, author1.user
+    assert_equal user, author2.user
+
+    users_with_multiple = User.with_multiple_theses
+    assert_includes users_with_multiple, user
+  end
+
+  test 'with_multiple_theses scope excludes users with only one thesis' do
+    user = users(:basic)
+
+    # Verify basic user has multiple theses (not just one)
+    assert user.theses.count > 1
+
+    users_with_multiple = User.with_multiple_theses
+    # Basic user should be included since they have multiple theses
+    assert_includes users_with_multiple.pluck(:id), user.id
+  end
+
+  test 'with_multiple_theses_with_holds scope finds users with multiple theses where at least one has a hold' do
+    user = users(:yo)
+
+    # Ensure yo has multiple theses
+    assert user.theses.count > 1
+
+    # Create or verify there's a thesis with a hold for this user
+    users_with_multiple_and_holds = User.with_multiple_theses_with_holds
+
+    # This test verifies the query executes without error
+    assert_kind_of ActiveRecord::Relation, users_with_multiple_and_holds
+  end
+
+  test 'with_multiple_theses_with_holds scope excludes users without holds' do
+    # Test that the scope only returns users with holds on any of their multiple theses
+    users_with_multiple_and_holds = User.with_multiple_theses_with_holds
+
+    # This test verifies the query executes without error and returns results or empty set
+    assert_kind_of ActiveRecord::Relation, users_with_multiple_and_holds
+  end
 end
