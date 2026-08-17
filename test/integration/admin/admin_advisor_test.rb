@@ -161,7 +161,6 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
   end
 
   test 'processors can create advisors via admin dashboard' do
-    skip('Processors currently can not _use_ the admin dashboard, so this fails.')
     mock_auth(users(:processor))
     create_advisor
   end
@@ -188,7 +187,6 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
   end
 
   test 'processors can edit advisors through admin dashboard' do
-    skip('Processors currently can not _use_ the admin dashboard, so this fails.')
     mock_auth(users(:processor))
     edit_advisor_name
   end
@@ -215,7 +213,6 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
   end
 
   test 'processors can assign theses to advisors via advisor form' do
-    skip('Processors currently can not _use_ the admin dashboard, so this fails.')
     mock_auth(users(:processor))
     assign_advisor_to_thesis
   end
@@ -242,7 +239,6 @@ class AdminAdvisorTest < ActionDispatch::IntegrationTest
   end
 
   test 'processors can delete an advisor' do
-    skip('Processors currently can not _use_ the admin dashboard, so this fails.')
     mock_auth(users(:processor))
     delete_advisor
   end

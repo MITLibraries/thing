@@ -63,6 +63,15 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
       )
   end
 
+  def stub_apt_lambda_bad_request
+    stub_request(:post, ENV.fetch('APT_LAMBDA_URL', nil))
+      .to_return(
+        status: 400,
+        body: { error: 'Invalid input payload' }.to_json,
+        headers: { 'Content-Type' => 'application/json' }
+      )
+  end
+
   test 'sends report emails on success' do
     stub_apt_lambda_success
     ClimateControl.modify DISABLE_ALL_EMAIL: 'false' do
@@ -175,10 +184,18 @@ class PreservationSubmissionJobTest < ActiveJob::TestCase
     assert_equal 1, another_good_thesis.archivematica_payloads.count
   end
 
-  test 'throws exceptions and probably creates payloads when a bad key is provided' do
-    skip('Test not implemented yet')
-    # Our lambda returns 400 Bad Request with a error body of Invalid input payload
-    # This should never happen as we submit it via ENV, but just in case we should understand what it looks like
+  test 'creates payloads when a a 400 error is returned' do
+    stub_apt_lambda_bad_request
+    thesis = setup_thesis
+    assert_equal 0, thesis.archivematica_payloads.count
+
+    # The job handles the 400 error gracefully.
+    PreservationSubmissionJob.perform_now([thesis])
+
+    # Confirms that payloads are created even when a 400 Bad Request is returned, but the payload
+    # is not preserved.
+    assert_equal 1, thesis.archivematica_payloads.count
+    assert_equal 'unpreserved', thesis.archivematica_payloads.last.preservation_status
   end
 
   test 'retries on 502 Bad Gateway errors' do
