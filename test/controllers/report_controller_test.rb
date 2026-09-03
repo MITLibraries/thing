@@ -49,20 +49,20 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ~~~~~~~~~~~~~~~~~~~~ Report dashboard ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  test 'summary report exists' do
+  test 'report dashboard exists' do
     sign_in users(:admin)
     get report_index_path
     assert_response :success
   end
 
-  test 'anonymous users are prompted to log in by summary report' do
+  test 'anonymous users are prompted to log in by report dashboard' do
     # Note that nobody is signed in.
     get report_index_path
     assert_response :redirect
     assert_redirected_to '/login'
   end
 
-  test 'basic users cannot see summary report' do
+  test 'basic users cannot see report dashboard' do
     sign_in users(:basic)
     get report_index_path
     assert_redirected_to '/'
@@ -70,7 +70,7 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
-  test 'submitters cannot see summary report' do
+  test 'submitters cannot see report dashboard' do
     sign_in users(:transfer_submitter)
     get report_index_path
     assert_redirected_to '/'
@@ -78,30 +78,22 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_select 'div.alert', text: 'Not authorized.', count: 1
   end
 
-  test 'processors can see summary report' do
+  test 'processors can see report dashboard' do
     sign_in users(:processor)
     get report_index_path
     assert_response :success
   end
 
-  test 'thesis_admins can see summary report' do
+  test 'thesis_admins can see report dashboard' do
     sign_in users(:thesis_admin)
     get report_index_path
     assert_response :success
   end
 
-  test 'admins can see summary report' do
+  test 'admins can see report dashboard' do
     sign_in users(:admin)
     get report_index_path
     assert_response :success
-  end
-
-  # ~~~~ Dashboard features
-
-  test 'summary report has links to term-specific pages for all terms' do
-    sign_in users(:processor)
-    get report_index_path
-    assert_select 'table:first-of-type thead a', count: Thesis.pluck(:grad_date).uniq.count
   end
 
   # ~~~~~~~~~~~~~~~~~~~~ Report empty theses ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
