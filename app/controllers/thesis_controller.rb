@@ -178,7 +178,10 @@ class ThesisController < ApplicationController
 
     Rails.logger.debug('TRANSFER_COUNTS: Files count changed on thesis, expect updated Transfer count logs')
     thesis_params['files_attachments_attributes'].values.select { |item| item['_destroy'] == '1' }.each do |file|
-      needle = ActiveStorage::Attachment.find_by(id: file['id']).blob
+      attachment = ActiveStorage::Attachment.find_by(id: file['id'])
+      next unless attachment
+
+      needle = attachment.blob
       list.append({
                     'filename' => needle.filename,
                     'transfer_id' => needle.attachments.select { |att| att.record_type == 'Transfer' }.first.record_id
