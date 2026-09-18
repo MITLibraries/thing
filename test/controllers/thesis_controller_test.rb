@@ -993,4 +993,167 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     error_count = Thesis.where(publication_status: 'Publication error').count
     assert error_count == 0
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~ process_thesis_update race condition regression ~~~~~~~~~~~~~~~~~~~~~
+  test 'process_thesis_update handles gracefully when an attachment marked for deletion no longer exists' do
+    sign_in users(:processor)
+    thesis = theses(:one)
+    f1 = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    thesis.files.attach(io: File.open(f1), filename: 'a_pdf.pdf')
+    thesis.save
+    thesis.reload
+
+    # Get the attachment ID to mark for deletion
+    attachment_id = thesis.files_attachments.first.id
+    
+    # Simulate the race condition: Delete the attachment from the database
+    # (This could happen if another process deletes it between form open and submit)
+    ActiveStorage::Attachment.find(attachment_id).delete
+
+    # Attempt to update the thesis with the deleted attachment marked for deletion
+    # This previously would crash with "undefined method 'blob' for nil:NilClass"
+    patch "/thesis/#{thesis.id}/process",
+          params: {
+            thesis: {
+              title: thesis.title,
+              files_attachments_attributes: {
+                '0' => {
+                  id: attachment_id,
+                  _destroy: '1'
+                }
+              },
+              files_complete: false,
+              metadata_complete: false,
+              issues_found: false
+            }
+          }
+
+    # Verify the update succeeded (redirects to thesis_process_path with success message)
+    assert_response :redirect
+    assert_redirected_to thesis_process_path(thesis)
+    follow_redirect!
+    assert_select '.alert-banner.success', text: /changes.*have been saved/
+  end
+
+  # This regression test targets the narrow race window where:
+  # 1) the pre-update stale-row filter runs while the attachment still exists, and
+  # 2) the attachment disappears before nested attribute processing inside update.
+  #
+  # To force that sequence deterministically, we temporarily wrap Thesis#update.
+  # On the first update call for this thesis, the wrapper deletes the target
+  # attachment, then calls the original update implementation. That first call
+  # should raise ActiveRecord::RecordNotFound from nested attributes, which the
+  # controller rescues, prunes stale rows again, and retries once.
+  #
+  # Assertions that prove retry-path behavior:
+  # - deleted_during_first_update is true (deletion happened in the race window)
+  # - update_calls == 2 (first call failed, second call succeeded)
+  # - request still redirects with success flash
+  test 'process_thesis_update retries when attachment disappears between stale check and update' do
+    sign_in users(:processor)
+
+    transfer = transfers(:valid)
+    thesis = theses(:publication_review_except_hold)
+    attach_files_to_records(transfer, thesis)
+
+    attachment_id = thesis.files_attachments.first.id
+    thesis_id = thesis.id
+    update_calls = 0
+    deleted_during_first_update = false
+
+    Thesis.class_eval do
+      alias_method :__original_update_for_attachment_race_test, :update
+      define_method(:update) do |*args|
+        if id == thesis_id
+          update_calls += 1
+
+          if update_calls == 1
+            ActiveStorage::Attachment.find_by(id: attachment_id)&.delete
+            deleted_during_first_update = true
+          end
+        end
+
+        __original_update_for_attachment_race_test(*args)
+      end
+    end
+
+    begin
+      patch thesis_process_update_path(thesis),
+            params: {
+              thesis: {
+                title: thesis.title,
+                files_attachments_attributes: {
+                  '0' => {
+                    id: attachment_id,
+                    _destroy: '1'
+                  }
+                },
+                files_complete: false,
+                metadata_complete: false,
+                issues_found: false
+              }
+            }
+    ensure
+      Thesis.class_eval do
+        alias_method :update, :__original_update_for_attachment_race_test
+        remove_method :__original_update_for_attachment_race_test
+      end
+    end
+
+    assert deleted_during_first_update
+    assert_equal 2, update_calls
+    assert_response :redirect
+    assert_redirected_to thesis_process_path(thesis)
+    follow_redirect!
+    assert_select '.alert-banner.success', text: /changes.*have been saved/
+  end
+
+  test 'process_thesis_update handles attachment deleted after stale-row check and before deleted_file_list' do
+    sign_in users(:processor)
+
+    transfer = transfers(:valid)
+    thesis = theses(:publication_review_except_hold)
+    attach_files_to_records(transfer, thesis)
+
+    attachment_id = thesis.files_attachments.first.id
+    deleted_after_stale_check = false
+
+    ThesisController.class_eval do
+      alias_method :__original_drop_stale_rows_for_nil_attachment_test, :drop_stale_deleted_attachment_rows!
+      define_method(:drop_stale_deleted_attachment_rows!) do
+        __original_drop_stale_rows_for_nil_attachment_test
+        ActiveStorage::Attachment.find_by(id: attachment_id)&.delete
+        deleted_after_stale_check = true
+      end
+    end
+
+    begin
+      patch thesis_process_update_path(thesis),
+            params: {
+              thesis: {
+                title: thesis.title,
+                files_attachments_attributes: {
+                  '0' => {
+                    id: attachment_id,
+                    _destroy: '1'
+                  }
+                },
+                files_complete: false,
+                metadata_complete: false,
+                issues_found: false
+              }
+            }
+    ensure
+      ThesisController.class_eval do
+        alias_method :drop_stale_deleted_attachment_rows!, :__original_drop_stale_rows_for_nil_attachment_test
+        remove_method :__original_drop_stale_rows_for_nil_attachment_test
+      end
+    end
+
+    assert deleted_after_stale_check
+    assert_response :redirect
+    assert_redirected_to thesis_process_path(thesis)
+    follow_redirect!
+    assert_select '.alert-banner.success', text: /changes.*have been saved/
+  end
 end
