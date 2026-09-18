@@ -1004,7 +1004,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis.reload
 
     # Get the attachment ID to mark for deletion
-    attachment_id = thesis.files.first.id
+    attachment_id = thesis.files_attachments.first.id
     
     # Simulate the race condition: Delete the attachment from the database
     # (This could happen if another process deletes it between form open and submit)
@@ -1056,7 +1056,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     thesis = theses(:publication_review_except_hold)
     attach_files_to_records(transfer, thesis)
 
-    attachment_id = thesis.files.first.id
+    attachment_id = thesis.files_attachments.first.id
     thesis_id = thesis.id
     update_calls = 0
     deleted_during_first_update = false
@@ -1103,7 +1103,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert deleted_during_first_update
     assert_equal 2, update_calls
     assert_response :redirect
-    assert_redirected_to thesis_process_path
+    assert_redirected_to thesis_process_path(thesis)
     follow_redirect!
     assert_select '.alert-banner.success', text: /changes.*have been saved/
   end
