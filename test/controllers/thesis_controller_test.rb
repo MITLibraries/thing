@@ -1034,4 +1034,77 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select '.alert-banner.success', text: /changes.*have been saved/
   end
+
+  # This regression test targets the narrow race window where:
+  # 1) the pre-update stale-row filter runs while the attachment still exists, and
+  # 2) the attachment disappears before nested attribute processing inside update.
+  #
+  # To force that sequence deterministically, we temporarily wrap Thesis#update.
+  # On the first update call for this thesis, the wrapper deletes the target
+  # attachment, then calls the original update implementation. That first call
+  # should raise ActiveRecord::RecordNotFound from nested attributes, which the
+  # controller rescues, prunes stale rows again, and retries once.
+  #
+  # Assertions that prove retry-path behavior:
+  # - deleted_during_first_update is true (deletion happened in the race window)
+  # - update_calls == 2 (first call failed, second call succeeded)
+  # - request still redirects with success flash
+  test 'process_thesis_update retries when attachment disappears between stale check and update' do
+    sign_in users(:processor)
+
+    transfer = transfers(:valid)
+    thesis = theses(:publication_review_except_hold)
+    attach_files_to_records(transfer, thesis)
+
+    attachment_id = thesis.files.first.id
+    thesis_id = thesis.id
+    update_calls = 0
+    deleted_during_first_update = false
+
+    Thesis.class_eval do
+      alias_method :__original_update_for_attachment_race_test, :update
+      define_method(:update) do |*args|
+        if id == thesis_id
+          update_calls += 1
+
+          if update_calls == 1
+            ActiveStorage::Attachment.find_by(id: attachment_id)&.delete
+            deleted_during_first_update = true
+          end
+        end
+
+        __original_update_for_attachment_race_test(*args)
+      end
+    end
+
+    begin
+      patch thesis_process_update_path(thesis),
+            params: {
+              thesis: {
+                title: thesis.title,
+                files_attachments_attributes: {
+                  '0' => {
+                    id: attachment_id,
+                    _destroy: '1'
+                  }
+                },
+                files_complete: false,
+                metadata_complete: false,
+                issues_found: false
+              }
+            }
+    ensure
+      Thesis.class_eval do
+        alias_method :update, :__original_update_for_attachment_race_test
+        remove_method :__original_update_for_attachment_race_test
+      end
+    end
+
+    assert deleted_during_first_update
+    assert_equal 2, update_calls
+    assert_response :redirect
+    assert_redirected_to thesis_process_path
+    follow_redirect!
+    assert_select '.alert-banner.success', text: /changes.*have been saved/
+  end
 end
