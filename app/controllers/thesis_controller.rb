@@ -120,20 +120,25 @@ class ThesisController < ApplicationController
   def process_thesis_update
     thesis = Thesis.find(params[:id])
 
-    # A file may be deleted after the form loads. Drop stale delete rows to avoid RecordNotFound.
-    if params[:thesis]&.[](:files_attachments_attributes)
-      params[:thesis][:files_attachments_attributes].delete_if do |_k, attrs|
-        marked_for_delete = attrs['_destroy'] == '1'
-        attachment_id = attrs['id']
-        missing_attachment = attachment_id.present? && !ActiveStorage::Attachment.exists?(attachment_id)
-
-        marked_for_delete && missing_attachment
-      end
-    end
+    # A file may be deleted after the form loads. Drop stale delete rows before update.
+    drop_stale_deleted_attachment_rows!
 
     removed = deleted_file_list
     params[:thesis][:files_complete] = false if removed.count.positive?
-    if thesis.update(thesis_params)
+    updated = false
+    retried_for_missing_attachment = false
+
+    begin
+      updated = thesis.update(thesis_params)
+    rescue ActiveRecord::RecordNotFound => e
+      raise unless missing_deleted_attachment_race?(e) && !retried_for_missing_attachment
+
+      retried_for_missing_attachment = true
+      drop_stale_deleted_attachment_rows!
+      retry
+    end
+
+    if updated
       flash[:success] = "<p>Your changes to '#{thesis.title}' have been saved.</p>".html_safe
       if removed.count.positive?
         flash[:success] += '<p>The following files were removed from this thesis. They can still be found attached to their original transfer, via the following links:</p><ul>'.html_safe
@@ -200,6 +205,23 @@ class ThesisController < ApplicationController
                   })
     end
     list
+  end
+
+  def drop_stale_deleted_attachment_rows!
+    return unless params[:thesis]&.[](:files_attachments_attributes)
+
+    params[:thesis][:files_attachments_attributes].delete_if do |_k, attrs|
+      marked_for_delete = attrs['_destroy'] == '1'
+      attachment_id = attrs['id']
+      missing_attachment = attachment_id.present? && !ActiveStorage::Attachment.exists?(attachment_id)
+
+      marked_for_delete && missing_attachment
+    end
+  end
+
+  def missing_deleted_attachment_race?(error)
+    params[:thesis]&.[](:files_attachments_attributes).present? &&
+      error.message.include?('ActiveStorage::Attachment')
   end
 
   def publication_candidates
