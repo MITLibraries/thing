@@ -1107,4 +1107,53 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select '.alert-banner.success', text: /changes.*have been saved/
   end
+
+  test 'process_thesis_update handles attachment deleted after stale-row check and before deleted_file_list' do
+    sign_in users(:processor)
+
+    transfer = transfers(:valid)
+    thesis = theses(:publication_review_except_hold)
+    attach_files_to_records(transfer, thesis)
+
+    attachment_id = thesis.files_attachments.first.id
+    deleted_after_stale_check = false
+
+    ThesisController.class_eval do
+      alias_method :__original_drop_stale_rows_for_nil_attachment_test, :drop_stale_deleted_attachment_rows!
+      define_method(:drop_stale_deleted_attachment_rows!) do
+        __original_drop_stale_rows_for_nil_attachment_test
+        ActiveStorage::Attachment.find_by(id: attachment_id)&.delete
+        deleted_after_stale_check = true
+      end
+    end
+
+    begin
+      patch thesis_process_update_path(thesis),
+            params: {
+              thesis: {
+                title: thesis.title,
+                files_attachments_attributes: {
+                  '0' => {
+                    id: attachment_id,
+                    _destroy: '1'
+                  }
+                },
+                files_complete: false,
+                metadata_complete: false,
+                issues_found: false
+              }
+            }
+    ensure
+      ThesisController.class_eval do
+        alias_method :drop_stale_deleted_attachment_rows!, :__original_drop_stale_rows_for_nil_attachment_test
+        remove_method :__original_drop_stale_rows_for_nil_attachment_test
+      end
+    end
+
+    assert deleted_after_stale_check
+    assert_response :redirect
+    assert_redirected_to thesis_process_path(thesis)
+    follow_redirect!
+    assert_select '.alert-banner.success', text: /changes.*have been saved/
+  end
 end
