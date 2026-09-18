@@ -993,4 +993,45 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     error_count = Thesis.where(publication_status: 'Publication error').count
     assert error_count == 0
   end
+
+  # ~~~~~~~~~~~~~~~~~~~~~ process_thesis_update race condition regression ~~~~~~~~~~~~~~~~~~~~~
+  test 'process_thesis_update handles gracefully when an attachment marked for deletion no longer exists' do
+    sign_in users(:processor)
+    thesis = theses(:one)
+    f1 = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    thesis.files.attach(io: File.open(f1), filename: 'a_pdf.pdf')
+    thesis.save
+    thesis.reload
+
+    # Get the attachment ID to mark for deletion
+    attachment_id = thesis.files.first.id
+    
+    # Simulate the race condition: Delete the attachment from the database
+    # (This could happen if another process deletes it between form open and submit)
+    ActiveStorage::Attachment.find(attachment_id).delete
+
+    # Attempt to update the thesis with the deleted attachment marked for deletion
+    # This previously would crash with "undefined method 'blob' for nil:NilClass"
+    patch "/thesis/#{thesis.id}/process",
+          params: {
+            thesis: {
+              title: thesis.title,
+              files_attachments_attributes: {
+                '0' => {
+                  id: attachment_id,
+                  _destroy: '1'
+                }
+              },
+              files_complete: false,
+              metadata_complete: false,
+              issues_found: false
+            }
+          }
+
+    # Verify the update succeeded (redirects to thesis_process_path with success message)
+    assert_response :redirect
+    assert_redirected_to thesis_process_path
+    follow_redirect!
+    assert_select '.alert-banner.success', text: /changes.*have been saved/
+  end
 end

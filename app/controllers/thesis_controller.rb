@@ -119,6 +119,18 @@ class ThesisController < ApplicationController
 
   def process_thesis_update
     thesis = Thesis.find(params[:id])
+
+    # A file may be deleted after the form loads. Drop stale delete rows to avoid RecordNotFound.
+    if params[:thesis]&.[](:files_attachments_attributes)
+      params[:thesis][:files_attachments_attributes].delete_if do |_k, attrs|
+        marked_for_delete = attrs['_destroy'] == '1'
+        attachment_id = attrs['id']
+        missing_attachment = attachment_id.present? && !ActiveStorage::Attachment.exists?(attachment_id)
+
+        marked_for_delete && missing_attachment
+      end
+    end
+
     removed = deleted_file_list
     params[:thesis][:files_complete] = false if removed.count.positive?
     if thesis.update(thesis_params)
