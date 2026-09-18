@@ -1030,7 +1030,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
     # Verify the update succeeded (redirects to thesis_process_path with success message)
     assert_response :redirect
-    assert_redirected_to thesis_process_path
+    assert_redirected_to thesis_process_path(thesis)
     follow_redirect!
     assert_select '.alert-banner.success', text: /changes.*have been saved/
   end
