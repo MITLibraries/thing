@@ -87,14 +87,14 @@ postgres config.
 
 ## Environment variables
 
-`DISABLE_LOGRAGE` - set this in to disable lograge single line logging config
-and use rails standard verbose logging.
-
 `JS_EXCEPTION_LOGGER_KEY` - set this to the value of the exception monitor
 public post key to enable capturing javascript exceptions.
 
-`LOG_LEVEL` - we set sane defaults in development or production, but you can
+`RAILS_LOG_LEVEL` - we set sane defaults in development or production, but you can
 override easily with this ENV if you need to get more details.
+
+`RAILS_APP_NAME` - overrides the application name used by semantic logger in
+structured log output.
 
 `MAINTENANCE_MODE` - this toggles a [Flipflop feature](https://github.com/voormedia/flipflop) that disables thesis
 transfers and informs transfer submitters that the application is under maintenance.
@@ -106,9 +106,6 @@ transfers and informs transfer submitters that the application is under maintena
 requests that come to the app will redirect to the root of this domain. This is
 useful to prevent access to herokuapp.com domains as well as any legacy domains
 you'd like to handle.
-
-`RAILS_LOG_TO_STDOUT` - log to standard out instead of a file. Heroku enables
-this automatically. It is often nice in development as well.
 
 `SENTRY_DSN` - set to your project sentry key to enable exception logging
 `SENTRY_ENV` - Sentry environment for the application. Defaults to 'unknown' if unset.
