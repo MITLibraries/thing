@@ -20,7 +20,6 @@ gem 'flipflop'
 gem 'jquery-rails'
 gem 'json'
 gem 'kaminari'
-gem 'lograge'
 gem 'marc'
 gem 'mitlibraries-theme', git: 'https://github.com/mitlibraries/mitlibraries-theme', tag: 'v1.5'
 gem 'net-imap', require: false
@@ -31,6 +30,8 @@ gem 'omniauth-saml'
 gem 'paper_trail'
 gem 'puma'
 gem 'rails', '~> 8.1.0'
+gem 'rails_cloudflare_turnstile'
+gem 'rails_semantic_logger'
 gem 'rubyzip'
 gem 'sass-rails'
 gem 'sentry-rails'
@@ -55,6 +56,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'amazing_print'
   gem 'annotaterb'
   gem 'dotenv-rails'
   gem 'letter_opener'
