@@ -92,9 +92,9 @@ public post key to enable capturing javascript exceptions.
 
 `RAILS_LOG_LEVEL` - we set sane defaults in development or production, but you can
 override easily with this ENV if you need to get more details.
-
 `RAILS_APP_NAME` - overrides the application name used by semantic logger in
 structured log output.
+`SEMANTIC_LOGGER_MULTILINE` - enables multiline semantic logger output in staging.
 
 `MAINTENANCE_MODE` - this toggles a [Flipflop feature](https://github.com/voormedia/flipflop) that disables thesis
 transfers and informs transfer submitters that the application is under maintenance.

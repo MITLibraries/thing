@@ -89,9 +89,10 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "debug")
 
   # Configure Rails Semantic Logger
+  multiline = ENV.fetch("SEMANTIC_LOGGER_MULTILINE", "true").downcase == "true"
   config.rails_semantic_logger.appenders do |appenders|
     # appenders.add(file_name: "log/#{Rails.env}.log", formatter: :color) # uncomment to log to file
-    appenders.add(io: $stdout, formatter: :color)
+    appenders.add(io: $stdout, formatter: { color: { ap: { multiline: multiline }}})
   end
 
   # Annotate rendered view with file names.

@@ -175,12 +175,6 @@ GEM
     erb (6.0.7)
     erubi (1.13.1)
     execjs (2.10.1)
-    faraday (2.14.4)
-      faraday-net_http (>= 2.0, < 3.5)
-      json
-      logger
-    faraday-net_http (3.4.4)
-      net-http (~> 0.5)
     ffi (1.17.3)
     flipflop (2.8.0)
       activesupport (>= 4.0)
@@ -252,8 +246,6 @@ GEM
       minitest (>= 5.0, < 7)
       ruby-progressbar
     msgpack (1.8.4)
-    net-http (0.9.1)
-      uri (>= 0.11.1)
     net-imap (0.6.6)
       date
       net-protocol
@@ -330,9 +322,6 @@ GEM
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     rails-mermaid_erd (0.8.0)
       rails (>= 5.2)
-    rails_cloudflare_turnstile (0.5.1)
-      faraday (>= 1.0, < 3.0)
-      rails (>= 6.0, < 8.2)
     rails_semantic_logger (5.2.0)
       rack
       railties (>= 7.2)
@@ -518,7 +507,6 @@ DEPENDENCIES
   puma
   rails (~> 8.1.0)
   rails-mermaid_erd
-  rails_cloudflare_turnstile
   rails_semantic_logger
   rubocop
   rubocop-rails
