@@ -91,6 +91,7 @@ GEM
       actionview (>= 6.0, < 9.0)
       activerecord (>= 6.0, < 9.0)
       kaminari (~> 1.2.2)
+    amazing_print (3.0.0)
     annotaterb (4.24.0)
       activerecord (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -222,11 +223,6 @@ GEM
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     logger (1.7.0)
-    lograge (0.15.0)
-      actionpack (>= 4)
-      activesupport (>= 4)
-      railties (>= 4)
-      request_store (~> 1.0)
     loofah (2.25.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -326,6 +322,10 @@ GEM
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     rails-mermaid_erd (0.8.0)
       rails (>= 5.2)
+    rails_semantic_logger (5.2.0)
+      rack
+      railties (>= 7.2)
+      semantic_logger (>= 5.1)
     railties (8.1.3.1)
       actionpack (= 8.1.3.1)
       activesupport (= 8.1.3.1)
@@ -402,6 +402,8 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
+    semantic_logger (5.1.0)
+      concurrent-ruby (~> 1.0)
     sentry-rails (6.7.0)
       railties (>= 5.2.0)
       sentry-ruby (~> 6.7.0)
@@ -468,6 +470,7 @@ PLATFORMS
 
 DEPENDENCIES
   administrate (~> 1.0.0)
+  amazing_print
   annotaterb
   aws-sdk-rails
   aws-sdk-s3
@@ -490,7 +493,6 @@ DEPENDENCIES
   kaminari
   letter_opener
   listen
-  lograge
   marc
   minitest (< 6)
   minitest-reporters
@@ -505,6 +507,7 @@ DEPENDENCIES
   puma
   rails (~> 8.1.0)
   rails-mermaid_erd
+  rails_semantic_logger
   rubocop
   rubocop-rails
   rubyzip

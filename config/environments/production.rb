@@ -36,14 +36,17 @@ Rails.application.configure do
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
-  # Log to STDOUT by default
-  config.log_tags = [ :request_id ]
-  config.logger = ActiveSupport::Logger.new(STDOUT)
-    .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
-    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+  # Include request ID as a structured field.
+  config.log_tags = { request_id: :request_id }
 
   # Change to "debug" to log everything (including potentially personally-identifiable information!).
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
+
+  # Configure Rails Semantic Logger to log to STDOUT in JSON format
+  SemanticLogger.application = ENV.fetch("RAILS_APP_NAME", "thing")
+  config.rails_semantic_logger.appenders do |appenders|
+    appenders.add(io: $stdout, formatter: :json)
+  end
 
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"

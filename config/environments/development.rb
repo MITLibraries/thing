@@ -86,16 +86,13 @@ Rails.application.configure do
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
-  # allow configurable log levels, default to debug
-  config.log_level = ENV['LOG_LEVEL'] || :debug
+  config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "debug")
 
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
-
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
+  # Configure Rails Semantic Logger
+  multiline = ENV.fetch("SEMANTIC_LOGGER_MULTILINE", "true").downcase == "true"
+  config.rails_semantic_logger.appenders do |appenders|
+    # appenders.add(file_name: "log/#{Rails.env}.log", formatter: :color) # uncomment to log to file
+    appenders.add(io: $stdout, formatter: { color: { ap: { multiline: multiline }}})
   end
 
   # Annotate rendered view with file names.
