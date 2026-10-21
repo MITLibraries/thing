@@ -625,7 +625,7 @@ class ThesisTest < ActiveSupport::TestCase
     assert_equal 'Publication review', thesis.publication_status
   end
 
-  test 'checks normalized filenames of pending uploads before publication readiness' do
+  test 'checks pending uploads with dash variants before publication readiness' do
     thesis = theses(:publication_review)
     thesis.save!
     assert_equal 'Publication review', thesis.reload.publication_status
@@ -642,6 +642,48 @@ class ThesisTest < ActiveSupport::TestCase
     end
 
     assert_equal(['same-name.pdf', 'same-name.pdf'], thesis.reload.files.map { |attachment| attachment.filename.to_s })
+    assert_not thesis.unique_filenames?(thesis)
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'checks pending uploads with exposed trailing whitespace before publication readiness' do
+    thesis = theses(:publication_review)
+    thesis.save!
+    assert_equal 'Publication review', thesis.reload.publication_status
+
+    thesis.files.first.blob.update!(filename: 'same.pdf')
+    thesis.title = 'Thesis with pending supplementary upload'
+    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    File.open(file) do |upload|
+      thesis.files.attach(io: upload, filename: "same.pdf \u200B")
+      thesis.files.last.purpose = 'thesis_supplementary_file'
+      assert thesis.files.last.blob.new_record?
+      assert_not thesis.unique_filenames?(thesis)
+      thesis.save!
+    end
+
+    assert_equal(['same.pdf', 'same.pdf'], thesis.reload.files.map { |attachment| attachment.filename.to_s })
+    assert_not thesis.unique_filenames?(thesis)
+    assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'checks pending uploads with directional marks before publication readiness' do
+    thesis = theses(:publication_review)
+    thesis.save!
+    assert_equal 'Publication review', thesis.reload.publication_status
+
+    thesis.files.first.blob.update!(filename: 'same.pdf')
+    thesis.title = 'Thesis with pending supplementary upload'
+    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    File.open(file) do |upload|
+      thesis.files.attach(io: upload, filename: "sa\u202Eme.pdf")
+      thesis.files.last.purpose = 'thesis_supplementary_file'
+      assert thesis.files.last.blob.new_record?
+      assert_not thesis.unique_filenames?(thesis)
+      thesis.save!
+    end
+
+    assert_equal(['same.pdf', 'same.pdf'], thesis.reload.files.map { |attachment| attachment.filename.to_s })
     assert_not thesis.unique_filenames?(thesis)
     assert_equal 'Not ready for publication', thesis.publication_status
   end

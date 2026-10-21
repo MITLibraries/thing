@@ -7,6 +7,10 @@
 # all dash variants, directional diacritics).
 
 class FilenameNormalizer
+  def self.comparison_key(filename)
+    ActiveStorage::Filename.new(sanitize_filename(filename.to_s)).to_s
+  end
+
   def self.sanitize_filename(filename)
     # Remove zero-width spaces and directional marks
     normalized = filename.gsub(/[\u200B\u200C\u200D\u200E\u200F\u202A-\u202E]/, '')

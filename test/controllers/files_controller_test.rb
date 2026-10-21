@@ -93,6 +93,21 @@ class FilesControllerTest < ActionDispatch::IntegrationTest
     assert_equal original_filename, attachment.blob.reload.filename.to_s
   end
 
+  test 'renaming rejects duplicates after Active Storage strips exposed trailing whitespace' do
+    sign_in users(:thesis_admin)
+    thesis = theses(:rename_attachment_tests)
+    attachment = thesis.files.first
+    original_filename = attachment.filename.to_s
+    thesis.files.last.blob.update!(filename: 'same.pdf')
+
+    post rename_file_path(thesis, attachment),
+         params: { attachment: { filename: "same.pdf \u200B" } }
+
+    assert_redirected_to thesis_process_path(thesis)
+    assert_equal 'The updated filename is identical to another filename attached to this thesis.', flash[:error]
+    assert_equal original_filename, attachment.blob.reload.filename.to_s
+  end
+
   test 'renaming checks names normalized by earlier blob saves' do
     sign_in users(:thesis_admin)
     thesis = theses(:rename_attachment_tests)

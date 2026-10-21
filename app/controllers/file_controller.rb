@@ -35,12 +35,12 @@ class FileController < ApplicationController
 
   def attachment_names_except_current
     @thesis.files.filter_map do |file|
-      FilenameNormalizer.sanitize_filename(file.filename.to_s) if file != @attachment
+      FilenameNormalizer.comparison_key(file.blob[:filename]) if file != @attachment
     end
   end
 
   def normalized_filename
-    FilenameNormalizer.sanitize_filename(params[:attachment][:filename].to_s)
+    FilenameNormalizer.comparison_key(params[:attachment][:filename])
   end
 
   def rename_attachment
