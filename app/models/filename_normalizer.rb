@@ -8,11 +8,11 @@
 
 class FilenameNormalizer
   def self.sanitize_filename(filename)
-    # Change decomposed accented characters to precomposed
-    normalized = filename.unicode_normalize(:nfc)
-
     # Remove zero-width spaces and directional marks
-    normalized = normalized.gsub(/[\u200B\u200C\u200D\u200E\u200F\u202A-\u202E]/, '')
+    normalized = filename.gsub(/[\u200B\u200C\u200D\u200E\u200F\u202A-\u202E]/, '')
+
+    # Change decomposed accented characters to precomposed
+    normalized = normalized.unicode_normalize(:nfc)
 
     # Convert dash variants to normal hyphens
     normalized.gsub(/[\u2010-\u2015]/, '-')

@@ -7,6 +7,12 @@ class FilenameNormalizerTest < ActiveSupport::TestCase
     assert_equal "sald\u00EDas_thesis.pdf", FilenameNormalizer.sanitize_filename(decomposed_filename)
   end
 
+  test 'composes accents separated by invisible characters' do
+    normalized = FilenameNormalizer.sanitize_filename("saldi\u200B\u0301as.pdf")
+
+    assert_equal "sald\u00EDas.pdf", normalized
+  end
+
   test 'removes zero-width spaces from filenames' do
     assert_equal 'Liang-thesis.pdf', FilenameNormalizer.sanitize_filename("Liang-thesis\u200B.pdf")
   end
