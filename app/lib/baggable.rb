@@ -13,7 +13,7 @@ module Baggable
   end
 
   def duplicate_filenames?(thesis)
-    filenames = thesis.files.map { |f| f.filename.to_s }
+    filenames = thesis.files.map { |file| FilenameNormalizer.comparison_key(file.blob[:filename]) }
     filenames.select { |f| filenames.count(f) > 1 }.uniq.any?
   end
 end

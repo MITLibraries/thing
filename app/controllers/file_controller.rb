@@ -28,13 +28,19 @@ class FileController < ApplicationController
 
   def new_duplicate?
     return false if @thesis.files.count == 1
-    return true if attachment_names_except_current.include?(params[:attachment][:filename])
+    return true if attachment_names_except_current.include?(normalized_filename)
 
     false
   end
 
   def attachment_names_except_current
-    @thesis.files.map { |x| x.filename if x != @attachment }.compact
+    @thesis.files.filter_map do |file|
+      FilenameNormalizer.comparison_key(file.blob[:filename]) if file != @attachment
+    end
+  end
+
+  def normalized_filename
+    FilenameNormalizer.comparison_key(params[:attachment][:filename])
   end
 
   def rename_attachment
@@ -57,7 +63,7 @@ class FileController < ApplicationController
   end
 
   def error_duplicate_name_message
-    flash[:error] = 'The new name you chose is the same as an existing name of a file attached to this thesis.'
+    flash[:error] = 'The updated filename is identical to another filename attached to this thesis.'
   end
 
   def success_message

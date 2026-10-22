@@ -50,10 +50,12 @@ class SqsMessageTest < ActiveSupport::TestCase
     @thesis.save
     @thesis.reload
     assert_equal 5, @thesis.files.length
-    assert_equal ['thesis_pdf', 'proquest_form', 'signature_page', 'thesis_source', 'thesis_supplementary_file'], @thesis.files.map{|f| f.purpose}
+    assert_equal(%w[thesis_pdf proquest_form signature_page thesis_source thesis_supplementary_file], @thesis.files.map do |f|
+      f.purpose
+    end)
     files = SqsMessage.new(@thesis).map_files
     assert_equal 2, files.length
-    assert_equal ['Thesis PDF My thesis', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
+    assert_equal(['Thesis PDF My thesis', 'Supplementary file'], files.map { |f| f['BitstreamDescription'] })
   end
 
   test 'thesis_pdf are attached before supplementary files' do
@@ -67,10 +69,14 @@ class SqsMessageTest < ActiveSupport::TestCase
     @thesis.files.last.purpose = 'thesis_supplementary_file'
     @thesis.save
     @thesis.reload
-    assert_equal ['thesis_supplementary_file', 'thesis_pdf', 'thesis_supplementary_file'], @thesis.files.map{|f| f.purpose}
+    assert_equal(%w[thesis_supplementary_file thesis_pdf thesis_supplementary_file], @thesis.files.map do |f|
+      f.purpose
+    end)
     files = SqsMessage.new(@thesis).map_files
-    assert_equal ['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
-    assert_equal ['thesis_pdf.pdf', 'supplemental_file.pdf', 'flexible_pdf.pdf'], files.map{ |f| f['BitstreamName'] }
+    assert_equal(['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map do |f|
+      f['BitstreamDescription']
+    end)
+    assert_equal(['thesis_pdf.pdf', 'supplemental_file.pdf', 'flexible_pdf.pdf'], files.map { |f| f['BitstreamName'] })
     # Swapping file purposes will result in the same set of files being sorted into a different order. This is meant to
     # demonstrate confidence that alphabetical order is not part of the logic being used - the thesis pdf comes first,
     # followed by supplemental files in the order they were attached.
@@ -80,8 +86,10 @@ class SqsMessageTest < ActiveSupport::TestCase
     @thesis.files.last.purpose = 'thesis_pdf' # last-attached "flexible_pdf" should now be sorted first
     @thesis.files.second.purpose = 'thesis_supplementary_file' # second-attached "thesis_pdf" should now be sorted last
     files = SqsMessage.new(@thesis).map_files
-    assert_equal ['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map{|f| f['BitstreamDescription']}
-    assert_equal ['flexible_pdf.pdf', 'supplemental_file.pdf', 'thesis_pdf.pdf'], files.map{ |f| f['BitstreamName'] }
+    assert_equal(['Thesis PDF', 'Supplementary file', 'Supplementary file'], files.map do |f|
+      f['BitstreamDescription']
+    end)
+    assert_equal(['flexible_pdf.pdf', 'supplemental_file.pdf', 'thesis_pdf.pdf'], files.map { |f| f['BitstreamName'] })
   end
 
   test 'returns correct bitstream description' do

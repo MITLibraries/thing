@@ -141,6 +141,18 @@ class TransferTest < ActiveSupport::TestCase
     assert @transfer.valid?
   end
 
+  test 'normalizes filenames when creating a transfer' do
+    transfer = Transfer.new(user: @transfer.user, department: @transfer.department,
+                            graduation_year: '2024', graduation_month: 'May')
+    file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
+    File.open(file) do |upload|
+      transfer.files.attach(io: upload, filename: "transfer\u200B.pdf")
+      transfer.save!
+    end
+
+    assert_equal 'transfer.pdf', transfer.reload.files.first.blob.reload.filename.to_s
+  end
+
   test 'at least one file must be attached' do
     @transfer.files.detach
     assert @transfer.invalid?
