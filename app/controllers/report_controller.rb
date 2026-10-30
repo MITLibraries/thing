@@ -88,7 +88,10 @@ class ReportController < ApplicationController
     @list = filter_holds_by_source term_filtered
   end
 
-  def index; end
+  def index
+    @terms = Thesis.distinct.order(grad_date: :desc).limit(4).pluck(:grad_date).reverse
+    @data = Report.new.index_data(@terms)
+  end
 
   def term
     term = params[:graduation] ? params[:graduation].to_s : 'all'

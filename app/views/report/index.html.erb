@@ -4,18 +4,31 @@
   <div class="col3q">
     <h3 class="title title-page">Report dashboard</h3>
 
-    <h4>Available reports</h4>
-    <ul>
-      <li><%= link_to("Thesis authors without confirmed graduation", report_authors_not_graduated_path) %></li>
-      <li><%= link_to("Theses without files", report_empty_theses_path) %></li>
-      <li><%= link_to("Unreleased holds which have ended", report_expired_holds_path) %></li>
-      <li><%= link_to("Files without purpose", report_files_path) %></li>
-      <li><%= link_to("Holds by source", report_holds_by_source_path) %></li>
-      <li><%= link_to("ProQuest forms", report_proquest_files_path) %></li>
-      <li><%= link_to("ProQuest opt-in status", report_proquest_status_path) %></li>
-      <li><%= link_to("Theses submitted by students", report_student_submitted_theses_path) %></li>
-      <li><%= link_to("Thesis information by term", report_term_path) %></li>
-    </ul>
+    <%= render 'shared/whodunnit_accuracy_statement' %>
+
+    <% @data.each do |table| %>
+      <table class="table table-simplified table-<%= table[0].gsub(" ", "-").downcase %>" style="margin-top: 4em;">
+        <caption class="hd-4"><%= table[0].gsub("-", " ").capitalize %></caption>
+        <thead>
+          <tr>
+            <td>&nbsp;</td>
+            <% @terms.each do |term| %>
+              <th scope="col"><%= link_to(term.in_time_zone('Eastern Time (US & Canada)').strftime('%b %Y'), report_term_path(graduation: term)) %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% table[1].each do |row| %>
+            <tr>
+              <th scope="row"><%= row[:label] %></th>
+              <% row[:data].each_value do |cell| %>
+                <td><%= cell %></td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   </div>
 
   <aside class="content-sup col1q-r">

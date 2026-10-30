@@ -4,7 +4,7 @@ class Report
   def card_empty_theses(collection)
     {
       'value' => collection.count,
-      'verb' => ['has', 'have'],
+      'verb' => %w[has have],
       'label' => 'no attached files'
     }
   end
@@ -13,7 +13,7 @@ class Report
     subset = collection.joins(:files_attachments)
     {
       'value' => subset.pluck(:id).uniq.count,
-      'verb' => ['has', 'have'],
+      'verb' => %w[has have],
       'label' => 'files attached',
       'note' => 'Only theses with a status of "Not ready for publication" and "Publication review" will be visible ' \
                 'in the processing queue.',
@@ -35,7 +35,7 @@ class Report
   def card_multiple_authors(collection)
     {
       'value' => collection.joins(:authors).group('theses.id').having('COUNT(authors.id) > 1').length,
-      'verb' => ['has', 'have'],
+      'verb' => %w[has have],
       'label' => 'multiple authors'
     }
   end
@@ -43,7 +43,7 @@ class Report
   def card_multiple_degrees(collection)
     {
       'value' => collection.joins(:degrees).group('theses.id').having('COUNT(degrees.id) > 1').length,
-      'verb' => ['has', 'have'],
+      'verb' => %w[has have],
       'label' => 'multiple degrees'
     }
   end
@@ -51,7 +51,7 @@ class Report
   def card_multiple_departments(collection)
     {
       'value' => collection.joins(:departments).group('theses.id').having('COUNT(departments.id) > 1').length,
-      'verb' => ['has', 'have'],
+      'verb' => %w[has have],
       'label' => 'multiple departments'
     }
   end
@@ -71,224 +71,132 @@ class Report
   def card_student_contributions(collection)
     {
       'value' => collection.map(&:student_contributed?).count(true),
-      'verb' => ['has', 'have'],
+      'verb' => %w[has have],
       'label' => 'had metadata contributed by students'
     }
   end
 
-  def data_category_copyright_holder
-    category = []
-    rows = populate_category(Copyright.pluck(:holder))
-    Thesis.all.joins(:copyright).group(:holder).group(:grad_date).count.each do |item|
-      rows[item[0][0]][item[0][1]] = item[1]
+  def data_category_copyright_holder(terms = nil)
+    dashboard_category_data(Copyright.pluck(:holder), terms) do |theses|
+      theses.joins(:copyright).group(:holder, :grad_date).count
     end
-    rows.each do |row|
-      category.push({
-                      label: row[0],
-                      data: pad_terms(row[1])
-                    })
-    end
-    category
   end
 
-  def data_category_department
-    category = []
-    rows = populate_category(Department.pluck(:name_dw))
-    Thesis.all.joins(:files_attachments).joins(:departments).group(:name_dw).group(:grad_date).distinct.count
-          .each do |item|
-      rows[item[0][0]][item[0][1]] = item[1]
+  def data_category_department(terms = nil)
+    dashboard_category_data(Department.pluck(:name_dw), terms) do |theses|
+      theses.joins(:files_attachments).joins(:departments).group(:name_dw, :grad_date).distinct.count
     end
-    rows.each do |row|
-      category.push({
-                      label: row[0],
-                      data: pad_terms(row[1])
-                    })
-    end
-    category
   end
 
-  def data_category_license
-    category = []
-    rows = populate_category(License.pluck(:display_description))
-    Thesis.all.joins(:license).group(:display_description).group(:grad_date).count.each do |item|
-      rows[item[0][0]][item[0][1]] = item[1]
+  def data_category_license(terms = nil)
+    dashboard_category_data(License.pluck(:display_description), terms) do |theses|
+      theses.joins(:license).group(:display_description, :grad_date).count
     end
-    rows.each do |row|
-      category.push({
-                      label: row[0],
-                      data: pad_terms(row[1])
-                    })
-    end
-    category
   end
 
-  def data_category_publication_status
-    category = []
-    rows = populate_category(Thesis.publication_statuses)
-    Thesis.all.group(:publication_status).group(:grad_date).count.each do |item|
-      rows[item[0][0]][item[0][1]] = item[1]
+  def data_category_publication_status(terms = nil)
+    dashboard_category_data(Thesis.publication_statuses, terms) do |theses|
+      theses.group(:publication_status, :grad_date).count
     end
-    rows.each do |row|
-      category.push({
-                      label: row[0],
-                      data: pad_terms(row[1])
-                    })
-    end
-    category
   end
 
-  def data_files_attached_to_theses
+  def data_files_attached_to_theses(terms = nil)
+    theses = Thesis.all
+    theses = theses.where(grad_date: terms) if terms
     {
       label: 'Files attached to theses',
-      data: pad_terms(Thesis.all.joins(:files_attachments).group(:grad_date).count)
+      data: pad_terms(theses.joins(:files_attachments).group(:grad_date).count, terms)
     }
   end
 
-  def data_issues
+  def data_issues(terms = nil)
+    theses = Thesis.all
+    theses = theses.where(grad_date: terms) if terms
     {
       label: 'Flagged with issues',
-      data: pad_terms(Thesis.all.group(:grad_date).where('issues_found = ?', true).count)
+      data: pad_terms(theses.where('issues_found = ?', true).group(:grad_date).count, terms)
     }
   end
 
-  def data_multiple_authors
-    row_data = {}
-    query = <<~SQL
-      SELECT t.grad_date, count(t.id) as pop
-      FROM (
-        SELECT theses.id, theses.grad_date, count(theses.id) as authors
-        FROM theses
-        INNER JOIN authors a on theses.id = a.thesis_id
-        GROUP BY theses.id
-        HAVING count(a.id) > 1
-      ) AS t
-      GROUP BY t.grad_date;
-    SQL
-    ActiveRecord::Base.connection.exec_query(query).each do |item|
-      row_data[Date.parse(item['grad_date'])] = item['pop']
-    end
+  def data_multiple_authors(terms = nil)
+    row_data = data_multiple_records(:authors, 'authors', terms)
     {
       label: 'Multiple authors',
-      data: pad_terms(row_data)
+      data: pad_terms(row_data, terms)
     }
   end
 
-  def data_multiple_degrees
-    row_data = {}
-    query = <<~SQL
-      SELECT t.grad_date, count(t.id) as pop
-      FROM (
-        SELECT theses.id, theses.grad_date, count(theses.id) as authors
-        FROM theses
-        INNER JOIN degree_theses link ON theses.id = link.thesis_id
-        INNER JOIN degrees d on link.degree_id = d.id
-        GROUP BY theses.id
-        HAVING count(d.id) > 1
-      ) AS t
-      GROUP BY t.grad_date;
-    SQL
-    ActiveRecord::Base.connection.exec_query(query).each do |item|
-      row_data[Date.parse(item['grad_date'])] = item['pop']
-    end
+  def data_multiple_degrees(terms = nil)
+    row_data = data_multiple_records(:degrees, 'degrees', terms)
     {
       label: 'Multiple degrees',
-      data: pad_terms(row_data)
+      data: pad_terms(row_data, terms)
     }
   end
 
-  def data_multiple_departments
-    row_data = {}
-    query = <<~SQL
-      SELECT t.grad_date, count(t.id) as pop
-      FROM (
-        SELECT theses.id, theses.grad_date, count(theses.id) as authors
-        FROM theses
-        INNER JOIN department_theses link ON theses.id = link.thesis_id
-        INNER JOIN departments d on link.department_id = d.id
-        GROUP BY theses.id
-        HAVING count(d.id) > 1
-      ) AS t
-      GROUP BY t.grad_date;
-    SQL
-    ActiveRecord::Base.connection.exec_query(query).each do |item|
-      row_data[Date.parse(item['grad_date'])] = item['pop']
-    end
+  def data_multiple_departments(terms = nil)
+    row_data = data_multiple_records(:departments, 'departments', terms)
     {
       label: 'Multiple departments',
-      data: pad_terms(row_data)
+      data: pad_terms(row_data, terms)
     }
   end
 
-  def data_student_contributions
-    row_data = {}
-    terms = Thesis.all.pluck(:grad_date).uniq.sort
-    terms.each do |term|
-      row_data[term] = Thesis.where('grad_date = ?', term).includes(:versions).map(&:student_contributed?).count(true)
-    end
+  def data_student_contributions(terms = nil)
+    terms ||= Thesis.distinct.order(:grad_date).pluck(:grad_date)
     {
       label: 'Students contributing',
-      data: pad_terms(row_data)
+      data: pad_terms(student_contribution_counts(terms), terms)
     }
   end
 
-  def data_authors_not_graduated
-    row_data = {}
-    terms = Thesis.all.pluck(:grad_date).uniq.sort
-    terms.each do |term|
-      row_data[term] =
-        Thesis.with_files.where('grad_date = ?', term).includes([:authors]).reject(&:authors_graduated?).uniq.count
-    end
+  def data_authors_not_graduated(terms = nil)
+    terms ||= Thesis.distinct.order(:grad_date).pluck(:grad_date)
+    confirmed = Author.where(graduation_confirmed: true).select(:thesis_id)
+    unconfirmed = Author.where(graduation_confirmed: false).select(:thesis_id)
+    theses = Thesis.where(grad_date: terms)
+    outstanding = theses.where(id: unconfirmed).or(theses.where.not(id: confirmed))
+    row_data = outstanding.with_files.group(:grad_date).count
     {
       label: 'Authors not graduated',
-      data: pad_terms(row_data)
+      data: pad_terms(row_data, terms)
     }
   end
 
-  def data_thesis_records
+  def data_thesis_records(terms = nil)
     {
       label: 'Thesis records',
-      data: pad_terms(Thesis.all.group(:grad_date).count)
+      data: pad_terms(dashboard_theses(terms).group(:grad_date).count, terms)
     }
   end
 
-  def data_theses_with_files
-    row_data = {}
-    query = <<~SQL
-      SELECT t.grad_date, count(distinct t.id) AS pop
-      FROM theses t
-      INNER JOIN active_storage_attachments a ON t.id = a.record_id
-      WHERE a.record_type = 'Thesis'
-      GROUP BY t.grad_date;
-    SQL
-    ActiveRecord::Base.connection.exec_query(query).each do |item|
-      row_data[Date.parse(item['grad_date'])] = item['pop']
-    end
+  def data_theses_with_files(terms = nil)
     {
       label: 'Theses with files',
-      data: pad_terms(row_data)
+      data: pad_terms(dashboard_theses(terms).joins(:files_attachments).group(:grad_date).distinct.count, terms)
     }
   end
 
-  def index_data
+  def index_data(terms = nil)
     output = {}
     output['summary'] = []
-    output['summary'].push data_thesis_records
-    output['summary'].push data_theses_with_files
-    output['summary'].push data_files_attached_to_theses
-    output['summary'].push data_issues
-    output['summary'].push data_student_contributions
-    output['summary'].push data_authors_not_graduated
-    output['summary'].push data_multiple_authors
-    output['summary'].push data_multiple_degrees
-    output['summary'].push data_multiple_departments
+    output['summary'].push data_thesis_records(terms)
+    output['summary'].push data_theses_with_files(terms)
+    output['summary'].push data_files_attached_to_theses(terms)
+    output['summary'].push data_issues(terms)
+    output['summary'].push data_student_contributions(terms)
+    output['summary'].push data_authors_not_graduated(terms)
+    output['summary'].push data_multiple_authors(terms)
+    output['summary'].push data_multiple_degrees(terms)
+    output['summary'].push data_multiple_departments(terms)
     output['publication-status'] = []
-    output['publication-status'].push(*data_category_publication_status)
+    output['publication-status'].push(*data_category_publication_status(terms))
     output['copyright'] = []
-    output['copyright'].push(*data_category_copyright_holder)
+    output['copyright'].push(*data_category_copyright_holder(terms))
     output['license'] = []
-    output['license'].push(*data_category_license)
+    output['license'].push(*data_category_license(terms))
     output['departments'] = []
-    output['departments'].push(*data_category_department)
+    output['departments'].push(*data_category_department(terms))
     output
   end
 
@@ -469,7 +377,7 @@ class Report
 
   private
 
-  def pad_terms(data)
+  def pad_terms(data, terms = nil)
     # Given a hash of data for a single row of the reporting table, this will compare the data to the set of all
     # terms, adding zero values where needed to the simple iterator in the view will place them accurately.
     # Sample input (missing some terms)
@@ -485,11 +393,40 @@ class Report
     #  Sun, 01 May 2022=>0,
     #  Thu, 01 Sep 2022=>2}
     output = {}
-    Thesis.pluck(:grad_date).uniq.sort.each do |term|
+    (terms || Thesis.pluck(:grad_date).uniq.sort).each do |term|
       output[term] = 0
       output[term] = data[term] if data.include? term
     end
     output
+  end
+
+  def dashboard_category_data(values, terms)
+    rows = populate_category(values)
+    yield(dashboard_theses(terms)).each do |(label, grad_date), count|
+      rows[label][grad_date] = count
+    end
+    rows.map do |label, data|
+      { label: label, data: pad_terms(data, terms) }
+    end
+  end
+
+  def dashboard_theses(terms)
+    terms ? Thesis.where(grad_date: terms) : Thesis.all
+  end
+
+  def student_contribution_counts(terms)
+    student_ids = User.where(role: 'basic', admin: [false, nil]).reorder(nil)
+                      .select('CAST(users.id AS TEXT)')
+    PaperTrail::Version.joins('INNER JOIN theses ON theses.id = versions.item_id')
+                       .where(item_type: 'Thesis', item_id: Thesis.where(grad_date: terms).select(:id),
+                              whodunnit: student_ids)
+                       .group('theses.grad_date').distinct.count('versions.item_id')
+  end
+
+  def data_multiple_records(association, table, terms)
+    theses = dashboard_theses(terms).joins(association)
+    multiple_ids = theses.group('theses.id').having("COUNT(#{table}.id) > 1").select(:id)
+    dashboard_theses(terms).where(id: multiple_ids).group(:grad_date).count
   end
 
   def populate_category(array)
