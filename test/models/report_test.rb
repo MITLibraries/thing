@@ -51,6 +51,34 @@ class ReportTest < ActiveSupport::TestCase
     assert_equal result['departments'][0][:data].values, [1, 2, 0, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0]
   end
 
+  test 'dashboard data is restricted to the requested degree periods' do
+    terms = Thesis.distinct.order(:grad_date).pluck(:grad_date).last(4)
+    result = Report.new.index_data(terms)
+
+    assert_equal terms, result['summary'][0][:data].keys
+    assert_equal terms, result['summary'][5][:data].keys
+    assert_equal terms, result['publication-status'][0][:data].keys
+    assert_equal terms, result['copyright'][0][:data].keys
+    assert_equal terms, result['license'][0][:data].keys
+    assert_equal terms, result['departments'][0][:data].keys
+  end
+
+  # The Oct 2026 refactor of the report summary seeks to minimize memory usage. This test confirms
+  # that we're making calculations in SQL rather than loading ActiveRecord objects into memory.
+  test 'dashboard summaries do not instantiate database records' do
+    terms = Thesis.distinct.order(:grad_date).pluck(:grad_date).last(4)
+    instantiated = 0
+    subscriber = lambda do |*arguments|
+      instantiated += arguments.last[:record_count]
+    end
+
+    ActiveSupport::Notifications.subscribed(subscriber, 'instantiation.active_record') do
+      Report.new.index_data(terms)
+    end
+
+    assert_equal 0, instantiated
+  end
+
   test 'index includes summary data of authors not graduated' do
     thesis = theses(:bachelor)
     another_thesis = theses(:published)
