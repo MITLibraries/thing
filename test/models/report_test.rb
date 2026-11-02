@@ -79,6 +79,72 @@ class ReportTest < ActiveSupport::TestCase
     assert_equal 0, instantiated
   end
 
+  test 'student contributions count theses separately for each requested period' do
+    first_thesis = theses(:one)
+    second_thesis = theses(:two)
+    later_thesis = theses(:active)
+    first_thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+    second_thesis.versions.create!(event: 'update', whodunnit: users(:second).id.to_s)
+    later_thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+
+    result = Report.new.data_student_contributions([first_thesis.grad_date, later_thesis.grad_date])
+
+    assert_equal({ first_thesis.grad_date => 2, later_thesis.grad_date => 1 }, result[:data])
+  end
+
+  test 'student contributions count repeated edits to a thesis only once' do
+    thesis = theses(:one)
+    thesis.versions.create!(event: 'create', whodunnit: users(:basic).id.to_s)
+    thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+    thesis.versions.create!(event: 'update', whodunnit: users(:second).id.to_s)
+
+    result = Report.new.data_student_contributions([thesis.grad_date])
+
+    assert_equal({ thesis.grad_date => 1 }, result[:data])
+  end
+
+  test 'student contributions exclude staff edits' do
+    thesis = theses(:one)
+    thesis.versions.create!(event: 'update', whodunnit: users(:processor).id.to_s)
+    thesis.versions.create!(event: 'update', whodunnit: users(:thesis_admin).id.to_s)
+
+    result = Report.new.data_student_contributions([thesis.grad_date])
+
+    assert_equal({ thesis.grad_date => 0 }, result[:data])
+  end
+
+  test 'student contributions exclude admin edits even with a basic role' do
+    thesis = theses(:one)
+    admin = users(:admin)
+    assert_equal 'basic', admin.role
+    thesis.versions.create!(event: 'update', whodunnit: admin.id.to_s)
+
+    result = Report.new.data_student_contributions([thesis.grad_date])
+
+    assert_equal({ thesis.grad_date => 0 }, result[:data])
+  end
+
+  test 'student contributions exclude registrar edits' do
+    thesis = theses(:one)
+    thesis.versions.create!(event: 'create', whodunnit: 'registrar')
+
+    result = Report.new.data_student_contributions([thesis.grad_date])
+
+    assert_equal({ thesis.grad_date => 0 }, result[:data])
+  end
+
+  test 'student contributions exclude theses outside the requested periods' do
+    included_thesis = theses(:active)
+    excluded_thesis = theses(:one)
+    included_thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+    excluded_thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+    assert_not_equal included_thesis.grad_date, excluded_thesis.grad_date
+
+    result = Report.new.data_student_contributions([included_thesis.grad_date])
+
+    assert_equal({ included_thesis.grad_date => 1 }, result[:data])
+  end
+
   test 'index includes summary data of authors not graduated' do
     thesis = theses(:bachelor)
     another_thesis = theses(:published)
