@@ -51,6 +51,100 @@ class ReportTest < ActiveSupport::TestCase
     assert_equal result['departments'][0][:data].values, [1, 2, 0, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0]
   end
 
+  test 'dashboard data is restricted to the requested degree periods' do
+    terms = Thesis.distinct.order(:grad_date).pluck(:grad_date).last(4)
+    result = Report.new.index_data(terms)
+
+    assert_equal terms, result['summary'][0][:data].keys
+    assert_equal terms, result['summary'][5][:data].keys
+    assert_equal terms, result['publication-status'][0][:data].keys
+    assert_equal terms, result['copyright'][0][:data].keys
+    assert_equal terms, result['license'][0][:data].keys
+    assert_equal terms, result['departments'][0][:data].keys
+  end
+
+  # The Oct 2026 refactor of the report summary seeks to minimize memory usage. This test confirms
+  # that we're making calculations in SQL rather than loading ActiveRecord objects into memory.
+  test 'dashboard summaries do not instantiate database records' do
+    terms = Thesis.distinct.order(:grad_date).pluck(:grad_date).last(4)
+    instantiated = 0
+    subscriber = lambda do |*arguments|
+      instantiated += arguments.last[:record_count]
+    end
+
+    ActiveSupport::Notifications.subscribed(subscriber, 'instantiation.active_record') do
+      Report.new.index_data(terms)
+    end
+
+    assert_equal 0, instantiated
+  end
+
+  test 'student contributions count theses separately for each requested period' do
+    first_thesis = theses(:one)
+    second_thesis = theses(:two)
+    later_thesis = theses(:active)
+    first_thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+    second_thesis.versions.create!(event: 'update', whodunnit: users(:second).id.to_s)
+    later_thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+
+    result = Report.new.data_student_contributions([first_thesis.grad_date, later_thesis.grad_date])
+
+    assert_equal({ first_thesis.grad_date => 2, later_thesis.grad_date => 1 }, result[:data])
+  end
+
+  test 'student contributions count repeated edits to a thesis only once' do
+    thesis = theses(:one)
+    thesis.versions.create!(event: 'create', whodunnit: users(:basic).id.to_s)
+    thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+    thesis.versions.create!(event: 'update', whodunnit: users(:second).id.to_s)
+
+    result = Report.new.data_student_contributions([thesis.grad_date])
+
+    assert_equal({ thesis.grad_date => 1 }, result[:data])
+  end
+
+  test 'student contributions exclude staff edits' do
+    thesis = theses(:one)
+    thesis.versions.create!(event: 'update', whodunnit: users(:processor).id.to_s)
+    thesis.versions.create!(event: 'update', whodunnit: users(:thesis_admin).id.to_s)
+
+    result = Report.new.data_student_contributions([thesis.grad_date])
+
+    assert_equal({ thesis.grad_date => 0 }, result[:data])
+  end
+
+  test 'student contributions exclude admin edits even with a basic role' do
+    thesis = theses(:one)
+    admin = users(:admin)
+    assert_equal 'basic', admin.role
+    thesis.versions.create!(event: 'update', whodunnit: admin.id.to_s)
+
+    result = Report.new.data_student_contributions([thesis.grad_date])
+
+    assert_equal({ thesis.grad_date => 0 }, result[:data])
+  end
+
+  test 'student contributions exclude registrar edits' do
+    thesis = theses(:one)
+    thesis.versions.create!(event: 'create', whodunnit: 'registrar')
+
+    result = Report.new.data_student_contributions([thesis.grad_date])
+
+    assert_equal({ thesis.grad_date => 0 }, result[:data])
+  end
+
+  test 'student contributions exclude theses outside the requested periods' do
+    included_thesis = theses(:active)
+    excluded_thesis = theses(:one)
+    included_thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+    excluded_thesis.versions.create!(event: 'update', whodunnit: users(:basic).id.to_s)
+    assert_not_equal included_thesis.grad_date, excluded_thesis.grad_date
+
+    result = Report.new.data_student_contributions([included_thesis.grad_date])
+
+    assert_equal({ included_thesis.grad_date => 1 }, result[:data])
+  end
+
   test 'index includes summary data of authors not graduated' do
     thesis = theses(:bachelor)
     another_thesis = theses(:published)

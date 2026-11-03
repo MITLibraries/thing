@@ -55,6 +55,18 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'report dashboard shows four most recent periods in summary tables' do
+    sign_in users(:admin)
+    latest_terms = Thesis.distinct.order(:grad_date).pluck(:grad_date).last(4)
+    get report_index_path
+
+    assert_response :success
+    assert_select 'table', count: 5
+    latest_terms.each do |term|
+      assert_select 'table thead th a[href=?]', report_term_path(graduation: term), count: 5
+    end
+  end
+
   test 'anonymous users are prompted to log in by report dashboard' do
     # Note that nobody is signed in.
     get report_index_path
@@ -82,6 +94,8 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:processor)
     get report_index_path
     assert_response :success
+    assert_select 'aside a[href=?]', report_student_submitted_theses_path,
+                  text: 'Theses submitted by students', count: 1
   end
 
   test 'thesis_admins can see report dashboard' do
