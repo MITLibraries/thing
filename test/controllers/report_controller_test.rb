@@ -94,6 +94,8 @@ class ReportControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:processor)
     get report_index_path
     assert_response :success
+    assert_select 'aside a[href=?]', report_student_submitted_theses_path,
+                  text: 'Theses submitted by students', count: 1
   end
 
   test 'thesis_admins can see report dashboard' do
