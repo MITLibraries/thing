@@ -18,6 +18,9 @@ class DspacePublicationJob < ActiveJob::Base
   end
 
   def perform(thesis, sqs_client = nil)
+    thesis.reload
+    return if publication_blocked?(thesis)
+
     setup(sqs_client)
 
     Rails.logger.debug('Setup complete')
@@ -67,5 +70,17 @@ class DspacePublicationJob < ActiveJob::Base
       message_body: message_body,
       message_attributes: message_attributes
     )
+  end
+
+  private
+
+  # We check for holds in the processing workflow. This method exists as a secondary safeguard.
+  def publication_blocked?(thesis)
+    return false if thesis.no_active_holds? && thesis.no_other_theses_with_holds?
+
+    Rails.logger.warn("Skipping publication of Thesis #{thesis.id}: holds prevent publication; " \
+                      "unreviewed related theses: #{thesis.blocking_other_theses_with_holds.ids}")
+    thesis.save! if thesis.publication_status == 'Publication review'
+    true
   end
 end
