@@ -51,12 +51,20 @@
             <%= f.input :no_other_theses_with_holds?, as: :string,
                                                    readonly: true,
                                                    label_html: { style: 'width: 50%' },
-                                                   input_html: { class: 'disabled', style: 'width: 40%', value: @other_theses_with_holds.none? ? 'Yes' : 'No' },
+                                                   input_html: { class: 'disabled', style: 'width: 40%', value: f.object.no_other_theses_with_holds? ? 'Yes' : 'No' },
                                                    label: 'Related holds resolved?' %>
-            <% if @other_theses_with_holds.any? %>
+            <% if @related_theses_for_review.any? %>
               <ul style="margin: 0.5em 0 0.75em 0; padding-left: 1.25em;">
-                <% @other_theses_with_holds.each do |other_thesis| %>
-                  <li><%= link_to "Thesis ##{other_thesis.id}", thesis_path(other_thesis) %></li>
+                <% @related_theses_for_review.each do |other_thesis| %>
+                  <li>
+                    <%= link_to "Thesis ##{other_thesis.id}", thesis_path(other_thesis) %>
+                    <p><%= other_thesis.title %> (<%= other_thesis.grad_date.strftime('%B %Y') %>)</p>
+                    <%= hidden_field_tag "thesis[related_hold_reviews][#{other_thesis.id}]", '0', id: nil %>
+                    <%= check_box_tag "thesis[related_hold_reviews][#{other_thesis.id}]", '1',
+                                      @reviewed_related_thesis_ids.include?(other_thesis.id),
+                                      id: "related_hold_review_#{other_thesis.id}" %>
+                    <%= label_tag "related_hold_review_#{other_thesis.id}", 'This related record should not block publication of the thesis being processed' %>
+                  </li>
                 <% end %>
               </ul>
             <% end %>

@@ -47,6 +47,15 @@ class Thesis < ApplicationRecord
   has_many :holds, dependent: :restrict_with_error
   has_many :hold_sources, through: :holds
 
+  # Outgoing exceptions waive specific related theses' holds for this thesis, not the reverse.
+  has_many :related_hold_exceptions, dependent: :destroy
+
+  # Incoming exceptions belong to other theses that waive this thesis's holds.
+  # Both associations use destroy callbacks to audit exception cleanup when either thesis is deleted.
+  has_many :incoming_related_hold_exceptions,
+           class_name: 'RelatedHoldException', foreign_key: :related_thesis_id,
+           inverse_of: :related_thesis, dependent: :destroy
+
   has_many :advisor_theses
   has_many :advisors, through: :advisor_theses
 
@@ -109,6 +118,17 @@ class Thesis < ApplicationRecord
 
   scope :date_asc, -> { order('grad_date') }
   scope :in_review, -> { where('publication_status = ?', 'Publication review') }
+  scope :without_publication_holds, lambda {
+    held_ids = Hold.active_or_expired.select(:thesis_id)
+    related_ids = Author.joins('INNER JOIN authors related_authors ON related_authors.user_id = authors.user_id')
+                        .joins('LEFT JOIN related_hold_exceptions ' \
+                               'ON related_hold_exceptions.thesis_id = authors.thesis_id ' \
+                               'AND related_hold_exceptions.related_thesis_id = related_authors.thesis_id')
+                        .where(related_authors: { thesis_id: held_ids }, related_hold_exceptions: { id: nil })
+                        .where('authors.thesis_id <> related_authors.thesis_id')
+                        .select(:thesis_id)
+    where.not(id: held_ids).where.not(id: related_ids)
+  }
   scope :without_files, -> { where.missing(:files_attachments) }
   scope :with_files, -> { joins(:files_attachments).distinct }
   scope :without_sips, lambda {
@@ -179,6 +199,7 @@ class Thesis < ApplicationRecord
   # Returns an ActiveRecord::Relation of other theses for the same user(s)
   # that have active or expired holds.
   # Used to alert processors about pre-existing holds prior to publication.
+  # Includes records with saved exceptions so alerts still reflect the actual holds.
   def other_theses_with_holds
     user_ids = users.ids
     return Thesis.none if user_ids.empty?
@@ -189,6 +210,31 @@ class Thesis < ApplicationRecord
           .where.not(id: id)
           .distinct
           .order(:id)
+  end
+
+  # Returns currently held related theses without an outgoing exception from this thesis.
+  # A saved exception excludes only its specific related thesis. Newly discovered related theses
+  # still block publicaiton.
+  # This filters publication eligibility without releasing holds or hiding them from the factual
+  # query above.
+  def blocking_other_theses_with_holds
+    other_theses_with_holds.where.not(id: related_hold_exceptions.select(:related_thesis_id))
+  end
+
+  # Saves processing attributes and related-hold decisions in one transaction, including their audit records.
+  # Reviews map string related thesis IDs to '1' (grant/retain) or '0' (revoke); omitted IDs are unchanged.
+  # Apply decisions before update so readiness recalculation sees the new exceptions during validation.
+  # Returns true on success and a falsey value on validation failure, rolling back all persisted changes.
+  # Other errors propagate so the controller can handle attachment races without hiding unrelated failures.
+  def update_with_related_hold_reviews(attributes, reviews)
+    transaction do
+      RelatedHoldException.apply_reviews!(self, reviews)
+      raise ActiveRecord::Rollback unless update(attributes)
+
+      true
+    end
+  rescue ActiveRecord::RecordInvalid
+    false
   end
 
   # Returns a true/false value if there are any associated advisors.
@@ -259,15 +305,13 @@ class Thesis < ApplicationRecord
     !active_holds?
   end
 
-  # Mirrors no_active_holds? but for other theses by the same user(s).
-  # Publication review is blocked when another thesis for the same user has
-  # an active or expired hold.
-  # 
-  # Releasing a Hold is the expected way for a Hold to be removed. Expiration signals to
-  # processors to review the Hold to see if it can be released, but expiration is not intended as a
-  # signal that the Thesis is publishable.
+  # True when no thesis sharing any author has an unwaived active or expired hold.
+  # Used by evaluate_status alongside the separate direct-hold check. Exceptions never waive this
+  # thesis's own holds.
+  # Expiration still requires review, not publication: the hold must be released or its
+  # related-thesis block waived.
   def no_other_theses_with_holds?
-    other_theses_with_holds.none?
+    blocking_other_theses_with_holds.none?
   end
 
   # This inverts the issues_found field, so that the checks inside the
