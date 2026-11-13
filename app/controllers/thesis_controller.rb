@@ -269,9 +269,7 @@ class ThesisController < ApplicationController
   # Stored review status can be stale after related records change; both preview and submission use
   # this check.
   def publication_candidates
-    filter_theses_by_term(Thesis.in_review).select do |thesis|
-      thesis.no_active_holds? && thesis.no_other_theses_with_holds?
-    end
+    filter_theses_by_term(Thesis.in_review.without_publication_holds).to_a
   end
 
   # Extracts processing-only decisions keyed by related thesis ID: '1' grants an exception and '0'

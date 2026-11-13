@@ -85,6 +85,89 @@ class RelatedHoldExceptionTest < ActiveSupport::TestCase
     assert RelatedHoldException.exists?(exception.id)
   end
 
+  test 'a stale unchecked review saves metadata after the related holds are released' do
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+    assert_includes thesis.other_theses_with_holds, related_thesis
+    related_thesis.holds.each { |hold| hold.update!(status: :released) }
+
+    assert_no_difference 'RelatedHoldException.count' do
+      assert thesis.update_with_related_hold_reviews(
+        { title: 'Updated after release' }, related_thesis.id.to_s => '0'
+      )
+    end
+
+    assert_equal 'Updated after release', thesis.reload.title
+  end
+
+  test 'a stale unchecked review saves metadata after the related holds are deleted' do
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+    assert_includes thesis.other_theses_with_holds, related_thesis
+    related_thesis.holds.destroy_all
+
+    assert_no_difference 'RelatedHoldException.count' do
+      assert thesis.update_with_related_hold_reviews(
+        { title: 'Updated after deletion' }, related_thesis.id.to_s => '0'
+      )
+    end
+
+    assert_equal 'Updated after deletion', thesis.reload.title
+  end
+
+  test 'revoking an exception already removed by another processor is a no-op' do
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+    exception = thesis.related_hold_exceptions.create!(related_thesis: related_thesis)
+    related_thesis.holds.each { |hold| hold.update!(status: :released) }
+    RelatedHoldException.find(exception.id).destroy!
+
+    assert_no_difference 'RelatedHoldException.count' do
+      assert thesis.update_with_related_hold_reviews(
+        { title: 'Updated after revocation' }, related_thesis.id.to_s => '0'
+      )
+    end
+
+    assert_equal 'Updated after revocation', thesis.reload.title
+  end
+
+  test 'an unchecked unrelated id cannot revoke another thesis exception' do
+    exception = theses(:released_hold).related_hold_exceptions.create!(related_thesis: theses(:downloaded))
+
+    assert_no_difference 'RelatedHoldException.count' do
+      assert theses(:one).update_with_related_hold_reviews({}, theses(:downloaded).id.to_s => '0')
+    end
+
+    assert RelatedHoldException.exists?(exception.id)
+  end
+
+  test 'a new exception is still rejected after the related holds are released' do
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+    related_thesis.holds.each { |hold| hold.update!(status: :released) }
+    original_title = thesis.reload.title
+
+    assert_no_difference 'RelatedHoldException.count' do
+      assert_not thesis.update_with_related_hold_reviews(
+        { title: 'Unsaved title' }, related_thesis.id.to_s => '1'
+      )
+    end
+
+    assert_equal original_title, thesis.reload.title
+  end
+
+  test 'malformed ids are rejected even for unchecked decisions' do
+    assert_not theses(:one).update_with_related_hold_reviews({}, 'not-an-id' => '0')
+  end
+
+  test 'non-string ids are rejected even for unchecked decisions' do
+    assert_not theses(:one).update_with_related_hold_reviews({}, theses(:with_hold).id => '0')
+  end
+
+  test 'non-string decision values are rejected' do
+    assert_not theses(:one).update_with_related_hold_reviews({}, theses(:with_hold).id.to_s => 0)
+  end
+
   test 'invalid thesis updates roll back reviews and their audit records' do
     thesis = theses(:one)
     related_id = theses(:with_hold).id.to_s

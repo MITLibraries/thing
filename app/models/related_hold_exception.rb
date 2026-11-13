@@ -56,13 +56,16 @@ class RelatedHoldException < ApplicationRecord
     end
   end
 
-  # Accepts only currently held related thesis IDs or IDs with an existing exception,
-  # allowing saved decisions to be retained or revoked after the related holds are released.
-  # IDs and decision values must be strings. Invalid submissions add a thesis-level error
-  # and raise ActiveRecord::RecordInvalid before any exception changes are applied.
+  # Grants require a currently held related thesis or an existing exception. Revoking an
+  # already-absent exception is a no-op, including when a hold was released after the form loaded.
+  # IDs must be positive integer strings and decisions must be '0' or '1'. Invalid submissions
+  # raise ActiveRecord::RecordInvalid before any exception changes are applied.
   def self.validate_reviews!(thesis, reviews, reviewed_ids)
     allowed_ids = thesis.other_theses_with_holds.ids.map(&:to_s) | reviewed_ids
-    return if reviews.all? { |related_id, reviewed| allowed_ids.include?(related_id) && %w[0 1].include?(reviewed) }
+    return if reviews.all? do |related_id, reviewed|
+      valid_decisions = allowed_ids.include?(related_id) ? %w[0 1] : ['0']
+      related_id.is_a?(String) && /\A[1-9]\d*\z/.match?(related_id) && valid_decisions.include?(reviewed)
+    end
 
     thesis.errors.add(:base, 'Related hold reviews must identify related theses and a checked or unchecked decision.')
     raise ActiveRecord::RecordInvalid, thesis

@@ -118,6 +118,17 @@ class Thesis < ApplicationRecord
 
   scope :date_asc, -> { order('grad_date') }
   scope :in_review, -> { where('publication_status = ?', 'Publication review') }
+  scope :without_publication_holds, lambda {
+    held_ids = Hold.active_or_expired.select(:thesis_id)
+    related_ids = Author.joins('INNER JOIN authors related_authors ON related_authors.user_id = authors.user_id')
+                        .joins('LEFT JOIN related_hold_exceptions ' \
+                               'ON related_hold_exceptions.thesis_id = authors.thesis_id ' \
+                               'AND related_hold_exceptions.related_thesis_id = related_authors.thesis_id')
+                        .where(related_authors: { thesis_id: held_ids }, related_hold_exceptions: { id: nil })
+                        .where('authors.thesis_id <> related_authors.thesis_id')
+                        .select(:thesis_id)
+    where.not(id: held_ids).where.not(id: related_ids)
+  }
   scope :without_files, -> { where.missing(:files_attachments) }
   scope :with_files, -> { joins(:files_attachments).distinct }
   scope :without_sips, lambda {

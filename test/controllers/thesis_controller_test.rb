@@ -609,6 +609,27 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
     assert_empty thesis.related_hold_exceptions.reload
   end
 
+  test 'processing saves metadata from a stale unchecked review after the related hold is released' do
+    sign_in users(:processor)
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+
+    get thesis_process_path(thesis)
+    assert_select "input#related_hold_review_#{related_thesis.id}:not([checked])"
+    related_thesis.holds.each { |hold| hold.update!(status: :released) }
+
+    assert_no_difference 'RelatedHoldException.count' do
+      patch thesis_process_update_path(thesis), params: {
+        thesis: { title: 'Saved from stale form', related_hold_reviews: { related_thesis.id.to_s => '0' } }
+      }
+    end
+
+    assert_redirected_to thesis_process_path(thesis)
+    assert_equal 'Saved from stale form', thesis.reload.title
+    follow_redirect!
+    assert_select '.alert-banner.success', text: "Your changes to 'Saved from stale form' have been saved."
+  end
+
   test 'new related held theses appear unchecked alongside saved exceptions' do
     sign_in users(:processor)
     thesis = theses(:one)
