@@ -27,6 +27,132 @@
 require 'test_helper'
 
 class HoldTest < ActiveSupport::TestCase
+  test 'adding a hold to a related thesis removes an otherwise ready thesis from publication review' do
+    thesis = theses(:publication_review)
+    related_thesis = theses(:released_hold)
+    Author.create!(user: thesis.users.first, thesis: related_thesis, graduation_confirmed: true)
+    thesis.save!
+    assert_equal 'Publication review', thesis.reload.publication_status
+
+    hold = holds(:valid).dup
+    hold.thesis = related_thesis
+    hold.save!
+
+    assert_equal 'Not ready for publication', thesis.reload.publication_status
+  end
+
+  test 'releasing the last related hold restores publication review' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    hold.update!(status: :active)
+    assert_equal 'Not ready for publication', thesis.reload.publication_status
+
+    hold.update!(status: :released)
+
+    assert_equal 'Publication review', thesis.reload.publication_status
+  end
+
+  test 'expiring a related hold does not restore publication review' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    hold.update!(status: :active)
+
+    hold.update!(status: :expired)
+
+    assert_equal 'Not ready for publication', thesis.reload.publication_status
+  end
+
+  test 'deleting the last related hold restores publication review' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    hold.update!(status: :active)
+    assert_equal 'Not ready for publication', thesis.reload.publication_status
+
+    hold.destroy!
+
+    assert_equal 'Publication review', thesis.reload.publication_status
+  end
+
+  test 'releasing one related hold leaves other active holds blocking publication review' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    hold.update!(status: :active)
+    another_hold = hold.dup
+    another_hold.save!
+
+    hold.update!(status: :released)
+
+    assert_equal 'Not ready for publication', thesis.reload.publication_status
+  end
+
+  test 'releasing a related hold does not waive other readiness requirements' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    hold.update!(status: :active)
+    thesis.update!(issues_found: true)
+
+    hold.update!(status: :released)
+
+    assert_equal 'Not ready for publication', thesis.reload.publication_status
+  end
+
+  test 'a reviewed distinction preserves publication review when the related thesis is held again' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    thesis.related_hold_exceptions.create!(related_thesis: hold.thesis)
+
+    hold.update!(status: :active)
+
+    assert_equal 'Publication review', thesis.reload.publication_status
+    assert hold.reload.active?
+  end
+
+  test 'moving a hold refreshes both the former and current author groups' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    hold.update!(status: :active)
+    assert_equal 'Not ready for publication', thesis.reload.publication_status
+    other_thesis = theses(:doctor)
+    new_held_thesis = theses(:one)
+    Author.create!(user: other_thesis.users.last, thesis: new_held_thesis, graduation_confirmed: true)
+    other_thesis.save!
+    assert_equal 'Publication review', other_thesis.reload.publication_status
+
+    hold.update!(thesis: new_held_thesis)
+
+    assert_equal 'Publication review', thesis.reload.publication_status
+    assert_equal 'Not ready for publication', other_thesis.reload.publication_status
+  end
+
+  test 'related hold changes preserve pending published and publication error statuses' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    pending_thesis = theses(:pending_publication)
+    published_thesis = theses(:published)
+    error_thesis = theses(:two)
+    Author.create!(user: thesis.users.first, thesis: pending_thesis, graduation_confirmed: true)
+    Author.create!(user: thesis.users.first, thesis: published_thesis, graduation_confirmed: true)
+    Author.create!(user: thesis.users.first, thesis: error_thesis, graduation_confirmed: true)
+    error_thesis.update!(publication_status: 'Publication error')
+
+    hold.update!(status: :active)
+
+    assert_equal 'Pending publication', pending_thesis.reload.publication_status
+    assert_equal 'Published', published_thesis.reload.publication_status
+    assert_equal 'Publication error', error_thesis.reload.publication_status
+  end
+
+  test 'related hold changes do not save unrelated theses' do
+    thesis = theses(:publication_review)
+    hold = related_hold_for(thesis)
+    unrelated_thesis = theses(:doctor)
+    original_updated_at = unrelated_thesis.updated_at
+
+    hold.update!(status: :active)
+
+    assert_equal original_updated_at, unrelated_thesis.reload.updated_at
+  end
+
   test 'valid hold' do
     hold = holds(:valid)
     assert(hold.valid?)
@@ -236,5 +362,14 @@ class HoldTest < ActiveSupport::TestCase
     later_release_date = hold.versions.last.changeset['updated_at'][1]
     assert_not_equal earlier_release_date, later_release_date
     assert_equal later_release_date, hold.date_released
+  end
+
+  private
+
+  def related_hold_for(thesis)
+    related_thesis = theses(:released_hold)
+    Author.create!(user: thesis.users.first, thesis: related_thesis, graduation_confirmed: true)
+    thesis.save!
+    related_thesis.holds.sole
   end
 end

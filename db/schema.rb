@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_29_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_120000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.integer "blob_id", null: false
     t.datetime "created_at", precision: nil, null: false
@@ -206,6 +206,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_150000) do
     t.index ["user_id"], name: "index_registrars_on_user_id"
   end
 
+  create_table "related_hold_exceptions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "related_thesis_id", null: false
+    t.integer "thesis_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["related_thesis_id"], name: "index_related_hold_exceptions_on_related_thesis_id"
+    t.index ["thesis_id", "related_thesis_id"], name: "index_related_hold_exceptions_on_pair", unique: true
+    t.check_constraint "thesis_id <> related_thesis_id", name: "related_hold_exceptions_not_self"
+  end
+
   create_table "submission_information_packages", force: :cascade do |t|
     t.string "bag_declaration"
     t.string "bag_name"
@@ -308,6 +318,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_150000) do
   add_foreign_key "holds", "hold_sources"
   add_foreign_key "holds", "theses"
   add_foreign_key "registrars", "users"
+  add_foreign_key "related_hold_exceptions", "theses"
+  add_foreign_key "related_hold_exceptions", "theses", column: "related_thesis_id"
   add_foreign_key "submission_information_packages", "theses"
   add_foreign_key "submitters", "departments"
   add_foreign_key "submitters", "users"

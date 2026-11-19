@@ -5,6 +5,7 @@ class DspacePublicationJobTest < ActiveJob::TestCase
     @thesis = theses(:one)
     @input_queue_url = ENV.fetch('SQS_INPUT_QUEUE_URL')
     dss_friendly_thesis(@thesis)
+    @thesis.related_hold_exceptions.create!(related_thesis: theses(:with_hold))
   end
 
   def teardown
@@ -36,6 +37,59 @@ class DspacePublicationJobTest < ActiveJob::TestCase
     sqs_client.stub_responses(:send_message)
 
     DspacePublicationJob.perform_now(@thesis, sqs_client)
+    assert_equal 'Pending publication', @thesis.publication_status
+  end
+
+  test 'a new related held thesis blocks publication despite an existing reviewed exception' do
+    @thesis.update_columns(publication_status: 'Publication review')
+    @thesis.related_hold_exceptions.load
+    @thesis.users.load
+    @thesis.holds.load
+    Author.create!(user: users(:yo), thesis: theses(:downloaded), graduation_confirmed: true)
+    sqs_client = Aws::SQS::Client.new(region: ENV.fetch('AWS_REGION'), stub_responses: true)
+
+    DspacePublicationJob.perform_now(@thesis, sqs_client)
+
+    assert_empty sqs_client.api_requests
+    assert_not @thesis.dspace_metadata.attached?
+    assert_equal 'Not ready for publication', @thesis.reload.publication_status
+  end
+
+  test 'a revoked exception blocks publication even when the job has cached the exception' do
+    @thesis.related_hold_exceptions.load
+    RelatedHoldException.find_by!(thesis: @thesis).destroy!
+    sqs_client = Aws::SQS::Client.new(region: ENV.fetch('AWS_REGION'), stub_responses: true)
+
+    DspacePublicationJob.perform_now(@thesis, sqs_client)
+
+    assert_empty sqs_client.api_requests
+    assert_not @thesis.dspace_metadata.attached?
+    assert_equal 'Not ready for publication', @thesis.reload.publication_status
+  end
+
+  test 'reviewed related holds cannot waive a new direct hold before publication' do
+    @thesis.holds.load
+    holds(:valid).update!(thesis: @thesis)
+    sqs_client = Aws::SQS::Client.new(region: ENV.fetch('AWS_REGION'), stub_responses: true)
+
+    DspacePublicationJob.perform_now(@thesis, sqs_client)
+
+    assert_empty sqs_client.api_requests
+    assert_not @thesis.dspace_metadata.attached?
+    assert_equal 'Not ready for publication', @thesis.reload.publication_status
+  end
+
+  test 'a blocked publication leaves existing metadata and protected publication status intact' do
+    @thesis.dspace_metadata.attach(io: StringIO.new('{}'), filename: 'existing.json', content_type: 'application/json')
+    metadata_blob_id = @thesis.dspace_metadata.blob.id
+    @thesis.update!(publication_status: 'Pending publication')
+    @thesis.related_hold_exceptions.destroy_all
+    sqs_client = Aws::SQS::Client.new(region: ENV.fetch('AWS_REGION'), stub_responses: true)
+
+    DspacePublicationJob.perform_now(@thesis, sqs_client)
+
+    assert_empty sqs_client.api_requests
+    assert_equal metadata_blob_id, @thesis.reload.dspace_metadata.blob.id
     assert_equal 'Pending publication', @thesis.publication_status
   end
 

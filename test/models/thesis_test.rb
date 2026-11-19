@@ -31,8 +31,11 @@
 
 require 'csv'
 require 'test_helper'
+require 'active_record/testing/query_assertions'
 
 class ThesisTest < ActiveSupport::TestCase
+  include ActiveRecord::Assertions::QueryAssertions
+
   def attach_file_with_purpose_to(thesis, _purpose = 'thesis_pdf')
     file = Rails.root.join('test', 'fixtures', 'files', 'a_pdf.pdf')
     thesis.files.attach(io: File.open(file), filename: 'a_pdf.pdf')
@@ -1704,5 +1707,63 @@ class ThesisTest < ActiveSupport::TestCase
 
     assert_equal false, thesis.no_other_theses_with_holds?
     assert_equal 'Not ready for publication', thesis.publication_status
+  end
+
+  test 'without_publication_holds matches the individual hold predicates with reviewed exceptions' do
+    theses(:one).related_hold_exceptions.create!(related_thesis: theses(:with_hold))
+    expected_ids = Thesis.all.select do |thesis|
+      thesis.no_active_holds? && thesis.no_other_theses_with_holds?
+    end.map(&:id)
+
+    assert_equal expected_ids.sort, Thesis.without_publication_holds.ids.sort
+  end
+
+  test 'without_publication_holds excludes direct active and expired holds' do
+    result = Thesis.without_publication_holds
+
+    assert_not_includes result, theses(:with_hold)
+    assert_not_includes result, theses(:downloaded)
+  end
+
+  test 'without_publication_holds keeps released related holds eligible' do
+    thesis = theses(:publication_review)
+    Author.create!(user: thesis.users.first, thesis: theses(:released_hold), graduation_confirmed: true)
+
+    assert_includes Thesis.without_publication_holds, thesis
+  end
+
+  test 'without_publication_holds checks all coauthors for related holds' do
+    thesis = theses(:publication_review)
+    Author.create!(user: users(:second), thesis: thesis, graduation_confirmed: true)
+
+    assert_not_includes Thesis.without_publication_holds, thesis
+  end
+
+  test 'without_publication_holds does not apply exceptions in reverse' do
+    theses(:with_hold).related_hold_exceptions.create!(related_thesis: theses(:one))
+
+    assert_not_includes Thesis.without_publication_holds, theses(:one)
+  end
+
+  test 'without_publication_holds excludes new blockers despite an existing reviewed exception' do
+    thesis = theses(:one)
+    thesis.related_hold_exceptions.create!(related_thesis: theses(:with_hold))
+    assert_includes Thesis.without_publication_holds, thesis
+    Author.create!(user: users(:yo), thesis: theses(:downloaded), graduation_confirmed: true)
+
+    assert_not_includes Thesis.without_publication_holds, thesis
+  end
+
+  test 'without_publication_holds does not produce N+1 queries' do
+    thesis = theses(:one)
+    thesis.related_hold_exceptions.create!(related_thesis: theses(:with_hold))
+    thesis.update_columns(publication_status: 'Publication review')
+    candidate_ids = [thesis.id, theses(:publication_review).id]
+
+    records = assert_queries_count(1) do
+      Thesis.in_review.where(id: candidate_ids).without_publication_holds.to_a
+    end
+
+    assert_equal candidate_ids.sort, records.map(&:id).sort
   end
 end

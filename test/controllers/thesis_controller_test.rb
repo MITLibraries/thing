@@ -513,6 +513,196 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
   end
 
   # ~~~~~~~~~~~~~~~~~~~ submitting thesis processing form ~~~~~~~~~~~~~~~~~~~~~
+  test 'processors can grant and revoke an audited related hold exception' do
+    sign_in users(:processor)
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+
+    assert_difference 'RelatedHoldException.count', 1 do
+      patch thesis_process_update_path(thesis),
+            params: { thesis: { processor_note: '', related_hold_reviews: { related_thesis.id.to_s => '1' } } }
+    end
+    exception = thesis.related_hold_exceptions.sole
+    assert_equal users(:processor).id.to_s, exception.versions.last.whodunnit
+    assert_equal 'create', exception.versions.last.event
+    assert_equal [nil, thesis.id], exception.versions.last.changeset[:thesis_id]
+    assert_equal [nil, related_thesis.id], exception.versions.last.changeset[:related_thesis_id]
+
+    follow_redirect!
+    assert_select "input#related_hold_review_#{related_thesis.id}[checked]"
+    assert_select 'input#thesis_no_other_theses_with_holds[readonly][value=?]', 'Yes'
+    assert_select "a[href='#{thesis_path(related_thesis)}']", text: "Thesis ##{related_thesis.id}"
+
+    assert_difference 'RelatedHoldException.count', -1 do
+      patch thesis_process_update_path(thesis),
+            params: { thesis: { related_hold_reviews: { related_thesis.id.to_s => '0' } } }
+    end
+    version = PaperTrail::Version.where(item_type: 'RelatedHoldException', item_id: exception.id).last
+    assert_equal 'destroy', version.event
+    assert_equal users(:processor).id.to_s, version.whodunnit
+    follow_redirect!
+    assert_select "input#related_hold_review_#{related_thesis.id}:not([checked])"
+    assert_select 'input#thesis_no_other_theses_with_holds[readonly][value=?]', 'No'
+  end
+
+  test 'thesis admins can grant and revoke an audited related hold exception' do
+    sign_in users(:thesis_admin)
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+
+    assert_difference 'RelatedHoldException.count', 1 do
+      patch thesis_process_update_path(thesis),
+            params: { thesis: { related_hold_reviews: { related_thesis.id.to_s => '1' } } }
+    end
+    assert_redirected_to thesis_process_path(thesis)
+    exception = thesis.related_hold_exceptions.sole
+    assert_equal 'create', exception.versions.last.event
+    assert_equal users(:thesis_admin).id.to_s, exception.versions.last.whodunnit
+
+    assert_difference 'RelatedHoldException.count', -1 do
+      patch thesis_process_update_path(thesis),
+            params: { thesis: { related_hold_reviews: { related_thesis.id.to_s => '0' } } }
+    end
+    assert_redirected_to thesis_process_path(thesis)
+    version = PaperTrail::Version.where(item_type: 'RelatedHoldException', item_id: exception.id).last
+    assert_equal 'destroy', version.event
+    assert_equal users(:thesis_admin).id.to_s, version.whodunnit
+  end
+
+  test 'admins can grant and revoke an audited related hold exception' do
+    sign_in users(:admin)
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+
+    assert_difference 'RelatedHoldException.count', 1 do
+      patch thesis_process_update_path(thesis),
+            params: { thesis: { related_hold_reviews: { related_thesis.id.to_s => '1' } } }
+    end
+    assert_redirected_to thesis_process_path(thesis)
+    exception = thesis.related_hold_exceptions.sole
+    assert_equal 'create', exception.versions.last.event
+    assert_equal users(:admin).id.to_s, exception.versions.last.whodunnit
+
+    assert_difference 'RelatedHoldException.count', -1 do
+      patch thesis_process_update_path(thesis),
+            params: { thesis: { related_hold_reviews: { related_thesis.id.to_s => '0' } } }
+    end
+    assert_redirected_to thesis_process_path(thesis)
+    version = PaperTrail::Version.where(item_type: 'RelatedHoldException', item_id: exception.id).last
+    assert_equal 'destroy', version.event
+    assert_equal users(:admin).id.to_s, version.whodunnit
+  end
+
+  test 'saved exceptions remain visible and revocable after related holds are released' do
+    sign_in users(:processor)
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+    thesis.related_hold_exceptions.create!(related_thesis: related_thesis)
+    related_thesis.holds.each { |hold| hold.update!(status: :released) }
+
+    get thesis_process_path(thesis)
+
+    assert_select "input#related_hold_review_#{related_thesis.id}[checked]"
+    assert_select "a[href='#{thesis_path(related_thesis)}']"
+    patch thesis_process_update_path(thesis),
+          params: { thesis: { related_hold_reviews: { related_thesis.id.to_s => '0' } } }
+    assert_empty thesis.related_hold_exceptions.reload
+  end
+
+  test 'processing saves metadata from a stale unchecked review after the related hold is released' do
+    sign_in users(:processor)
+    thesis = theses(:one)
+    related_thesis = theses(:with_hold)
+
+    get thesis_process_path(thesis)
+    assert_select "input#related_hold_review_#{related_thesis.id}:not([checked])"
+    related_thesis.holds.each { |hold| hold.update!(status: :released) }
+
+    assert_no_difference 'RelatedHoldException.count' do
+      patch thesis_process_update_path(thesis), params: {
+        thesis: { title: 'Saved from stale form', related_hold_reviews: { related_thesis.id.to_s => '0' } }
+      }
+    end
+
+    assert_redirected_to thesis_process_path(thesis)
+    assert_equal 'Saved from stale form', thesis.reload.title
+    follow_redirect!
+    assert_select '.alert-banner.success', text: "Your changes to 'Saved from stale form' have been saved."
+  end
+
+  test 'new related held theses appear unchecked alongside saved exceptions' do
+    sign_in users(:processor)
+    thesis = theses(:one)
+    thesis.related_hold_exceptions.create!(related_thesis: theses(:with_hold))
+    Author.create!(user: users(:yo), thesis: theses(:downloaded), graduation_confirmed: true)
+
+    get thesis_process_path(thesis)
+
+    assert_select "input#related_hold_review_#{theses(:with_hold).id}[checked]"
+    assert_select "input#related_hold_review_#{theses(:downloaded).id}:not([checked])"
+    assert_select 'input#thesis_no_other_theses_with_holds[readonly][value=?]', 'No'
+  end
+
+  test 'authors cannot grant exceptions through the processing route' do
+    sign_in users(:yo)
+
+    assert_no_difference 'RelatedHoldException.count' do
+      patch thesis_process_update_path(theses(:one)),
+            params: { thesis: { related_hold_reviews: { theses(:with_hold).id.to_s => '1' } } }
+    end
+    assert_redirected_to '/'
+  end
+
+  test 'anonymous users cannot grant exceptions through the processing route' do
+    assert_no_difference 'RelatedHoldException.count' do
+      patch thesis_process_update_path(theses(:one)),
+            params: { thesis: { related_hold_reviews: { theses(:with_hold).id.to_s => '1' } } }
+    end
+    assert_redirected_to '/login'
+  end
+
+  test 'author updates cannot mass assign related hold exceptions' do
+    sign_in users(:yo)
+
+    assert_no_difference 'RelatedHoldException.count' do
+      patch thesis_path(theses(:one)), params: {
+        thesis: {
+          related_hold_reviews: { theses(:with_hold).id.to_s => '1' },
+          related_hold_exceptions_attributes: [{ related_thesis_id: theses(:with_hold).id }]
+        }
+      }
+    end
+    assert_redirected_to thesis_confirm_path
+    assert_not theses(:one).reload.no_other_theses_with_holds?
+  end
+
+  test 'processing rejects unrelated review ids without saving other changes' do
+    sign_in users(:processor)
+    thesis = theses(:one)
+    original_title = thesis.title
+
+    assert_no_difference ['RelatedHoldException.count', 'PaperTrail::Version.count'] do
+      patch thesis_process_update_path(thesis), params: {
+        thesis: { title: 'Not saved', related_hold_reviews: { theses(:released_hold).id.to_s => '1' } }
+      }
+    end
+    assert_equal original_title, thesis.reload.title
+    follow_redirect!
+    assert_select '.alert-banner.error'
+  end
+
+  test 'invalid processing metadata rolls back exception grants and audit records' do
+    sign_in users(:processor)
+
+    assert_no_difference ['RelatedHoldException.count', 'PaperTrail::Version.count'] do
+      patch thesis_process_update_path(theses(:one)), params: {
+        thesis: { graduation_month: 'invalid', related_hold_reviews: { theses(:with_hold).id.to_s => '1' } }
+      }
+    end
+    follow_redirect!
+    assert_select '.alert-banner.error'
+  end
+
   test 'anonymous users cannot submit thesis processing form' do
     patch thesis_process_update_path(theses(:one)),
           params: { thesis: { title: 'Something nonsensical' } }
@@ -791,11 +981,60 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
   test 'publishing a specific term to dspace ends back at the processing queue with a flash success' do
     sign_in users(:processor)
-    get thesis_publish_to_dspace_path, params: { graduation: '2018-09-01' }
-    assert_redirected_to thesis_select_path(params: { graduation: '2018-09-01' })
+    get thesis_publish_to_dspace_path, params: { graduation: '2021-06-01' }
+    assert_redirected_to thesis_select_path(params: { graduation: '2021-06-01' })
     follow_redirect!
     assert_select '.alert-banner.success',
-                  text: 'The theses you selected have been added to the publication queue. Status updates are not immediate.', count: 1
+                  text: '1 thesis added to the publication queue. Status updates are not immediate.', count: 1
+  end
+
+  test 'publication preview excludes stale review records with unreviewed related holds' do
+    sign_in users(:processor)
+    thesis = theses(:publication_review)
+    related_thesis = theses(:with_hold)
+    related_thesis.holds.each { |hold| hold.update!(status: :released) }
+    Author.create!(user: users(:yo), thesis: thesis, graduation_confirmed: true)
+    related_thesis.holds.first.update!(status: :active)
+    assert_equal 'Not ready for publication', thesis.reload.publication_status
+    thesis.update_columns(publication_status: 'Publication review')
+    assert_equal 'Publication review', thesis.reload.publication_status
+
+    get thesis_publish_preview_path, params: { graduation: '2021-06-01' }
+
+    assert_select "a[href='#{thesis_process_path(thesis)}']", count: 0
+    assert_select 'h4', text: 'Ready to publish 0 theses?'
+  end
+
+  test 'publication rechecks related holds after preview and enqueues nothing when all are blocked' do
+    sign_in users(:processor)
+    thesis = theses(:publication_review)
+    Author.create!(user: users(:yo), thesis: thesis, graduation_confirmed: true)
+    assert thesis.update_with_related_hold_reviews({}, theses(:with_hold).id.to_s => '1')
+    get thesis_publish_preview_path, params: { graduation: '2021-06-01' }
+    assert_select 'h4', text: 'Ready to publish 1 theses?'
+    Author.create!(user: users(:yo), thesis: theses(:downloaded), graduation_confirmed: true)
+
+    assert_no_enqueued_jobs only: DspacePublicationPrepJob do
+      get thesis_publish_to_dspace_path, params: { graduation: '2021-06-01' }
+    end
+
+    assert_redirected_to thesis_select_path(params: { graduation: '2021-06-01' })
+    follow_redirect!
+    assert_select '.alert-banner.warning', text: 'No theses are eligible for publication in the selected term.'
+  end
+
+  test 'publication batches contain only currently eligible theses and report the queued count' do
+    sign_in users(:processor)
+    eligible = theses(:publication_review)
+    blocked = theses(:one)
+    blocked.update_columns(grad_date: eligible.grad_date, publication_status: 'Publication review')
+    assert_not blocked.no_other_theses_with_holds?
+
+    assert_enqueued_with(job: DspacePublicationPrepJob, args: [[eligible]]) do
+      get thesis_publish_to_dspace_path, params: { graduation: '2021-06-01' }
+    end
+    follow_redirect!
+    assert_select '.alert-banner.success', text: /1 thesis added/
   end
 
   # ~~~~~~~~~~~~~~~~~~~~~ proquest export preview ~~~~~~~~~~~~~~~~~~~~~
@@ -1082,6 +1321,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
             params: {
               thesis: {
                 title: thesis.title,
+                related_hold_reviews: { theses(:with_hold).id.to_s => '1' },
                 files_attachments_attributes: {
                   '0' => {
                     id: attachment_id,
@@ -1102,6 +1342,7 @@ class ThesisControllerTest < ActionDispatch::IntegrationTest
 
     assert deleted_during_first_update
     assert_equal 2, update_calls
+    assert RelatedHoldException.exists?(thesis: thesis, related_thesis: theses(:with_hold))
     assert_response :redirect
     assert_redirected_to thesis_process_path(thesis)
     follow_redirect!

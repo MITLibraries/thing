@@ -41,6 +41,7 @@ class Hold < ApplicationRecord
   validates :thesis, presence: true
 
   after_save :update_thesis_status
+  after_destroy :update_thesis_status
 
   scope :active_or_expired, -> { Hold.active.or(Hold.expired) }
   scope :ends_today_or_before, -> { where('date_end <= ?', Date.current) }
@@ -61,7 +62,7 @@ class Hold < ApplicationRecord
     return unless versions.present? && versions.first.event == 'create'
 
     creator_id = versions.first.whodunnit
-    if user = User.find_by(id: creator_id)
+    if (user = User.find_by(id: creator_id))
       user.kerberos_id
     else
       "User ID #{creator_id} no longer active."
@@ -87,15 +88,17 @@ class Hold < ApplicationRecord
       # We check for the integer 2 here because that corresponds with 'released', and PT has been incorrectly storing
       # all enum values as integers since we started using it. That is fixed now that we migrated to JSON, but it
       # remains a problem with historical data.
-      version.changeset['status'][1] == 'released' || version.changeset['status'][1] == 2
+      ['released', 2].include?(version.changeset['status'][1])
     end
     dates_released = released_versions.map { |version| version.changeset['updated_at'][1] }
     dates_released.max
   end
 
-  # The thesis' publication_status is recalculated every time the record is
-  # saved, so in case this hold's status has changed, we force a recalculation.
+  # Saving recalculates readiness for both the held thesis and related theses.
   def update_thesis_status
-    thesis.save
+    thesis_ids = [thesis_id, thesis_id_before_last_save].compact.uniq
+    user_ids = Author.where(thesis_id: thesis_ids).select(:user_id)
+    related_thesis_ids = Author.where(user_id: user_ids).select(:thesis_id)
+    Thesis.where(id: thesis_ids).or(Thesis.where(id: related_thesis_ids)).find_each(&:save)
   end
 end
